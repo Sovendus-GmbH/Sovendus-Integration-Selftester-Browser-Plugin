@@ -13,6 +13,5 @@ The Sovendus integration tester plugin can self-test common integration issues a
 ## Export the test result
 1.	Navigate to a page where the Sovendus integration should be (e.g. order success page)
 2.	If there is a trace of our integration, you should see the Sovendus selftest overlay and a report of the current integration status.
- 
 3.	To copy the test result to your clipboard, click on the Sovendus icon on the top right and then click on "Copy Test Result"
  
