@@ -81,7 +81,9 @@ function getSovIFramesData(
   sovendusDivFound,
   sovDivIdInIframes,
   multipleSovIframesDetected,
-  sovIframesAmount
+  sovIframesAmount,
+  isEnabledInBackend,
+  wasExecuted
 ) {
   return `
     <div>
@@ -105,6 +107,13 @@ function getSovIFramesData(
               window.sovIframes[0].iframeContainerId
             )}
           </li>
+          ${
+            isEnabledInBackend
+              ? ""
+              : wasExecuted
+              ? "<h3 class='sovendus-overlay-error'>ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend. Please contact your account manager to fix this issue.</h3>"
+              : ""
+          }
           ${
             sovendusDivFound
               ? ""
@@ -133,7 +142,7 @@ function getSovIFramesData(
           orderId: ${returnValueIfValidOrError(window.sovIframes[0].orderId)}
         </li>
         <li class'sovendus-overlay-font sovendus-overlay-text'>
-          orderValue: ${returnValueIfValidOrError(
+          orderValue: ${returnValueIfValidNumberOrError(
             window.sovIframes[0].orderValue
           )}
         </li>
@@ -143,7 +152,7 @@ function getSovIFramesData(
           )}
         </li>
         <li class'sovendus-overlay-font sovendus-overlay-text'>
-          timestamp: ${returnValueIfValidOrError(
+          timestamp: ${returnValueIfValidUnixtimeOrError(
             window.sovIframes[0].timestamp
           )}
         </li>
@@ -168,15 +177,38 @@ function toggleOverlay() {
   }
 }
 
+const dataIsMissingWarning =
+  "<span class='sovendus-overlay-error' >DATA MISSING</span>";
 function returnValueIfValidOrError(value, returnFalseIfEmpty) {
   if (value && value !== "undefined") {
-    return decodeURIComponent(value);
+    return decodeURIComponent(decodeURI(value));
   }
   if (returnFalseIfEmpty) {
     return false;
   }
-  const dataIsMissingWarning =
-    "<span class='sovendus-overlay-error' >DATA MISSING</span>";
+  return dataIsMissingWarning;
+}
+
+function returnValueIfValidNumberOrError(value) {
+  const decodedValue = returnValueIfValidOrError(value, true);
+  if (decodedValue) {
+    return isNaN(Number(decodedValue))
+      ? `<span class='sovendus-overlay-error' >${decodedValue} IS NOT A NUMBER</span>`
+      : decodedValue;
+  }
+  return dataIsMissingWarning;
+}
+
+function returnValueIfValidUnixtimeOrError(value) {
+  const decodedValue = returnValueIfValidOrError(value, true);
+  if (decodedValue) {
+    const truncatedTime = Math.floor(decodedValue);
+
+    return !isNaN(truncatedTime) &&
+      [12, 9].includes(truncatedTime.toString().length)
+      ? decodedValue
+      : `<span class='sovendus-overlay-error' >${decodedValue} IS NOT A UNIXTIME</span>`;
+  }
   return dataIsMissingWarning;
 }
 
@@ -185,16 +217,44 @@ async function waitForSovendusIntegrationDetected() {
   while (!window.hasOwnProperty("sovIframes")) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
+  await waitForSovApplicationObject();
+}
+
+async function waitForSovApplicationObject() {
   let waitedSeconds = 0;
-  while (
-    (!window.hasOwnProperty("sovApplication") ||
-      !window.sovApplication.hasOwnProperty("consumer")) &&
-    waitedSeconds < 7
-  ) {
+  while (!sovApplicationExists() && waitedSeconds < 5) {
     await new Promise((resolve) => setTimeout(resolve, 500));
     waitedSeconds += 0.5;
   }
   console.log("Sovendus has been detected");
+  if (sovApplicationExists()) {
+    await waitForBannerToBeLoaded();
+  }
+}
+
+function sovApplicationExists() {
+  return (
+    window.hasOwnProperty("sovApplication") &&
+    window.sovApplication.hasOwnProperty("consumer")
+  );
+}
+
+function sovInstancesLoaded() {
+  return (
+    window.sovApplication.hasOwnProperty("instances") &&
+    window.sovApplication.instances.length &&
+    window.sovApplication.instances[0].banner &&
+    window.sovApplication.instances[0].selectBanner
+  );
+}
+
+async function waitForBannerToBeLoaded() {
+  let waitedSeconds = 0;
+  while (!sovInstancesLoaded() && waitedSeconds < 4) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    waitedSeconds += 0.5;
+  }
+  console.log("Sovendus banner loaded");
 }
 
 function getSovendusSelfTestData() {
@@ -204,16 +264,21 @@ function getSovendusSelfTestData() {
     document.getElementById(window.sovIframes[0].iframeContainerId)
       ? true
       : false;
-  const multipleSovDivsDetected = window.sovIframes.length > 1;
-  const sovDivAmount = window.sovIframes.length;
+  const sovIframesAmount = window.sovIframes.length;
+  const multipleSovIframesDetected = sovIframesAmount > 1;
   const wasExecuted =
     window.hasOwnProperty("sovApplication") && sovApplication.instances.length;
+  const isEnabledInBackend =
+    wasExecuted &&
+    (sovApplication.instances[0].banner?.bannerExists ||
+      sovApplication.instances[0].selectBanner?.bannerExists);
   return {
     sovendusDivFound,
     sovDivIdInIframes,
-    multipleSovDivsDetected,
-    sovDivAmount,
+    multipleSovIframesDetected,
+    sovIframesAmount,
     wasExecuted,
+    isEnabledInBackend,
   };
 }
 
@@ -334,6 +399,7 @@ function createInnerOverlay() {
     multipleSovIframesDetected,
     sovIframesAmount,
     wasExecuted,
+    isEnabledInBackend,
   } = getSovendusSelfTestData();
   let innerOverlay = "";
   if (wasExecuted) {
@@ -343,7 +409,9 @@ function createInnerOverlay() {
           sovendusDivFound,
           sovDivIdInIframes,
           multipleSovIframesDetected,
-          sovIframesAmount
+          sovIframesAmount,
+          isEnabledInBackend,
+          wasExecuted
         )}
         ${getSovConsumerData(window.sovApplication.consumer)}
     `;
@@ -356,9 +424,11 @@ function createInnerOverlay() {
         sovendusDivFound,
         sovDivIdInIframes,
         multipleSovIframesDetected,
-        sovIframesAmount
+        sovIframesAmount,
+        isEnabledInBackend,
+        wasExecuted
       )}
-      ${getSovConsumerData(window.sovConsumer)}
+      ${getSovConsumerData(window.sovConsumer || {})}
       `;
   }
   return innerOverlay;
