@@ -268,10 +268,7 @@ function getSovendusSelfTestData() {
   const multipleSovIframesDetected = sovIframesAmount > 1;
   const wasExecuted =
     window.hasOwnProperty("sovApplication") && sovApplication.instances.length;
-  const isEnabledInBackend =
-    wasExecuted &&
-    (sovApplication.instances[0].banner?.bannerExists ||
-      sovApplication.instances[0].selectBanner?.bannerExists);
+  const isEnabledInBackend = checkIfEnabledInBackend(wasExecuted);
   return {
     sovendusDivFound,
     sovDivIdInIframes,
@@ -280,6 +277,16 @@ function getSovendusSelfTestData() {
     wasExecuted,
     isEnabledInBackend,
   };
+}
+
+function checkIfEnabledInBackend(wasExecuted) {
+  return (
+    wasExecuted &&
+    sovApplication.instances.some(
+      (instance) =>
+        instance.banner?.bannerExists || instance.selectBanner?.bannerExists
+    )
+  );
 }
 
 function getOverlayStyle() {
