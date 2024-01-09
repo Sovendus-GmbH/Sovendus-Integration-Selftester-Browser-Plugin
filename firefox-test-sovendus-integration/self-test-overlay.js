@@ -205,7 +205,7 @@ function returnValueIfValidUnixtimeOrError(value) {
     const truncatedTime = Math.floor(decodedValue);
 
     return !isNaN(truncatedTime) &&
-      [12, 9].includes(truncatedTime.toString().length)
+      [13, 10].includes(truncatedTime.toString().length)
       ? decodedValue
       : `<span class='sovendus-overlay-error' >${decodedValue} IS NOT A UNIXTIME</span>`;
   }
@@ -284,7 +284,8 @@ function checkIfEnabledInBackend(wasExecuted) {
     wasExecuted &&
     sovApplication.instances.some(
       (instance) =>
-        instance.banner?.bannerExists || instance.selectBanner?.bannerExists
+        Object.keys(instance.config?.overlay || {}).length > 0 ||
+        Object.keys(instance.config?.stickyBanner || {}).length > 0
     )
   );
 }
