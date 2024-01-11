@@ -313,13 +313,6 @@ function getOverlayStyle() {
         left: 0;
         max-height: 100vh;
       }
-      #sovendusOverlay.fullscreen {
-        width: 100vw;
-        height: 100vh;
-        top: 0;
-        left: 0;
-        max-height: 100vh;
-      }
       @media only screen and (max-width: 700px) {
         #sovendusOverlay {
           left: 0;

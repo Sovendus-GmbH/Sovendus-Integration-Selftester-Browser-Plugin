@@ -20,6 +20,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const query = { active: true, currentWindow: true };
     chrome.tabs.query(query, callback);
   });
+  const hideButton = document.getElementById("hide-button");
+  hideButton.addEventListener("click", async function () {
+    async function callback(tabs) {
+      const currentTab = tabs[0];
+      toggleOverlayVisibility(currentTab);
+    }
+    const query = { active: true, currentWindow: true };
+    chrome.tabs.query(query, callback);
+  });
 });
 
 function copyScreenshotsToClipboard(screenshotContainer) {
@@ -62,6 +71,14 @@ function createScreenshot(ctx, screenshotContainer, isFirstScreenShot, onDone) {
       onDone();
     };
   });
+}
+
+async function toggleOverlayVisibility(currentTab) {
+  chrome.scripting.executeScript({
+    target: { tabId: currentTab.id },
+    files: ["self-test-overlay-toggle.js"],
+  });
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 
 async function showOverlay(currentTab) {

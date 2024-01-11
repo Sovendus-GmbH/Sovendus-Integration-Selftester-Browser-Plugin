@@ -3,9 +3,23 @@
   <head>
     <title>Sovendus Integration Tester</title>
     <script src="export-result-popup.js"></script>
+    <style>
+      .sovendus-button {
+        width: 100%;
+        background-color: #fc8e0c;
+        color: #fff;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0;
+      }
+    </style>
   </head>
-  <body style="width: 160px">
-    <button style="width:100%" id="capture-button">Copy Test Result</button>
+  <body style="width: 200px; background-color: #293049">
+    <button class="sovendus-button" id="capture-button">
+      Copy Test Result
+    </button>
+    <button class="sovendus-button" style="margin-top: 7px" id="hide-button">
+      Show/Hide Selftest Overlay
+    </button>
     <canvas id="screenshot-canvas" style="display: none"></canvas>
   </body>
 </html>
