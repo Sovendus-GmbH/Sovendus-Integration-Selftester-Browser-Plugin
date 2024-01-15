@@ -285,7 +285,8 @@ function checkIfEnabledInBackend(wasExecuted) {
     sovApplication.instances.some(
       (instance) =>
         Object.keys(instance.config?.overlay || {}).length > 0 ||
-        Object.keys(instance.config?.stickyBanner || {}).length > 0
+        Object.keys(instance.config?.stickyBanner || {}).length > 0 ||
+        instance?.banner?.bannerExists
     )
   );
 }
@@ -322,12 +323,6 @@ function getOverlayStyle() {
           top: 50px;
           padding: 22px;
          
-        }
-      }
-      @media only screen and (min-width: 700px) {
-        #sovendusOverlay.fullscreen {
-          transform: scale(130%);
-          transform-origin: top;
         }
       }
       .sovendus-overlay-font {
