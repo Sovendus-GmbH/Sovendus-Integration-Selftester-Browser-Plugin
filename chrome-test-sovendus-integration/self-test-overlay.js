@@ -83,7 +83,8 @@ function getSovIFramesData(
   multipleSovIframesDetected,
   sovIframesAmount,
   isEnabledInBackend,
-  wasExecuted
+  wasExecuted,
+  multipleIframesAreSame
 ) {
   return `
     <div>
@@ -127,7 +128,11 @@ function getSovIFramesData(
             multipleSovIframesDetected
               ? "<h3 class='sovendus-overlay-error'>ERROR: sovIframes was found " +
                 sovIframesAmount +
-                " times. This is probably due to Sovendus being executed multiple times or Sovendus was integrated multiple times.</h3>"
+                " times " +
+                (multipleIframesAreSame
+                  ? "with the same content. This is probably due to Sovendus being executed multiple times or"
+                  : "with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to ") +
+                " Sovendus being integrated multiple times.</h3>"
               : ""
           }
       </ul>
@@ -264,8 +269,11 @@ function getSovendusSelfTestData() {
     document.getElementById(window.sovIframes[0].iframeContainerId)
       ? true
       : false;
-  const sovIframesAmount = window.sovIframes.length;
-  const multipleSovIframesDetected = sovIframesAmount > 1;
+  const {
+    sovIframesAmount,
+    multipleSovIframesDetected,
+    multipleIframesAreSame,
+  } = checkIfMultipleSovIframes();
   const wasExecuted =
     window.hasOwnProperty("sovApplication") && sovApplication.instances.length;
   const isEnabledInBackend = checkIfEnabledInBackend(wasExecuted);
@@ -276,9 +284,40 @@ function getSovendusSelfTestData() {
     sovIframesAmount,
     wasExecuted,
     isEnabledInBackend,
+    multipleIframesAreSame,
   };
 }
 
+function checkIfMultipleSovIframes() {
+  const sovIframesAmount = window.sovIframes.length;
+  const multipleSovIframesDetected = sovIframesAmount > 1;
+  let multipleIframesAreSame = true;
+  if (multipleSovIframesDetected) {
+    let prevSovIframe = undefined;
+    multipleIframesAreSame = window.sovIframes.every((sovIframe) => {
+      let isTheSame = true;
+      if (prevSovIframe) {
+        isTheSame =
+          sovIframe.trafficSourceNumber === prevSovIframe.trafficSourceNumber &&
+          sovIframe.trafficMediumNumber === prevSovIframe.trafficMediumNumber &&
+          sovIframe.sessionId === prevSovIframe.sessionId &&
+          sovIframe.timestamp === prevSovIframe.timestamp &&
+          sovIframe.orderId === prevSovIframe.orderId &&
+          sovIframe.orderValue === prevSovIframe.orderValue &&
+          sovIframe.orderCurrency === prevSovIframe.orderCurrency &&
+          sovIframe.usedCouponCode === prevSovIframe.usedCouponCode &&
+          sovIframe.iframeContainerId === prevSovIframe.iframeContainerId;
+      }
+      prevSovIframe = sovIframe;
+      return isTheSame;
+    });
+  }
+  return {
+    sovIframesAmount,
+    multipleSovIframesDetected,
+    multipleIframesAreSame,
+  };
+}
 function checkIfEnabledInBackend(wasExecuted) {
   return (
     wasExecuted &&
@@ -396,6 +435,7 @@ function createInnerOverlay() {
     sovIframesAmount,
     wasExecuted,
     isEnabledInBackend,
+    multipleIframesAreSame,
   } = getSovendusSelfTestData();
   let innerOverlay = "";
   if (wasExecuted) {
@@ -407,7 +447,8 @@ function createInnerOverlay() {
           multipleSovIframesDetected,
           sovIframesAmount,
           isEnabledInBackend,
-          wasExecuted
+          wasExecuted,
+          multipleIframesAreSame
         )}
         ${getSovConsumerData(window.sovApplication.consumer)}
     `;
@@ -422,7 +463,8 @@ function createInnerOverlay() {
         multipleSovIframesDetected,
         sovIframesAmount,
         isEnabledInBackend,
-        wasExecuted
+        wasExecuted,
+        multipleIframesAreSame
       )}
       ${getSovConsumerData(window.sovConsumer || {})}
       `;
