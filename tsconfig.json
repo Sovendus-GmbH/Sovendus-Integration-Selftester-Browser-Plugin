@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    // "sourceMap": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "allowJs": true,
+    "allowArbitraryExtensions": true,
+    "outDir": "build/chrome",
+    "rootDir": "src"
+  },
+  "include": ["src/"],
+  "exclude": ["src/chrome", "src/firefox"]
+}

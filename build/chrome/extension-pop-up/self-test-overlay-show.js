@@ -1,15 +1,15 @@
 var overlay = document.getElementById("sovendusOverlay");
 if (overlay) {
-  overlay.style.display = "block";
-  overlay.classList.add("fullscreen");
-  var overlayToggle = document.getElementById("toggleSovendusOverlay");
-  overlayToggle.style.display = "block";
-} else {
-  createNotDetectedOverlay();
+    overlay.style.display = "block";
+    overlay.classList.add("fullscreen");
+    var overlayToggle = document.getElementById("toggleSovendusOverlay");
+    overlayToggle.style.display = "block";
 }
-
+else {
+    createNotDetectedOverlay();
+}
 function getOverlayStyle() {
-  return `
+    return `
       <style>
         #sovendusNotDetectedOverlay {
           position: fixed;
@@ -58,11 +58,10 @@ function getOverlayStyle() {
       </style>
     `;
 }
-
 function createNotDetectedOverlay() {
-  var overlay = document.createElement("div");
-  overlay.id = "outerSovendusNotDetectedOverlay";
-  overlay.innerHTML = `
+    var overlay = document.createElement("div");
+    overlay.id = "outerSovendusNotDetectedOverlay";
+    overlay.innerHTML = `
       ${getOverlayStyle()}
       <div class="sovendus-overlay-font" id="sovendusNotDetectedOverlay">  
         <div style="margin:auto;max-width:500px;">
@@ -73,5 +72,5 @@ function createNotDetectedOverlay() {
         </div>
       </div>
     `;
-  document.getElementsByTagName("body")[0].appendChild(overlay);
+    document.getElementsByTagName("body")[0].appendChild(overlay);
 }

@@ -1,6 +1,6 @@
 {
   "name": "Sovendus Integration Tester",
-  "version": "1.2.8",
+  "version": "1.3.0",
   "manifest_version": 2,
   "description": "Use this extension to verify if your Sovendus integration is setup properly",
   "background": {
@@ -18,6 +18,6 @@
   "browser_action": {
     "default_icon": "sovendus.png",
     "default_title": "Sovendus Integration Tester",
-    "default_popup": "export-result-popup.html"
+    "default_popup": "extension-pop-up/export-result-popup.html"
   }
 }

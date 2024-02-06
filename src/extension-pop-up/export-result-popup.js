@@ -76,7 +76,7 @@ function createScreenshot(ctx, screenshotContainer, isFirstScreenShot, onDone) {
 async function toggleOverlayVisibility(currentTab) {
   chrome.scripting.executeScript({
     target: { tabId: currentTab.id },
-    files: ["self-test-overlay-toggle.js"],
+    files: ["/extension-pop-up/self-test-overlay-toggle.js"],
   });
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
@@ -84,7 +84,7 @@ async function toggleOverlayVisibility(currentTab) {
 async function showOverlay(currentTab) {
   chrome.scripting.executeScript({
     target: { tabId: currentTab.id },
-    files: ["self-test-overlay-show.js"],
+    files: ["/extension-pop-up/self-test-overlay-show.js"],
   });
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
@@ -92,14 +92,14 @@ async function showOverlay(currentTab) {
 async function restoreOverlay(currentTab) {
   chrome.scripting.executeScript({
     target: { tabId: currentTab.id },
-    files: ["self-test-overlay-restore.js"],
+    files: ["/extension-pop-up/self-test-overlay-restore.js"],
   });
 }
 
 async function hideOverlay(currentTab) {
   chrome.scripting.executeScript({
     target: { tabId: currentTab.id },
-    files: ["self-test-overlay-hide.js"],
+    files: ["/extension-pop-up/self-test-overlay-hide.js"],
   });
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
