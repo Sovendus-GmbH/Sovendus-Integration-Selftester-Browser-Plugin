@@ -14,40 +14,42 @@ class TestResult {
 }
 
 export default class SelfTester {
-  consumerSalutation: TestResult;
-  consumerFirstName: TestResult;
-  consumerLastName: TestResult;
-  consumerYearOfBirth: TestResult;
-  consumerEmail: TestResult;
-  consumerEmailHash: TestResult;
-  consumerStreet: TestResult;
-  consumerStreetNumber: TestResult;
-  consumerZipcode: TestResult;
-  consumerPhone: TestResult;
-  consumerCity: TestResult;
-  consumerCountry: TestResult;
+  integrationType: string;
+  consumerSalutation?: TestResult;
+  consumerFirstName?: TestResult;
+  consumerLastName?: TestResult;
+  consumerYearOfBirth?: TestResult;
+  consumerEmail?: TestResult;
+  consumerEmailHash?: TestResult;
+  consumerStreet?: TestResult;
+  consumerStreetNumber?: TestResult;
+  consumerZipcode?: TestResult;
+  consumerPhone?: TestResult;
+  consumerCity?: TestResult;
+  consumerCountry?: TestResult;
   trafficSourceNumber: TestResult;
   trafficMediumNumber: TestResult;
-  iframeContainerId: TestResult;
-  isEnabledInBackend: TestResult;
+  iframeContainerId?: TestResult;
+  isEnabledInBackend?: TestResult;
   wasExecuted: TestResult;
-  sovendusDivFound: TestResult;
-  sovDivIdInIframes: TestResult;
-  multipleSovIframesDetected: TestResult;
-  sovIframesAmount: TestResult;
-  multipleIframesAreSame: TestResult;
-  orderCurrency: TestResult;
-  orderId: TestResult;
-  orderValue: TestResult;
-  sessionId: TestResult;
-  timestamp: TestResult;
-  usedCouponCode: TestResult;
-  flexibleiframeOnDOM: TestResult;
+  awinTest?: TestResult;
+  sovendusDivFound?: TestResult;
+  sovDivIdInIframes?: TestResult;
+  multipleSovIframesDetected?: TestResult;
+  sovIframesAmount?: TestResult;
+  multipleIframesAreSame?: TestResult;
+  orderCurrency?: TestResult;
+  orderId?: TestResult;
+  orderValue?: TestResult;
+  sessionId?: TestResult;
+  timestamp?: TestResult;
+  usedCouponCode?: TestResult;
+  flexibleiframeOnDOM?: TestResult;
 
   sovConsumer: SovApplicationConsumer;
-  sovConsumerSource: "sovConsumer" | "sovApplication.consumer";
 
   async selfTestIntegration() {
+    this.integrationType = this.getIntegrationType();
     this.trafficSourceNumber = this.getTrafficSourceNumberTestresult();
     this.trafficMediumNumber = this.getTrafficMediumNumberTestresult();
     this.wasExecuted = this.getWasExecutedTestresult(
@@ -63,62 +65,107 @@ export default class SelfTester {
         window.sovConsumer || {}
       );
     }
-    this.consumerSalutation = this.getConsumerSalutationTestresult(
-      this.sovConsumer
-    );
-    this.consumerFirstName = this.getConsumerFirstNameTestresult(
-      this.sovConsumer
-    );
-    this.consumerLastName = this.getConsumerLastNameTestresult(
-      this.sovConsumer
-    );
-    this.consumerYearOfBirth = this.getConsumerYearOfBirthTestresult(
-      this.sovConsumer
-    );
-    this.consumerEmail = this.getConsumerEmailTestresult(this.sovConsumer);
-    this.consumerEmailHash = this.getConsumerEmailHashTestresult(
-      this.sovConsumer,
-      this.consumerEmail
-    );
-    this.consumerStreet = this.getConsumerStreetTestresult(this.sovConsumer);
-    this.consumerStreetNumber = this.getConsumerStreetNumberTestresult(
-      this.sovConsumer
-    );
-    this.consumerZipcode = this.getConsumerZipcodeTestresult(this.sovConsumer);
-    this.consumerPhone = this.getConsumerPhoneTestresult(this.sovConsumer);
-    this.consumerCity = this.getconsumerCityTestresult(this.sovConsumer);
-    this.consumerCountry = this.getConsumerCountryTestresult(this.sovConsumer);
-    this.iframeContainerId = this.getIframeContainerIdTestresult();
-    this.isEnabledInBackend = this.getIsEnabledInBackendTestresult(
-      this.wasExecuted
-    );
-    this.sovIframesAmount = this.getSovIframesAmountTestresult();
-    this.sovDivIdInIframes = this.getSovDivIdInIframesTestresult(
-      this.sovIframesAmount
-    );
-    this.sovendusDivFound = this.getSovendusDivFoundTestresult(
-      this.sovDivIdInIframes,
-      this.iframeContainerId
-    );
-    this.multipleSovIframesDetected =
-      this.getMultipleSovIframesDetectedTestresult(this.sovIframesAmount);
-    this.multipleIframesAreSame = this.getMultipleIframesAreSameTestresult(
-      this.multipleSovIframesDetected,
-      this.sovIframesAmount
-    );
-    this.orderCurrency = this.getOrderCurrencyTestresult();
-    this.orderId = this.getOrderIdTestresult();
-    this.orderValue = this.getOrderValueTestresult();
-    this.sessionId = this.getSessionIdTestresult();
-    this.timestamp = this.getTimestampTestresult();
-    this.usedCouponCode = this.getUsedCouponCodeTestresult();
-    this.flexibleiframeOnDOM = this.getIsFlexibleiframeOnDOM(
-      this.wasExecuted,
-      this.trafficSourceNumber,
-      this.trafficMediumNumber
+    if (
+      this.wasExecuted.statusCode === StatusCodes.Error &&
+      this.awinIntegrationDetected()
+    ) {
+      this.awinTest = this.getAwinNotExecutedTestresult();
+    } else {
+      this.consumerSalutation = this.getConsumerSalutationTestresult(
+        this.sovConsumer
+      );
+      this.consumerFirstName = this.getConsumerFirstNameTestresult(
+        this.sovConsumer
+      );
+      this.consumerLastName = this.getConsumerLastNameTestresult(
+        this.sovConsumer
+      );
+      this.consumerYearOfBirth = this.getConsumerYearOfBirthTestresult(
+        this.sovConsumer
+      );
+      this.consumerEmail = this.getConsumerEmailTestresult(this.sovConsumer);
+      this.consumerEmailHash = this.getConsumerEmailHashTestresult(
+        this.sovConsumer,
+        this.consumerEmail
+      );
+      this.consumerStreet = this.getConsumerStreetTestresult(this.sovConsumer);
+      this.consumerStreetNumber = this.getConsumerStreetNumberTestresult(
+        this.sovConsumer
+      );
+      this.consumerZipcode = this.getConsumerZipcodeTestresult(
+        this.sovConsumer
+      );
+      this.consumerPhone = this.getConsumerPhoneTestresult(this.sovConsumer);
+      this.consumerCity = this.getconsumerCityTestresult(this.sovConsumer);
+      this.consumerCountry = this.getConsumerCountryTestresult(
+        this.sovConsumer
+      );
+      this.iframeContainerId = this.getIframeContainerIdTestresult();
+      this.isEnabledInBackend = this.getIsEnabledInBackendTestresult(
+        this.wasExecuted
+      );
+      this.sovIframesAmount = this.getSovIframesAmountTestresult();
+      this.sovDivIdInIframes = this.getSovDivIdInIframesTestresult(
+        this.sovIframesAmount
+      );
+      this.sovendusDivFound = this.getSovendusDivFoundTestresult(
+        this.sovDivIdInIframes,
+        this.iframeContainerId
+      );
+      this.multipleSovIframesDetected =
+        this.getMultipleSovIframesDetectedTestresult(this.sovIframesAmount);
+      this.multipleIframesAreSame = this.getMultipleIframesAreSameTestresult(
+        this.multipleSovIframesDetected,
+        this.sovIframesAmount
+      );
+      this.orderCurrency = this.getOrderCurrencyTestresult();
+      this.orderId = this.getOrderIdTestresult();
+      this.orderValue = this.getOrderValueTestresult();
+      this.sessionId = this.getSessionIdTestresult();
+      this.timestamp = this.getTimestampTestresult();
+      this.usedCouponCode = this.getUsedCouponCodeTestresult();
+      this.flexibleiframeOnDOM = this.getIsFlexibleiframeOnDOM(
+        this.wasExecuted,
+        this.trafficSourceNumber,
+        this.trafficMediumNumber
+      );
+    }
+  }
+
+  getIntegrationType(): string {
+    return (
+      window.sovIframes?.[0]?.integrationType ||
+      (this.awinIntegrationDetected() ? "Awin" : "unknown")
     );
   }
 
+  getAwinNotExecutedTestresult(): TestResult {
+    const statusCode = StatusCodes.Error;
+    const statusMessage = `
+          <h3 class='sovendus-overlay-error'>
+            ERROR: Awin integration detected, but no Sale was tracked.
+            If this happens on the order success page, make sure you've implemented Awin sales tracking properly.
+            <a href="https://advertiser-success.awin.com/s/article/How-do-I-set-up-and-track-sales-with-Awin?language=en_GB" target="_blank">
+              How to set up sales tracking with Awin?
+            </a>  
+          </h3>`;
+    const elementValue = false;
+
+    this.trafficSourceNumber = new TestResult(
+      window.AWIN.Tracking.Sovendus.trafficSourceNumber,
+      window.AWIN.Tracking.Sovendus.trafficSourceNumber +
+        this.getInfoMarkWithLabel(trafficSourceInfoMessage),
+      StatusCodes.Success
+    );
+    this.trafficMediumNumber = new TestResult(
+      window.AWIN.Tracking.Sovendus.trafficMediumNumber,
+      window.AWIN.Tracking.Sovendus.trafficMediumNumber +
+        this.getInfoMarkWithLabel(trafficMediumInfoMessage),
+      StatusCodes.Success
+    );
+
+    return new TestResult(elementValue, statusMessage, statusCode);
+  }
   getConsumerSalutationTestresult(
     consumer: SovApplicationConsumer
   ): TestResult {
@@ -338,7 +385,7 @@ export default class SelfTester {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.trafficSourceNumber,
       "Make sure to pass the traffic source number you've received in your integration docs.",
-      "Make sure the value aligns with the traffic source number you have received for this country."
+      trafficSourceInfoMessage
     );
   }
 
@@ -346,7 +393,7 @@ export default class SelfTester {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.trafficMediumNumber,
       "Make sure to pass the traffic medium number you've received in your integration docs.",
-      "Make sure the value aligns with the traffic medium number you have received for this country."
+      trafficMediumInfoMessage
     );
   }
 
@@ -724,8 +771,19 @@ export default class SelfTester {
     `;
   }
 
+  sovIframesOrConsumerExists() {
+    return (
+      window.hasOwnProperty("sovIframes") ||
+      window.hasOwnProperty("sovConsumer")
+    );
+  }
+
   sovApplicationExists() {
     return window.sovApplication?.hasOwnProperty("consumer");
+  }
+
+  awinIntegrationDetected(): boolean {
+    return Boolean(window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber);
   }
 
   sovInstancesLoaded() {
@@ -739,8 +797,13 @@ export default class SelfTester {
 
   async waitForSovendusIntegrationDetected() {
     console.log("No Sovendus integration detected yet");
-    while (!window.hasOwnProperty("sovIframes")) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    let waitedSeconds = 0;
+    while (!this.sovIframesOrConsumerExists()) {
+      if (waitedSeconds > 5 && this.awinIntegrationDetected()) {
+        return; // continue with awin diagnostics
+      }
+      waitedSeconds += 0.5;
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
     await this.waitForSovApplicationObject();
   }
@@ -773,6 +836,11 @@ export default class SelfTester {
     );
   }
 }
+
+const trafficSourceInfoMessage =
+  "Make sure the value aligns with the traffic source number you have received for this country.";
+const trafficMediumInfoMessage =
+  "Make sure the value aligns with the traffic medium number you have received for this country.";
 
 type ElementValue = undefined | null | string | number | boolean;
 enum StatusCodes {
@@ -848,6 +916,7 @@ interface SovIframes {
   orderCurrency?: string;
   usedCouponCode?: string;
   iframeContainerId?: string;
+  integrationType?: string;
 }
 
 interface Banner {
@@ -865,10 +934,17 @@ interface Instance {
   config?: Config;
 }
 
+interface Awin {
+  Tracking?: {
+    Sovendus?: { trafficSourceNumber?: string; trafficMediumNumber?: string };
+  };
+}
+
 interface SovWindow extends Window {
   sovIframes?: SovIframes[];
   sovConsumer?: SovConsumer;
   sovApplication?: SovApplication;
+  AWIN?: Awin;
 }
 
 declare let window: SovWindow;

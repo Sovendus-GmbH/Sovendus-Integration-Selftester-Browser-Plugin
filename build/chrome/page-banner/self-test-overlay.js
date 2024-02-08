@@ -22,6 +22,7 @@ class SelfTesterOverlay {
           <div>
             <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Selftest Overlay</h1>
           </div>
+          <p class="sovendus-overlay-font">Integration Type: ${selfTester.integrationType}</p>
           ${this.createInnerOverlay(selfTester)}
         </div>
       </div>
@@ -38,11 +39,20 @@ class SelfTesterOverlay {
     }
     createInnerOverlay(selfTester) {
         let innerOverlay = "";
+        const awinIntegrationDetected = selfTester.awinIntegrationDetected();
         if (selfTester.wasExecuted.elementValue) {
             innerOverlay = `
         ${this.getSovIFramesData(selfTester)}
-        ${this.generateConsumerDataReport(selfTester)}
+        ${awinIntegrationDetected
+                ? ""
+                : this.generateConsumerDataReport(selfTester)}
     `;
+        }
+        else if (awinIntegrationDetected) {
+            const awinIntegrationNoSaleTracked = true;
+            innerOverlay = `
+        ${this.getSovIFramesData(selfTester, awinIntegrationNoSaleTracked, awinIntegrationDetected)}
+        `;
         }
         else {
             innerOverlay = `
@@ -96,10 +106,55 @@ class SelfTesterOverlay {
         </div>
     `;
     }
-    getSovIFramesData(testresult) {
+    getSovIFramesData(testresult, awinIntegrationNoSaleTracked = false, awinIntegrationDetected = false) {
+        let additionalInfo;
+        if (awinIntegrationNoSaleTracked) {
+            additionalInfo = `
+          ${testresult.awinTest.statusMessage}
+    `;
+        }
+        else {
+            additionalInfo = `
+      <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Container:</h2>
+      <ul class="sovendus-overlay-font sovendus-overlay-ul">
+        <li class'sovendus-overlay-font sovendus-overlay-text'>
+          iframeContainerId: ${testresult.iframeContainerId.statusMessage}
+        </li>
+        ${testresult.isEnabledInBackend.statusMessage}
+        ${testresult.sovendusDivFound.statusMessage}
+        ${testresult.multipleIframesAreSame.statusMessage}
+      </ul>
+      <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
+      <ul class="sovendus-overlay-font sovendus-overlay-ul">
+        <li class'sovendus-overlay-font sovendus-overlay-text'>
+          orderCurrency: ${testresult.orderCurrency.statusMessage}
+        </li>
+        <li class'sovendus-overlay-font sovendus-overlay-text'>
+          orderId: ${testresult.orderId.statusMessage}
+        </li>
+        <li class'sovendus-overlay-font sovendus-overlay-text'>
+          orderValue: ${testresult.orderValue.statusMessage}
+        </li>
+        ${awinIntegrationDetected
+                ? "<li class'sovendus-overlay-font sovendus-overlay-text'>" +
+                    "sessionId: " +
+                    testresult.sessionId.statusMessage +
+                    "</li>"
+                : ""}
+        <li class'sovendus-overlay-font sovendus-overlay-text'>
+          timestamp: ${testresult.timestamp.statusMessage}
+        </li>
+        <li class'sovendus-overlay-font sovendus-overlay-text'>
+          usedCouponCode: ${testresult.usedCouponCode.statusMessage}
+        </li>
+      </ul>
+    `;
+        }
         return `
       <div>
-        ${testresult.flexibleiframeOnDOM.statusMessage}
+        ${testresult.flexibleiframeOnDOM
+            ? testresult.flexibleiframeOnDOM.statusMessage
+            : ""}
         <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Partner Numbers:</h2>
         <ul class="sovendus-overlay-font sovendus-overlay-ul">
           <li class'sovendus-overlay-font sovendus-overlay-text'>
@@ -108,36 +163,7 @@ class SelfTesterOverlay {
           <li class'sovendus-overlay-font sovendus-overlay-text'>
             trafficMediumNumber: ${testresult.trafficMediumNumber.statusMessage}
           </li>
-        </ul>
-        <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Container:</h2>
-        <ul class="sovendus-overlay-font sovendus-overlay-ul">
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
-              iframeContainerId: ${testresult.iframeContainerId.statusMessage}
-            </li>
-            ${testresult.isEnabledInBackend.statusMessage}
-            ${testresult.sovendusDivFound.statusMessage}
-            ${testresult.multipleIframesAreSame.statusMessage}
-        </ul>
-        <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
-        <ul class="sovendus-overlay-font sovendus-overlay-ul">
-          <li class'sovendus-overlay-font sovendus-overlay-text'>
-            orderCurrency: ${testresult.orderCurrency.statusMessage}
-          </li>
-          <li class'sovendus-overlay-font sovendus-overlay-text'>
-            orderId: ${testresult.orderId.statusMessage}
-          </li>
-          <li class'sovendus-overlay-font sovendus-overlay-text'>
-            orderValue: ${testresult.orderValue.statusMessage}
-          </li>
-          <li class'sovendus-overlay-font sovendus-overlay-text'>
-            sessionId: ${testresult.sessionId.statusMessage}
-          </li>
-          <li class'sovendus-overlay-font sovendus-overlay-text'>
-            timestamp: ${testresult.timestamp.statusMessage}
-          </li>
-          <li class'sovendus-overlay-font sovendus-overlay-text'>
-            usedCouponCode: ${testresult.usedCouponCode.statusMessage}
-          </li>
+          ${additionalInfo}
         </ul>
       </div>`;
     }
@@ -215,6 +241,12 @@ class SelfTesterOverlay {
           #sovendusOverlay .sovendus-overlay-ul {
             margin: 0 !important;
             padding: 0 !important;
+          }
+          #sovendusOverlay a {
+            color: #197bbd !important;
+          }
+          #sovendusOverlay a:hover {
+            color: #15669d !important;
           }
           #toggleSovendusOverlay {
             position: fixed !important;
