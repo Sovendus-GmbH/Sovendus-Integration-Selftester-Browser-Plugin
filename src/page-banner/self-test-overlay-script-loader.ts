@@ -13,3 +13,7 @@ if (!window.didLoad) {
   window.didLoad = true;
   injectScript();
 }
+
+interface Window {
+  didLoad: boolean;
+}

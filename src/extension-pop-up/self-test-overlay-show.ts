@@ -8,7 +8,7 @@ if (overlay) {
   createNotDetectedOverlay();
 }
 
-function getOverlayStyle() {
+function getOverlayStyle(): string {
   return `
       <style>
         #sovendusNotDetectedOverlay {

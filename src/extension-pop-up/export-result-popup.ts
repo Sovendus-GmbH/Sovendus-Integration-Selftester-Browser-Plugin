@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   captureButton.addEventListener("click", function () {
     captureButton.innerText = "Copying In Progress...";
     const { ctx, screenshotContainer } = getScreenshotCanvas();
-    async function callback(tabs) {
+    async function callback(tabs: chrome.tabs.Tab[]) {
       const currentTab = tabs[0];
       await showOverlay(currentTab);
       createScreenshot(ctx, screenshotContainer, true, async () => {
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   const hideButton = document.getElementById("hide-button");
   hideButton.addEventListener("click", async function () {
-    async function callback(tabs) {
+    async function callback(tabs: chrome.tabs.Tab[]) {
       const currentTab = tabs[0];
       toggleOverlayVisibility(currentTab);
     }
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-function copyScreenshotsToClipboard(screenshotContainer) {
+function copyScreenshotsToClipboard(screenshotContainer: HTMLCanvasElement) {
   if (window.hasOwnProperty("ClipboardItem")) {
     screenshotContainer.toBlob((blob) => {
       const data = [new ClipboardItem({ [blob.type]: blob })];
@@ -44,7 +44,12 @@ function copyScreenshotsToClipboard(screenshotContainer) {
   }
 }
 
-function createScreenshot(ctx, screenshotContainer, isFirstScreenShot, onDone) {
+function createScreenshot(
+  ctx: CanvasRenderingContext2D,
+  screenshotContainer: HTMLCanvasElement,
+  isFirstScreenShot: boolean,
+  onDone: () => void
+) {
   chrome.tabs.captureVisibleTab(function (screenshotDataUrl) {
     const screenshotImage = new Image();
     screenshotImage.src = screenshotDataUrl;
@@ -73,7 +78,7 @@ function createScreenshot(ctx, screenshotContainer, isFirstScreenShot, onDone) {
   });
 }
 
-async function toggleOverlayVisibility(currentTab) {
+async function toggleOverlayVisibility(currentTab: chrome.tabs.Tab) {
   chrome.scripting.executeScript({
     target: { tabId: currentTab.id },
     files: ["/extension-pop-up/self-test-overlay-toggle.js"],
@@ -81,7 +86,7 @@ async function toggleOverlayVisibility(currentTab) {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 
-async function showOverlay(currentTab) {
+async function showOverlay(currentTab: chrome.tabs.Tab) {
   chrome.scripting.executeScript({
     target: { tabId: currentTab.id },
     files: ["/extension-pop-up/self-test-overlay-show.js"],
@@ -89,14 +94,14 @@ async function showOverlay(currentTab) {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 
-async function restoreOverlay(currentTab) {
+async function restoreOverlay(currentTab: chrome.tabs.Tab) {
   chrome.scripting.executeScript({
     target: { tabId: currentTab.id },
     files: ["/extension-pop-up/self-test-overlay-restore.js"],
   });
 }
 
-async function hideOverlay(currentTab) {
+async function hideOverlay(currentTab: chrome.tabs.Tab) {
   chrome.scripting.executeScript({
     target: { tabId: currentTab.id },
     files: ["/extension-pop-up/self-test-overlay-hide.js"],
@@ -104,8 +109,13 @@ async function hideOverlay(currentTab) {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 
-function getScreenshotCanvas() {
-  const screenshotContainer = document.getElementById("screenshot-canvas");
+function getScreenshotCanvas(): {
+  ctx: CanvasRenderingContext2D;
+  screenshotContainer: HTMLCanvasElement;
+} {
+  const screenshotContainer: HTMLCanvasElement = document.getElementById(
+    "screenshot-canvas"
+  ) as HTMLCanvasElement;
   const ctx = screenshotContainer.getContext("2d");
   return { ctx, screenshotContainer };
 }
