@@ -118,12 +118,7 @@ export default class SelfTester {
         this.multipleSovIframesDetected,
         this.sovIframesAmount
       );
-      this.orderCurrency = this.getOrderCurrencyTestresult();
-      this.orderId = this.getOrderIdTestresult();
-      this.orderValue = this.getOrderValueTestresult();
-      this.sessionId = this.getSessionIdTestresult();
-      this.timestamp = this.getTimestampTestresult();
-      this.usedCouponCode = this.getUsedCouponCodeTestresult();
+      this.executeOrderDataTests();
       this.flexibleiframeOnDOM = this.getIsFlexibleiframeOnDOM(
         this.wasExecuted,
         this.trafficSourceNumber,
@@ -132,26 +127,46 @@ export default class SelfTester {
     }
   }
 
+  executeOrderDataTests(): void {
+    this.orderCurrency = this.getOrderCurrencyTestresult();
+    this.orderId = this.getOrderIdTestresult();
+    this.orderValue = this.getOrderValueTestresult();
+    this.sessionId = this.getSessionIdTestresult();
+    this.timestamp = this.getTimestampTestresult();
+    this.usedCouponCode = this.getUsedCouponCodeTestresult();
+  }
+
   getIntegrationType(): string {
     return (
       window.sovIframes?.[0]?.integrationType ||
-      (this.awinIntegrationDetected() ? "Awin" : "unknown")
+      (this.awinIntegrationDetected()
+        ? `Awin (Merchant ID: ${this.getAwinMerchantId()})`
+        : "unknown")
     );
   }
 
   getAwinNotExecutedTestresult(): TestResult {
+    this.executeOrderDataTests();
+
     const statusCode: StatusCode = StatusCodes.Error;
     let statusMessage: StatusMessage = undefined;
-    if (Boolean(window.AWIN?.Tracking?.Sale)) {
+    if (this.awinSaleTracked()) {
       statusMessage = `
           <h3 class='sovendus-overlay-error'>
-            ERROR: Awin integration detected, a sale has been tracked, but for an unkown reason Sovendus hasnt been executed. A potential cause of the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed."
+            ERROR: Awin integration detected and a sale has been tracked, but for an unkown reason Sovendus hasn't been executed. 
+            A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.
+            <a href="https://advertiser-success.awin.com/s/article/How-do-I-set-up-and-track-sales-with-Awin?language=en_GB" target="_blank">
+              How to set up sales tracking with Awin?
+            </a>  
           </h3>`;
     } else {
       statusMessage = `
-          <h3 class='sovendus-overlay-error'>
-            ERROR: Awin integration detected, but no Sale was tracked.
-            If this happens on the order success page, make sure you've implemented Awin sales tracking properly.
+          <h3 class='sovendus-overlay-h3 sovendus-overlay-error'>
+            ERROR: No Sale tracked yet
+          </h3>
+          <h2 class='sovendus-overlay-h2 sovendus-overlay-error'>It's normal if this isn't the order success page!</h2>
+          <h3 class='sovendus-overlay-font sovendus-overlay-h3'>
+            If this happens on the order success page, make sure you've implemented Awin sales tracking properly, as no sale was tracked.
             <a href="https://advertiser-success.awin.com/s/article/How-do-I-set-up-and-track-sales-with-Awin?language=en_GB" target="_blank">
               How to set up sales tracking with Awin?
             </a>  
@@ -795,6 +810,14 @@ export default class SelfTester {
     return Boolean(window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber);
   }
 
+  awinSaleTracked(): boolean {
+    return Boolean(window.AWIN?.Tracking?.Sale);
+  }
+
+  getAwinMerchantId(): number | string {
+    return window.AWIN?.Tracking?.iMerchantId || "not available";
+  }
+
   sovInstancesLoaded() {
     return (
       window.sovApplication?.hasOwnProperty("instances") &&
@@ -947,6 +970,7 @@ interface Awin {
   Tracking?: {
     Sovendus?: { trafficSourceNumber?: string; trafficMediumNumber?: string };
     Sale: {};
+    iMerchantId: number;
   };
 }
 
