@@ -140,8 +140,15 @@ export default class SelfTester {
   }
 
   getAwinNotExecutedTestresult(): TestResult {
-    const statusCode = StatusCodes.Error;
-    const statusMessage = `
+    const statusCode: StatusCode = StatusCodes.Error;
+    let statusMessage: StatusMessage = undefined;
+    if (Boolean(window.AWIN?.Tracking?.Sale)) {
+      statusMessage = `
+          <h3 class='sovendus-overlay-error'>
+            ERROR: Awin integration detected, a sale has been tracked, but for an unkown reason Sovendus hasnt been executed. A potential cause of the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed."
+          </h3>`;
+    } else {
+      statusMessage = `
           <h3 class='sovendus-overlay-error'>
             ERROR: Awin integration detected, but no Sale was tracked.
             If this happens on the order success page, make sure you've implemented Awin sales tracking properly.
@@ -149,7 +156,9 @@ export default class SelfTester {
               How to set up sales tracking with Awin?
             </a>  
           </h3>`;
-    const elementValue = false;
+    }
+
+    const elementValue: ElementValue = false;
 
     this.trafficSourceNumber = new TestResult(
       window.AWIN.Tracking.Sovendus.trafficSourceNumber,
@@ -937,6 +946,7 @@ interface Instance {
 interface Awin {
   Tracking?: {
     Sovendus?: { trafficSourceNumber?: string; trafficMediumNumber?: string };
+    Sale: {};
   };
 }
 
