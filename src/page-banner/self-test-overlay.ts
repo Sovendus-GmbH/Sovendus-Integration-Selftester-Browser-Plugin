@@ -1,12 +1,37 @@
 import SelfTester from "./self-tester.js";
 
 (async () => {
+  repeatTestsOnSPA(async () => {
+    await executeTests();
+  });
+})();
+
+async function executeTests() {
+  removeOverlay();
   const selfTester = new SelfTester();
   await selfTester.waitForSovendusIntegrationDetected();
   await selfTester.selfTestIntegration();
   new SelfTesterOverlay(selfTester);
-})();
+}
 
+interface testsFn {
+  (): Promise<void>;
+}
+
+async function repeatTestsOnSPA(tests: testsFn) {
+  let visitedPath = "";
+  while (true) {
+    if (visitedPath !== window.location.pathname) {
+      visitedPath = window.location.pathname;
+      await tests();
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+}
+
+function removeOverlay() {
+  document.getElementById("outerSovendusOverlay")?.remove();
+}
 class SelfTesterOverlay {
   constructor(selfTester: SelfTester) {
     this.createOverlay(selfTester);
@@ -17,15 +42,18 @@ class SelfTesterOverlay {
     overlay.id = "outerSovendusOverlay";
     overlay.innerHTML = `
       ${this.getOverlayStyle()}
-      <button class="sovendus-overlay-font" id="toggleSovendusOverlay">
+      <button class="sovendus-overlay-font sovendus-overlay-button" id="toggleSovendusOverlay">
         Hide
       </button>
       <div class="sovendus-overlay-font" id="sovendusOverlay">  
         <div style="margin:auto;max-width:500px;">
           <div>
-            <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Selftest Overlay</h1>
+            <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Self-Test Overlay</h1>
+            <button class="sovendus-overlay-font sovendus-overlay-button" id="sovendusOverlayRepeatTests">repeat tests</button>
           </div>
-          <p class="sovendus-overlay-font">Integration Type: ${selfTester.integrationType}</p>
+          <p class="sovendus-overlay-font">Integration Type: ${
+            selfTester.integrationType
+          }</p>
           ${this.createInnerOverlay(selfTester)}
         </div>
       </div>
@@ -34,9 +62,12 @@ class SelfTesterOverlay {
     document
       .getElementById("toggleSovendusOverlay")
       .addEventListener("click", this.toggleOverlay);
-    const checkmarks: HTMLCollectionOf<Element> =
+    document
+      .getElementById("sovendusOverlayRepeatTests")
+      .addEventListener("click", executeTests);
+    const checkMarks: HTMLCollectionOf<Element> =
       document.getElementsByClassName("sovendus-info");
-    for (let element of checkmarks) {
+    for (let element of checkMarks) {
       element.parentElement.parentElement.addEventListener(
         "mouseover",
         this.showInfoText
@@ -78,51 +109,51 @@ class SelfTesterOverlay {
     return innerOverlay;
   }
 
-  generateConsumerDataReport(testresult: SelfTester): string {
+  generateConsumerDataReport(testResult: SelfTester): string {
     return `
         <div class="sovendus-overlay-font">
           <h2 class="sovendus-overlay-font sovendus-overlay-h2">Customer Data:</h2>
           <ul class="sovendus-overlay-font sovendus-overlay-ul">
             <li class'sovendus-overlay-font sovendus-overlay-text'>
-              consumerSalutation: ${testresult.consumerSalutation.statusMessage}
+              consumerSalutation: ${testResult.consumerSalutation.statusMessage}
             </li>
             <li class'sovendus-overlay-font sovendus-overlay-text'>
-              consumerFirstName: ${testresult.consumerFirstName.statusMessage}
+              consumerFirstName: ${testResult.consumerFirstName.statusMessage}
             </li>
             <li class'sovendus-overlay-font sovendus-overlay-text'>
-              consumerLastName: ${testresult.consumerLastName.statusMessage}
+              consumerLastName: ${testResult.consumerLastName.statusMessage}
             </li>
             <li class'sovendus-overlay-font sovendus-overlay-text'>
               consumerYearOfBirth: ${
-                testresult.consumerYearOfBirth.statusMessage
+                testResult.consumerYearOfBirth.statusMessage
               }
             </li>
             <li class'sovendus-overlay-font sovendus-overlay-text'>
-              consumerEmail: ${testresult.consumerEmail.statusMessage}
+              consumerEmail: ${testResult.consumerEmail.statusMessage}
             </li>
             ${
-              testresult.consumerEmailHash.statusMessage &&
-              testresult.consumerEmailHash.statusMessage
+              testResult.consumerEmailHash.statusMessage &&
+              testResult.consumerEmailHash.statusMessage
             }            
             <li class'sovendus-overlay-font sovendus-overlay-text'>
-              consumerPhone: ${testresult.consumerPhone.statusMessage}
+              consumerPhone: ${testResult.consumerPhone.statusMessage}
             </li>
             <li class'sovendus-overlay-font sovendus-overlay-text'>
-              consumerStreet: ${testresult.consumerStreet.statusMessage}
+              consumerStreet: ${testResult.consumerStreet.statusMessage}
             </li>
             <li class'sovendus-overlay-font sovendus-overlay-text'>
               consumerStreetNumber: ${
-                testresult.consumerStreetNumber.statusMessage
+                testResult.consumerStreetNumber.statusMessage
               }
             </li>
             <li class'sovendus-overlay-font sovendus-overlay-text'>
-              consumerZipcode: ${testresult.consumerZipcode.statusMessage}
+              consumerZipcode: ${testResult.consumerZipCode.statusMessage}
             </li>
             <li class'sovendus-overlay-font sovendus-overlay-text'>
-              consumerCity: ${testresult.consumerCity.statusMessage}
+              consumerCity: ${testResult.consumerCity.statusMessage}
             </li>
             <li class'sovendus-overlay-font sovendus-overlay-text'>
-              consumerCountry: ${testresult.consumerCountry.statusMessage}
+              consumerCountry: ${testResult.consumerCountry.statusMessage}
             </li>
           </ul>
         </div>
@@ -130,50 +161,50 @@ class SelfTesterOverlay {
   }
 
   getSovIFramesData(
-    testresult: SelfTester,
+    testResult: SelfTester,
     awinIntegrationNoSaleTracked: boolean = false,
     awinIntegrationDetected: boolean = false
   ): string {
     let additionalInfo: string;
     if (awinIntegrationNoSaleTracked) {
       additionalInfo = `
-          ${testresult.awinTest.statusMessage}
+          ${testResult.awinTest.statusMessage}
     `;
     } else {
       additionalInfo = `
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Container:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
         <li class'sovendus-overlay-font sovendus-overlay-text'>
-          iframeContainerId: ${testresult.iframeContainerId.statusMessage}
+          iframeContainerId: ${testResult.iframeContainerId.statusMessage}
         </li>
-        ${testresult.isEnabledInBackend.statusMessage}
-        ${testresult.sovendusDivFound.statusMessage}
-        ${testresult.multipleIframesAreSame.statusMessage}
+        ${testResult.isEnabledInBackend.statusMessage}
+        ${testResult.sovendusDivFound.statusMessage}
+        ${testResult.multipleIFramesAreSame.statusMessage}
       </ul>
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
         <li class'sovendus-overlay-font sovendus-overlay-text'>
-          orderCurrency: ${testresult.orderCurrency.statusMessage}
+          orderCurrency: ${testResult.orderCurrency.statusMessage}
         </li>
         <li class'sovendus-overlay-font sovendus-overlay-text'>
-          orderId: ${testresult.orderId.statusMessage}
+          orderId: ${testResult.orderId.statusMessage}
         </li>
         <li class'sovendus-overlay-font sovendus-overlay-text'>
-          orderValue: ${testresult.orderValue.statusMessage}
+          orderValue: ${testResult.orderValue.statusMessage}
         </li>
         ${
           awinIntegrationDetected
             ? "<li class'sovendus-overlay-font sovendus-overlay-text'>" +
               "sessionId: " +
-              testresult.sessionId.statusMessage +
+              testResult.sessionId.statusMessage +
               "</li>"
             : ""
         }
         <li class'sovendus-overlay-font sovendus-overlay-text'>
-          timestamp: ${testresult.timestamp.statusMessage}
+          timestamp: ${testResult.timestamp.statusMessage}
         </li>
         <li class'sovendus-overlay-font sovendus-overlay-text'>
-          usedCouponCode: ${testresult.usedCouponCode.statusMessage}
+          usedCouponCode: ${testResult.usedCouponCode.statusMessage}
         </li>
       </ul>
     `;
@@ -181,17 +212,17 @@ class SelfTesterOverlay {
     return `
       <div>
         ${
-          testresult.flexibleiframeOnDOM
-            ? testresult.flexibleiframeOnDOM.statusMessage
+          testResult.flexibleIFrameOnDOM
+            ? testResult.flexibleIFrameOnDOM.statusMessage
             : ""
         }
         <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Partner Numbers:</h2>
         <ul class="sovendus-overlay-font sovendus-overlay-ul">
           <li class'sovendus-overlay-font sovendus-overlay-text'>
-            trafficSourceNumber: ${testresult.trafficSourceNumber.statusMessage}
+            trafficSourceNumber: ${testResult.trafficSourceNumber.statusMessage}
           </li>
           <li class'sovendus-overlay-font sovendus-overlay-text'>
-            trafficMediumNumber: ${testresult.trafficMediumNumber.statusMessage}
+            trafficMediumNumber: ${testResult.trafficMediumNumber.statusMessage}
           </li>
           ${additionalInfo}
         </ul>
@@ -279,18 +310,25 @@ class SelfTesterOverlay {
           #sovendusOverlay a:hover {
             color: #15669d !important;
           }
+          .sovendus-overlay-button {
+            background: #293049 !important;
+            color: #fff !important;
+            padding: 9px !important;
+            font-size: 16px !important;
+            border-radius: 8px !important;
+            border: solid 1px #fff;
+          }
+          #sovendusOverlayRepeatTests {
+            float: right !important;
+            width: 105px !important;
+          }
           #toggleSovendusOverlay {
+            width: 62px !important;
             position: fixed !important;
             left: calc(50% - 10px) !important;
             right: calc(50% - 10px) !important;
             top: 20px !important;
-            background: #293049 !important;
-            color: #fff !important;
-            width: 62px !important;
-            padding: 9px !important;
             z-index: 2147483647 !important;
-            font-size: 16px !important;
-            border-radius: 8px !important;
             border: unset !important;
             line-height: normal !important;
           }

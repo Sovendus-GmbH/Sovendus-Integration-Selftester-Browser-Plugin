@@ -23,7 +23,7 @@ export default class SelfTester {
   consumerEmailHash?: TestResult;
   consumerStreet?: TestResult;
   consumerStreetNumber?: TestResult;
-  consumerZipcode?: TestResult;
+  consumerZipCode?: TestResult;
   consumerPhone?: TestResult;
   consumerCity?: TestResult;
   consumerCountry?: TestResult;
@@ -34,25 +34,25 @@ export default class SelfTester {
   wasExecuted: TestResult;
   awinTest?: TestResult;
   sovendusDivFound?: TestResult;
-  sovDivIdInIframes?: TestResult;
-  multipleSovIframesDetected?: TestResult;
-  sovIframesAmount?: TestResult;
-  multipleIframesAreSame?: TestResult;
+  sovDivIdInIFrames?: TestResult;
+  multipleSovIFramesDetected?: TestResult;
+  sovIFramesAmount?: TestResult;
+  multipleIFramesAreSame?: TestResult;
   orderCurrency?: TestResult;
   orderId?: TestResult;
   orderValue?: TestResult;
   sessionId?: TestResult;
   timestamp?: TestResult;
   usedCouponCode?: TestResult;
-  flexibleiframeOnDOM?: TestResult;
+  flexibleIFrameOnDOM?: TestResult;
 
   sovConsumer: SovApplicationConsumer;
 
   async selfTestIntegration() {
     this.integrationType = this.getIntegrationType();
-    this.trafficSourceNumber = this.getTrafficSourceNumberTestresult();
-    this.trafficMediumNumber = this.getTrafficMediumNumberTestresult();
-    this.wasExecuted = this.getWasExecutedTestresult(
+    this.trafficSourceNumber = this.getTrafficSourceNumberTestResult();
+    this.trafficMediumNumber = this.getTrafficMediumNumberTestResult();
+    this.wasExecuted = this.getWasExecutedTestResult(
       this.trafficSourceNumber,
       this.trafficMediumNumber
     );
@@ -69,57 +69,57 @@ export default class SelfTester {
       this.wasExecuted.statusCode === StatusCodes.Error &&
       this.awinIntegrationDetected()
     ) {
-      this.awinTest = this.getAwinNotExecutedTestresult();
+      this.awinTest = this.getAwinNotExecutedTestResult();
     } else {
-      this.consumerSalutation = this.getConsumerSalutationTestresult(
+      this.consumerSalutation = this.getConsumerSalutationTestResult(
         this.sovConsumer
       );
-      this.consumerFirstName = this.getConsumerFirstNameTestresult(
+      this.consumerFirstName = this.getConsumerFirstNameTestResult(
         this.sovConsumer
       );
-      this.consumerLastName = this.getConsumerLastNameTestresult(
+      this.consumerLastName = this.getConsumerLastNameTestResult(
         this.sovConsumer
       );
-      this.consumerYearOfBirth = this.getConsumerYearOfBirthTestresult(
+      this.consumerYearOfBirth = this.getConsumerYearOfBirthTestResult(
         this.sovConsumer
       );
-      this.consumerEmail = this.getConsumerEmailTestresult(this.sovConsumer);
-      this.consumerEmailHash = this.getConsumerEmailHashTestresult(
+      this.consumerEmail = this.getConsumerEmailTestResult(this.sovConsumer);
+      this.consumerEmailHash = this.getConsumerEmailHashTestResult(
         this.sovConsumer,
         this.consumerEmail
       );
-      this.consumerStreet = this.getConsumerStreetTestresult(this.sovConsumer);
-      this.consumerStreetNumber = this.getConsumerStreetNumberTestresult(
+      this.consumerStreet = this.getConsumerStreetTestResult(this.sovConsumer);
+      this.consumerStreetNumber = this.getConsumerStreetNumberTestResult(
         this.sovConsumer
       );
-      this.consumerZipcode = this.getConsumerZipcodeTestresult(
+      this.consumerZipCode = this.getConsumerZipCodeTestResult(
         this.sovConsumer
       );
-      this.consumerPhone = this.getConsumerPhoneTestresult(this.sovConsumer);
-      this.consumerCity = this.getconsumerCityTestresult(this.sovConsumer);
-      this.consumerCountry = this.getConsumerCountryTestresult(
+      this.consumerPhone = this.getConsumerPhoneTestResult(this.sovConsumer);
+      this.consumerCity = this.getConsumerCityTestResult(this.sovConsumer);
+      this.consumerCountry = this.getConsumerCountryTestResult(
         this.sovConsumer
       );
-      this.iframeContainerId = this.getIframeContainerIdTestresult();
-      this.isEnabledInBackend = this.getIsEnabledInBackendTestresult(
+      this.iframeContainerId = this.getIframeContainerIdTestResult();
+      this.isEnabledInBackend = this.getIsEnabledInBackendTestResult(
         this.wasExecuted
       );
-      this.sovIframesAmount = this.getSovIframesAmountTestresult();
-      this.sovDivIdInIframes = this.getSovDivIdInIframesTestresult(
-        this.sovIframesAmount
+      this.sovIFramesAmount = this.getSovIFramesAmountTestResult();
+      this.sovDivIdInIFrames = this.getSovDivIdInIFramesTestResult(
+        this.sovIFramesAmount
       );
-      this.sovendusDivFound = this.getSovendusDivFoundTestresult(
-        this.sovDivIdInIframes,
+      this.sovendusDivFound = this.getSovendusDivFoundTestResult(
+        this.sovDivIdInIFrames,
         this.iframeContainerId
       );
-      this.multipleSovIframesDetected =
-        this.getMultipleSovIframesDetectedTestresult(this.sovIframesAmount);
-      this.multipleIframesAreSame = this.getMultipleIframesAreSameTestresult(
-        this.multipleSovIframesDetected,
-        this.sovIframesAmount
+      this.multipleSovIFramesDetected =
+        this.getMultipleSovIFamesDetectedTestResult(this.sovIFramesAmount);
+      this.multipleIFramesAreSame = this.getMultipleIFramesAreSameTestResult(
+        this.multipleSovIFramesDetected,
+        this.sovIFramesAmount
       );
       this.executeOrderDataTests();
-      this.flexibleiframeOnDOM = this.getIsFlexibleiframeOnDOM(
+      this.flexibleIFrameOnDOM = this.getIsFlexibleIFrameOnDOM(
         this.wasExecuted,
         this.trafficSourceNumber,
         this.trafficMediumNumber
@@ -128,12 +128,12 @@ export default class SelfTester {
   }
 
   executeOrderDataTests(): void {
-    this.orderCurrency = this.getOrderCurrencyTestresult();
-    this.orderId = this.getOrderIdTestresult();
-    this.orderValue = this.getOrderValueTestresult();
-    this.sessionId = this.getSessionIdTestresult();
-    this.timestamp = this.getTimestampTestresult();
-    this.usedCouponCode = this.getUsedCouponCodeTestresult();
+    this.orderCurrency = this.getOrderCurrencyTestResult();
+    this.orderId = this.getOrderIdTestResult();
+    this.orderValue = this.getOrderValueTestResult();
+    this.sessionId = this.getSessionIdTestResult();
+    this.timestamp = this.getTimestampTestResult();
+    this.usedCouponCode = this.getUsedCouponCodeTestResult();
   }
 
   getIntegrationType(): string {
@@ -145,7 +145,7 @@ export default class SelfTester {
     );
   }
 
-  getAwinNotExecutedTestresult(): TestResult {
+  getAwinNotExecutedTestResult(): TestResult {
     this.executeOrderDataTests();
 
     const statusCode: StatusCode = StatusCodes.Error;
@@ -153,7 +153,7 @@ export default class SelfTester {
     if (this.awinSaleTracked()) {
       statusMessage = `
           <h3 class='sovendus-overlay-error'>
-            ERROR: Awin integration detected and a sale has been tracked, but for an unkown reason Sovendus hasn't been executed. 
+            ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. 
             A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.
             <a href="https://advertiser-success.awin.com/s/article/How-do-I-set-up-and-track-sales-with-Awin?language=en_GB" target="_blank">
               How to set up sales tracking with Awin?
@@ -190,7 +190,7 @@ export default class SelfTester {
 
     return new TestResult(elementValue, statusMessage, statusCode);
   }
-  getConsumerSalutationTestresult(
+  getConsumerSalutationTestResult(
     consumer: SovApplicationConsumer
   ): TestResult {
     const missingSalutationError =
@@ -208,7 +208,7 @@ export default class SelfTester {
         statusCode = StatusCodes.Error;
         statusMessage = `<span class='sovendus-overlay-error' >${
           valueTestResult.elementValue
-        } ISNT A VALID SALUTATION${this.getInfoMarkWithLabel(
+        } ISN'T A VALID SALUTATION${this.getInfoMarkWithLabel(
           missingSalutationError
         )}</span>`;
       }
@@ -221,7 +221,7 @@ export default class SelfTester {
     return valueTestResult;
   }
 
-  getConsumerFirstNameTestresult(consumer: SovApplicationConsumer): TestResult {
+  getConsumerFirstNameTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.firstName,
       "Make sure to pass the customers first name.",
@@ -229,7 +229,7 @@ export default class SelfTester {
     );
   }
 
-  getConsumerLastNameTestresult(consumer: SovApplicationConsumer): TestResult {
+  getConsumerLastNameTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.lastName,
       "Make sure to pass the customers last name.",
@@ -237,7 +237,7 @@ export default class SelfTester {
     );
   }
 
-  getConsumerYearOfBirthTestresult(
+  getConsumerYearOfBirthTestResult(
     consumer: SovApplicationConsumer
   ): TestResult {
     const missingMailError: string =
@@ -262,7 +262,7 @@ export default class SelfTester {
         statusCode = StatusCodes.Error;
         statusMessage = `<span class='sovendus-overlay-error' >${
           yearOfBirthTestResult.elementValue
-        } ISNT A VALID BIRTH YEAR${this.getInfoMarkWithLabel(
+        } ISN'T A VALID BIRTH YEAR${this.getInfoMarkWithLabel(
           missingMailError
         )}</span>`;
       }
@@ -275,7 +275,7 @@ export default class SelfTester {
     return yearOfBirthTestResult;
   }
 
-  getConsumerEmailTestresult(consumer: SovApplicationConsumer): TestResult {
+  getConsumerEmailTestResult(consumer: SovApplicationConsumer): TestResult {
     const missingEmailError =
       "Make sure to pass the email address of the customer.";
     const emailTestResult: TestResult = this.validValueTestResult(
@@ -296,7 +296,7 @@ export default class SelfTester {
         statusCode = StatusCodes.Error;
         statusMessage = `<span class='sovendus-overlay-error' >${
           emailTestResult.elementValue
-        } ISNT A VALID EMAIL${this.getInfoMarkWithLabel(
+        } ISN'T A VALID EMAIL${this.getInfoMarkWithLabel(
           missingEmailError
         )}</span>`;
       }
@@ -305,7 +305,7 @@ export default class SelfTester {
     return emailTestResult;
   }
 
-  getConsumerEmailHashTestresult(
+  getConsumerEmailHashTestResult(
     consumer: SovApplicationConsumer,
     consumerEmail: TestResult
   ): TestResult {
@@ -356,7 +356,7 @@ export default class SelfTester {
     return regexExp.test(emailHash);
   }
 
-  getConsumerStreetTestresult(consumer: SovApplicationConsumer): TestResult {
+  getConsumerStreetTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.street,
       "Make sure to pass the street name of the delivery address.",
@@ -364,7 +364,7 @@ export default class SelfTester {
     );
   }
 
-  getConsumerStreetNumberTestresult(
+  getConsumerStreetNumberTestResult(
     consumer: SovApplicationConsumer
   ): TestResult {
     return this.validValueTestResult(
@@ -374,7 +374,7 @@ export default class SelfTester {
     );
   }
 
-  getConsumerZipcodeTestresult(consumer: SovApplicationConsumer): TestResult {
+  getConsumerZipCodeTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.zipCode,
       "Make sure to pass the zip code of the delivery address.",
@@ -382,7 +382,7 @@ export default class SelfTester {
     );
   }
 
-  getConsumerPhoneTestresult(consumer: SovApplicationConsumer): TestResult {
+  getConsumerPhoneTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.phone,
       "Make sure to pass the phone number of the customer.",
@@ -390,7 +390,7 @@ export default class SelfTester {
     );
   }
 
-  getconsumerCityTestresult(consumer: SovApplicationConsumer): TestResult {
+  getConsumerCityTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.city,
       "Make sure to pass the city of the delivery address.",
@@ -398,14 +398,14 @@ export default class SelfTester {
     );
   }
 
-  getConsumerCountryTestresult(consumer: SovApplicationConsumer): TestResult {
+  getConsumerCountryTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.country,
       "Make sure to pass the country id of the delivery address."
     );
   }
 
-  getTrafficSourceNumberTestresult(): TestResult {
+  getTrafficSourceNumberTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.trafficSourceNumber,
       "Make sure to pass the traffic source number you've received in your integration docs.",
@@ -413,7 +413,7 @@ export default class SelfTester {
     );
   }
 
-  getTrafficMediumNumberTestresult(): TestResult {
+  getTrafficMediumNumberTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.trafficMediumNumber,
       "Make sure to pass the traffic medium number you've received in your integration docs.",
@@ -421,39 +421,77 @@ export default class SelfTester {
     );
   }
 
-  getIframeContainerIdTestresult(): TestResult {
+  getIframeContainerIdTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.iframeContainerId,
       "Make sure to pass a iframe container id, this id corresponds to a div with this id on the DOM."
     );
   }
 
-  getIsFlexibleiframeOnDOM(
+  getIsFlexibleIFrameOnDOM(
     wasExecuted: TestResult,
     trafficSourceNumber: TestResult,
     trafficMediumNumber: TestResult
   ) {
-    const isOnDom = Boolean(
-      document.querySelector(
-        '[src$="api.sovendus.com/sovabo/common/js/flexibleIframe.js"]'
-      )
+    const flexibleIframeJs: HTMLScriptElement | null = document.querySelector(
+      '[src$="api.sovendus.com/sovabo/common/js/flexibleIframe.js"]'
     );
-    let errorMessage = "";
+    let errorMessage: StatusMessage = "";
+    let statusCode: StatusCode = StatusCodes.Success;
+    let isSuccess: boolean = true;
     if (
       wasExecuted.statusCode === StatusCodes.Error &&
       trafficSourceNumber.statusCode === StatusCodes.Success &&
       trafficMediumNumber.statusCode === StatusCodes.Success
     ) {
-      errorMessage = `<h2 class="sovendus-overlay-font sovendus-overlay-h2" style="color:red !important;">Error: ${
-        isOnDom
-          ? "Sovendus was detected but flexibleiframe.js was probalby placed on the DOM / executed before the Sovendus integration script. Make sure the flexibleiframe.js gets placed on the DOM / executed after the the Sovendus integration script."
-          : "Sovendus was detected but flexibleiframe.js was not found on the DOM. Make sure to place the flexibleiframe.js on the DOM after the Sovendus Integration Script."
-      }</h2>`;
+      let innerErrorMessage: string = "";
+      statusCode = StatusCodes.Error;
+      isSuccess = false;
+      const isOnDom = Boolean(flexibleIframeJs);
+      if (isOnDom) {
+        innerErrorMessage =
+          this.getFlexileIframeDidNotExecuteErrorMessage(flexibleIframeJs);
+      } else {
+        innerErrorMessage =
+          "Sovendus was detected but flexibleiframe.js was not found on the DOM. Make sure to place the flexibleiframe.js on the DOM after the Sovendus Integration Script.";
+      }
+      errorMessage = `<h2 class="sovendus-overlay-font sovendus-overlay-h2" style="color:red !important;">Error: ${innerErrorMessage}</h2>`;
     }
-    return new TestResult(isOnDom, errorMessage, isOnDom ? 0 : 2);
+    return new TestResult(isSuccess, errorMessage, statusCode);
   }
 
-  getWasExecutedTestresult(
+  getFlexileIframeDidNotExecuteErrorMessage(
+    flexibleIframeJs: HTMLScriptElement
+  ): string {
+    let innerErrorMessage: string = "";
+    if (this.checkIfFlexibleIframeIsExecutable(flexibleIframeJs)) {
+      const sovendusJs: HTMLScriptElement = document.getElementById(
+        "sovloader-script"
+      ) as HTMLScriptElement;
+      if (sovendusJs) {
+        if (sovendusJs.type === "text/javascript" || sovendusJs.type === null) {
+          innerErrorMessage =
+            "Sovendus was detected and flexibleiframe.js was executed. For an unknown reason the integration script didn't run successfully tho.";
+        } else {
+          innerErrorMessage = `Sovendus was detected and flexibleiframe.js was executed. But the sovendus.js script, which gets placed by the flexibleiframe.js script, got blocked most likely because of your cookie consent tool. The type of the sovendus.js script should not be set, but is "${sovendusJs.type}" instead.`;
+        }
+      } else {
+        innerErrorMessage =
+          "Sovendus was detected but flexibleiframe.js was not executed. This is probably because the flexibleiframe.js script got placed on the DOM / executed before the Sovendus integration script. Make sure the flexibleiframe.js gets placed on the DOM / executed after the the Sovendus integration script.";
+      }
+    } else {
+      innerErrorMessage = `Sovendus was detected but flexibleiframe.js was not executed because the script type is "${flexibleIframeJs.type}" instead of "text/javascript". This probably happened because your cookie consent tool blocked the script.`;
+    }
+    return innerErrorMessage;
+  }
+
+  checkIfFlexibleIframeIsExecutable(
+    flexibleIframeJs: HTMLScriptElement
+  ): boolean {
+    return flexibleIframeJs.type === "text/javascript";
+  }
+
+  getWasExecutedTestResult(
     trafficSourceNumber: TestResult,
     trafficMediumNumber: TestResult
   ): TestResult {
@@ -469,8 +507,8 @@ export default class SelfTester {
     );
   }
 
-  getIsEnabledInBackendTestresult(wasExecuted: TestResult): TestResult {
-    let statusCode: StatusCode = StatusCodes.TestDidntRun;
+  getIsEnabledInBackendTestResult(wasExecuted: TestResult): TestResult {
+    let statusCode: StatusCode = StatusCodes.TestDidNotRun;
     let isEnabled: boolean | undefined = undefined;
     let statusMessage: StatusMessage = undefined;
     if (wasExecuted.statusCode === StatusCodes.Success) {
@@ -485,19 +523,19 @@ export default class SelfTester {
       } else {
         statusCode = StatusCodes.Error;
         statusMessage =
-          "<h3 class='sovendus-overlay-error'>ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend. Please contact your account manager to fix this issue.</h3>";
+          "<h3 class='sovendus-overlay-error'>ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.</h3>";
       }
     }
     return new TestResult(isEnabled, statusMessage, statusCode);
   }
 
-  getSovDivIdInIframesTestresult(sovIframesAmount: TestResult): TestResult {
+  getSovDivIdInIFramesTestResult(sovIFramesAmount: TestResult): TestResult {
     const elementValue: boolean = Boolean(
       window.sovIframes?.[0]?.iframeContainerId
     );
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Success;
-    if ((elementValue && sovIframesAmount.elementValue) || 0 > 0) {
+    if ((elementValue && sovIFramesAmount.elementValue) || 0 > 0) {
       statusCode = StatusCodes.Error;
       statusMessage =
         "<h3 class='sovendus-overlay-error'>ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.</h3>";
@@ -505,7 +543,7 @@ export default class SelfTester {
     return new TestResult(elementValue, statusMessage, statusCode);
   }
 
-  getSovendusDivFoundTestresult(
+  getSovendusDivFoundTestResult(
     sovDivIdInIframes: TestResult,
     iframeContainerId: TestResult
   ): TestResult {
@@ -529,7 +567,7 @@ export default class SelfTester {
     return new TestResult(sovendusDivFound, statusMessage, statusCode);
   }
 
-  getMultipleSovIframesDetectedTestresult(
+  getMultipleSovIFamesDetectedTestResult(
     sovIframesAmount: TestResult
   ): TestResult {
     const multipleSovIframesDetected =
@@ -541,7 +579,7 @@ export default class SelfTester {
     );
   }
 
-  getSovIframesAmountTestresult(): TestResult {
+  getSovIFramesAmountTestResult(): TestResult {
     const sovIframesAmount = window.sovIframes?.length;
     return new TestResult(
       sovIframesAmount,
@@ -550,7 +588,7 @@ export default class SelfTester {
     );
   }
 
-  getMultipleIframesAreSameTestresult(
+  getMultipleIFramesAreSameTestResult(
     multipleSovIframesDetected: TestResult,
     sovIframesAmount: TestResult
   ): TestResult {
@@ -598,7 +636,7 @@ export default class SelfTester {
         : StatusCodes.Success
     );
   }
-  getOrderCurrencyTestresult(): TestResult {
+  getOrderCurrencyTestResult(): TestResult {
     const validCurrencies = ["EUR", "GBP", "CHF", "PLN", "SEK", "DKK"];
     const missingCurrencyError =
       "Make sure a valid order currency gets passed, valid currencies are: " +
@@ -617,7 +655,7 @@ export default class SelfTester {
       if (!isValidCurrency) {
         statusMessage = `<span class='sovendus-overlay-error' >${
           valueTestResult.elementValue
-        } ISNT A VALID CURRENCY${this.getInfoMarkWithLabel(
+        } ISN'T A VALID CURRENCY${this.getInfoMarkWithLabel(
           missingCurrencyError
         )}</span>`;
         statusCode = StatusCodes.Error;
@@ -631,7 +669,7 @@ export default class SelfTester {
     return valueTestResult;
   }
 
-  getOrderIdTestresult(): TestResult {
+  getOrderIdTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.orderId,
       "Make sure to pass the order id",
@@ -639,23 +677,23 @@ export default class SelfTester {
     );
   }
 
-  getOrderValueTestresult(): TestResult {
+  getOrderValueTestResult(): TestResult {
     return this.validNumberTestResult(window.sovIframes?.[0]?.orderValue);
   }
 
-  getSessionIdTestresult(): TestResult {
+  getSessionIdTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.sessionId,
       "Make sure a session id gets passed",
-      "Make sure the session id doesnt change after a refresh, but changes with a new session."
+      "Make sure the session id doesn't change after a refresh, but changes with a new session."
     );
   }
 
-  getTimestampTestresult(): TestResult {
-    return this.validUnixtimeTestResult(window.sovIframes?.[0]?.timestamp);
+  getTimestampTestResult(): TestResult {
+    return this.validUnixTimeTestResult(window.sovIframes?.[0]?.timestamp);
   }
 
-  getUsedCouponCodeTestresult(): TestResult {
+  getUsedCouponCodeTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.usedCouponCode,
       "Make sure the used coupon code from the order gets passed",
@@ -719,7 +757,7 @@ export default class SelfTester {
     return new TestResult(decodedValue.elementValue, statusMessage, statusCode);
   }
 
-  validUnixtimeTestResult(value: ElementValue): TestResult {
+  validUnixTimeTestResult(value: ElementValue): TestResult {
     const missingUnixTimeError =
       "Make sure to pass a unix timestamp in seconds.";
     const decodedValue: TestResult = this.validValueTestResult(
@@ -741,7 +779,7 @@ export default class SelfTester {
       } else {
         statusMessage = `<span class='sovendus-overlay-error' >${
           decodedValue.elementValue
-        } IS NOT A UNIXTIME${this.getInfoMarkWithLabel(
+        } IS NOT A UNIX TIME${this.getInfoMarkWithLabel(
           missingUnixTimeError
         )}</span>`;
         statusCode = StatusCodes.Error;
@@ -758,7 +796,7 @@ export default class SelfTester {
   getCheckMarkWithLabel(): string {
     return `
       <span style="position:relative">
-        <img style="height:18px;width:auto;margin-bottom: -4px" class="sovendus-checkmark"
+        <img style="height:18px;width:auto;margin-bottom: -4px" class="sovendus-check-mark"
          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAS5AAAEuQER4c0nAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAcZJREFUWIXtlT1Lw1AUht+bFOql+A8qCO4Blzalgwo6pLX+AWdxaC1UcHBzlULVdHDzF+jg1+RgoEJSSpfugiJdO2mr9OM6WEqa5japjRmk73jP4T4P54RcYJZZfEqsEKOyKmdxBMF8LvoBV1Ql2BSalwCyYRpeqEfrd9DAfBFQVCXYQOMKQLJ/tGyWID7DzbkoN8o7fyYQK8RoT+xdg2CD0/IodISkwClODw/0bsbAS1SkW/q+3vJ8AgM4sD4GntDS2jsAeCowKdxTgd/ARwTix/H5Nm2fM5EdVtKVNw/hWifYSVZ3q01rYfARSnkp1KbtWwKyLXSFknwiL3oEL1GRpuzgQH8CUl4KzQXn7gnIiqn2Srpk1cgZL1PCR8Y+JNC/5AFA3FpkYM9MZGt263Az9tZXa7N2UPvgwQFA0HP6J4CqrR3Ikt06XMCfqEhTTvAfBgAwkGgxegogy+kbrMMlXBk39lEBlxIAEgDOvIIPC/Ql5KKsMrAMp78DIMCpudq5NcNvAQEz9owsAJXTz4O73rk19n9C53VY4RON3VnAvcRU8PECzhJTw50F+BKewN0JjEp4Bp8sDCSiRjJSXgr5C57lv+cbJ0juWerPx1oAAAAASUVORK5CYII=" />
       </span>
     `;
@@ -879,7 +917,7 @@ enum StatusCodes {
   Success = 0,
   Warning,
   Error,
-  TestDidntRun,
+  TestDidNotRun,
 }
 type StatusCode = StatusCodes;
 type StatusMessage = string | undefined;
@@ -894,7 +932,7 @@ interface SovConsumer {
   consumerPhone?: string;
   consumerStreet?: string;
   consumerStreetNumber?: string;
-  consumerZipcode?: string;
+  consumerZipCode?: string;
   consumerCity?: string;
   consumerCountry?: string;
 }
@@ -911,7 +949,7 @@ function convertToSovApplicationConsumer(
     emailHash: sovConsumer.consumerEmailHash,
     street: sovConsumer.consumerStreet,
     streetNumber: sovConsumer.consumerStreetNumber,
-    zipCode: sovConsumer.consumerZipcode,
+    zipCode: sovConsumer.consumerZipCode,
     city: sovConsumer.consumerCity,
     country: sovConsumer.consumerCountry,
     phone: sovConsumer.consumerPhone,
