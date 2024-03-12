@@ -194,11 +194,11 @@ class SelfTesterOverlay {
         </li>
         ${
           awinIntegrationDetected
-            ? "<li class'sovendus-overlay-font sovendus-overlay-text'>" +
+            ? ""
+            : "<li class'sovendus-overlay-font sovendus-overlay-text'>" +
               "sessionId: " +
               testResult.sessionId.statusMessage +
               "</li>"
-            : ""
         }
         <li class'sovendus-overlay-font sovendus-overlay-text'>
           timestamp: ${testResult.timestamp.statusMessage}

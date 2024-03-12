@@ -29,6 +29,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const query = { active: true, currentWindow: true };
     chrome.tabs.query(query, callback);
   });
+  const checkMethodsButton = document.getElementById("check-methods-button");
+  checkMethodsButton.addEventListener("click", async function () {
+    async function callback(tabs: chrome.tabs.Tab[]) {
+      const currentTab = tabs[0];
+      await checkAvailableIntegrations(currentTab);
+    }
+    const query = { active: true, currentWindow: true };
+    chrome.tabs.query(query, callback);
+  });
 });
 
 function copyScreenshotsToClipboard(screenshotContainer: HTMLCanvasElement) {
@@ -118,4 +127,12 @@ function getScreenshotCanvas(): {
   ) as HTMLCanvasElement;
   const ctx = screenshotContainer.getContext("2d");
   return { ctx, screenshotContainer };
+}
+
+async function checkAvailableIntegrations(currentTab: chrome.tabs.Tab) {
+  chrome.scripting.executeScript({
+    target: { tabId: currentTab.id },
+    files: ["/extension-pop-up/check-available-integrations.js"],
+  });
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 }

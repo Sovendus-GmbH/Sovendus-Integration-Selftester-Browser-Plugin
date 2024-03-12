@@ -67,7 +67,7 @@ function createNotDetectedOverlay() {
       <div class="sovendus-overlay-font" id="sovendusNotDetectedOverlay">  
         <div style="margin:auto;max-width:500px;">
           <div>
-            <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Selftest Overlay</h1>
+            <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Self Test Overlay</h1>
           </div>
           <h2 class="sovendus-overlay-font sovendus-overlay-h2" style="color:red !important;">Error: Sovendus was not detected</h2>
         </div>
