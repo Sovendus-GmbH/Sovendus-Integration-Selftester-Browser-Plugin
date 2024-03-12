@@ -11,3 +11,14 @@ if (overlay) {
     overlayToggle.style.display = "none";
   }
 }
+
+var checkerOverlay = document.getElementById(
+  "outerSovedusIntegrationMethodCheckerOverlay"
+);
+if (checkerOverlay) {
+  if (checkerOverlay.style.display === "none") {
+    checkerOverlay.style.display = "block";
+  } else {
+    checkerOverlay.style.display = "none";
+  }
+}

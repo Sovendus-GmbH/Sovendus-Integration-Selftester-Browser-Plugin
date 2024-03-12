@@ -155,7 +155,7 @@ export default class SelfTester {
           <h3 class='sovendus-overlay-error'>
             ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. 
             A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.
-            <a href="https://advertiser-success.awin.com/s/article/How-do-I-set-up-and-track-sales-with-Awin?language=en_GB" target="_blank">
+            <a href="https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag" target="_blank">
               How to set up sales tracking with Awin?
             </a>  
           </h3>`;
@@ -167,7 +167,7 @@ export default class SelfTester {
           <h2 class='sovendus-overlay-h2 sovendus-overlay-error'>It's normal if this isn't the order success page!</h2>
           <h3 class='sovendus-overlay-font sovendus-overlay-h3'>
             If this happens on the order success page, make sure you've implemented Awin sales tracking properly, as no sale was tracked.
-            <a href="https://advertiser-success.awin.com/s/article/How-do-I-set-up-and-track-sales-with-Awin?language=en_GB" target="_blank">
+            <a href="https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag" target="_blank">
               How to set up sales tracking with Awin?
             </a>  
           </h3>`;
@@ -896,6 +896,8 @@ export default class SelfTester {
       await new Promise((resolve) => setTimeout(resolve, 500));
       waitedSeconds += 0.5;
     }
+    // wait a bit longer, just in case multiple integrations fire later
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log("Sovendus banner loaded");
   }
   getDataIsMissingWarning(missingErrorMessage: string) {
