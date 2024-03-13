@@ -915,7 +915,7 @@ const trafficMediumInfoMessage =
   "Make sure the value aligns with the traffic medium number you have received for this country.";
 
 type ElementValue = undefined | null | string | number | boolean;
-enum StatusCodes {
+export enum StatusCodes {
   Success = 0,
   Warning,
   Error,

@@ -1,4 +1,4 @@
-import SelfTester from "./self-tester.js";
+import SelfTester, { StatusCodes } from "./self-tester.js";
 
 (async () => {
   repeatTestsOnSPA(async () => {
@@ -82,9 +82,9 @@ class SelfTesterOverlay {
   createInnerOverlay(selfTester: SelfTester) {
     let innerOverlay: string = "";
     const awinIntegrationDetected = selfTester.awinIntegrationDetected();
-    if (selfTester.wasExecuted.elementValue) {
+    if (selfTester.wasExecuted.statusCode === StatusCodes.Success) {
       innerOverlay = `
-        ${this.getSovIFramesData(selfTester)}
+        ${this.getSovIFramesData(selfTester, false, awinIntegrationDetected)}
         ${
           awinIntegrationDetected
             ? ""
