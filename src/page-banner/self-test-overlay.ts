@@ -77,6 +77,7 @@ class SelfTesterOverlay {
         this.hideInfoText
       );
     }
+    this.moveOverlayAboveAll();
   }
 
   createInnerOverlay(selfTester: SelfTester) {
@@ -361,5 +362,25 @@ class SelfTesterOverlay {
     if (label) {
       (label as HTMLElement).style.display = "none";
     }
+  }
+  moveOverlayAboveAll() {
+    function checkAndChangeZIndex(element: HTMLElement) {
+      if (
+        element.id !== "sovendusOverlay" &&
+        element.id !== "toggleSovendusOverlay" &&
+        (getComputedStyle(element).zIndex === "2147483647" ||
+          element.style.zIndex === "2147483647")
+      ) {
+        element.setAttribute("style", "z-index:2147483646 !important");
+      }
+
+      // Handle child elements
+      let childElement = element.firstElementChild;
+      while (childElement) {
+        checkAndChangeZIndex(childElement as HTMLElement);
+        childElement = childElement.nextElementSibling;
+      }
+    }
+    checkAndChangeZIndex(document.body);
   }
 }
