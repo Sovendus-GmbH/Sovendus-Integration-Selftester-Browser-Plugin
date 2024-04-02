@@ -285,8 +285,9 @@ if (!overlay) {
             #sovedusIntegrationMethodCheckerOverlay {
               position: fixed !important;
               left: calc(50% - 300px) !important;
-              right: calc(50% - 300px) !important;
-              width: 600px !important;
+              right: calc(50% - 300px) !important;  
+              width: 500px !important;
+              max-width: calc(100vw - 44px) !important;
               top: 50px !important;
               padding: 22px !important;
               background: #293049 !important;
@@ -297,13 +298,9 @@ if (!overlay) {
               line-height: normal !important;  
             }
             @media only screen and (max-width: 700px) {
-              #sovendusOverlay {
+              #sovedusIntegrationMethodCheckerOverlay {
                 left: 0 !important;
                 right: 0 !important;
-                width: 500px !important;
-                max-width: 500px !important;
-                top: 50px !important;
-                padding: 22px !important;
               }
             }
             .sovendus-overlay-h1 {

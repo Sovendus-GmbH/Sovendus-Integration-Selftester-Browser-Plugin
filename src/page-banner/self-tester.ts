@@ -637,7 +637,7 @@ export default class SelfTester {
     );
   }
   getOrderCurrencyTestResult(): TestResult {
-    const validCurrencies = ["EUR", "GBP", "CHF", "PLN", "SEK", "DKK"];
+    const validCurrencies = ["EUR", "GBP", "CHF", "PLN", "SEK", "DKK", "NOK"];
     const missingCurrencyError =
       "Make sure a valid order currency gets passed, valid currencies are: " +
       validCurrencies;
@@ -906,6 +906,17 @@ export default class SelfTester {
       this.getInfoMarkWithLabel(missingErrorMessage) +
       "</span>"
     );
+  }
+  getBrowserName(): string {
+    if (navigator.userAgent.indexOf("Firefox") != -1) {
+      return "Firefox";
+    }
+    if (navigator.userAgent.indexOf("Edg") != -1) {
+      return "Edge";
+    }
+    if (navigator.userAgent.indexOf("Chrome") != -1) {
+      return "Chrome";
+    }
   }
 }
 

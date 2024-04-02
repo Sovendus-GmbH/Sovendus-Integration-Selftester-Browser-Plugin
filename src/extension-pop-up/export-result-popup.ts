@@ -130,6 +130,7 @@ function getScreenshotCanvas(): {
 }
 
 async function checkAvailableIntegrations(currentTab: chrome.tabs.Tab) {
+  console.log("test1")
   chrome.scripting.executeScript({
     target: { tabId: currentTab.id },
     files: ["/extension-pop-up/check-available-integrations.js"],

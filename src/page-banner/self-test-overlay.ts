@@ -51,9 +51,12 @@ class SelfTesterOverlay {
             <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Self-Test Overlay</h1>
             <button class="sovendus-overlay-font sovendus-overlay-button" id="sovendusOverlayRepeatTests">repeat tests</button>
           </div>
-          <p class="sovendus-overlay-font">Integration Type: ${
-            selfTester.integrationType
-          }</p>
+          <p class="sovendus-overlay-font" style="margin:0 !important">
+            Integration Type: ${selfTester.integrationType}
+          </p>
+          <p class="sovendus-overlay-font" style="margin:0 !important">
+            Browser: ${selfTester.getBrowserName()}
+          </p>
           ${this.createInnerOverlay(selfTester)}
         </div>
       </div>
@@ -238,6 +241,7 @@ class SelfTesterOverlay {
             left: calc(50% - 250px) !important;
             right: calc(50% - 250px) !important;
             width: 500px !important;
+            max-width: calc(100vw) !important;
             top: 50px !important;
             padding: 22px !important;
             background: #293049 !important;
@@ -247,22 +251,21 @@ class SelfTesterOverlay {
             border-radius: 8px !important;    
             line-height: normal !important;        
           }
-          #sovendusOverlay.fullscreen {
-            width: 100vw !important;
-            height: 100vh !important;
-            top: 0 !important;
-            left: 0 !important;
-            max-height: 100vh !important;
-          }
           @media only screen and (max-width: 700px) {
             #sovendusOverlay {
               left: 0 !important;
               right: 0 !important;
-              width: 500px !important;
-              max-width: 500px !important;
               top: 50px !important;
               padding: 22px !important;
             }
+          }
+          #sovendusOverlay.fullscreen {
+            width: calc(100vw) !important;
+            max-width: calc(100vw) !important;
+            height: 100vh !important;
+            top: 0 !important;
+            left: 0 !important;
+            max-height: 100vh !important;
           }
           #sovendusOverlay .sovendus-overlay-font,
           #sovendusOverlay ul .sovendus-overlay-font,

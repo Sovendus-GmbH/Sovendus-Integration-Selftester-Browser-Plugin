@@ -4,8 +4,14 @@ if (overlay) {
   overlay.classList.add("fullscreen");
   var overlayToggle = document.getElementById("toggleSovendusOverlay");
   overlayToggle.style.display = "block";
+  hideRepeatTestsButton()
 } else {
   createNotDetectedOverlay();
+}
+
+function hideRepeatTestsButton(){
+  const repeatTestsButton = document.getElementById("sovendusOverlayRepeatTests");
+  repeatTestsButton.style.display = "none";
 }
 
 function getOverlayStyle(): string {
