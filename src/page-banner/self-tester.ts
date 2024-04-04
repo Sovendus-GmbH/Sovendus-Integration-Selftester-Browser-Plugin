@@ -561,7 +561,7 @@ export default class SelfTester {
         statusMessage =
           '<li><h3 class="sovendus-overlay-error">ERROR: The sovendus container div with the id "' +
           iframeContainerId.elementValue +
-          '" was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed.</h2></li>';
+          '" was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.</h2></li>';
       }
     }
     return new TestResult(sovendusDivFound, statusMessage, statusCode);
