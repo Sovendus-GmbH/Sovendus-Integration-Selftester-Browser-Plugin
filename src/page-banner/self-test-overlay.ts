@@ -80,7 +80,7 @@ class SelfTesterOverlay {
         this.hideInfoText
       );
     }
-    this.moveOverlayAboveAll();
+    // this.moveOverlayAboveAll();
   }
 
   createInnerOverlay(selfTester: SelfTester) {
@@ -245,7 +245,7 @@ class SelfTesterOverlay {
             top: 50px !important;
             padding: 22px !important;
             background: #293049 !important;
-            z-index: 2147483647 !important;
+            z-index: 2147483648 !important;
             overflow-y: auto !important;
             max-height: calc(100vh - 100px) !important;
             border-radius: 8px !important;    
@@ -366,24 +366,24 @@ class SelfTesterOverlay {
       (label as HTMLElement).style.display = "none";
     }
   }
-  moveOverlayAboveAll() {
-    function checkAndChangeZIndex(element: HTMLElement) {
-      if (
-        element.id !== "sovendusOverlay" &&
-        element.id !== "toggleSovendusOverlay" &&
-        (getComputedStyle(element).zIndex === "2147483647" ||
-          element.style.zIndex === "2147483647")
-      ) {
-        element.setAttribute("style", "z-index:2147483646 !important");
-      }
+  // moveOverlayAboveAll() {
+  //   function checkAndChangeZIndex(element: HTMLElement) {
+  //     if (
+  //       element.id !== "sovendusOverlay" &&
+  //       element.id !== "toggleSovendusOverlay" &&
+  //       (getComputedStyle(element).zIndex === "2147483647" ||
+  //         element.style.zIndex === "2147483647")
+  //     ) {
+  //       element.setAttribute("style", "z-index:2147483646 !important");
+  //     }
 
-      // Handle child elements
-      let childElement = element.firstElementChild;
-      while (childElement) {
-        checkAndChangeZIndex(childElement as HTMLElement);
-        childElement = childElement.nextElementSibling;
-      }
-    }
-    checkAndChangeZIndex(document.body);
-  }
+  //     // Handle child elements
+  //     let childElement = element.firstElementChild;
+  //     while (childElement) {
+  //       checkAndChangeZIndex(childElement as HTMLElement);
+  //       childElement = childElement.nextElementSibling;
+  //     }
+  //   }
+  //   checkAndChangeZIndex(document.body);
+  // }
 }
