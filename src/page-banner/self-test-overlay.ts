@@ -118,45 +118,45 @@ class SelfTesterOverlay {
         <div class="sovendus-overlay-font">
           <h2 class="sovendus-overlay-font sovendus-overlay-h2">Customer Data:</h2>
           <ul class="sovendus-overlay-font sovendus-overlay-ul">
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerSalutation: ${testResult.consumerSalutation.statusMessage}
             </li>
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerFirstName: ${testResult.consumerFirstName.statusMessage}
             </li>
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerLastName: ${testResult.consumerLastName.statusMessage}
             </li>
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerYearOfBirth: ${
                 testResult.consumerYearOfBirth.statusMessage
               }
             </li>
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerEmail: ${testResult.consumerEmail.statusMessage}
             </li>
             ${
               testResult.consumerEmailHash.statusMessage &&
               testResult.consumerEmailHash.statusMessage
             }            
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerPhone: ${testResult.consumerPhone.statusMessage}
             </li>
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerStreet: ${testResult.consumerStreet.statusMessage}
             </li>
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerStreetNumber: ${
                 testResult.consumerStreetNumber.statusMessage
               }
             </li>
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerZipcode: ${testResult.consumerZipCode.statusMessage}
             </li>
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerCity: ${testResult.consumerCity.statusMessage}
             </li>
-            <li class'sovendus-overlay-font sovendus-overlay-text'>
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerCountry: ${testResult.consumerCountry.statusMessage}
             </li>
           </ul>
@@ -178,7 +178,7 @@ class SelfTesterOverlay {
       additionalInfo = `
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Container:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
-        <li class'sovendus-overlay-font sovendus-overlay-text'>
+        <li class='sovendus-overlay-font sovendus-overlay-text'>
           iframeContainerId: ${testResult.iframeContainerId.statusMessage}
         </li>
         ${testResult.isEnabledInBackend.statusMessage}
@@ -187,27 +187,27 @@ class SelfTesterOverlay {
       </ul>
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
-        <li class'sovendus-overlay-font sovendus-overlay-text'>
+        <li class='sovendus-overlay-font sovendus-overlay-text'>
           orderCurrency: ${testResult.orderCurrency.statusMessage}
         </li>
-        <li class'sovendus-overlay-font sovendus-overlay-text'>
+        <li class='sovendus-overlay-font sovendus-overlay-text'>
           orderId: ${testResult.orderId.statusMessage}
         </li>
-        <li class'sovendus-overlay-font sovendus-overlay-text'>
+        <li class='sovendus-overlay-font sovendus-overlay-text'>
           orderValue: ${testResult.orderValue.statusMessage}
         </li>
         ${
           awinIntegrationDetected
             ? ""
-            : "<li class'sovendus-overlay-font sovendus-overlay-text'>" +
+            : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
               "sessionId: " +
               testResult.sessionId.statusMessage +
               "</li>"
         }
-        <li class'sovendus-overlay-font sovendus-overlay-text'>
+        <li class='sovendus-overlay-font sovendus-overlay-text'>
           timestamp: ${testResult.timestamp.statusMessage}
         </li>
-        <li class'sovendus-overlay-font sovendus-overlay-text'>
+        <li class='sovendus-overlay-font sovendus-overlay-text'>
           usedCouponCode: ${testResult.usedCouponCode.statusMessage}
         </li>
       </ul>
@@ -222,10 +222,10 @@ class SelfTesterOverlay {
         }
         <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Partner Numbers:</h2>
         <ul class="sovendus-overlay-font sovendus-overlay-ul">
-          <li class'sovendus-overlay-font sovendus-overlay-text'>
+          <li class='sovendus-overlay-font sovendus-overlay-text'>
             trafficSourceNumber: ${testResult.trafficSourceNumber.statusMessage}
           </li>
-          <li class'sovendus-overlay-font sovendus-overlay-text'>
+          <li class='sovendus-overlay-font sovendus-overlay-text'>
             trafficMediumNumber: ${testResult.trafficMediumNumber.statusMessage}
           </li>
           ${additionalInfo}

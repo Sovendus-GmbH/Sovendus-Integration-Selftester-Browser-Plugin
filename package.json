@@ -1,6 +1,6 @@
 {
   "name": "integration-tester-browser-extension",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "description": "Sovendus integration tester chrome & firefox extensions",
   "type": "commonjs",
   "scripts": {

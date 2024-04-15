@@ -325,14 +325,14 @@ export default class SelfTester {
         );
         if (hashIsValid) {
           statusMessage =
-            "<li class'sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
+            "<li class='sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
             testResult.elementValue +
             this.getCheckMarkWithLabel() +
             "</li>";
         } else {
           statusCode = StatusCodes.Error;
           statusMessage =
-            "<li class'sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
+            "<li class='sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
             testResult.elementValue +
             "<span class='sovendus-overlay-error' >NOT A MD5 HASH" +
             this.getInfoMarkWithLabel(
@@ -343,7 +343,7 @@ export default class SelfTester {
         }
       } else if (testResult.statusCode === 2) {
         statusMessage =
-          "<li class'sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
+          "<li class='sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
           testResult.statusMessage +
           "</li>";
       }

@@ -1,6 +1,6 @@
 {
   "name": "Sovendus Integration Tester",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "manifest_version": 3,
   "description": "Use this extension to verify if your Sovendus integration is setup properly",
   "background": {
