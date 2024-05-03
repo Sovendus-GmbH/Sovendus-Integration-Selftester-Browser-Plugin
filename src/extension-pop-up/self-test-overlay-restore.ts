@@ -1,11 +1,28 @@
-var overlay = document.getElementById("sovendusOverlay");
-overlay.style.display = "block";
-overlay.classList.remove("fullscreen");
-var overlayToggle = document.getElementById("toggleSovendusOverlay");
-overlayToggle.style.display = "block";
-showRepeatTestsButton()
+_restoreOverlay();
+function _restoreOverlay() {
+  const overlay = document.getElementById("sovendusOverlay");
+  if (overlay) {
+    overlay.style.display = "block";
+    overlay.classList.remove("fullscreen");
+    const overlayToggle = document.getElementById("toggleSovendusOverlay");
+    if (overlayToggle) {
+      overlayToggle.style.display = "block";
+    }
+    _showRepeatTestsButton();
+  } else {
+    _removeSovendusNotDetectedOverlay();
+  }
+}
 
-function showRepeatTestsButton(){
-    const repeatTestsButton = document.getElementById("sovendusOverlayRepeatTests");
+function _showRepeatTestsButton() {
+  const repeatTestsButton = document.getElementById(
+    "sovendusOverlayRepeatTests"
+  );
+  if (repeatTestsButton) {
     repeatTestsButton.style.display = "block";
   }
+}
+
+function _removeSovendusNotDetectedOverlay() {
+  document.getElementById("outerSovendusNotDetectedOverlay")?.remove();
+}
