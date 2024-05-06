@@ -1,11 +1,13 @@
-var overlay = document.getElementById("outerSovedusIntegrationMethodCheckerOverlay");
+var overlay = document.getElementById(
+  "outerSovedusIntegrationMethodCheckerOverlay"
+);
 if (!overlay) {
   class availableMethodsChecker {
     apiKeys: string[] = [
       "whz2mjdra9s0s0s683zodmidj6mo5d1v3gas3hbglcp73j6e16ufvo8k5i7lofnengl94u",
       "wr9wyithqrnw9nnxuja2yjw2gpcr83cytckmjzcjbxzobm57wjcs0c82aazqm9aufog6v2",
     ];
-    supportedSystems: { [key: string]: supportedSystem } = {
+    supportedSystems: { [key in SupportedSystemKeyType]: supportedSystem } = {
       WooCommerce: {
         name: "WooCommerce",
         docsLink:
@@ -91,12 +93,10 @@ if (!overlay) {
     }
 
     async getAvailableMethodsMessage(): Promise<string> {
-      let availableMethodsText: string;
       const { data, responseStatusCode, responseErrorMessage } =
         await this.getAvailableMethodsResponse();
       if (responseStatusCode === this.statusCodes.fail) {
-        availableMethodsText = responseErrorMessage;
-        return availableMethodsText;
+        return responseErrorMessage || "";
       }
       const {
         shopSystemName,
@@ -112,7 +112,7 @@ if (!overlay) {
         );
       } else if (cmsName && this.supportedSystems[cmsName]) {
         availableMethods = this.formatIntegrationOption(
-          this.supportedSystems[webFrameworkName]
+          this.supportedSystems[cmsName]
         );
       } else if (webFrameworkName && this.supportedSystems[webFrameworkName]) {
         availableMethods = this.formatIntegrationOption(
@@ -120,12 +120,7 @@ if (!overlay) {
         );
       }
       const gtmAvailable = this.checkIfGtmIsIntegrated();
-      // ${this.formatIntegrationOption(
-      //   this.supportedSystems.generic,
-      //   null,
-      //   " Integration"
-      // )}
-      availableMethodsText = `
+      const availableMethodsText = `
         <h3 class='sovendus-overlay-font sovendus-overlay-h3' style="border: 1px solid; border-radius: 8px; padding: 8px; text-align: center;">
           Note that the detection can be wrong and incomplete!
         </h3>
@@ -185,25 +180,27 @@ if (!overlay) {
     }> {
       const randomIndex = Math.floor(Math.random() * this.apiKeys.length);
       let responseStatusCode: statusCode;
-      let responseErrorMessage: string;
       try {
         const response = await fetch(
           `https://whatcms.org/API/Tech?key=${this.apiKeys[randomIndex]}&url=${window.location.origin}`
         );
         const data = await response.json();
         responseStatusCode = this.statusCodes.success;
-        console.log("CMS detection result:", data);
-        return { data, responseStatusCode, responseErrorMessage };
+        return { data, responseStatusCode, responseErrorMessage: undefined };
       } catch (error) {
-        console.error("Error fetching data:", error.message);
-        responseStatusCode = this.statusCodes.fail;
-        responseErrorMessage = this.formatErrorMessage(
+        console.error(
           "Error fetching data:",
-          error.message
+          `${(error as any)?.message || error}`
+        );
+        responseStatusCode = this.statusCodes.fail;
+        const responseErrorMessage = this.formatErrorMessage(
+          "Error fetching data:",
+          String((error as any)?.message || error)
         );
         return { data: {}, responseStatusCode, responseErrorMessage };
       }
     }
+
     formatErrorMessage(errorTitle: string, errorMessage: string): string {
       return `
         <h2 class="sovendus-overlay-font sovendus-overlay-h2 sovendus-overlay-error">${errorTitle}</h2>
@@ -211,39 +208,49 @@ if (!overlay) {
       `;
     }
 
-    getAvailableMethodsFromResponse(responseJson: availableMethodsResponse) {
+    getAvailableMethodsFromResponse(responseJson: availableMethodsResponse): {
+      shopSystemName: SupportedSystemKeyType | undefined;
+      cmsName: SupportedSystemKeyType | undefined;
+      webFrameworkName: SupportedSystemKeyType | undefined;
+      statusCode: statusCode;
+      errorMessage: string | undefined;
+    } {
       let statusCode: statusCode = this.statusCodes.fail;
-      let shopSystemName = "";
-      let cmsName = "";
-      let errorMessage = "";
-      let webFrameworkName = "";
-
-      for (const technology of responseJson.results) {
-        if (technology.categories.includes("E-commerce")) {
-          statusCode = this.statusCodes.success;
-          shopSystemName += shopSystemName
-            ? `, ${technology.name}`
-            : technology.name;
-        }
-        if (technology.categories.includes("CMS")) {
-          cmsName += cmsName ? `, ${technology.name}` : technology.name;
-        }
-        if (technology.categories.includes("Web Framework")) {
-          webFrameworkName += webFrameworkName
-            ? `, ${technology.name}`
-            : technology.name;
+      let shopSystemName: SupportedSystemKeyType | undefined;
+      let cmsName: SupportedSystemKeyType | undefined;
+      let errorMessage: string | undefined;
+      let webFrameworkName: SupportedSystemKeyType | undefined;
+      if (responseJson?.results) {
+        for (const technology of responseJson.results) {
+          if (technology.categories.includes("E-commerce")) {
+            statusCode = this.statusCodes.success;
+            const _shopSystemName = this.getNameIfValidPlugin(technology.name);
+            if (_shopSystemName) {
+              shopSystemName = _shopSystemName;
+            }
+          }
+          if (technology.categories.includes("CMS")) {
+            statusCode = this.statusCodes.success;
+            const _cmsName = this.getNameIfValidPlugin(technology.name);
+            if (_cmsName) {
+              cmsName = _cmsName;
+            }
+          }
+          if (technology.categories.includes("Web Framework")) {
+            statusCode = this.statusCodes.success;
+            const _webFrameworkName = this.getNameIfValidPlugin(
+              technology.name
+            );
+            if (_webFrameworkName) {
+              webFrameworkName = _webFrameworkName;
+            }
+          }
         }
       }
 
-      if (statusCode === this.statusCodes.fail && cmsName === "") {
-        errorMessage = responseJson.result.msg;
-        if (![201, 202].includes(responseJson.result.code)) {
-          if (responseJson.result.code === 200) {
-            errorMessage = "Error, no CMS or Shopsystem detected";
-          } else {
-            console.error("Error");
-          }
-        }
+      if (statusCode === this.statusCodes.fail) {
+        errorMessage =
+          responseJson?.result?.msg || "Error, no CMS or Shopsystem detected";
       }
 
       return {
@@ -253,6 +260,14 @@ if (!overlay) {
         statusCode,
         errorMessage,
       };
+    }
+
+    getNameIfValidPlugin(
+      shopSystemName: string
+    ): SupportedSystemKeyType | undefined {
+      return shopSystemName in this.supportedSystems
+        ? (shopSystemName as SupportedSystemKeyType)
+        : undefined;
     }
 
     async createCheckIntegrationMethodsOverlay(): Promise<void> {
@@ -271,12 +286,14 @@ if (!overlay) {
         </div>
       </div>
       `;
-      document.getElementsByTagName("body")[0].appendChild(overlay);
+      document.body.appendChild(overlay);
       const availableMethodsMessage = await this.getAvailableMethodsMessage();
       const sovendusDetectionResultDiv = document.getElementById(
         "sovendusDetectionResult"
       );
-      sovendusDetectionResultDiv.innerHTML = availableMethodsMessage;
+      if (sovendusDetectionResultDiv) {
+        sovendusDetectionResultDiv.innerHTML = availableMethodsMessage;
+      }
     }
 
     getCheckerOverlayStyle(): string {
@@ -354,6 +371,23 @@ interface availableMethodsResponseResults {
   categories: string[];
   name: string;
 }
+
+type SupportedSystemKeyType =
+  | "WooCommerce"
+  | "Shopware"
+  | "Nuxt.js"
+  | "Magento"
+  | "Next.js"
+  | "Shopify"
+  | "OXID eSales"
+  | "OXID eShop Enterprise Edition"
+  | "OXID eShop Community Edition"
+  | "OXID eShop Professional Edition"
+  | "PrestaShop"
+  | "JTL-Shop"
+  | "BigCommerce"
+  | "gtm"
+  | "generic";
 
 interface supportedSystem {
   name: string;

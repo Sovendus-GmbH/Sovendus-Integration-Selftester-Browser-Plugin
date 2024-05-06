@@ -142,9 +142,6 @@ async function drawSegmentScreenshot({
   remainingScrollHeight: number;
   onDone: () => void;
 }) {
-  // wait a second as captureVisibleTab only supports once per second on chrome
-  // TODO don't do that on firefox
-  await new Promise((r) => setTimeout(r, 1000));
   chrome.tabs.captureVisibleTab(async (screenshotDataUrl) => {
     const screenshotImage = new Image();
     screenshotImage.src = screenshotDataUrl;
@@ -173,6 +170,9 @@ async function drawSegmentScreenshot({
       remainingScrollHeight -= viewPortHeight;
       await scrollDownToNextSection(tabId, viewPortHeight);
       if (remainingScrollHeight > 0) {
+        // wait a second as captureVisibleTab only supports once per second on chrome
+        // TODO don't do that on firefox
+        await new Promise((r) => setTimeout(r, 1000));
         await drawSegmentScreenshot({
           tabId,
           ctx,
@@ -206,18 +206,27 @@ function getScrollableHeight(
   chrome.scripting.executeScript(
     {
       target: { tabId },
-      world: "MAIN",
       func: async (): Promise<[number, number, number]> => {
         const body = document.body,
           html = document.documentElement;
-        const height = Math.max(
-          body.scrollHeight,
-          body.offsetHeight,
-          html.clientHeight,
-          html.scrollHeight,
-          html.offsetHeight
-        );
-        return [height, window.innerHeight, window.innerWidth];
+        const viewPortHeight = window.innerHeight;
+        // when overlay is open, don't scroll
+        let scrollHeight: number;
+        if (
+          viewPortHeight ===
+          document.getElementsByClassName("sov-overlay")?.[0]?.clientHeight
+        ) {
+          scrollHeight = viewPortHeight;
+        } else {
+          scrollHeight = Math.max(
+            body.scrollHeight,
+            body.offsetHeight,
+            html.clientHeight,
+            html.scrollHeight,
+            html.offsetHeight
+          );
+        }
+        return [scrollHeight, viewPortHeight, window.innerWidth];
       },
     },
     (results: chrome.scripting.InjectionResult<[number, number, number]>[]) => {
@@ -233,7 +242,6 @@ function getScrollableHeight(
 async function scrollDownToNextSection(tabId: number, scrollBy: number) {
   await chrome.scripting.executeScript({
     target: { tabId },
-    world: "MAIN",
     args: [scrollBy],
     func: async (scrollBy) => {
       window.scrollBy(0, scrollBy);
@@ -247,7 +255,6 @@ async function executeScriptOnPage(
 ): Promise<void> {
   await chrome.scripting.executeScript({
     target: { tabId },
-    world: "MAIN",
     func: pageFunction,
   });
   return undefined;

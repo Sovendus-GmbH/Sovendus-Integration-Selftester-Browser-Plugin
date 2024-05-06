@@ -61,21 +61,21 @@ class SelfTesterOverlay {
         </div>
       </div>
     `;
-    document.getElementsByTagName("body")[0].appendChild(overlay);
+    document.body.appendChild(overlay);
     document
       .getElementById("toggleSovendusOverlay")
-      .addEventListener("click", this.toggleOverlay);
+      ?.addEventListener("click", this.toggleOverlay);
     document
       .getElementById("sovendusOverlayRepeatTests")
-      .addEventListener("click", executeTests);
+      ?.addEventListener("click", executeTests);
     const checkMarks: HTMLCollectionOf<Element> =
       document.getElementsByClassName("sovendus-info");
     for (let element of checkMarks) {
-      element.parentElement.parentElement.addEventListener(
+      element.parentElement?.parentElement?.addEventListener(
         "mouseover",
         this.showInfoText
       );
-      element.parentElement.parentElement.addEventListener(
+      element.parentElement?.parentElement?.addEventListener(
         "mouseout",
         this.hideInfoText
       );
@@ -86,7 +86,7 @@ class SelfTesterOverlay {
   createInnerOverlay(selfTester: SelfTester) {
     let innerOverlay: string = "";
     const awinIntegrationDetected = selfTester.awinIntegrationDetected();
-    if (selfTester.wasExecuted.statusCode === StatusCodes.Success) {
+    if (selfTester.wasExecuted?.statusCode === StatusCodes.Success) {
       innerOverlay = `
         ${this.getSovIFramesData(selfTester, false, awinIntegrationDetected)}
         ${
@@ -119,45 +119,47 @@ class SelfTesterOverlay {
           <h2 class="sovendus-overlay-font sovendus-overlay-h2">Customer Data:</h2>
           <ul class="sovendus-overlay-font sovendus-overlay-ul">
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerSalutation: ${testResult.consumerSalutation.statusMessage}
+              consumerSalutation: ${
+                testResult.consumerSalutation?.statusMessage
+              }
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerFirstName: ${testResult.consumerFirstName.statusMessage}
+              consumerFirstName: ${testResult.consumerFirstName?.statusMessage}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerLastName: ${testResult.consumerLastName.statusMessage}
+              consumerLastName: ${testResult.consumerLastName?.statusMessage}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerYearOfBirth: ${
-                testResult.consumerYearOfBirth.statusMessage
+                testResult.consumerYearOfBirth?.statusMessage
               }
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerEmail: ${testResult.consumerEmail.statusMessage}
+              consumerEmail: ${testResult.consumerEmail?.statusMessage}
             </li>
             ${
-              testResult.consumerEmailHash.statusMessage &&
-              testResult.consumerEmailHash.statusMessage
+              testResult.consumerEmailHash?.statusMessage &&
+              testResult.consumerEmailHash?.statusMessage
             }            
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerPhone: ${testResult.consumerPhone.statusMessage}
+              consumerPhone: ${testResult.consumerPhone?.statusMessage}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerStreet: ${testResult.consumerStreet.statusMessage}
+              consumerStreet: ${testResult.consumerStreet?.statusMessage}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerStreetNumber: ${
-                testResult.consumerStreetNumber.statusMessage
+                testResult.consumerStreetNumber?.statusMessage
               }
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerZipcode: ${testResult.consumerZipCode.statusMessage}
+              consumerZipcode: ${testResult.consumerZipCode?.statusMessage}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerCity: ${testResult.consumerCity.statusMessage}
+              consumerCity: ${testResult.consumerCity?.statusMessage}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerCountry: ${testResult.consumerCountry.statusMessage}
+              consumerCountry: ${testResult.consumerCountry?.statusMessage}
             </li>
           </ul>
         </div>
@@ -172,43 +174,43 @@ class SelfTesterOverlay {
     let additionalInfo: string;
     if (awinIntegrationNoSaleTracked) {
       additionalInfo = `
-          ${testResult.awinTest.statusMessage}
+          ${testResult.awinTest?.statusMessage}
     `;
     } else {
       additionalInfo = `
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Container:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          iframeContainerId: ${testResult.iframeContainerId.statusMessage}
+          iframeContainerId: ${testResult.iframeContainerId?.statusMessage}
         </li>
-        ${testResult.isEnabledInBackend.statusMessage}
-        ${testResult.sovendusDivFound.statusMessage}
-        ${testResult.multipleIFramesAreSame.statusMessage}
+        ${testResult.isEnabledInBackend?.statusMessage}
+        ${testResult.sovendusDivFound?.statusMessage}
+        ${testResult.multipleIFramesAreSame?.statusMessage}
       </ul>
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          orderCurrency: ${testResult.orderCurrency.statusMessage}
+          orderCurrency: ${testResult.orderCurrency?.statusMessage}
         </li>
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          orderId: ${testResult.orderId.statusMessage}
+          orderId: ${testResult.orderId?.statusMessage}
         </li>
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          orderValue: ${testResult.orderValue.statusMessage}
+          orderValue: ${testResult.orderValue?.statusMessage}
         </li>
         ${
           awinIntegrationDetected
             ? ""
             : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
               "sessionId: " +
-              testResult.sessionId.statusMessage +
+              testResult.sessionId?.statusMessage +
               "</li>"
         }
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          timestamp: ${testResult.timestamp.statusMessage}
+          timestamp: ${testResult.timestamp?.statusMessage}
         </li>
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          usedCouponCode: ${testResult.usedCouponCode.statusMessage}
+          usedCouponCode: ${testResult.usedCouponCode?.statusMessage}
         </li>
       </ul>
     `;
@@ -223,10 +225,14 @@ class SelfTesterOverlay {
         <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Partner Numbers:</h2>
         <ul class="sovendus-overlay-font sovendus-overlay-ul">
           <li class='sovendus-overlay-font sovendus-overlay-text'>
-            trafficSourceNumber: ${testResult.trafficSourceNumber.statusMessage}
+            trafficSourceNumber: ${
+              testResult.trafficSourceNumber?.statusMessage
+            }
           </li>
           <li class='sovendus-overlay-font sovendus-overlay-text'>
-            trafficMediumNumber: ${testResult.trafficMediumNumber.statusMessage}
+            trafficMediumNumber: ${
+              testResult.trafficMediumNumber?.statusMessage
+            }
           </li>
           ${additionalInfo}
         </ul>
@@ -353,17 +359,25 @@ class SelfTesterOverlay {
     }
   }
   showInfoText(event: MouseEvent) {
-    const label = (event.currentTarget as HTMLElement).firstElementChild
-      .firstElementChild;
-    if (label) {
-      (label as HTMLElement).style.display = "block";
+    const eventTarget: HTMLElement | null =
+      event.currentTarget as null | HTMLElement;
+    if (eventTarget) {
+      const label = eventTarget?.firstElementChild
+        ?.firstElementChild as HTMLElement | null;
+      if (label) {
+        label.style.display = "block";
+      }
     }
   }
   hideInfoText(event: MouseEvent) {
-    const label = (event.currentTarget as HTMLElement).firstElementChild
-      .firstElementChild;
-    if (label) {
-      (label as HTMLElement).style.display = "none";
+    const eventTarget: HTMLElement | null =
+      event.currentTarget as null | HTMLElement;
+    if (eventTarget) {
+      const label = eventTarget?.firstElementChild
+        ?.firstElementChild as HTMLElement | null;
+      if (label) {
+        label.style.display = "none";
+      }
     }
   }
   // moveOverlayAboveAll() {
