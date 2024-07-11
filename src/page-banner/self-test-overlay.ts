@@ -11,7 +11,8 @@ async function executeTests() {
   const selfTester = new SelfTester();
   await selfTester.waitForSovendusIntegrationDetected();
   await selfTester.selfTestIntegration();
-  new SelfTesterOverlay(selfTester);
+  const overlay = new SelfTesterOverlay();
+  await overlay.createOverlay(selfTester);
 }
 
 interface testsFn {
@@ -33,11 +34,9 @@ function removeOverlay() {
   document.getElementById("outerSovendusOverlay")?.remove();
 }
 class SelfTesterOverlay {
-  constructor(selfTester: SelfTester) {
-    this.createOverlay(selfTester);
-  }
+  constructor() {}
 
-  createOverlay(selfTester: SelfTester) {
+  async createOverlay(selfTester: SelfTester) {
     var overlay = document.createElement("div");
     overlay.id = "outerSovendusOverlay";
     overlay.innerHTML = `

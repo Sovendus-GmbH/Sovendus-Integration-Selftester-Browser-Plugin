@@ -857,11 +857,11 @@ export default class SelfTester {
   }
 
   sovInstancesLoaded() {
-    return (
-      window.sovApplication?.hasOwnProperty("instances") &&
-      window.sovApplication?.instances?.length &&
-      window.sovApplication?.instances?.[0]?.banner &&
-      window.sovApplication?.instances?.[0]?.selectBanner
+    return window.sovApplication?.instances?.find(
+      (instance) =>
+        instance.banner?.bannerExists ||
+        instance.collapsableOverlayClosingType ||
+        instance.stickyBanner?.bannerExists
     );
   }
 
@@ -1013,7 +1013,9 @@ interface Config {
 
 interface Instance {
   banner?: Banner;
+  stickyBanner?: Banner;
   selectBanner?: object;
+  collapsableOverlayClosingType?: string;
   config?: Config;
 }
 

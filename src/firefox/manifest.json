@@ -1,10 +1,12 @@
 {
   "name": "Sovendus Integration Tester",
-  "version": "1.4.9",
+  "version": "1.5.2",
   "manifest_version": 2,
   "description": "Use this extension to verify if your Sovendus integration is setup properly",
   "background": {
-    "scripts": ["service-worker.js"],
+    "scripts": [
+      "service-worker.js"
+    ],
     "persistent": true
   },
   "permissions": [
