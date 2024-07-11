@@ -14,7 +14,7 @@ class TestResult {
 }
 
 export default class SelfTester {
-  integrationType: string;
+  integrationType?: string;
   consumerSalutation?: TestResult;
   consumerFirstName?: TestResult;
   consumerLastName?: TestResult;
@@ -27,11 +27,11 @@ export default class SelfTester {
   consumerPhone?: TestResult;
   consumerCity?: TestResult;
   consumerCountry?: TestResult;
-  trafficSourceNumber: TestResult;
-  trafficMediumNumber: TestResult;
+  trafficSourceNumber?: TestResult;
+  trafficMediumNumber?: TestResult;
   iframeContainerId?: TestResult;
   isEnabledInBackend?: TestResult;
-  wasExecuted: TestResult;
+  wasExecuted?: TestResult;
   awinTest?: TestResult;
   sovendusDivFound?: TestResult;
   sovDivIdInIFrames?: TestResult;
@@ -46,7 +46,7 @@ export default class SelfTester {
   usedCouponCode?: TestResult;
   flexibleIFrameOnDOM?: TestResult;
 
-  sovConsumer: SovApplicationConsumer;
+  sovConsumer?: SovApplicationConsumer;
 
   async selfTestIntegration() {
     this.integrationType = this.getIntegrationType();
@@ -176,14 +176,14 @@ export default class SelfTester {
     const elementValue: ElementValue = false;
 
     this.trafficSourceNumber = new TestResult(
-      window.AWIN.Tracking.Sovendus.trafficSourceNumber,
-      window.AWIN.Tracking.Sovendus.trafficSourceNumber +
+      window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber,
+      window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber +
         this.getInfoMarkWithLabel(trafficSourceInfoMessage),
       StatusCodes.Success
     );
     this.trafficMediumNumber = new TestResult(
-      window.AWIN.Tracking.Sovendus.trafficMediumNumber,
-      window.AWIN.Tracking.Sovendus.trafficMediumNumber +
+      window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber,
+      window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber +
         this.getInfoMarkWithLabel(trafficMediumInfoMessage),
       StatusCodes.Success
     );
@@ -447,7 +447,7 @@ export default class SelfTester {
       let innerErrorMessage: string = "";
       statusCode = StatusCodes.Error;
       isSuccess = false;
-      const isOnDom = Boolean(flexibleIframeJs);
+      const isOnDom = !!flexibleIframeJs;
       if (isOnDom) {
         innerErrorMessage =
           this.getFlexileIframeDidNotExecuteErrorMessage(flexibleIframeJs);
@@ -704,7 +704,7 @@ export default class SelfTester {
   validValueTestResult(
     value: ElementValue,
     missingErrorMessage: string = "",
-    successMessage: string = undefined
+    successMessage?: string
   ): TestResult {
     let elementValue: ElementValue = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
@@ -917,6 +917,7 @@ export default class SelfTester {
     if (navigator.userAgent.indexOf("Chrome") != -1) {
       return "Chrome";
     }
+    return "Not detected";
   }
 }
 
@@ -970,18 +971,18 @@ function convertToSovApplicationConsumer(
 }
 
 interface SovApplicationConsumer {
-  salutation?: "Mr." | "Mrs." | "";
-  firstName?: string;
-  lastName?: string;
-  yearOfBirth?: number;
-  email?: string;
-  emailHash?: string;
-  phone?: string;
-  street?: string;
-  streetNumber?: string;
-  zipCode?: string;
-  city?: string;
-  country?: string;
+  salutation?: "Mr." | "Mrs." | "" | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  yearOfBirth?: number | undefined;
+  email?: string | undefined;
+  emailHash?: string | undefined;
+  phone?: string | undefined;
+  street?: string | undefined;
+  streetNumber?: string | undefined;
+  zipCode?: string | undefined;
+  city?: string | undefined;
+  country?: string | undefined;
 }
 
 interface SovApplication {

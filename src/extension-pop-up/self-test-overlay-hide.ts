@@ -1,14 +1,14 @@
-var overlay = document.getElementById("sovendusOverlay");
-if (overlay) {
-  overlay.style.display = "none";
-  overlay.classList.remove("fullscreen");
-  var overlayToggle = document.getElementById("toggleSovendusOverlay");
-  overlayToggle.style.display = "none";
-} else {
-  removeSovendusNotDetectedOverlay();
-}
-
-function removeSovendusNotDetectedOverlay() {
-  var overlay = document.getElementById("outerSovendusNotDetectedOverlay");
-  overlay.remove();
+_hideOverlay();
+function _hideOverlay() {
+  const overlay = document.getElementById("sovendusOverlay");
+  if (overlay) {
+    overlay.style.display = "none";
+    overlay.classList.remove("fullscreen");
+    const overlayToggle = document.getElementById("toggleSovendusOverlay");
+    if (overlayToggle) {
+      overlayToggle.style.display = "none";
+    }
+  } else {
+    document.getElementById("outerSovendusNotDetectedOverlay")?.remove();
+  }
 }

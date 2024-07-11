@@ -1,20 +1,30 @@
-var overlay = document.getElementById("sovendusOverlay");
-if (overlay) {
-  overlay.style.display = "block";
-  overlay.classList.add("fullscreen");
-  var overlayToggle = document.getElementById("toggleSovendusOverlay");
-  overlayToggle.style.display = "block";
-  hideRepeatTestsButton()
-} else {
-  createNotDetectedOverlay();
+_showOverlay();
+
+function _showOverlay() {
+  const overlay = document.getElementById("sovendusOverlay");
+  if (overlay) {
+    overlay.style.display = "block";
+    overlay.classList.add("fullscreen");
+    var overlayToggle = document.getElementById("toggleSovendusOverlay");
+    if (overlayToggle) {
+      overlayToggle.style.display = "block";
+    }
+    _hideRepeatTestsButton();
+  } else {
+    _createNotDetectedOverlay();
+  }
 }
 
-function hideRepeatTestsButton(){
-  const repeatTestsButton = document.getElementById("sovendusOverlayRepeatTests");
-  repeatTestsButton.style.display = "none";
+function _hideRepeatTestsButton() {
+  const repeatTestsButton = document.getElementById(
+    "sovendusOverlayRepeatTests"
+  );
+  if (repeatTestsButton) {
+    repeatTestsButton.style.display = "none";
+  }
 }
 
-function getOverlayStyle(): string {
+function _getOverlayStyle(): string {
   return `
       <style>
         #sovendusNotDetectedOverlay {
@@ -65,11 +75,11 @@ function getOverlayStyle(): string {
     `;
 }
 
-function createNotDetectedOverlay() {
-  var overlay = document.createElement("div");
+function _createNotDetectedOverlay() {
+  const overlay = document.createElement("div");
   overlay.id = "outerSovendusNotDetectedOverlay";
   overlay.innerHTML = `
-      ${getOverlayStyle()}
+      ${_getOverlayStyle()}
       <div class="sovendus-overlay-font" id="sovendusNotDetectedOverlay">  
         <div style="margin:auto;max-width:500px;">
           <div>
@@ -79,5 +89,5 @@ function createNotDetectedOverlay() {
         </div>
       </div>
     `;
-  document.getElementsByTagName("body")[0].appendChild(overlay);
+  document.body.appendChild(overlay);
 }
