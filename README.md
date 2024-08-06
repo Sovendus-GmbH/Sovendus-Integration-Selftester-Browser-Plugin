@@ -4,7 +4,8 @@ The Sovendus integration tester plugin can self-test common integration issues a
 
 ## Installation on Chrome, Firefox and Edge
 
-[The installation steps can be found here](https://github.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/blob/main/docs/installation.md)
+[Installation on Chrome or Edge](https://github.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/blob/main/docs/installation-chrome.md)
+[Installation on Firefox](https://github.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/blob/main/docs/installation-firefox.md)
 
 ## Testing Procedure
 
