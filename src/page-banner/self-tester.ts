@@ -215,7 +215,8 @@ export default class SelfTester {
     const missingSalutationError = errorsMessages.salutationNotValid.infoText;
     const valueTestResult: TestResult = this.validValueTestResult(
       consumer.salutation || window.sovConsumer?.consumerSalutation,
-      missingSalutationError
+      MessageKeyTypes.salutationNotValid,
+      MessageKeyTypes.consumerSalutationSuccess
     );
     if (valueTestResult.statusCode === StatusCodes.Success) {
       const validSalutations = ["Mr.", "Mrs."];
@@ -264,7 +265,8 @@ export default class SelfTester {
     const missingMailError: string = errorsMessages.yearOfBirthNotValid.infoText;
     const yearOfBirthTestResult: TestResult = this.validValueTestResult(
       consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
-      missingMailError
+      MessageKeyTypes.yearOfBirthNotValid,
+      MessageKeyTypes.yearOfBirthSuccess,
     );
     if (yearOfBirthTestResult.statusCode === StatusCodes.Success) {
       const validFromYear: number = 1890;
@@ -302,7 +304,8 @@ export default class SelfTester {
     const missingEmailError = errorsMessages.emailNotValid.infoText;
     const emailTestResult: TestResult = this.validValueTestResult(
       consumer.email,
-      missingEmailError
+      MessageKeyTypes.emailNotValid,
+      MessageKeyTypes.emailSuccess,
     );
     if (emailTestResult.statusCode === StatusCodes.Success) {
       function validateEmail(email: string) {
@@ -345,7 +348,8 @@ export default class SelfTester {
     if (!consumerEmail.elementValue) {
       const testResult = this.validValueTestResult(
         consumer.emailHash,
-        errorsMessages.emailHashSuccess.infoText
+        MessageKeyTypes.emailNotMD5Hash,
+        MessageKeyTypes.emailHashSuccess
       );
       statusCode = testResult.statusCode;
       elementValue = testResult.elementValue;
@@ -465,7 +469,7 @@ export default class SelfTester {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.iframeContainerId,
       MessageKeyTypes.missingIframeContainerId,
-      MessageKeyTypes.iframeContainerIdSuccess,
+      undefined,
     );
   }
 
@@ -603,8 +607,8 @@ export default class SelfTester {
     if ((elementValue && sovIFramesAmount.elementValue) || 0 > 0) {
       statusCode = StatusCodes.Error;
       statusMessage =
-        `<h3 class='sovendus-overlay-error'>${errorsMessages.noiframeContainerId.errorText}</h3>`;
-        statusMessageKey = MessageKeyTypes.noiframeContainerId;
+        `<h3 class='sovendus-overlay-error'>${errorsMessages.missingIframeContainerId.errorText}</h3>`;
+        statusMessageKey = MessageKeyTypes.missingIframeContainerId;
     }
     return new TestResult({
       elementValue, 
@@ -718,15 +722,16 @@ export default class SelfTester {
     const missingCurrencyError = errorsMessages.currencyNotValid.infoText;
     const valueTestResult: TestResult = this.validValueTestResult(
       window.sovIframes?.[0]?.orderCurrency,
-      missingCurrencyError
+      MessageKeyTypes.currencyNotValid,
+      MessageKeyTypes.currencySuccess
     );
     if (valueTestResult.statusCode === StatusCodes.Success) {
       const isValidCurrency = validCurrencies.includes(
         String(valueTestResult.elementValue)
       );
       let statusMessage: StatusMessage =
-        String(valueTestResult.elementValue) + this.getCheckMarkWithLabel();
-      let statusMessageKey: MessageKeyTypes = undefined;
+        String(valueTestResult.elementValue) + this.getInfoMarkWithLabel(errorsMessages.currencySuccess.infoText);
+      let statusMessageKey: MessageKeyTypes = MessageKeyTypes.currencySuccess;
       let statusCode: StatusCode = StatusCodes.Success;
       if (!isValidCurrency) {
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -781,8 +786,8 @@ export default class SelfTester {
 
   validValueTestResult(
     value: ElementValue,
-    missingErrorMessage: string = "",
-    successMessage?: string
+    missingErrorMessageKey: MessageKeyTypes,
+    successMessageKey: MessageKeyTypes
   ): TestResult {
     let elementValue: ElementValue = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
@@ -793,12 +798,13 @@ export default class SelfTester {
       elementValue = decodeURIComponent(decodeURI(String(value)));
       statusMessage =
         String(elementValue) +
-        (successMessage
-          ? this.getInfoMarkWithLabel(successMessage)
+        (successMessageKey
+          ? this.getInfoMarkWithLabel(errorsMessages[String(successMessageKey)].infoText)
           : this.getCheckMarkWithLabel());
+          statusMessageKey = successMessageKey;
     } else {
-      statusMessage = this.getDataIsMissingWarning(missingErrorMessage);
-      //statusMessageKey = MessageKeyTypes.;
+      statusMessage = this.getDataIsMissingWarning(errorsMessages[String(missingErrorMessageKey)].infoText);
+      statusMessageKey = missingErrorMessageKey;
     }
     return new TestResult({
       elementValue,
@@ -812,7 +818,8 @@ export default class SelfTester {
     const missingNumberError = errorsMessages.orderValueMissing.infoText;
     const decodedValue: TestResult = this.validValueTestResult(
       value,
-      missingNumberError
+      MessageKeyTypes.orderValueMissing,
+      MessageKeyTypes.orderValueMissing
     );
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
@@ -831,13 +838,13 @@ export default class SelfTester {
         statusMessage =
           String(decodedValue.elementValue) +
           this.getInfoMarkWithLabel(
-            "Make sure the order value is net without shipping cost."
+            errorsMessages.orderValueSuccess.infoText
           );
         statusMessageKey = MessageKeyTypes.orderValueSuccess;
       }
     } else {
       statusMessage = this.getDataIsMissingWarning(
-        "This value needs to be a number e.g. 20.5 and NOT 20,5"
+        errorsMessages.orderValueWrongFormat.infoText
       );
       statusMessageKey = MessageKeyTypes.orderValueWrongFormat;
       statusCode = StatusCodes.Error;
@@ -854,7 +861,8 @@ export default class SelfTester {
     const missingUnixTimeError = errorsMessages.notAUnixTimestamp.infoText;
     const decodedValue: TestResult = this.validValueTestResult(
       value,
-      missingUnixTimeError
+      MessageKeyTypes.notAUnixTimestamp,
+      undefined
     );
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
@@ -1146,6 +1154,7 @@ enum MessageKeyTypes {
   awinNoSalesTracked = "awinNoSalesTracked",
   awinSaleTrackedAfterScript = "awinSaleTrackedAfterScript",
   salutationNotValid = "salutationNotValid",
+  consumerSalutationSuccess = "consumerSalutationSuccess",
   yearOfBirthNotValid = "yearOfBirthNotValid",
   emailNotValid = "emailNotValid",
   emailSuccess = "emailSuccess",
@@ -1157,11 +1166,11 @@ enum MessageKeyTypes {
   flexibleIframeJsExecutedTooEarly = "flexibleIframeJsExecutedTooEarly",
   flexibleIframeJsBlockedByCookieConsent = "flexibleIframeJsBlockedByCookieConsent",
   sovendusBannerDisabled = "sovendusBannerDisabled",
-  noiframeContainerId = "noiframeContainerId",
   containerDivNotFoundOnDOM = "containerDivNotFoundOnDOM",
   multipleSovIframesDetected = "multipleSovIframesDetected",
   multipleSovIframesDetectedAndAreSame = "multipleSovIframesDetectedAndAreSame",
   currencyNotValid = "currencyNotValid",
+  currencySuccess = "currencySuccess",
   notValidUnixTimestamp = "notValidUnixTimestamp",
   notAUnixTimestamp = "notAUnixTimestamp",
   orderValueMissing = "orderValueMissing",
@@ -1190,11 +1199,11 @@ enum MessageKeyTypes {
   missingTrafficMediumNumber = "missingTrafficMediumNumber",
   trafficMediumNumberSuccess = "trafficMediumNumberSuccess",
   missingIframeContainerId = "missingIframeContainerId",
-  iframeContainerIdSuccess = "iframeContainerIdSuccess",
   missingConsumerFirstName = "missingConsumerFirstName",
   consumerFirstNameSuccess = "consumerFirstNameSuccess",
   missingConsumerLastName = "missingConsumerLastName",
   consumerLastNameSuccess = "consumerLastNameSuccess",
+  yearOfBirthSuccess = "yearOfBirthSuccess",
 }
 
 const validCurrencies = ["EUR", "GBP", "CHF", "PLN", "SEK", "DKK", "NOK"]; 
@@ -1228,6 +1237,11 @@ const errorsMessages: {
     infoText: "Make sure to pass the year of birth of the customer, e.g. 1991",
   },
 
+  yearOfBirthSuccess: {
+    errorText: undefined,
+    infoText: "Make sure the year of birth aligns with the year of birth you used for the order.",
+  },
+
   emailNotValid: {
     errorText: "NOT A VALID EMAIL",
     infoText: "Make sure to pass the email address of the customer.",
@@ -1235,7 +1249,7 @@ const errorsMessages: {
 
   emailSuccess: {
     errorText: undefined,
-    infoText: "Make sure to pass the email address of the customer.",
+    infoText: "Make sure the email address aligns with the email address you used for the order.",
   },
 
   emailNotMD5Hash: {
@@ -1255,11 +1269,6 @@ const errorsMessages: {
 
   sovendusBannerDisabled: {
     errorText: "ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.",
-    infoText: undefined,
-  },
-
-  noiframeContainerId: {
-    errorText: "ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.",
     infoText: undefined,
   },
 
@@ -1303,6 +1312,11 @@ const errorsMessages: {
     infoText: "Make sure a valid order currency gets passed, valid currencies are: " + validCurrencies,
   },
 
+  currencySuccess: {
+    errorText: undefined,
+    infoText: "Make sure the value aligns with the actual currency of your order.",
+  },
+
   notValidUnixTimestamp: {
     errorText: "A unix timestamp in seconds should be provided",
     infoText: "Make sure to pass a unix timestamp in seconds.",
@@ -1320,7 +1334,7 @@ const errorsMessages: {
 
   orderIdSuccess: {
     errorText: undefined,
-    infoText: "Make sure the value aligns with the actual order id.",
+    infoText: "Make sure the value aligns with the actual order id of your order.",
   },
 
   orderValueMissing: {
@@ -1356,7 +1370,7 @@ const errorsMessages: {
 
   couponCodeSuccess: {
     errorText: undefined,
-    infoText: "Make sure the used coupon code from the order aligns with this value."
+    infoText: "Make sure the used coupon code of your order aligns with this value."
   },
 
   missingConsumerStreet: {
@@ -1366,7 +1380,7 @@ const errorsMessages: {
     
   consumerStreetSuccess: {
     errorText: undefined,
-    infoText: "Make sure this value aligns with the delivery address street name."
+    infoText: "Make sure this value aligns with the delivery address street name of your order."
   },
 
   missingConsumerStreetNumber: {
@@ -1376,7 +1390,7 @@ const errorsMessages: {
     
   consumerStreetNumberSuccess: {
     errorText: undefined,
-    infoText: "Make sure this value aligns with the delivery address street number."
+    infoText: "Make sure this value aligns with the delivery address street number of your order."
   },
 
   missingConsumerZipCode: {
@@ -1386,17 +1400,17 @@ const errorsMessages: {
     
   consumerZipCodeSuccess: {
     errorText: undefined,
-    infoText: "Make sure this value aligns with the delivery address zip code."
+    infoText: "Make sure this value aligns with the delivery address zip code of your order."
   },
 
   missingConsumerPhone: {
     errorText: "DATA IS MISSING",
-    infoText: "Make sure to pass the phone number of the customer.",
+    infoText: "Make sure to pass the phone number.",
   },
     
   consumerPhoneSuccess: {
     errorText: undefined,
-    infoText: "Make sure this value aligns with the customers phone number."
+    infoText: "Make sure this value aligns with the phone number you used for the order."
   },
 
   missingConsumerCity: {
@@ -1406,7 +1420,7 @@ const errorsMessages: {
     
   consumerCitySuccess: {
     errorText: undefined,
-    infoText: "Make sure this value aligns with the delivery address city."
+    infoText: "Make sure this value aligns with the delivery address city you used for the order."
   },
 
   missingConsumerCountry: {
@@ -1416,7 +1430,7 @@ const errorsMessages: {
     
   consumerCountrySuccess: {
     errorText: undefined,
-    infoText: "Make sure this value aligns with the country of the delivery address."
+    infoText: "Make sure this value aligns with the country of the delivery address you used for the order."
   },
 
   missingTrafficSourceNumber: {
@@ -1444,11 +1458,6 @@ const errorsMessages: {
     infoText: "Make sure to pass a iframe container id, this id corresponds to a div with this id on the DOM."
   },
     
-  iframeContainerIdSuccess: {
-    errorText: undefined,
-    infoText: "Make sure this value aligns with a iframe container id, this id corresponds to a div with this id on the DOM."
-  },
-
   missingConsumerFirstName: {
     errorText: "DATA IS MISSING",
     infoText: "Make sure to pass the customers first name.",
@@ -1456,7 +1465,7 @@ const errorsMessages: {
     
   consumerFirstNameSuccess: {
     errorText: undefined,
-    infoText: "Make sure this value aligns with the customers first name"
+    infoText: "Make sure this value aligns with the customers first name you used for the order."
   },
 
   missingConsumerLastName: {
@@ -1466,6 +1475,11 @@ const errorsMessages: {
     
   consumerLastNameSuccess: {
     errorText: undefined,
-    infoText: "Make sure this value aligns with the customers last name"
+    infoText: "Make sure this value aligns with the customers last name you used for the order."
+  },
+
+  consumerSalutationSuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with the salutation you used for the order."
   },
 };
