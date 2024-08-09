@@ -1,8 +1,8 @@
-import { executeOverlayTests } from "../../testUtils";
+import { executeOverlayTests } from "../../../testUtils";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "../sovAppData";
+} from "../../sovAppData";
 
 executeOverlayTests({
   testName: "integrationTypeSet",

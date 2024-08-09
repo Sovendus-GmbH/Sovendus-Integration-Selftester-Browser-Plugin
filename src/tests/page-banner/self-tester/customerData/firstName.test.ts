@@ -2,11 +2,11 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester";
-import { executeOverlayTests } from "../../testUtils";
+import { executeOverlayTests } from "../../../testUtils";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "../sovAppData";
+} from "../../sovAppData";
 
 executeOverlayTests({
   testName: "firstNameSuccess",
@@ -14,7 +14,7 @@ executeOverlayTests({
   testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerFirstName.elementValue).toBe("John");
     expect(sovSelfTester.consumerFirstName.statusCode).toBe(
-      StatusCodes.Warning
+      StatusCodes.SuccessButNeedsReview
     );
     expect(sovSelfTester.consumerFirstName.statusMessageKey).toBe(
       StatusMessageKeyTypes.consumerFirstNameSuccess

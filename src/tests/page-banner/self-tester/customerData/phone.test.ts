@@ -2,18 +2,20 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester";
-import { executeOverlayTests } from "../../testUtils";
+import { executeOverlayTests } from "../../../testUtils";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "../sovAppData";
+} from "../../sovAppData";
 
 executeOverlayTests({
   testName: "phoneSuccess",
   sovAppData: sovAppDataEverythingIsOkay,
   testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerPhone.elementValue).toBe("+4915512005211");
-    expect(sovSelfTester.consumerPhone.statusCode).toBe(StatusCodes.Warning);
+    expect(sovSelfTester.consumerPhone.statusCode).toBe(
+      StatusCodes.SuccessButNeedsReview
+    );
     expect(sovSelfTester.consumerPhone.statusMessageKey).toBe(
       StatusMessageKeyTypes.consumerPhoneSuccess
     );

@@ -2,18 +2,20 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester";
-import { executeOverlayTests } from "../../testUtils";
+import { executeOverlayTests } from "../../../testUtils";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "../sovAppData";
+} from "../../sovAppData";
 
 executeOverlayTests({
   testName: "ZipCodeSuccess",
   sovAppData: sovAppDataEverythingIsOkay,
   testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerZipCode.elementValue).toBe("76135");
-    expect(sovSelfTester.consumerZipCode.statusCode).toBe(StatusCodes.Warning);
+    expect(sovSelfTester.consumerZipCode.statusCode).toBe(
+      StatusCodes.SuccessButNeedsReview
+    );
     expect(sovSelfTester.consumerZipCode.statusMessageKey).toBe(
       StatusMessageKeyTypes.consumerZipCodeSuccess
     );

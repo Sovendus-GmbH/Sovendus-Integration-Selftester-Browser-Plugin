@@ -2,13 +2,13 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester";
-import { executeOverlayTests } from "../../testUtils";
+import { executeOverlayTests } from "../../../testUtils";
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
   sovAppDataMalformedButIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "../sovAppData";
+} from "../../sovAppData";
 
 executeOverlayTests({
   testName: "salutationSuccessMr",
@@ -16,7 +16,7 @@ executeOverlayTests({
   testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerSalutation.elementValue).toBe("Mr.");
     expect(sovSelfTester.consumerSalutation.statusCode).toBe(
-      StatusCodes.Warning
+      StatusCodes.SuccessButNeedsReview
     );
     expect(sovSelfTester.consumerSalutation.statusMessageKey).toBe(
       StatusMessageKeyTypes.consumerSalutationSuccess
@@ -33,7 +33,7 @@ executeOverlayTests({
   testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerSalutation.elementValue).toBe("Mrs.");
     expect(sovSelfTester.consumerSalutation.statusCode).toBe(
-      StatusCodes.Warning
+      StatusCodes.SuccessButNeedsReview
     );
     expect(sovSelfTester.consumerSalutation.statusMessageKey).toBe(
       StatusMessageKeyTypes.consumerSalutationSuccess
