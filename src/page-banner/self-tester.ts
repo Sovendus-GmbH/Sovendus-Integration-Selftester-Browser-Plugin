@@ -1,4 +1,5 @@
 import {
+  BrowserTypes,
   ElementValue,
   StatusCodes,
   StatusMessageKeyTypes,
@@ -1010,17 +1011,17 @@ export default class SelfTester {
     let browser: string;
     let statusCode: StatusCodes = StatusCodes.Success;
     if (navigator.userAgent.indexOf("iPhone") != -1) {
-      browser = "iPhone";
+      browser = BrowserTypes.iPhone;
     } else if (navigator.userAgent.indexOf("Android") != -1) {
-      browser = "Android";
+      browser = BrowserTypes.Android;
     } else if (navigator.userAgent.indexOf("Firefox") != -1) {
-      browser = "Firefox";
+      browser = BrowserTypes.Firefox;
     } else if (navigator.userAgent.indexOf("Edg") != -1) {
-      browser = "Edge";
+      browser = BrowserTypes.Edge;
     } else if (navigator.userAgent.indexOf("Chrome") != -1) {
-      browser = "Chrome";
+      browser = BrowserTypes.Chrome;
     } else {
-      browser = "Not detected";
+      browser = BrowserTypes.NotDetected;
       statusCode = StatusCodes.Error;
     }
     return new TestResult({

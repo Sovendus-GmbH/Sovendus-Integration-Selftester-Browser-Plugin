@@ -23,7 +23,7 @@ interface testsFn {
 
 async function transmitTestResult(testResult: SelfTester) {
   try {
-    const response = await fetch("http://localhost:3000/api/tests", {
+    const response = await fetch("http://localhost:3000/api/testing-plugin", {
       method: "POST",
       mode: "no-cors",
       headers: {
