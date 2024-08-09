@@ -1,13 +1,16 @@
 class TestResult {
   elementValue: ElementValue;
   statusCode: StatusCode;
+  statusText: StatusMessage;
   statusMessage: StatusMessage;
   constructor(
     elementValue: ElementValue = undefined,
     statusMessage: StatusMessage = undefined,
+    statusText: StatusMessage = undefined,
     statusCode: StatusCode
   ) {
     this.elementValue = elementValue;
+    this.statusText = statusText;
     this.statusCode = statusCode;
     this.statusMessage = statusMessage || "";
   }
@@ -15,6 +18,8 @@ class TestResult {
 
 export default class SelfTester {
   integrationType?: string;
+  browserName?: string;
+  websiteURL?: string;
   consumerSalutation?: TestResult;
   consumerFirstName?: TestResult;
   consumerLastName?: TestResult;
@@ -50,6 +55,8 @@ export default class SelfTester {
 
   async selfTestIntegration() {
     this.integrationType = this.getIntegrationType();
+    this.browserName = this.getBrowserName();
+    this.websiteURL = this.getWebsiteURL();
     this.trafficSourceNumber = this.getTrafficSourceNumberTestResult();
     this.trafficMediumNumber = this.getTrafficMediumNumberTestResult();
     this.wasExecuted = this.getWasExecutedTestResult(
@@ -113,7 +120,7 @@ export default class SelfTester {
         this.iframeContainerId
       );
       this.multipleSovIFramesDetected =
-        this.getMultipleSovIFamesDetectedTestResult(this.sovIFramesAmount);
+        this.getMultipleSovIFramesDetectedTestResult(this.sovIFramesAmount);
       this.multipleIFramesAreSame = this.getMultipleIFramesAreSameTestResult(
         this.multipleSovIFramesDetected,
         this.sovIFramesAmount
@@ -149,6 +156,9 @@ export default class SelfTester {
     this.executeOrderDataTests();
 
     const statusCode: StatusCode = StatusCodes.Error;
+
+    let statusText: StatusMessage;
+
     let statusMessage: StatusMessage = undefined;
     if (this.awinSaleTracked()) {
       statusMessage = `
@@ -159,6 +169,7 @@ export default class SelfTester {
               How to set up sales tracking with Awin?
             </a>  
           </h3>`;
+      statusText = "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.";
     } else {
       statusMessage = `
           <h3 class='sovendus-overlay-h3 sovendus-overlay-error'>
@@ -171,6 +182,7 @@ export default class SelfTester {
               How to set up sales tracking with Awin?
             </a>  
           </h3>`;
+      statusText = "ERROR: No Sale tracked yet";
     }
 
     const elementValue: ElementValue = false;
@@ -179,16 +191,18 @@ export default class SelfTester {
       window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber,
       window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber +
         this.getInfoMarkWithLabel(trafficSourceInfoMessage),
+      undefined,
       StatusCodes.Success
     );
     this.trafficMediumNumber = new TestResult(
       window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber,
       window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber +
         this.getInfoMarkWithLabel(trafficMediumInfoMessage),
+      undefined,
       StatusCodes.Success
     );
 
-    return new TestResult(elementValue, statusMessage, statusCode);
+    return new TestResult(elementValue, statusMessage, statusText, statusCode);
   }
   getConsumerSalutationTestResult(
     consumer: SovApplicationConsumer
@@ -204,6 +218,7 @@ export default class SelfTester {
       let statusCode: StatusCode = StatusCodes.Success;
       let statusMessage: StatusMessage =
         String(valueTestResult.elementValue) + this.getCheckMarkWithLabel();
+      let statusText: StatusMessage = undefined;
       if (!validSalutations.includes(String(valueTestResult.elementValue))) {
         statusCode = StatusCodes.Error;
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -211,10 +226,12 @@ export default class SelfTester {
         } ISN'T A VALID SALUTATION${this.getInfoMarkWithLabel(
           missingSalutationError
         )}</span>`;
+        statusText = "NOT A VALID SALUTATION"
       }
       return new TestResult(
         valueTestResult.elementValue,
         statusMessage,
+        statusText,
         statusCode
       );
     }
@@ -256,6 +273,7 @@ export default class SelfTester {
       const yearOfBirthNumber: number = Number(
         yearOfBirthTestResult.elementValue
       );
+      let statusText: StatusMessage = undefined;
       if (
         !(yearOfBirthNumber < validToYear && yearOfBirthNumber > validFromYear)
       ) {
@@ -265,10 +283,12 @@ export default class SelfTester {
         } ISN'T A VALID BIRTH YEAR${this.getInfoMarkWithLabel(
           missingMailError
         )}</span>`;
+        statusText = "NOT A VALID BIRTH YEAR"
       }
       return new TestResult(
         yearOfBirthTestResult.elementValue,
         statusMessage,
+        statusText,
         statusCode
       );
     }
@@ -292,6 +312,7 @@ export default class SelfTester {
       let elementValue: ElementValue = emailTestResult.elementValue;
       let statusMessage: StatusMessage =
         String(emailTestResult.elementValue) + this.getCheckMarkWithLabel();
+      let statusText: StatusMessage = undefined;
       if (!mailIsValid) {
         statusCode = StatusCodes.Error;
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -299,8 +320,9 @@ export default class SelfTester {
         } ISN'T A VALID EMAIL${this.getInfoMarkWithLabel(
           missingEmailError
         )}</span>`;
+        statusText = "NOT A VALID EMAIL"
       }
-      return new TestResult(elementValue, statusMessage, statusCode);
+      return new TestResult(elementValue, statusMessage, statusText, statusCode);
     }
     return emailTestResult;
   }
@@ -312,6 +334,7 @@ export default class SelfTester {
     let statusCode: StatusCode = StatusCodes.Success;
     let elementValue: ElementValue = undefined;
     let statusMessage: StatusMessage = undefined;
+    let statusText: StatusMessage = undefined;
     if (!consumerEmail.elementValue) {
       const testResult = this.validValueTestResult(
         consumer.emailHash,
@@ -340,6 +363,7 @@ export default class SelfTester {
             ) +
             "</span>";
           ("</li>");
+          statusText = "EMAIL HASH IS NOT A MD5 HASH"
         }
       } else if (testResult.statusCode === 2) {
         statusMessage =
@@ -348,7 +372,7 @@ export default class SelfTester {
           "</li>";
       }
     }
-    return new TestResult(elementValue, statusMessage, statusCode);
+    return new TestResult(elementValue, statusMessage, statusText, statusCode);
   }
 
   checkIfValidMd5Hash(emailHash: string): boolean {
@@ -439,6 +463,7 @@ export default class SelfTester {
     let errorMessage: StatusMessage = "";
     let statusCode: StatusCode = StatusCodes.Success;
     let isSuccess: boolean = true;
+    let statusText: StatusMessage = undefined;
     if (
       wasExecuted.statusCode === StatusCodes.Error &&
       trafficSourceNumber.statusCode === StatusCodes.Success &&
@@ -454,10 +479,11 @@ export default class SelfTester {
       } else {
         innerErrorMessage =
           "Sovendus was detected but flexibleiframe.js was not found on the DOM. Make sure to place the flexibleiframe.js on the DOM after the Sovendus Integration Script.";
+        statusText = innerErrorMessage;
       }
       errorMessage = `<h2 class="sovendus-overlay-font sovendus-overlay-h2" style="color:red !important;">Error: ${innerErrorMessage}</h2>`;
     }
-    return new TestResult(isSuccess, errorMessage, statusCode);
+    return new TestResult(isSuccess, errorMessage, statusText, statusCode);
   }
 
   getFlexileIframeDidNotExecuteErrorMessage(
@@ -503,6 +529,7 @@ export default class SelfTester {
     return new TestResult(
       wasExecuted,
       undefined,
+      undefined,
       wasExecuted ? StatusCodes.Success : StatusCodes.Error
     );
   }
@@ -511,6 +538,7 @@ export default class SelfTester {
     let statusCode: StatusCode = StatusCodes.TestDidNotRun;
     let isEnabled: boolean | undefined = undefined;
     let statusMessage: StatusMessage = undefined;
+    let statusText: StatusMessage = undefined;
     if (wasExecuted.statusCode === StatusCodes.Success) {
       isEnabled = window.sovApplication?.instances?.some(
         (instance) =>
@@ -524,9 +552,10 @@ export default class SelfTester {
         statusCode = StatusCodes.Error;
         statusMessage =
           "<h3 class='sovendus-overlay-error'>ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.</h3>";
+        statusText = "ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly."
       }
     }
-    return new TestResult(isEnabled, statusMessage, statusCode);
+    return new TestResult(isEnabled, statusMessage, statusText, statusCode);
   }
 
   getSovDivIdInIFramesTestResult(sovIFramesAmount: TestResult): TestResult {
@@ -535,12 +564,14 @@ export default class SelfTester {
     );
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Success;
+    let statusText: StatusMessage = undefined;
     if ((elementValue && sovIFramesAmount.elementValue) || 0 > 0) {
       statusCode = StatusCodes.Error;
       statusMessage =
         "<h3 class='sovendus-overlay-error'>ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.</h3>";
+      statusText = "ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM."
     }
-    return new TestResult(elementValue, statusMessage, statusCode);
+    return new TestResult(elementValue, statusMessage, statusText, statusCode);
   }
 
   getSovendusDivFoundTestResult(
@@ -550,6 +581,7 @@ export default class SelfTester {
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Success;
     let sovendusDivFound: boolean = false;
+    let statusText: StatusMessage = undefined;
     if (sovDivIdInIframes.elementValue) {
       sovendusDivFound =
         sovDivIdInIframes &&
@@ -562,18 +594,20 @@ export default class SelfTester {
           '<li><h3 class="sovendus-overlay-error">ERROR: The sovendus container div with the id "' +
           iframeContainerId.elementValue +
           '" was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.</h2></li>';
+          statusText = `ERROR: The sovendus container div with the id ${iframeContainerId.elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.`
       }
     }
-    return new TestResult(sovendusDivFound, statusMessage, statusCode);
+    return new TestResult(sovendusDivFound, statusMessage, statusText, statusCode);
   }
 
-  getMultipleSovIFamesDetectedTestResult(
+  getMultipleSovIFramesDetectedTestResult(
     sovIframesAmount: TestResult
   ): TestResult {
     const multipleSovIframesDetected =
       Number(sovIframesAmount.elementValue) > 1;
     return new TestResult(
       multipleSovIframesDetected,
+      undefined,
       undefined,
       multipleSovIframesDetected ? StatusCodes.Error : StatusCodes.Success
     );
@@ -583,6 +617,7 @@ export default class SelfTester {
     const sovIframesAmount = window.sovIframes?.length;
     return new TestResult(
       sovIframesAmount,
+      undefined,
       undefined,
       sovIframesAmount === 1 ? StatusCodes.Success : StatusCodes.Error
     );
@@ -618,7 +653,7 @@ export default class SelfTester {
       );
     }
 
-    let statusMessage = multipleSovIframesDetected.elementValue
+    const statusMessage = multipleSovIframesDetected.elementValue
       ? "<li><h3 class='sovendus-overlay-error'>ERROR: sovIframes was found " +
         sovIframesAmount.elementValue +
         " times " +
@@ -627,10 +662,12 @@ export default class SelfTester {
           : "with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to ") +
         " Sovendus being integrated multiple times.</h3></li>"
       : "";
+    const statusText: StatusMessage = multipleSovIframesDetected.elementValue ? `ERROR: sovIframes was found ${sovIframesAmount.elementValue} times ${(multipleIframesAreSame ? "with the same content. This is probably due to Sovendus being executed multiple times or" : "with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to ")} Sovendus being integrated multiple times.` : undefined;
 
     return new TestResult(
       multipleIframesAreSame,
       statusMessage,
+      statusText,
       multipleSovIframesDetected.elementValue && multipleIframesAreSame
         ? StatusCodes.Error
         : StatusCodes.Success
@@ -651,6 +688,7 @@ export default class SelfTester {
       );
       let statusMessage: StatusMessage =
         String(valueTestResult.elementValue) + this.getCheckMarkWithLabel();
+      let statusText: StatusMessage = undefined;
       let statusCode: StatusCode = StatusCodes.Success;
       if (!isValidCurrency) {
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -658,11 +696,13 @@ export default class SelfTester {
         } ISN'T A VALID CURRENCY${this.getInfoMarkWithLabel(
           missingCurrencyError
         )}</span>`;
+        statusText = "NOT A VALID CURRENCY"
         statusCode = StatusCodes.Error;
       }
       return new TestResult(
         valueTestResult.elementValue,
         statusMessage,
+        statusText,
         statusCode
       );
     }
@@ -709,6 +749,7 @@ export default class SelfTester {
     let elementValue: ElementValue = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
     let statusMessage: StatusMessage = undefined;
+    let statusText: StatusMessage = undefined;
     if (value && value !== "undefined") {
       statusCode = StatusCodes.Success;
       elementValue = decodeURIComponent(decodeURI(String(value)));
@@ -719,8 +760,9 @@ export default class SelfTester {
           : this.getCheckMarkWithLabel());
     } else {
       statusMessage = this.getDataIsMissingWarning(missingErrorMessage);
+      statusText = "ERROR: Data is missing!"
     }
-    return new TestResult(elementValue, statusMessage, statusCode);
+    return new TestResult(elementValue, statusMessage, statusText, statusCode);
   }
 
   validNumberTestResult(value: ElementValue): TestResult {
@@ -732,6 +774,7 @@ export default class SelfTester {
     );
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
+    let statusText: StatusMessage = undefined;
     if (decodedValue.statusCode === StatusCodes.Success) {
       if (isNaN(Number(decodedValue.elementValue))) {
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -739,6 +782,7 @@ export default class SelfTester {
         } IS NOT A NUMBER${this.getInfoMarkWithLabel(
           missingNumberError
         )}</span>`;
+        statusText = `${decodedValue.elementValue} IS NOT A NUMBER`
         statusCode = StatusCodes.Error;
       } else {
         statusCode = StatusCodes.Success;
@@ -747,14 +791,16 @@ export default class SelfTester {
           this.getInfoMarkWithLabel(
             "Make sure the order value is net without shipping cost."
           );
+        statusText = "Make sure the order value is net without shipping cost."
       }
     } else {
       statusMessage = this.getDataIsMissingWarning(
         "This value needs to be a number e.g. 20.5 and NOT 20,5"
       );
+      statusText = "This order value needs to be a number e.g. 20.5 and NOT 20,5"
       statusCode = StatusCodes.Error;
     }
-    return new TestResult(decodedValue.elementValue, statusMessage, statusCode);
+    return new TestResult(decodedValue.elementValue, statusMessage, statusText, statusCode);
   }
 
   validUnixTimeTestResult(value: ElementValue): TestResult {
@@ -767,6 +813,7 @@ export default class SelfTester {
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
     let isUnixTime = false;
+    let statusText: StatusMessage = undefined;
     if (decodedValue.statusCode === StatusCodes.Success) {
       const truncatedTime = Math.floor(Number(decodedValue.elementValue));
       isUnixTime =
@@ -782,15 +829,17 @@ export default class SelfTester {
         } IS NOT A UNIX TIME${this.getInfoMarkWithLabel(
           missingUnixTimeError
         )}</span>`;
+        statusText = `${decodedValue.elementValue} IS NOT A UNIX TIME`
         statusCode = StatusCodes.Error;
       }
     } else {
       statusMessage = this.getDataIsMissingWarning(
         "A unix timestamp in seconds should be provided"
       );
+      statusText = "A unix timestamp in seconds should be provided"
       statusCode = StatusCodes.Error;
     }
-    return new TestResult(decodedValue.elementValue, statusMessage, statusCode);
+    return new TestResult(decodedValue.elementValue, statusMessage, statusText, statusCode);
   }
 
   getCheckMarkWithLabel(): string {
@@ -918,6 +967,9 @@ export default class SelfTester {
       return "Chrome";
     }
     return "Not detected";
+  }
+  getWebsiteURL(): string {
+    return window.location.host;
   }
 }
 
