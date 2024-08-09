@@ -1,7 +1,7 @@
 import {
   StatusCodes,
   StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester";
+} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { executeOverlayTests } from "../../../testUtils";
 import {
   sovAppConsumerAllValidData,
