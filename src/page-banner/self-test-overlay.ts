@@ -150,12 +150,14 @@ class SelfTesterOverlay {
             <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerEmail: ${testResult.consumerEmail.getFormattedStatusMessage()}
             </li>
-            ${
-              testResult.consumerEmailHash.statusCode !==
-              StatusCodes.TestDidNotRun
-                ? testResult.consumerEmailHash.getFormattedStatusMessage()
-                : ""
-            }            
+            <li class='sovendus-overlay-font sovendus-overlay-text'>
+              consumerEmailHash: ${
+                testResult.consumerEmailHash.statusCode !==
+                StatusCodes.TestDidNotRun
+                  ? testResult.consumerEmailHash.getFormattedStatusMessage()
+                  : ""
+              }
+            </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerPhone: ${testResult.consumerPhone.getFormattedStatusMessage()}
             </li>
