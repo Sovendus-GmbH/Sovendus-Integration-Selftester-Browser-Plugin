@@ -1,28 +1,33 @@
 import { executeOverlayTests } from "../../testUtils";
+import {
+  sovAppDataEverythingIsOkay,
+  sovAppDataMalformedButIsOkay,
+  sovAppDataNoParameterButIsOkay,
+} from "../sovAppData";
 
-executeOverlayTests(
-  "integrationTypeSet",
-  "everythingIsOkay.html",
-  async (driver, sovSelfTester) => {
+executeOverlayTests({
+  testName: "integrationTypeSet",
+  sovAppData: sovAppDataEverythingIsOkay,
+  testFunction: async (driver, sovSelfTester) => {
     expect(sovSelfTester.integrationType).toBe("test-1.0.0");
-  }
-);
+  },
+});
 
-executeOverlayTests(
-  "integrationTypeNotSet",
-  "noParameterButOkay.html",
-  async (driver, sovSelfTester) => {
+executeOverlayTests({
+  testName: "integrationTypeNotSet",
+  sovAppData: sovAppDataNoParameterButIsOkay,
+  testFunction: async (driver, sovSelfTester) => {
     expect(sovSelfTester.integrationType).toBe("unknown");
-  }
-);
+  },
+});
 
-executeOverlayTests(
-  "integrationTypeNotSet",
-  "noParameterButOkay.html",
-  async (driver, sovSelfTester) => {
+executeOverlayTests({
+  testName: "integrationTypeNotSet",
+  sovAppData: sovAppDataMalformedButIsOkay,
+  testFunction: async (driver, sovSelfTester) => {
     expect(sovSelfTester.integrationType).toBe("unknown");
-  }
-);
+  },
+});
 
 // executeOverlayTests(
 //   "integrationTypeMalformed",
