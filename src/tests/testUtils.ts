@@ -1,7 +1,7 @@
 import { Builder, Browser, By, until, WebDriver } from "selenium-webdriver";
-import { Options } from "selenium-webdriver/chrome";
-import * as path from "path";
-import * as url from "url";
+import { Options as ChromeOptions } from "selenium-webdriver/chrome";
+import { Options as EdgeOptions } from "selenium-webdriver/edge";
+import { Options as FirefoxOptions } from "selenium-webdriver/firefox";
 
 import {
   getSovAppData,
@@ -9,12 +9,21 @@ import {
   SovFinalDataType,
 } from "./page-banner/sovAppData";
 import SelfTester from "@src/page-banner/self-tester";
+import { resolve } from "path";
+import { pathToFileURL } from "url";
+
+const browserOptions = {
+  chrome: ChromeOptions,
+  MicrosoftEdge: EdgeOptions,
+  firefox: FirefoxOptions,
+};
 
 export async function executeOverlayTests({
   testName,
   sovAppData,
   testFunction,
   testOnly,
+  browser = Browser.CHROME,
 }: {
   testName: string;
   sovAppData: SovDataType;
@@ -26,29 +35,43 @@ export async function executeOverlayTests({
     sovSelfTester: SelfTester;
   }) => Promise<void>;
   testOnly?: boolean;
+  browser?: "chrome" | "MicrosoftEdge" | "firefox" | "safari";
 }) {
   const jestFunction = testOnly ? test.only : test;
   jestFunction(
     testName,
     async () => {
-      const extensionPath = path.resolve(
+      const extensionPath = resolve(
         __dirname,
         "../../release_zips/chrome-test-sovendus-integration_TESTING.crx"
       );
 
-      const options = new Options();
+      const options = new browserOptions[browser]();
       options.addArguments("--disable-search-engine-choice-screen");
       options.addArguments("--auto-open-devtools-for-tabs");
       options.addExtensions(extensionPath);
-      const driver = new Builder()
-        .forBrowser(Browser.CHROME)
-        .setChromeOptions(options)
-        .build();
-      const localFilePath = path.resolve(
+      let driver: WebDriver;
+      if (browser === Browser.CHROME) {
+        driver = new Builder()
+          .forBrowser(browser)
+          .setChromeOptions(options)
+          .build();
+      } else if (browser === Browser.EDGE) {
+        driver = new Builder()
+          .forBrowser(browser)
+          .setEdgeOptions(options)
+          .build();
+      } else {
+        driver = new Builder()
+          .forBrowser(browser)
+          .setFirefoxOptions(options)
+          .build();
+      }
+      const localFilePath = resolve(
         __dirname,
         "page-banner/testHtmlFiles/empty.html"
       );
-      const fileUrl = url.pathToFileURL(localFilePath).toString();
+      const fileUrl = pathToFileURL(localFilePath).toString();
       const _sovAppData = getSovAppData(sovAppData);
       try {
         await prepareTestPageAndRetryForever(_sovAppData, driver, fileUrl);
