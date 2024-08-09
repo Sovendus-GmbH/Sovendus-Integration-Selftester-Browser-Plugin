@@ -48,7 +48,7 @@ export async function executeOverlayTests({
 
       const options = new browserOptions[browser]();
       options.addArguments("--disable-search-engine-choice-screen");
-      options.addArguments("--auto-open-devtools-for-tabs");
+      // options.addArguments("--auto-open-devtools-for-tabs");
       options.addExtensions(extensionPath);
       let driver: WebDriver;
       if (browser === Browser.CHROME) {

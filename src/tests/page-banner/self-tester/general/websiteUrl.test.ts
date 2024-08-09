@@ -9,6 +9,6 @@ executeOverlayTests({
   testFunction: async ({ sovSelfTester }) => {
     const localFilePath = resolve(__dirname, "../../testHtmlFiles/empty.html");
     const fileUrl = pathToFileURL(localFilePath).toString();
-    expect(sovSelfTester.websiteURL).toBe(fileUrl);
+    expect(sovSelfTester.websiteURL.elementValue).toBe(fileUrl);
   },
 });

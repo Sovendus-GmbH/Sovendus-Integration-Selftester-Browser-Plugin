@@ -3,14 +3,15 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
   statusMessages,
+  TestResultResponseDataType,
   validCountries,
   validCurrencies,
 } from "./self-tester-data-to-sync-with-dev-hub.js";
 
 export default class SelfTester {
-  integrationType?: string;
-  browserName?: string;
-  websiteURL?: string;
+  integrationType: TestResult;
+  browserName: TestResult;
+  websiteURL: TestResult;
   consumerSalutation: TestResult;
   consumerFirstName: TestResult;
   consumerLastName: TestResult;
@@ -52,6 +53,9 @@ export default class SelfTester {
       statusCode: StatusCodes.TestDidNotRun,
       statusMessageKey: StatusMessageKeyTypes.empty,
     });
+    this.integrationType = emptyTestResult;
+    this.browserName = emptyTestResult;
+    this.websiteURL = emptyTestResult;
     this.consumerSalutation = emptyTestResult;
     this.consumerFirstName = emptyTestResult;
     this.consumerLastName = emptyTestResult;
@@ -175,13 +179,16 @@ export default class SelfTester {
     this.usedCouponCode = this.getUsedCouponCodeTestResult();
   }
 
-  getIntegrationType(): string {
-    return (
-      window.sovIframes?.[0]?.integrationType ||
-      (this.awinIntegrationDetected()
-        ? `Awin (Merchant ID: ${this.getAwinMerchantId()})`
-        : "unknown")
-    );
+  getIntegrationType(): TestResult {
+    return new TestResult({
+      elementValue:
+        window.sovIframes?.[0]?.integrationType ||
+        (this.awinIntegrationDetected()
+          ? `Awin (Merchant ID: ${this.getAwinMerchantId()})`
+          : "unknown"),
+      statusCode: StatusCodes.Success,
+      statusMessageKey: undefined,
+    });
   }
 
   getAwinNotExecutedTestResult(): TestResult {
@@ -999,27 +1006,145 @@ export default class SelfTester {
     console.log("Sovendus banner loaded");
   }
 
-  getBrowserName(): string {
+  getBrowserName(): TestResult {
+    let browser: string;
+    let statusCode: StatusCodes = StatusCodes.Success;
     if (navigator.userAgent.indexOf("iPhone") != -1) {
-      return "iPhone";
+      browser = "iPhone";
+    } else if (navigator.userAgent.indexOf("Android") != -1) {
+      browser = "Android";
+    } else if (navigator.userAgent.indexOf("Firefox") != -1) {
+      browser = "Firefox";
+    } else if (navigator.userAgent.indexOf("Edg") != -1) {
+      browser = "Edge";
+    } else if (navigator.userAgent.indexOf("Chrome") != -1) {
+      browser = "Chrome";
+    } else {
+      browser = "Not detected";
+      statusCode = StatusCodes.Error;
     }
-    if (navigator.userAgent.indexOf("Android") != -1) {
-      return "Android";
-    }
-    if (navigator.userAgent.indexOf("Firefox") != -1) {
-      return "Firefox";
-    }
-    if (navigator.userAgent.indexOf("Edg") != -1) {
-      return "Edge";
-    }
-    if (navigator.userAgent.indexOf("Chrome") != -1) {
-      return "Chrome";
-    }
-    return "Not detected";
+    return new TestResult({
+      elementValue: browser,
+      statusCode,
+      statusMessageKey: undefined,
+    });
   }
 
-  getWebsiteURL(): string {
-    return window.location.href;
+  getWebsiteURL(): TestResult {
+    return new TestResult({
+      elementValue: window.location.href,
+      statusCode: StatusCodes.Success,
+      statusMessageKey: undefined,
+    });
+  }
+
+  getTestResultResponseData(): TestResultResponseDataType {
+    return {
+      integrationType: this.integrationType,
+      browserName: this.browserName,
+      websiteURL: this.websiteURL,
+      ...(this.consumerSalutation.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerSalutation: this.consumerSalutation }
+        : {}),
+      ...(this.consumerFirstName.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerFirstName: this.consumerFirstName }
+        : {}),
+      ...(this.consumerLastName.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerLastName: this.consumerLastName }
+        : {}),
+      ...(this.consumerYearOfBirth.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerYearOfBirth: this.consumerYearOfBirth }
+        : {}),
+      ...(this.consumerEmail.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerEmail: this.consumerEmail }
+        : {}),
+      ...(this.consumerEmailHash.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerEmailHash: this.consumerEmailHash }
+        : {}),
+      ...(this.consumerStreet.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerStreet: this.consumerStreet }
+        : {}),
+      ...(this.consumerStreetNumber.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerStreetNumber: this.consumerStreetNumber }
+        : {}),
+      ...(this.consumerZipCode.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerZipCode: this.consumerZipCode }
+        : {}),
+      ...(this.consumerPhone.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerPhone: this.consumerPhone }
+        : {}),
+      ...(this.consumerCity.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerCity: this.consumerCity }
+        : {}),
+      ...(this.consumerCountry.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerCountry: this.consumerCountry }
+        : {}),
+      ...(this.trafficSourceNumber.statusCode !== StatusCodes.TestDidNotRun
+        ? { trafficSourceNumber: this.trafficSourceNumber }
+        : {}),
+      ...(this.trafficMediumNumber.statusCode !== StatusCodes.TestDidNotRun
+        ? { trafficMediumNumber: this.trafficMediumNumber }
+        : {}),
+      ...(this.orderCurrency.statusCode !== StatusCodes.TestDidNotRun
+        ? { orderCurrency: this.orderCurrency }
+        : {}),
+      ...(this.orderId.statusCode !== StatusCodes.TestDidNotRun
+        ? { orderId: this.orderId }
+        : {}),
+      ...(this.orderValue.statusCode !== StatusCodes.TestDidNotRun
+        ? { orderValue: this.orderValue }
+        : {}),
+      ...(this.sessionId.statusCode !== StatusCodes.TestDidNotRun
+        ? { sessionId: this.sessionId }
+        : {}),
+      ...(this.timestamp.statusCode !== StatusCodes.TestDidNotRun
+        ? { timestamp: this.timestamp }
+        : {}),
+      ...(this.usedCouponCode.statusCode !== StatusCodes.TestDidNotRun
+        ? { usedCouponCode: this.usedCouponCode }
+        : {}),
+      ...(this.iframeContainerId.statusCode !== StatusCodes.TestDidNotRun
+        ? { iframeContainerId: this.iframeContainerId }
+        : {}),
+      ...(this.isEnabledInBackend.statusCode !== StatusCodes.TestDidNotRun
+        ? { isEnabledInBackend: this.isEnabledInBackend }
+        : {}),
+      ...(this.wasExecuted.statusCode !== StatusCodes.TestDidNotRun
+        ? { wasExecuted: this.wasExecuted }
+        : {}),
+      ...(this.awinTest.statusCode !== StatusCodes.TestDidNotRun
+        ? { awinTest: this.awinTest }
+        : {}),
+      ...(this.sovendusDivFound.statusCode !== StatusCodes.TestDidNotRun
+        ? { sovendusDivFound: this.sovendusDivFound }
+        : {}),
+      ...(this.sovDivIdInIFrames.statusCode !== StatusCodes.TestDidNotRun
+        ? { sovDivIdInIFrames: this.sovDivIdInIFrames }
+        : {}),
+      ...(this.multipleSovIFramesDetected.statusCode !==
+      StatusCodes.TestDidNotRun
+        ? { multipleSovIFramesDetected: this.multipleSovIFramesDetected }
+        : {}),
+      ...(this.sovIFramesAmount.statusCode !== StatusCodes.TestDidNotRun
+        ? { sovIFramesAmount: this.sovIFramesAmount }
+        : {}),
+      ...(this.multipleIFramesAreSame.statusCode !== StatusCodes.TestDidNotRun
+        ? { multipleIFramesAreSame: this.multipleIFramesAreSame }
+        : {}),
+      ...(this.flexibleIFrameOnDOM.statusCode !== StatusCodes.TestDidNotRun
+        ? { flexibleIFrameOnDOM: this.flexibleIFrameOnDOM }
+        : {}),
+      ...(this.isFlexibleIframeExecutable.statusCode !==
+      StatusCodes.TestDidNotRun
+        ? { isFlexibleIframeExecutable: this.isFlexibleIframeExecutable }
+        : {}),
+      ...(this.isSovendusJsOnDom.statusCode !== StatusCodes.TestDidNotRun
+        ? { isSovendusJsOnDom: this.isSovendusJsOnDom }
+        : {}),
+      ...(this.isSovendusJsExecutable.statusCode !== StatusCodes.TestDidNotRun
+        ? { isSovendusJsExecutable: this.isSovendusJsExecutable }
+        : {}),
+    };
   }
 }
 

@@ -8,7 +8,7 @@ executeOverlayTests({
   testName: "integrationTypeSet",
   sovAppData: sovAppDataEverythingIsOkay,
   testFunction: async ({ sovSelfTester }) => {
-    expect(sovSelfTester.integrationType).toBe("test-1.0.0");
+    expect(sovSelfTester.integrationType.elementValue).toBe("test-1.0.0");
   },
 });
 
@@ -16,7 +16,7 @@ executeOverlayTests({
   testName: "integrationTypeNotSet",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async ({ sovSelfTester }) => {
-    expect(sovSelfTester.integrationType).toBe("unknown");
+    expect(sovSelfTester.integrationType.elementValue).toBe("unknown");
   },
 });
 
