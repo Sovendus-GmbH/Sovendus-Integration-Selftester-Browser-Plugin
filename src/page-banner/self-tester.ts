@@ -272,7 +272,7 @@ export default class SelfTester {
       let statusCode: StatusCode = StatusCodes.Success;
       let statusMessage: StatusMessage =
         String(valueTestResult.elementValue) + this.getCheckMarkWithLabel();
-      let statusMessageKey: MessageKeyTypes = undefined;
+      let statusMessageKey: MessageKeyTypes;
       if (!validSalutations.includes(String(valueTestResult.elementValue))) {
         statusCode = StatusCodes.Error;
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -327,7 +327,7 @@ export default class SelfTester {
       const yearOfBirthNumber: number = Number(
         yearOfBirthTestResult.elementValue
       );
-      let statusMessageKey: MessageKeyTypes = undefined;
+      let statusMessageKey: MessageKeyTypes;
       if (
         !(yearOfBirthNumber < validToYear && yearOfBirthNumber > validFromYear)
       ) {
@@ -393,7 +393,7 @@ export default class SelfTester {
     let statusCode: StatusCode = StatusCodes.Success;
     let elementValue: ElementValue = undefined;
     let statusMessage: StatusMessage = undefined;
-    let statusMessageKey: MessageKeyTypes = undefined;
+    let statusMessageKey: MessageKeyTypes;
     if (!consumerEmail.elementValue) {
       const testResult = this.validValueTestResult(
         consumer.emailHash,
@@ -532,7 +532,7 @@ export default class SelfTester {
     let errorMessage: StatusMessage = "";
     let statusCode: StatusCode = StatusCodes.Success;
     let isSuccess: boolean = true;
-    let statusMessageKey: MessageKeyTypes = undefined;
+    let statusMessageKey: MessageKeyTypes;
     if (
       wasExecuted.statusCode === StatusCodes.Error &&
       trafficSourceNumber.statusCode === StatusCodes.Success &&
@@ -566,7 +566,7 @@ export default class SelfTester {
     statusMessageKey: MessageKeyTypes;
   } {
     let innerErrorMessage: string = "";
-    let statusMessageKey: MessageKeyTypes = undefined;
+    let statusMessageKey: MessageKeyTypes;
     if (this.checkIfFlexibleIframeIsExecutable(flexibleIframeJs)) {
       const sovendusJs: HTMLScriptElement = document.getElementById(
         "sovloader-script"
@@ -628,7 +628,7 @@ export default class SelfTester {
     let statusCode: StatusCode = StatusCodes.TestDidNotRun;
     let isEnabled: boolean | undefined = undefined;
     let statusMessage: StatusMessage = undefined;
-    let statusMessageKey: MessageKeyTypes = undefined;
+    let statusMessageKey: MessageKeyTypes;
     if (wasExecuted.statusCode === StatusCodes.Success) {
       isEnabled = window.sovApplication?.instances?.some(
         (instance) =>
@@ -658,7 +658,7 @@ export default class SelfTester {
     );
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Success;
-    let statusMessageKey: MessageKeyTypes = undefined;
+    let statusMessageKey: MessageKeyTypes;
     if ((elementValue && sovIFramesAmount.elementValue) || 0 > 0) {
       statusCode = StatusCodes.Error;
       statusMessage = `<h3 class='sovendus-overlay-error'>${errorsMessages.noiframeContainerId.errorText}</h3>`;
@@ -679,7 +679,7 @@ export default class SelfTester {
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Success;
     let sovendusDivFound: boolean = false;
-    let statusMessageKey: MessageKeyTypes = undefined;
+    let statusMessageKey: MessageKeyTypes;
     if (sovDivIdInIframes.elementValue) {
       sovendusDivFound =
         sovDivIdInIframes &&
@@ -865,7 +865,7 @@ export default class SelfTester {
     let elementValue: ElementValue = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
     let statusMessage: StatusMessage = undefined;
-    let statusMessageKey: MessageKeyTypes = undefined;
+    let statusMessageKey: MessageKeyTypes;
     if (value && value !== "undefined") {
       statusCode = StatusCodes.Success;
       elementValue = decodeURIComponent(decodeURI(String(value)));
@@ -900,7 +900,7 @@ export default class SelfTester {
     );
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
-    let statusMessageKey: MessageKeyTypes = undefined;
+    let statusMessageKey: MessageKeyTypes;
     if (decodedValue.statusCode === StatusCodes.Success) {
       if (isNaN(Number(decodedValue.elementValue))) {
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -942,7 +942,7 @@ export default class SelfTester {
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
     let isUnixTime = false;
-    let statusMessageKey: MessageKeyTypes = undefined;
+    let statusMessageKey: MessageKeyTypes;
     if (decodedValue.statusCode === StatusCodes.Success) {
       const truncatedTime = Math.floor(Number(decodedValue.elementValue));
       isUnixTime =
@@ -1288,8 +1288,8 @@ const validCurrencies = ["EUR", "GBP", "CHF", "PLN", "SEK", "DKK", "NOK"];
 
 const errorsMessages: {
   [errorKey in MessageKeyTypes]: {
-    errorText: string | undefined;
-    infoText: string | undefined;
+    errorText: string;
+    infoText: string;
   };
 } = {
   awinNoSalesTracked: {
@@ -1320,7 +1320,7 @@ const errorsMessages: {
   },
 
   consumerYearOfBirthSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure the year of birth aligns with the year of birth you used for the order.",
   },
@@ -1336,7 +1336,7 @@ const errorsMessages: {
   },
 
   consumerEmailSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure the email address aligns with the email address you used for the order.",
   },
@@ -1353,7 +1353,7 @@ const errorsMessages: {
   },
 
   consumerEmailHashSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure either a valid email or a md5 hashed email is provided. Note that hashed email support must be enabled by Sovendus.",
   },
@@ -1366,61 +1366,61 @@ const errorsMessages: {
   iFrameNotOnDOM: {
     errorText:
       "Sovendus was detected but flexibleiframe.js was not found on the DOM. Make sure to place the flexibleiframe.js on the DOM after the Sovendus Integration Script.",
-    infoText: undefined,
+    infoText: "",
   },
 
   sovendusBannerDisabled: {
     errorText:
       "ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.",
-    infoText: undefined,
+    infoText: "",
   },
 
   noiframeContainerId: {
     errorText:
       "ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.",
-    infoText: undefined,
+    infoText: "",
   },
 
   unknownErrorIntegrationScriptFailed: {
     errorText:
       "Sovendus was detected and flexibleiframe.js was executed. For an unknown reason the integration script didn't run successfully tho.",
-    infoText: undefined,
+    infoText: "",
   },
 
   sovendusJsBlockedByCookieConsent: {
     errorText:
       "Sovendus was detected and flexibleiframe.js was executed. But the sovendus.js script, which gets placed by the flexibleiframe.js script, got blocked most likely because of your cookie consent tool. The type of the sovendus.js script should not be set, but is ${elementValue} instead.",
-    infoText: undefined,
+    infoText: "",
   },
 
   flexibleIframeJsExecutedTooEarly: {
     errorText:
       "Sovendus was detected but flexibleiframe.js was not executed. This is probably because the flexibleiframe.js script got placed on the DOM / executed before the Sovendus integration script. Make sure the flexibleiframe.js gets placed on the DOM / executed after the the Sovendus integration script.",
-    infoText: undefined,
+    infoText: "",
   },
 
   flexibleIframeJsBlockedByCookieConsent: {
     errorText:
       "Sovendus was detected but flexibleiframe.js was not executed because the script type is ${elementValue} instead of text/javascript. This probably happened because your cookie consent tool blocked the script.",
-    infoText: undefined,
+    infoText: "",
   },
 
   containerDivNotFoundOnDOM: {
     errorText:
       "ERROR: The sovendus container div with the id ${elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.",
-    infoText: undefined,
+    infoText: "",
   },
 
   multipleSovIframesDetected: {
     errorText:
       "ERROR: sovIframes was found ${elementValue} times with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to Sovendus being integrated multiple times.",
-    infoText: undefined,
+    infoText: "",
   },
 
   multipleSovIframesDetectedAndAreSame: {
     errorText:
       "ERROR: sovIframes was found ${elementValue} times with the same content. This is probably due to Sovendus being executed multiple times or Sovendus being integrated multiple times.",
-    infoText: undefined,
+    infoText: "",
   },
 
   currencyNotValid: {
@@ -1431,7 +1431,7 @@ const errorsMessages: {
   },
 
   currencySuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure the value aligns with the actual currency of your order.",
   },
@@ -1452,7 +1452,7 @@ const errorsMessages: {
   },
 
   orderIdSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure the value aligns with the actual order id of your order.",
   },
@@ -1470,7 +1470,7 @@ const errorsMessages: {
   },
 
   orderValueSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText: "Make sure the order value is net without shipping cost.",
   },
 
@@ -1480,7 +1480,7 @@ const errorsMessages: {
   },
 
   sessionIdSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure the session id doesn't change after a refresh, but changes with a new session.",
   },
@@ -1491,7 +1491,7 @@ const errorsMessages: {
   },
 
   couponCodeSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure the used coupon code from the order aligns with this value.",
   },
@@ -1502,7 +1502,7 @@ const errorsMessages: {
   },
 
   consumerStreetSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure this value aligns with the delivery address street name.",
   },
@@ -1513,7 +1513,7 @@ const errorsMessages: {
   },
 
   consumerStreetNumberSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure this value aligns with the delivery address street number.",
   },
@@ -1524,7 +1524,7 @@ const errorsMessages: {
   },
 
   consumerZipCodeSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText: "Make sure this value aligns with the delivery address zip code.",
   },
 
@@ -1534,7 +1534,7 @@ const errorsMessages: {
   },
 
   consumerPhoneSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText: "Make sure this value aligns with the customers phone number.",
   },
 
@@ -1544,7 +1544,7 @@ const errorsMessages: {
   },
 
   consumerCitySuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText: "Make sure this value aligns with the delivery address city.",
   },
 
@@ -1554,7 +1554,7 @@ const errorsMessages: {
   },
 
   consumerCountrySuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure this value aligns with the country of the delivery address.",
   },
@@ -1566,7 +1566,7 @@ const errorsMessages: {
   },
 
   trafficSourceNumberSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure this value aligns with the traffic source number you've received in your integration docs.",
   },
@@ -1578,7 +1578,7 @@ const errorsMessages: {
   },
 
   trafficMediumNumberSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure the value aligns with the traffic medium number you have received for this country.",
   },
@@ -1590,7 +1590,7 @@ const errorsMessages: {
   },
 
   iframeContainerIdSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText:
       "Make sure this value aligns with a iframe container id, this id corresponds to a div with this id on the DOM.",
   },
@@ -1601,7 +1601,7 @@ const errorsMessages: {
   },
 
   consumerFirstNameSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText: "Make sure this value aligns with the customers first name",
   },
 
@@ -1611,12 +1611,12 @@ const errorsMessages: {
   },
 
   consumerLastNameSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText: "Make sure this value aligns with the customers last name",
   },
 
   consumerSalutationSuccess: {
-    errorText: undefined,
+    errorText: "",
     infoText: "Make sure this value aligns with the salutation you used for the order."
   },
 
