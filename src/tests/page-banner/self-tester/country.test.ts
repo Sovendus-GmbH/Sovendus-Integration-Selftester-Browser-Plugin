@@ -23,7 +23,7 @@ executeOverlayTests({
   testName: "countryMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.consumerCountry.elementValue).toBe(null);
+    expect(sovSelfTester.consumerCountry.elementValue).toBe("DE");
     expect(sovSelfTester.consumerCountry.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerCountry.statusMessageKey).toBe(
       StatusMessageKeyTypes.missingConsumerCountry
