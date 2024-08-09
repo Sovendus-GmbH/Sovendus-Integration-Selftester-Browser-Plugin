@@ -18,7 +18,13 @@ export async function executeOverlayTests({
 }: {
   testName: string;
   sovAppData: SovDataType;
-  testFunction: (driver: WebDriver, sovSelfTester: SelfTester) => Promise<void>;
+  testFunction: ({
+    driver,
+    sovSelfTester,
+  }: {
+    driver: WebDriver;
+    sovSelfTester: SelfTester;
+  }) => Promise<void>;
   testOnly?: boolean;
 }) {
   const jestFunction = testOnly ? test.only : test;
@@ -47,7 +53,7 @@ export async function executeOverlayTests({
       try {
         await prepareTestPageAndRetryForever(_sovAppData, driver, fileUrl);
         const sovSelfTester = await getIntegrationTesterData(driver);
-        await testFunction(driver, sovSelfTester);
+        await testFunction({ driver, sovSelfTester });
       } finally {
         await driver?.quit();
       }
@@ -60,7 +66,7 @@ async function prepareTestPageAndRetryForever(
   sovAppData: SovFinalDataType,
   driver: WebDriver,
   fileUrl: string,
-  retryCounter: number = 0
+  retryCounter: number = 1
 ) {
   try {
     await driver.get(fileUrl);

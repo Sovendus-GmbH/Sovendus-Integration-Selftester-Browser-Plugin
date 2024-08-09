@@ -3,16 +3,17 @@ import {
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester";
 import { executeOverlayTests } from "../../testUtils";
-import { sovAppDataEverythingIsOkay, sovAppDataNoParameterButIsOkay } from "../sovAppData";
+import {
+  sovAppDataEverythingIsOkay,
+  sovAppDataNoParameterButIsOkay,
+} from "../sovAppData";
 
 executeOverlayTests({
   testName: "streetSuccess",
   sovAppData: sovAppDataEverythingIsOkay,
-  testFunction: async (driver, sovSelfTester) => {
+  testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerStreet.elementValue).toBe("test street");
-    expect(sovSelfTester.consumerStreet.statusCode).toBe(
-      StatusCodes.Warning
-    );
+    expect(sovSelfTester.consumerStreet.statusCode).toBe(StatusCodes.Warning);
     expect(sovSelfTester.consumerStreet.statusMessageKey).toBe(
       StatusMessageKeyTypes.consumerStreetSuccess
     );
@@ -22,7 +23,7 @@ executeOverlayTests({
 executeOverlayTests({
   testName: "streetMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
-  testFunction: async (driver, sovSelfTester) => {
+  testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerStreet.elementValue).toBe(null);
     expect(sovSelfTester.consumerStreet.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerStreet.statusMessageKey).toBe(
