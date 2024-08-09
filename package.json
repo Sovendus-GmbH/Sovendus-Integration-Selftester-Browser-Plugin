@@ -10,7 +10,7 @@
     "clean": "rimraf build",
     "test": "jest",
     "test-it": "jest -t=lastNameSuccess",
-    "build-and-test": "npm run zip-builds-for-tests && npm run test",
+    "build-and-test": "npm run build-test-zips && npm run test",
     "build-test-zips": "npm run build-ts && npm run copy-files && npm run zip-builds-for-tests",
     "copy-files": "npm run copy-other-files && npm run copy-to-ff && npm run copy-browser-specific-files && npm run copy-icon",
     "copy-other-files": "copyfiles --flat src/extension-pop-up/export-result-popup.html build/chrome/extension-pop-up/",
