@@ -21,16 +21,16 @@ interface testsFn {
 }
 
 async function transmitTestResult(testResult: SelfTester) {
-    const response = await fetch('http://localhost:3000/api/tests', {
-        method: 'POST',
-        mode: "no-cors",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(testResult),
-    });
-    const result = response.ok;
-    console.log(result);
+  const response = await fetch("http://localhost:3000/api/tests", {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(testResult),
+  });
+  const result = response.ok;
+  console.log(result);
 }
 
 async function repeatTestsOnSPA(tests: testsFn) {
@@ -74,21 +74,21 @@ class SelfTesterOverlay {
         </div>
       </div>
     `;
-    document.getElementsByTagName("body")[0].appendChild(overlay);
+    document.body.appendChild(overlay);
     document
       .getElementById("toggleSovendusOverlay")
-      .addEventListener("click", this.toggleOverlay);
+      ?.addEventListener("click", this.toggleOverlay);
     document
       .getElementById("sovendusOverlayRepeatTests")
-      .addEventListener("click", executeTests);
+      ?.addEventListener("click", executeTests);
     const checkMarks: HTMLCollectionOf<Element> =
       document.getElementsByClassName("sovendus-info");
     for (let element of checkMarks) {
-      element.parentElement.parentElement.addEventListener(
+      element.parentElement?.parentElement?.addEventListener(
         "mouseover",
         this.showInfoText
       );
-      element.parentElement.parentElement.addEventListener(
+      element.parentElement?.parentElement?.addEventListener(
         "mouseout",
         this.hideInfoText
       );
