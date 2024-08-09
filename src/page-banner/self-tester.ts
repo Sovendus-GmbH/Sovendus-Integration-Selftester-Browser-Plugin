@@ -169,7 +169,8 @@ export default class SelfTester {
               How to set up sales tracking with Awin?
             </a>  
           </h3>`;
-      statusText = "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.";
+      statusText =
+        "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.";
     } else {
       statusMessage = `
           <h3 class='sovendus-overlay-h3 sovendus-overlay-error'>
@@ -226,7 +227,7 @@ export default class SelfTester {
         } ISN'T A VALID SALUTATION${this.getInfoMarkWithLabel(
           missingSalutationError
         )}</span>`;
-        statusText = "NOT A VALID SALUTATION"
+        statusText = "NOT A VALID SALUTATION";
       }
       return new TestResult(
         valueTestResult.elementValue,
@@ -283,7 +284,7 @@ export default class SelfTester {
         } ISN'T A VALID BIRTH YEAR${this.getInfoMarkWithLabel(
           missingMailError
         )}</span>`;
-        statusText = "NOT A VALID BIRTH YEAR"
+        statusText = "NOT A VALID BIRTH YEAR";
       }
       return new TestResult(
         yearOfBirthTestResult.elementValue,
@@ -320,9 +321,14 @@ export default class SelfTester {
         } ISN'T A VALID EMAIL${this.getInfoMarkWithLabel(
           missingEmailError
         )}</span>`;
-        statusText = "NOT A VALID EMAIL"
+        statusText = "NOT A VALID EMAIL";
       }
-      return new TestResult(elementValue, statusMessage, statusText, statusCode);
+      return new TestResult(
+        elementValue,
+        statusMessage,
+        statusText,
+        statusCode
+      );
     }
     return emailTestResult;
   }
@@ -363,7 +369,7 @@ export default class SelfTester {
             ) +
             "</span>";
           ("</li>");
-          statusText = "EMAIL HASH IS NOT A MD5 HASH"
+          statusText = "EMAIL HASH IS NOT A MD5 HASH";
         }
       } else if (testResult.statusCode === 2) {
         statusMessage =
@@ -552,7 +558,8 @@ export default class SelfTester {
         statusCode = StatusCodes.Error;
         statusMessage =
           "<h3 class='sovendus-overlay-error'>ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.</h3>";
-        statusText = "ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly."
+        statusText =
+          "ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.";
       }
     }
     return new TestResult(isEnabled, statusMessage, statusText, statusCode);
@@ -569,7 +576,8 @@ export default class SelfTester {
       statusCode = StatusCodes.Error;
       statusMessage =
         "<h3 class='sovendus-overlay-error'>ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.</h3>";
-      statusText = "ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM."
+      statusText =
+        "ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.";
     }
     return new TestResult(elementValue, statusMessage, statusText, statusCode);
   }
@@ -594,10 +602,15 @@ export default class SelfTester {
           '<li><h3 class="sovendus-overlay-error">ERROR: The sovendus container div with the id "' +
           iframeContainerId.elementValue +
           '" was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.</h2></li>';
-          statusText = `ERROR: The sovendus container div with the id ${iframeContainerId.elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.`
+        statusText = `ERROR: The sovendus container div with the id ${iframeContainerId.elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.`;
       }
     }
-    return new TestResult(sovendusDivFound, statusMessage, statusText, statusCode);
+    return new TestResult(
+      sovendusDivFound,
+      statusMessage,
+      statusText,
+      statusCode
+    );
   }
 
   getMultipleSovIFramesDetectedTestResult(
@@ -662,7 +675,13 @@ export default class SelfTester {
           : "with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to ") +
         " Sovendus being integrated multiple times.</h3></li>"
       : "";
-    const statusText: StatusMessage = multipleSovIframesDetected.elementValue ? `ERROR: sovIframes was found ${sovIframesAmount.elementValue} times ${(multipleIframesAreSame ? "with the same content. This is probably due to Sovendus being executed multiple times or" : "with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to ")} Sovendus being integrated multiple times.` : undefined;
+    const statusText: StatusMessage = multipleSovIframesDetected.elementValue
+      ? `ERROR: sovIframes was found ${sovIframesAmount.elementValue} times ${
+          multipleIframesAreSame
+            ? "with the same content. This is probably due to Sovendus being executed multiple times or"
+            : "with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to "
+        } Sovendus being integrated multiple times.`
+      : undefined;
 
     return new TestResult(
       multipleIframesAreSame,
@@ -696,7 +715,7 @@ export default class SelfTester {
         } ISN'T A VALID CURRENCY${this.getInfoMarkWithLabel(
           missingCurrencyError
         )}</span>`;
-        statusText = "NOT A VALID CURRENCY"
+        statusText = "NOT A VALID CURRENCY";
         statusCode = StatusCodes.Error;
       }
       return new TestResult(
@@ -760,7 +779,7 @@ export default class SelfTester {
           : this.getCheckMarkWithLabel());
     } else {
       statusMessage = this.getDataIsMissingWarning(missingErrorMessage);
-      statusText = "ERROR: Data is missing!"
+      statusText = "ERROR: Data is missing!";
     }
     return new TestResult(elementValue, statusMessage, statusText, statusCode);
   }
@@ -782,7 +801,7 @@ export default class SelfTester {
         } IS NOT A NUMBER${this.getInfoMarkWithLabel(
           missingNumberError
         )}</span>`;
-        statusText = `${decodedValue.elementValue} IS NOT A NUMBER`
+        statusText = `${decodedValue.elementValue} IS NOT A NUMBER`;
         statusCode = StatusCodes.Error;
       } else {
         statusCode = StatusCodes.Success;
@@ -791,16 +810,22 @@ export default class SelfTester {
           this.getInfoMarkWithLabel(
             "Make sure the order value is net without shipping cost."
           );
-        statusText = "Make sure the order value is net without shipping cost."
+        statusText = "Make sure the order value is net without shipping cost.";
       }
     } else {
       statusMessage = this.getDataIsMissingWarning(
         "This value needs to be a number e.g. 20.5 and NOT 20,5"
       );
-      statusText = "This order value needs to be a number e.g. 20.5 and NOT 20,5"
+      statusText =
+        "This order value needs to be a number e.g. 20.5 and NOT 20,5";
       statusCode = StatusCodes.Error;
     }
-    return new TestResult(decodedValue.elementValue, statusMessage, statusText, statusCode);
+    return new TestResult(
+      decodedValue.elementValue,
+      statusMessage,
+      statusText,
+      statusCode
+    );
   }
 
   validUnixTimeTestResult(value: ElementValue): TestResult {
@@ -829,17 +854,22 @@ export default class SelfTester {
         } IS NOT A UNIX TIME${this.getInfoMarkWithLabel(
           missingUnixTimeError
         )}</span>`;
-        statusText = `${decodedValue.elementValue} IS NOT A UNIX TIME`
+        statusText = `${decodedValue.elementValue} IS NOT A UNIX TIME`;
         statusCode = StatusCodes.Error;
       }
     } else {
       statusMessage = this.getDataIsMissingWarning(
         "A unix timestamp in seconds should be provided"
       );
-      statusText = "A unix timestamp in seconds should be provided"
+      statusText = "A unix timestamp in seconds should be provided";
       statusCode = StatusCodes.Error;
     }
-    return new TestResult(decodedValue.elementValue, statusMessage, statusText, statusCode);
+    return new TestResult(
+      decodedValue.elementValue,
+      statusMessage,
+      statusText,
+      statusCode
+    );
   }
 
   getCheckMarkWithLabel(): string {
@@ -957,6 +987,12 @@ export default class SelfTester {
     );
   }
   getBrowserName(): string {
+    if (navigator.userAgent.indexOf("iPhone") != -1) {
+      return "iPhone";
+    }
+    if (navigator.userAgent.indexOf("Android") != -1) {
+      return "Android";
+    }
     if (navigator.userAgent.indexOf("Firefox") != -1) {
       return "Firefox";
     }
@@ -968,6 +1004,7 @@ export default class SelfTester {
     }
     return "Not detected";
   }
+
   getWebsiteURL(): string {
     return window.location.host;
   }
