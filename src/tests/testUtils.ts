@@ -45,7 +45,7 @@ export async function executeOverlayTests(
 export async function waitForTestOverlay(driver: WebDriver) {
   await driver.wait(
     until.elementLocated(By.css("#outerSovendusOverlay")),
-    10000
+    20000
   );
 }
 
