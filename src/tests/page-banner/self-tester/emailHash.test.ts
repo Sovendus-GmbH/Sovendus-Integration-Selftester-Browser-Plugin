@@ -26,7 +26,7 @@ executeOverlayTests({
   testName: "emailHashMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.consumerEmailHash.elementValue).toBe(undefined);
+    expect(sovSelfTester.consumerEmailHash.elementValue).toBe(null);
     expect(sovSelfTester.consumerEmailHash.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerEmailHash.statusMessageKey).toBe(
       StatusMessageKeyTypes.missingConsumerEmailHash

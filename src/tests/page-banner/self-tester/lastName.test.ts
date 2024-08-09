@@ -21,7 +21,7 @@ executeOverlayTests({
   testName: "lastNameMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.consumerLastName.elementValue).toBe(undefined);
+    expect(sovSelfTester.consumerLastName.elementValue).toBe(null);
     expect(sovSelfTester.consumerLastName.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerLastName.statusMessageKey).toBe(
       StatusMessageKeyTypes.missingConsumerLastName

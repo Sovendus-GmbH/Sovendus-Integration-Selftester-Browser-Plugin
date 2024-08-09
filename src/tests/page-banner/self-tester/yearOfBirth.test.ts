@@ -26,7 +26,7 @@ executeOverlayTests({
   testName: "yearOfBirthMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.consumerYearOfBirth.elementValue).toBe(undefined);
+    expect(sovSelfTester.consumerYearOfBirth.elementValue).toBe(null);
     expect(sovSelfTester.consumerYearOfBirth.statusCode).toBe(
       StatusCodes.Error
     );

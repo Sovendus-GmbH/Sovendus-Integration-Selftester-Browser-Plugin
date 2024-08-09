@@ -23,7 +23,7 @@ executeOverlayTests({
   testName: "emailMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.consumerEmail.elementValue).toBe(undefined);
+    expect(sovSelfTester.consumerEmail.elementValue).toBe(null);
     expect(sovSelfTester.consumerEmail.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerEmail.statusMessageKey).toBe(
       StatusMessageKeyTypes.missingConsumerEmail

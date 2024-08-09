@@ -23,7 +23,7 @@ executeOverlayTests({
   testName: "ZipCodeMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.consumerZipCode.elementValue).toBe(undefined);
+    expect(sovSelfTester.consumerZipCode.elementValue).toBe(null);
     expect(sovSelfTester.consumerZipCode.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerZipCode.statusMessageKey).toBe(
       StatusMessageKeyTypes.missingConsumerZipCode
