@@ -1,7 +1,6 @@
 import { executeOverlayTests } from "../../testUtils";
 import {
   sovAppDataEverythingIsOkay,
-  sovAppDataMalformedButIsOkay,
   sovAppDataNoParameterButIsOkay,
 } from "../sovAppData";
 
