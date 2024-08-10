@@ -16,19 +16,29 @@ import {
 // });
 
 executeOverlayTests({
-  testName: "browserNameEdge",
-  sovAppData: sovAppDataNoParameterButIsOkay,
-  testFunction: async ({ sovSelfTester }) => {
-    expect(sovSelfTester.browserName.elementValue).toBe("Edge");
-  },
+  testName: "browserName",
+  tests: [
+    {
+      testName: "Edge",
+      sovAppData: sovAppDataNoParameterButIsOkay,
+      testFunction: async ({ sovSelfTester }) => {
+        expect(sovSelfTester.browserName.elementValue).toBe("Edge");
+      },
+    },
+  ],
   browser: Browser.EDGE,
 });
 
 executeOverlayTests({
-  testName: "browserNameChrome",
-  sovAppData: sovAppDataEverythingIsOkay,
-  testFunction: async ({ sovSelfTester }) => {
-    expect(sovSelfTester.browserName.elementValue).toBe("Chrome");
-  },
+  testName: "browserName",
+  tests: [
+    {
+      testName: "Chrome",
+      sovAppData: sovAppDataEverythingIsOkay,
+      testFunction: async ({ sovSelfTester }) => {
+        expect(sovSelfTester.browserName.elementValue).toBe("Chrome");
+      },
+    },
+  ],
   browser: Browser.CHROME,
 });

@@ -13,9 +13,12 @@
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["src/*"] // Adjust this as needed
+      "@src/*": [
+        "src/*"
+      ] // Adjust this as needed
     },
     // // // Strict Checks
+    // "strict": true,
     // "alwaysStrict": true,
     // "noImplicitAny": true,
     // "strictNullChecks": true,
@@ -48,6 +51,12 @@
     // "suppressImplicitAnyIndexErrors": false,
     // "noStrictGenericChecks": false
   },
-  "include": ["src/", "src/tests"],
-  "exclude": ["src/chrome", "src/firefox"]
+  "include": [
+    "src/",
+    "src/tests"
+  ],
+  "exclude": [
+    "src/chrome",
+    "src/firefox"
+  ]
 }

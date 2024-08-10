@@ -3,6 +3,10 @@
 - improve overlay style and fix style issues (style overrides from page css)
 - handle encoding in sovConsumer vs sovApplication.consumer
 - improve timestamp test - check if recent
+- already show overlay in loading state as soon as something is detected
+- improve style of overlay when awin sale not tracked
+- improve overlay loading speed
+- add error when invalid email hash is used - banner will not load
 
 ## Tests
 

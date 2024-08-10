@@ -14,37 +14,37 @@ import {
 } from "../../sovAppData";
 
 executeOverlayTests({
-  testName: "ZipCode",
+  testName: "trafficSourceNumber",
   tests: [
     {
       testName: "SuccessAsString",
       sovAppData: sovAppDataEverythingIsOkay,
       testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.consumerZipCode.elementValue).toBe("76135");
-        expect(sovSelfTester.consumerZipCode.statusCode).toBe(
+        expect(sovSelfTester.trafficSourceNumber.elementValue).toBe("4704");
+        expect(sovSelfTester.trafficSourceNumber.statusCode).toBe(
           StatusCodes.SuccessButNeedsReview,
         );
-        expect(sovSelfTester.consumerZipCode.statusMessageKey).toBe(
-          StatusMessageKeyTypes.consumerZipCodeSuccess,
+        expect(sovSelfTester.trafficSourceNumber.statusMessageKey).toBe(
+          StatusMessageKeyTypes.trafficSourceNumberSuccess,
         );
       },
     },
     {
       testName: "SuccessAsNumber",
       sovAppData: {
-        sovConsumer: {
-          ...sovAppConsumerAllValidData,
-          consumerZipcode: 1234,
+        sovConsumer: sovAppConsumerAllValidData,
+        sovIframes1: {
+          ...sovAppIframesAllValidData,
+          trafficSourceNumber: 4704,
         },
-        sovIframes1: sovAppIframesAllValidData,
       },
       testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.consumerZipCode.elementValue).toBe("1234");
-        expect(sovSelfTester.consumerZipCode.statusCode).toBe(
+        expect(sovSelfTester.trafficSourceNumber.elementValue).toBe("4704");
+        expect(sovSelfTester.trafficSourceNumber.statusCode).toBe(
           StatusCodes.SuccessButNeedsReview,
         );
-        expect(sovSelfTester.consumerZipCode.statusMessageKey).toBe(
-          StatusMessageKeyTypes.consumerZipCodeSuccess,
+        expect(sovSelfTester.trafficSourceNumber.statusMessageKey).toBe(
+          StatusMessageKeyTypes.trafficSourceNumberSuccess,
         );
       },
     },
@@ -52,21 +52,21 @@ executeOverlayTests({
       testName: "Missing",
       sovAppData: sovAppDataNoParameterButIsOkay,
       testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.consumerZipCode.elementValue).toBe(null);
-        expect(sovSelfTester.consumerZipCode.statusCode).toBe(
+        expect(sovSelfTester.trafficSourceNumber.elementValue).toBe(null);
+        expect(sovSelfTester.trafficSourceNumber.statusCode).toBe(
           StatusCodes.Error,
         );
-        expect(sovSelfTester.consumerZipCode.statusMessageKey).toBe(
-          StatusMessageKeyTypes.missingConsumerZipCode,
+        expect(sovSelfTester.trafficSourceNumber.statusMessageKey).toBe(
+          StatusMessageKeyTypes.missingTrafficSourceNumber,
         );
       },
     },
     ...generateMalformedDataTests({
-      elementKey: "consumerZipCode",
+      elementKey: "trafficSourceNumber",
       expectedMalformedStatusMessageKey:
-        StatusMessageKeyTypes.consumerZipCodeMalformed,
+        StatusMessageKeyTypes.trafficSourceNumberMalformed,
       expectedMissingStatusMessageKey:
-        StatusMessageKeyTypes.missingConsumerZipCode,
+        StatusMessageKeyTypes.missingTrafficSourceNumber,
       canBeANumber: true,
     }),
   ],

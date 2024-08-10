@@ -12,30 +12,13 @@ async function executeTests() {
   window.sovSelfTester = new SelfTester();
   await window.sovSelfTester.waitForSovendusIntegrationDetected();
   await window.sovSelfTester.selfTestIntegration();
-  transmitTestResult(window.sovSelfTester);
+
   const overlay = new SelfTesterOverlay();
   await overlay.createOverlay(window.sovSelfTester);
 }
 
 interface testsFn {
   (): Promise<void>;
-}
-
-async function transmitTestResult(testResult: SelfTester) {
-  try {
-    const response = await fetch("http://localhost:3000/api/testing-plugin", {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(testResult.getTestResultResponseData()),
-    });
-    const result = response.ok;
-    console.log(result);
-  } catch (e) {
-    console.error("Failed to transmit sovendus test result - error:", e);
-  }
 }
 
 async function repeatTestsOnSPA(tests: testsFn) {
@@ -64,7 +47,7 @@ class SelfTesterOverlay {
         Hide
       </button>
       <div class="sovendus-overlay-font" id="sovendusOverlay">  
-        <div style="margin:auto;max-width:500px;">
+        <div style="margin:auto;max-width:700px;">
           <div>
             <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Self-Test Overlay</h1>
             <button class="sovendus-overlay-font sovendus-overlay-button" id="sovendusOverlayRepeatTests">repeat tests</button>
@@ -91,44 +74,30 @@ class SelfTesterOverlay {
     for (let element of checkMarks) {
       element.parentElement?.parentElement?.addEventListener(
         "mouseover",
-        this.showInfoText
+        this.showInfoText,
       );
       element.parentElement?.parentElement?.addEventListener(
         "mouseout",
-        this.hideInfoText
+        this.hideInfoText,
       );
     }
     // this.moveOverlayAboveAll();
   }
 
   createInnerOverlay(selfTester: SelfTester) {
-    let innerOverlay: string = "";
-    const awinIntegrationDetected = selfTester.awinIntegrationDetected();
-    if (selfTester.wasExecuted.statusCode === StatusCodes.Success) {
-      innerOverlay = `
-        ${this.getSovIFramesData(selfTester, false, awinIntegrationDetected)}
+    const awinIntegrationDetected =
+      selfTester.awinIntegrationDetectedTestResult.elementValue;
+    const awinIntegrationNoSaleTracked =
+      awinIntegrationDetected &&
+      !selfTester.awinSaleTrackedTestResult.elementValue;
+    return `
+        ${this.getSovIFramesData(selfTester, awinIntegrationNoSaleTracked)}
         ${
           awinIntegrationDetected
             ? ""
             : this.generateConsumerDataReport(selfTester)
         }
     `;
-    } else if (awinIntegrationDetected) {
-      const awinIntegrationNoSaleTracked = true;
-      innerOverlay = `
-        ${this.getSovIFramesData(
-          selfTester,
-          awinIntegrationNoSaleTracked,
-          awinIntegrationDetected
-        )}
-        `;
-    } else {
-      innerOverlay = `
-        ${this.getSovIFramesData(selfTester)}
-        ${this.generateConsumerDataReport(selfTester)}
-        `;
-    }
-    return innerOverlay;
   }
 
   generateConsumerDataReport(testResult: SelfTester): string {
@@ -151,14 +120,14 @@ class SelfTesterOverlay {
             <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerEmail: ${testResult.consumerEmail.getFormattedStatusMessage()}
             </li>
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerEmailHash: ${
-                testResult.consumerEmailHash.statusCode !==
-                StatusCodes.TestDidNotRun
-                  ? testResult.consumerEmailHash.getFormattedStatusMessage()
-                  : ""
-              }
-            </li>
+            ${
+              testResult.consumerEmailHash.statusCode ===
+              StatusCodes.TestDidNotRun
+                ? ""
+                : `<li class='sovendus-overlay-font sovendus-overlay-text'>
+              consumerEmailHash: ${testResult.consumerEmailHash.getFormattedStatusMessage()}
+            </li>`
+            }
             <li class='sovendus-overlay-font sovendus-overlay-text'>
               consumerPhone: ${testResult.consumerPhone.getFormattedStatusMessage()}
             </li>
@@ -185,13 +154,11 @@ class SelfTesterOverlay {
   getSovIFramesData(
     testResult: SelfTester,
     awinIntegrationNoSaleTracked: boolean = false,
-    awinIntegrationDetected: boolean = false
   ): string {
     let additionalInfo: string;
     if (awinIntegrationNoSaleTracked) {
-      additionalInfo = `
-          ${testResult.awinTest.getFormattedStatusMessage()}
-    `;
+      additionalInfo =
+        testResult.awinSaleTrackedTestResult.getFormattedStatusMessage();
     } else {
       additionalInfo = `
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Container:</h2>
@@ -207,6 +174,8 @@ class SelfTesterOverlay {
         ${testResult.isSovendusJsOnDom.getFormattedGeneralStatusMessage()}
         ${testResult.isSovendusJsExecutable.getFormattedGeneralStatusMessage()}
         ${testResult.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
+        ${testResult.awinExecutedTestResult.getFormattedGeneralStatusMessage()}
+        ${testResult.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
       </ul>
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
@@ -220,7 +189,7 @@ class SelfTesterOverlay {
           orderValue: ${testResult.orderValue.getFormattedStatusMessage()}
         </li>
         ${
-          awinIntegrationDetected
+          testResult.sessionId.statusCode === StatusCodes.TestDidNotRun
             ? ""
             : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
               "sessionId: " +
@@ -256,9 +225,9 @@ class SelfTesterOverlay {
         <style>
           #sovendusOverlay {
             position: fixed !important;
-            left: calc(50% - 250px) !important;
-            right: calc(50% - 250px) !important;
-            width: 500px !important;
+            left: calc(50% - 350px) !important;
+            right: calc(50% - 350px) !important;
+            width: 700px !important;
             max-width: calc(100vw) !important;
             top: 50px !important;
             padding: 22px !important;
@@ -371,14 +340,14 @@ class SelfTesterOverlay {
     }
   }
   showInfoText(event: MouseEvent) {
-    const label = (event.currentTarget as HTMLElement)?.firstElementChild
+    const label = (event.currentTarget as HTMLElement)?.lastElementChild
       ?.firstElementChild;
     if (label) {
       (label as HTMLElement).style.display = "block";
     }
   }
   hideInfoText(event: MouseEvent) {
-    const label = (event.currentTarget as HTMLElement)?.firstElementChild
+    const label = (event.currentTarget as HTMLElement)?.lastElementChild
       ?.firstElementChild;
     if (label) {
       (label as HTMLElement).style.display = "none";

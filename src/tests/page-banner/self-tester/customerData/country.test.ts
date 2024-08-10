@@ -2,7 +2,10 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { executeOverlayTests } from "../../../testUtils";
+import {
+  executeOverlayTests,
+  generateMalformedDataTests,
+} from "../../../testUtils";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataMalformedButIsOkay,
@@ -10,42 +13,53 @@ import {
 } from "../../sovAppData";
 
 executeOverlayTests({
-  testName: "countrySuccess",
-  sovAppData: sovAppDataEverythingIsOkay,
-  testFunction: async ({ sovSelfTester }) => {
-    expect(sovSelfTester.consumerCountry.elementValue).toBe("DE");
-    expect(sovSelfTester.consumerCountry.statusCode).toBe(
-      StatusCodes.SuccessButNeedsReview
-    );
-    expect(sovSelfTester.consumerCountry.statusMessageKey).toBe(
-      StatusMessageKeyTypes.consumerCountrySuccess
-    );
-  },
-});
-
-executeOverlayTests({
-  testName: "countryMissing",
-  sovAppData: sovAppDataNoParameterButIsOkay,
-  testFunction: async ({ sovSelfTester }) => {
-    // TODO Should we changes this behavior?
-    expect(sovSelfTester.consumerCountry.elementValue).toBe("DE");
-    expect(sovSelfTester.consumerCountry.statusCode).toBe(
-      StatusCodes.SuccessButNeedsReview
-    );
-    expect(sovSelfTester.consumerCountry.statusMessageKey).toBe(
-      StatusMessageKeyTypes.consumerCountrySuccess
-    );
-  },
-});
-
-executeOverlayTests({
-  testName: "countryMalformed",
-  sovAppData: sovAppDataMalformedButIsOkay,
-  testFunction: async ({ sovSelfTester }) => {
-    expect(sovSelfTester.consumerCountry.elementValue).toBe("Space");
-    expect(sovSelfTester.consumerCountry.statusCode).toBe(StatusCodes.Error);
-    expect(sovSelfTester.consumerCountry.statusMessageKey).toBe(
-      StatusMessageKeyTypes.consumerCountryInvalid
-    );
-  },
+  testName: "country",
+  tests: [
+    {
+      testName: "Success",
+      sovAppData: sovAppDataEverythingIsOkay,
+      testFunction: async ({ sovSelfTester }) => {
+        expect(sovSelfTester.consumerCountry.elementValue).toBe("DE");
+        expect(sovSelfTester.consumerCountry.statusCode).toBe(
+          StatusCodes.SuccessButNeedsReview,
+        );
+        expect(sovSelfTester.consumerCountry.statusMessageKey).toBe(
+          StatusMessageKeyTypes.consumerCountrySuccess,
+        );
+      },
+    },
+    {
+      testName: "Missing",
+      sovAppData: sovAppDataNoParameterButIsOkay,
+      testFunction: async ({ sovSelfTester }) => {
+        expect(sovSelfTester.consumerCountry.elementValue).toBe(null);
+        expect(sovSelfTester.consumerCountry.statusCode).toBe(
+          StatusCodes.Error,
+        );
+        expect(sovSelfTester.consumerCountry.statusMessageKey).toBe(
+          StatusMessageKeyTypes.missingConsumerCountry,
+        );
+      },
+    },
+    {
+      testName: "Malformed",
+      sovAppData: sovAppDataMalformedButIsOkay,
+      testFunction: async ({ sovSelfTester }) => {
+        expect(sovSelfTester.consumerCountry.elementValue).toBe("Space");
+        expect(sovSelfTester.consumerCountry.statusCode).toBe(
+          StatusCodes.Error,
+        );
+        expect(sovSelfTester.consumerCountry.statusMessageKey).toBe(
+          StatusMessageKeyTypes.consumerCountryInvalid,
+        );
+      },
+    },
+    ...generateMalformedDataTests({
+      elementKey: "consumerCountry",
+      expectedMalformedStatusMessageKey:
+        StatusMessageKeyTypes.consumerCountryInvalid,
+      expectedMissingStatusMessageKey:
+        StatusMessageKeyTypes.missingConsumerCountry,
+    }),
+  ],
 });
