@@ -5,7 +5,6 @@ import {
 import {
   executeOverlayTests,
   generateTests,
-  TestsType,
 } from "../../../testUtils";
 import {
   sovAppDataEverythingIsOkay,
@@ -38,7 +37,7 @@ executeOverlayTests({
         sovAppData: sovAppDataNoParameterButIsOkay,
         expectedElementValue: "unknown",
         expectedStatusCode: StatusCodes.Error,
-        expectedStatusMessageKey: null,
+        expectedStatusMessageKey: StatusMessageKeyTypes.integrationTypeMissing,
       },
       {
         testName: "MalformedTrue",
@@ -67,7 +66,7 @@ executeOverlayTests({
       {
         testName: "MalformedObject",
         sovAppData: sovAppDataMalformedObjectsButIsOkay,
-        expectedElementValue: "object",
+        expectedElementValue: "[object Object]",
         expectedStatusCode: StatusCodes.Error,
         expectedStatusMessageKey:
           StatusMessageKeyTypes.integrationTypeMalformed,
@@ -75,7 +74,7 @@ executeOverlayTests({
       {
         testName: "MalformedArray",
         sovAppData: sovAppDataMalformedArrayButIsOkay,
-        expectedElementValue: "object",
+        expectedElementValue: "[object Object]",
         expectedStatusCode: StatusCodes.Error,
         expectedStatusMessageKey:
           StatusMessageKeyTypes.integrationTypeMalformed,
@@ -85,14 +84,14 @@ executeOverlayTests({
         sovAppData: sovAppDataNullButIsOkay,
         expectedElementValue: "unknown",
         expectedStatusCode: StatusCodes.Error,
-        expectedStatusMessageKey: null,
+        expectedStatusMessageKey: StatusMessageKeyTypes.integrationTypeMissing,
       },
       {
         testName: "MalformedUndefined",
         sovAppData: sovAppDataUndefinedButIsOkay,
         expectedElementValue: "unknown",
         expectedStatusCode: StatusCodes.Error,
-        expectedStatusMessageKey: null,
+        expectedStatusMessageKey: StatusMessageKeyTypes.integrationTypeMissing,
       },
       {
         testName: "MalformedTrue_WhenScriptDoesNotRun",
@@ -144,7 +143,7 @@ executeOverlayTests({
         sovAppData: sovAppDataNullButIsOkay,
         expectedElementValue: "unknown",
         expectedStatusCode: StatusCodes.Error,
-        expectedStatusMessageKey: null,
+        expectedStatusMessageKey: StatusMessageKeyTypes.integrationTypeMissing,
         disableFlexibleIframeJs: true,
       },
       {
@@ -152,7 +151,7 @@ executeOverlayTests({
         sovAppData: sovAppDataUndefinedButIsOkay,
         expectedElementValue: "unknown",
         expectedStatusCode: StatusCodes.Error,
-        expectedStatusMessageKey: null,
+        expectedStatusMessageKey: StatusMessageKeyTypes.integrationTypeMissing,
         disableFlexibleIframeJs: true,
       },
     ],

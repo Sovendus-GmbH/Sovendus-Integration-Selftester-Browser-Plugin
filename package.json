@@ -5,11 +5,11 @@
   "type": "commonjs",
   "scripts": {
     "build": "npm run build-ts && npm run copy-files",
-    "build-release": "npm run build && npm run zip-builds-for-tests && npm run test && npm run zip-builds",
+    "build-release": "npm run build-and-test --buildMode && npm run zip-builds",
     "build-ts": "npm run clean && tsc --build && rimraf build/chrome/tests",
     "clean": "rimraf build",
     "test": "jest --silent=false",
-    "test-it": "jest --silent=false -t=trafficMediumNumber",
+    "test-it": "jest --silent=false -t=browserName",
     "build-and-test": "npm run build-test-zips && npm run test",
     "build-and-test-it": "npm run build-test-zips && npm run test-it",
     "build-test-zips": "npm run build-ts && npm run copy-files && npm run zip-builds-for-tests",
@@ -20,7 +20,7 @@
     "copy-browser-specific-files": "copyfiles --flat src/chrome/* build/chrome && copyfiles --flat src/firefox/* build/firefox",
     "copy-icon": "copyfiles --flat src/sovendus.png build/firefox/ && copyfiles --flat src/sovendus.png build/chrome/",
     "zip-builds": "zip-build build/chrome release_zips -t 'chrome-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%' && zip-build build/firefox release_zips -t 'firefox-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%'",
-    "zip-builds-for-tests": "rimraf release_zips/chrome-test-sovendus-integration_TESTING.crx && zip-build build/chrome release_zips -t 'chrome-test-sovendus-integration_TESTING.crx'"
+    "zip-builds-for-tests": "rimraf release_zips/chrome-test-sovendus-integration_TESTING.crx && zip-build build/chrome release_zips -t 'chrome-test-sovendus-integration_TESTING.crx' && rimraf release_zips/firefox-test-sovendus-integration_TESTING.xpi &&  zip-build build/firefox release_zips -t 'firefox-test-sovendus-integration_TESTING.xpi'"
   },
   "author": "Marcus Brandstaetter - Sovendus GmbH",
   "license": "GPL-3.0-or-later",
@@ -32,7 +32,6 @@
     "@types/selenium-webdriver": "^4.1.24",
     "copyfiles": "^2.4.1",
     "jest": "^29.7.0",
-    "jest-serial-runner": "^1.2.1",
     "prettier-eslint": "^16.3.0",
     "rimraf": "^5.0.5",
     "selenium-webdriver": "^4.23.0",

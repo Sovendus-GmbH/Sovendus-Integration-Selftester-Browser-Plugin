@@ -1,20 +1,25 @@
-import { Browser } from "selenium-webdriver";
-import { executeOverlayTests } from "../../../testUtils";
+import { BrowserTypes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import { Browsers, executeOverlayTests } from "../../../testUtils";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
 } from "../../sovAppData";
 
-// TODO fix firefox
-// executeOverlayTests({
-//   testName: "browserNameFirefox",
-//   sovAppData: sovAppDataNoParameterButIsOkay,
-//   testFunction: async ({ sovSelfTester }) => {
-//     expect(sovSelfTester.browserName).toBe("Firefox");
-//   },
-//   browser: Browser.FIREFOX,
-// });
-
+executeOverlayTests({
+  testName: "browserName",
+  tests: [
+    {
+      testName: "Firefox",
+      sovAppData: sovAppDataNoParameterButIsOkay,
+      testFunction: async ({ sovSelfTester }) => {
+        expect(sovSelfTester.browserName.elementValue).toBe(
+          BrowserTypes.Firefox,
+        );
+      },
+    },
+  ],
+  browser: Browsers.Firefox,
+});
 executeOverlayTests({
   testName: "browserName",
   tests: [
@@ -22,11 +27,11 @@ executeOverlayTests({
       testName: "Edge",
       sovAppData: sovAppDataNoParameterButIsOkay,
       testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.browserName.elementValue).toBe("Edge");
+        expect(sovSelfTester.browserName.elementValue).toBe(BrowserTypes.Edge);
       },
     },
   ],
-  browser: Browser.EDGE,
+  browser: Browsers.Edge,
 });
 
 executeOverlayTests({
@@ -36,9 +41,43 @@ executeOverlayTests({
       testName: "Chrome",
       sovAppData: sovAppDataEverythingIsOkay,
       testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.browserName.elementValue).toBe("Chrome");
+        expect(sovSelfTester.browserName.elementValue).toBe(
+          BrowserTypes.Chrome,
+        );
       },
     },
   ],
-  browser: Browser.CHROME,
+  browser: Browsers.Chrome,
+});
+
+executeOverlayTests({
+  testName: "browserName",
+  tests: [
+    {
+      testName: "iPhone",
+      sovAppData: sovAppDataEverythingIsOkay,
+      testFunction: async ({ sovSelfTester }) => {
+        expect(sovSelfTester.browserName.elementValue).toBe(
+          BrowserTypes.iPhone,
+        );
+      },
+    },
+  ],
+  browser: Browsers.iPhone,
+});
+
+executeOverlayTests({
+  testName: "browserName",
+  tests: [
+    {
+      testName: "Android",
+      sovAppData: sovAppDataEverythingIsOkay,
+      testFunction: async ({ sovSelfTester }) => {
+        expect(sovSelfTester.browserName.elementValue).toBe(
+          BrowserTypes.Android,
+        );
+      },
+    },
+  ],
+  browser: Browsers.Android,
 });

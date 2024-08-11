@@ -21,5 +21,10 @@
     "default_icon": "sovendus.png",
     "default_title": "Sovendus Integration Tester",
     "default_popup": "extension-pop-up/export-result-popup.html"
+  },
+  "applications": {
+    "gecko": {
+      "id": "SovendusIntegrationTester@sovendus.com"
+    }
   }
 }

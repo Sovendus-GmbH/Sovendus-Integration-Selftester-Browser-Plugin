@@ -5,55 +5,37 @@ import {
 import {
   executeOverlayTests,
   generateMalformedDataTests,
+  generateTests,
 } from "../../../testUtils";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataMalformedButIsOkay,
-  sovAppDataNoParameterButIsOkay,
 } from "../../sovAppData";
 
 executeOverlayTests({
   testName: "country",
   tests: [
-    {
-      testName: "Success",
-      sovAppData: sovAppDataEverythingIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.consumerCountry.elementValue).toBe("DE");
-        expect(sovSelfTester.consumerCountry.statusCode).toBe(
-          StatusCodes.SuccessButNeedsReview,
-        );
-        expect(sovSelfTester.consumerCountry.statusMessageKey).toBe(
-          StatusMessageKeyTypes.consumerCountrySuccess,
-        );
-      },
-    },
-    {
-      testName: "Missing",
-      sovAppData: sovAppDataNoParameterButIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.consumerCountry.elementValue).toBe(null);
-        expect(sovSelfTester.consumerCountry.statusCode).toBe(
-          StatusCodes.Error,
-        );
-        expect(sovSelfTester.consumerCountry.statusMessageKey).toBe(
-          StatusMessageKeyTypes.missingConsumerCountry,
-        );
-      },
-    },
-    {
-      testName: "Malformed",
-      sovAppData: sovAppDataMalformedButIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.consumerCountry.elementValue).toBe("Space");
-        expect(sovSelfTester.consumerCountry.statusCode).toBe(
-          StatusCodes.Error,
-        );
-        expect(sovSelfTester.consumerCountry.statusMessageKey).toBe(
-          StatusMessageKeyTypes.consumerCountryInvalid,
-        );
-      },
-    },
+    ...generateTests({
+      elementKey: "consumerCountry",
+      testsInfo: [
+        {
+          testName: "Success",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: "DE",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerCountrySuccess,
+        },
+        {
+          testName: "Malformed",
+          sovAppData: sovAppDataMalformedButIsOkay,
+          expectedElementValue: "Space",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerCountryInvalid,
+        },
+      ],
+    }),
     ...generateMalformedDataTests({
       elementKey: "consumerCountry",
       expectedMalformedStatusMessageKey:

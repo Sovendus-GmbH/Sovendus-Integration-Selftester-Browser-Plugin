@@ -10,27 +10,25 @@ import {
 import { sovAppDataEverythingIsOkay } from "../../sovAppData";
 
 executeOverlayTests({
-  testName: "firstName",
+  testName: "orderId",
   tests: [
     ...generateTests({
-      elementKey: "consumerFirstName",
+      elementKey: "orderId",
       testsInfo: [
         {
           testName: "Success",
           sovAppData: sovAppDataEverythingIsOkay,
-          expectedElementValue: "John",
+          expectedElementValue: "order-1234",
           expectedStatusCode: StatusCodes.SuccessButNeedsReview,
-          expectedStatusMessageKey:
-            StatusMessageKeyTypes.consumerFirstNameSuccess,
+          expectedStatusMessageKey: StatusMessageKeyTypes.orderIdSuccess,
         },
       ],
     }),
     ...generateMalformedDataTests({
-      elementKey: "consumerFirstName",
-      expectedMalformedStatusMessageKey:
-        StatusMessageKeyTypes.consumerFirstNameMalformed,
-      expectedMissingStatusMessageKey:
-        StatusMessageKeyTypes.missingConsumerFirstName,
+      elementKey: "orderId",
+      expectedMalformedStatusMessageKey: StatusMessageKeyTypes.orderIdMalformed,
+      expectedMissingStatusMessageKey: StatusMessageKeyTypes.missingOrderId,
+      objectElementValueType: "objectObject",
     }),
   ],
 });

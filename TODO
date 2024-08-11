@@ -7,9 +7,14 @@
 - improve style of overlay when awin sale not tracked
 - improve overlay loading speed
 - add error when invalid email hash is used - banner will not load
+- handle if a test fails - still continue and show error in overlay - also use new status code testFailed
+- dont compile tests with build
+- transmit multiple iframes content when they are different
 
 ## Tests
 
 - add banner disabled tests
 - add awin tests
 - add spa tests
+- dont spam dev hub api on tests
+- run all tests also on firefox and edge
