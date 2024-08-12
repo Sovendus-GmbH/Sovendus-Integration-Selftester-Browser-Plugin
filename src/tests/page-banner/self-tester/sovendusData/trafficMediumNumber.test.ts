@@ -15,7 +15,7 @@ import {
   sovAppDataNull,
   sovAppDataTrue,
   sovAppDataUndefined,
-  sovAppIframesAllValidData,
+  sovAppIFramesAllValidData,
   sovTestTrafficMediumNumbers,
 } from "../../../testUtils/sovAppData";
 import {
@@ -37,7 +37,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     sovAppData: {
       sovConsumer: sovAppConsumerAllValidData,
       sovIframes1: {
-        ...sovAppIframesAllValidData,
+        ...sovAppIFramesAllValidData,
         trafficMediumNumber:
           sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
       },
@@ -51,7 +51,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     testName: "FailAsFloat",
     sovAppData: {
       sovConsumer: sovAppConsumerAllValidData,
-      sovIframes1: { ...sovAppIframesAllValidData, trafficMediumNumber: 5.5 },
+      sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: 5.5 },
     },
     expectedElementValue: "5.5",
     expectedStatusCode: StatusCodes.Error,
