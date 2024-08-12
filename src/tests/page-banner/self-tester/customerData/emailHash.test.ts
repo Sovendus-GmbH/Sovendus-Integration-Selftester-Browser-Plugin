@@ -2,12 +2,13 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { executeOverlayTests, generateTests } from "../../../testUtils";
+import { executeOverlayTests } from "../../../testUtils/testUtils";
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "../../sovAppData";
+} from "../../../testUtils/sovAppData";
+import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 // TODO add more tests
 

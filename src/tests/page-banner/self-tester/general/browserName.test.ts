@@ -1,9 +1,9 @@
 import { BrowserTypes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { Browsers, executeOverlayTests } from "../../../testUtils";
+import { Browsers, executeOverlayTests } from "../../../testUtils/testUtils";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "../../sovAppData";
+} from "../../../testUtils/sovAppData";
 
 executeOverlayTests({
   testName: "browserName",
@@ -20,6 +20,7 @@ executeOverlayTests({
   ],
   browser: Browsers.Firefox,
 });
+
 executeOverlayTests({
   testName: "browserName",
   tests: [

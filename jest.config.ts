@@ -11,6 +11,7 @@ const config: Config = {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
   maxWorkers: 25,
+  setupFiles: ["<rootDir>/jest.setup.js"],
 };
 
 export default config;
