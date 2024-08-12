@@ -26,7 +26,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
   {
     testName: "SuccessAsString",
     sovAppData: sovAppDataEverythingIsOkay,
-    expectedElementValue: "4704",
+    expectedElementValue: "7849",
     expectedStatusCode: StatusCodes.SuccessButNeedsReview,
     expectedStatusMessageKey: StatusMessageKeyTypes.trafficSourceNumberSuccess,
   },
@@ -34,9 +34,9 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     testName: "SuccessAsNumber",
     sovAppData: {
       sovConsumer: sovAppConsumerAllValidData,
-      sovIframes1: { ...sovAppIframesAllValidData, trafficSourceNumber: 4704 },
+      sovIframes1: { ...sovAppIframesAllValidData, trafficSourceNumber: 7849 },
     },
-    expectedElementValue: "4704",
+    expectedElementValue: "7849",
     expectedStatusCode: StatusCodes.SuccessButNeedsReview,
     expectedStatusMessageKey: StatusMessageKeyTypes.trafficSourceNumberSuccess,
   },
