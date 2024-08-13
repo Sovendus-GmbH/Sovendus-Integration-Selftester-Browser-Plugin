@@ -332,7 +332,7 @@ export const statusMessages: {
     )}`,
   },
   currencyMissing: {
-    errorText: "DATA MISSING",
+    errorText: "VALUE MISSING",
     infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
       ", ",
     )}`,

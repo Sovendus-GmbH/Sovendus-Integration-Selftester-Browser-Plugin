@@ -1,4 +1,4 @@
-import { SovConsumer, SovIframes } from "@src/page-banner/self-tester";
+import type { SovConsumer, SovIframes } from "@src/page-banner/self-tester";
 
 export function getSovAppData(sovAppData: SovDataType) {
   const sovData: SovFinalDataType = {

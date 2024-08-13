@@ -2,7 +2,12 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+import type {
+  TestsInfoType} from "@src/tests/testUtils/testCaseGenerator";
+import {
+  generateTests
+} from "@src/tests/testUtils/testCaseGenerator";
+
 import {
   malformedArrayData,
   malformedObjectData,
@@ -18,10 +23,7 @@ import {
   sovAppIFramesAllValidData,
   sovTestTrafficSourceNumber,
 } from "../../../testUtils/sovAppData";
-import {
-  generateTests,
-  TestsInfoType,
-} from "@src/tests/testUtils/testCaseGenerator";
+import { executeOverlayTests } from "../../../testUtils/testUtils";
 
 const testCasesWhenScriptRuns: TestsInfoType = [
   {

@@ -2,11 +2,11 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
 import {
   generateMalformedDataTests,
   generateTests,
 } from "@src/tests/testUtils/testCaseGenerator";
+
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataFloatNumberButIsOkay,
@@ -14,6 +14,7 @@ import {
   sovAppDataNumberButIsOkay,
   sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
 } from "../../../testUtils/sovAppData";
+import { executeOverlayTests } from "../../../testUtils/testUtils";
 
 executeOverlayTests({
   testName: "orderValue",

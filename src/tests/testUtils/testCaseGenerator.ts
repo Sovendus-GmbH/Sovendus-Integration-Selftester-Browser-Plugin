@@ -1,3 +1,13 @@
+import type SelfTester from "@src/page-banner/self-tester";
+import type {
+  StatusMessageKeyTypes} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import {
+  StatusCodes
+} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import type { WebDriver } from "selenium-webdriver";
+
+import type {
+  SovDataType} from "./sovAppData";
 import {
   malformedArrayData,
   malformedObjectData,
@@ -9,15 +19,8 @@ import {
   sovAppDataNumberButIsOkay,
   sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
   sovAppDataTrueButIsOkay,
-  sovAppDataUndefinedButIsOkay,
-  SovDataType,
+  sovAppDataUndefinedButIsOkay
 } from "./sovAppData";
-import SelfTester from "@src/page-banner/self-tester";
-import {
-  StatusCodes,
-  StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { WebDriver } from "selenium-webdriver";
 
 export function generateTests({
   elementKey,

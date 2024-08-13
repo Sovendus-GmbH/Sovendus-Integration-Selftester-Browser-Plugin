@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const captureButton = document.getElementById(
-    "capture-button"
+    "capture-button",
   ) as HTMLElement;
   captureButton.addEventListener("click", function () {
     captureButton.innerText = "Copying In Progress...";
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.tabs.query(query, callback);
   });
   const checkMethodsButton = document.getElementById(
-    "check-methods-button"
+    "check-methods-button",
   ) as HTMLElement;
   checkMethodsButton.addEventListener("click", async function () {
     async function callback(tabs: chrome.tabs.Tab[]) {
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function copyScreenshotsToClipboard(screenshotContainer: HTMLCanvasElement) {
-  if (window.hasOwnProperty("ClipboardItem")) {
+  if (window.ClipboardItem) {
     screenshotContainer.toBlob((blob) => {
       if (blob) {
         const data = [new ClipboardItem({ [blob.type]: blob })];
@@ -74,7 +74,7 @@ function createScreenshot(
   ctx: CanvasRenderingContext2D,
   screenshotContainer: HTMLCanvasElement,
   isFirstScreenShot: boolean,
-  onDone: () => void
+  onDone: () => void,
 ) {
   chrome.tabs.captureVisibleTab(function (screenshotDataUrl) {
     const screenshotImage = new Image();
@@ -88,7 +88,7 @@ function createScreenshot(
           0,
           0,
           screenshotImage.width,
-          screenshotImage.height
+          screenshotImage.height,
         );
       } else {
         ctx.drawImage(
@@ -96,7 +96,7 @@ function createScreenshot(
           0,
           screenshotImage.height,
           screenshotImage.width,
-          screenshotImage.height
+          screenshotImage.height,
         );
       }
       onDone();
@@ -140,14 +140,13 @@ function getScreenshotCanvas(): {
   screenshotContainer: HTMLCanvasElement;
 } {
   const screenshotContainer: HTMLCanvasElement = document.getElementById(
-    "screenshot-canvas"
+    "screenshot-canvas",
   ) as HTMLCanvasElement;
   const ctx = screenshotContainer.getContext("2d") as CanvasRenderingContext2D;
   return { ctx, screenshotContainer };
 }
 
 async function checkAvailableIntegrations(tabId: number) {
-  console.log("test1");
   chrome.scripting.executeScript({
     target: { tabId },
     files: ["/extension-pop-up/check-available-integrations.js"],
