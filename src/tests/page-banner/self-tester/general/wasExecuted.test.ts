@@ -1,7 +1,4 @@
-import {
-  StatusCodes,
-  StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 import {

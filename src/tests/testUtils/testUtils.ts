@@ -13,7 +13,6 @@ import { pathToFileURL } from "url";
 import type { SovFinalDataType } from "./sovAppData";
 import { getSovAppData, sovAwinID } from "./sovAppData";
 import type { TestsType } from "./testCaseGenerator";
-import { SovIframes } from "@src/page-banner/self-tester";
 
 export enum Browsers {
   Chrome = "chrome",
@@ -107,11 +106,11 @@ function initializeWebDriver(browser: Browsers) {
     browser === "firefox"
       ? resolve(
           __dirname,
-          "../../../test_zips/firefox-test-sovendus-integration_TESTING.xpi",
+          "../../../test_zips/firefox-test-sovendus-integration_TESTING.xpi"
         )
       : resolve(
           __dirname,
-          "../../../test_zips/chrome-test-sovendus-integration_TESTING.crx",
+          "../../../test_zips/chrome-test-sovendus-integration_TESTING.crx"
         );
   const preferences = new Preferences();
   // preferences.setLevel(Type.BROWSER, Level.OFF);
@@ -198,9 +197,9 @@ async function prepareTestPageAndRetry(
   retryCounter: number = 1,
   disableFlexibleIframeJs: boolean | undefined,
   disableSovendusDiv: boolean | undefined,
-  isAwinTest?: boolean | undefined,
-  disableAwinMasterTag?: boolean | undefined,
-  disableAwinSalesTracking?: boolean | undefined
+  isAwinTest: boolean | undefined,
+  disableAwinMasterTag: boolean | undefined,
+  disableAwinSalesTracking: boolean | undefined
 ): Promise<WebDriver> {
   let _driver = driver;
   try {
@@ -246,18 +245,18 @@ async function prepareTestPageAndRetry(
             : `
             
             /*** Do not change ***/
-            var AWIN = AWIN || {};
-            AWIN.Tracking = AWIN.Tracking || {};
-            AWIN.Tracking.Sale = {};
+            window.AWIN = window.AWIN || {};
+            window.AWIN.Tracking = window.AWIN.Tracking || {};
+            window.AWIN.Tracking.Sale = {};
 
             /*** Set your transaction parameters ***/
-            AWIN.Tracking.Sale.amount = "${sovAppData.sovIframes[0].orderValue}";
-            AWIN.Tracking.Sale.channel = "aw";
-            AWIN.Tracking.Sale.orderRef = "${sovAppData.sovIframes[0].orderId}";
-            AWIN.Tracking.Sale.parts = "DEFAULT:" + "${sovAppData.sovIframes[0].orderValue}";
-            AWIN.Tracking.Sale.currency = "${sovAppData.sovIframes[0].orderCurrency}";
-            AWIN.Tracking.Sale.voucher = "${sovAppData.sovIframes[0].usedCouponCode}";
-            AWIN.Tracking.Sale.test = "0";
+            window.AWIN.Tracking.Sale.amount = "${sovAppData.sovIframes[0].orderValue}";
+            window.AWIN.Tracking.Sale.channel = "aw";
+            window.AWIN.Tracking.Sale.orderRef = "${sovAppData.sovIframes[0].orderId}";
+            window.AWIN.Tracking.Sale.parts = "DEFAULT:" + "${sovAppData.sovIframes[0].orderValue}";
+            window.AWIN.Tracking.Sale.currency = "${sovAppData.sovIframes[0].orderCurrency}";
+            window.AWIN.Tracking.Sale.voucher = "${sovAppData.sovIframes[0].usedCouponCode}";
+            window.AWIN.Tracking.Sale.test = "0";
             
             
             var img = document.createElement("img");
@@ -333,7 +332,7 @@ async function waitForTestOverlay(driver: WebDriver) {
   );
 }
 
-async function executeWithTimeout(fn: ()=> Promise<void>) {
+async function executeWithTimeout(fn: () => Promise<void>) {
   return new Promise((resolve, reject) => {
     // Create a timeout promise that rejects after the specified time
     const timeoutId = setTimeout(() => {
