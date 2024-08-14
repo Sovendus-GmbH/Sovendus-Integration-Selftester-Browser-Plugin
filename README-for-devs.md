@@ -78,7 +78,9 @@ These commands will run the tests and provide feedback in the console. Note that
 
 ### Building for Release
 
-To prepare the extension for a release, use the following command which will build the extensions, run tests, and package the extensions into zip files ready for distribution:
+1. Bump the version number in package.json, src/chrome/manifest.json and src/firefox/manifest.json
+
+2. To prepare the extension for a release, use the following command which will build the extensions, run tests, and package the extensions into zip files ready for distribution:
 
 ```bash
 npm run build-release
