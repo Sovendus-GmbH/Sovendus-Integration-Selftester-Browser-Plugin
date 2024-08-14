@@ -11,7 +11,7 @@ async function executeTests() {
   removeOverlay();
   window.sovSelfTester = new SelfTester();
   await window.sovSelfTester.waitForSovendusIntegrationDetected();
-  await window.sovSelfTester.selfTestIntegration();
+  window.sovSelfTester.selfTestIntegration();
 
   const overlay = new SelfTesterOverlay();
   await overlay.createOverlay(window.sovSelfTester);
@@ -73,24 +73,7 @@ class SelfTesterOverlay {
       </div>
     `;
     document.body.appendChild(overlay);
-    document
-      .getElementById("toggleSovendusOverlay")
-      ?.addEventListener("click", this.toggleOverlay);
-    document
-      .getElementById("sovendusOverlayRepeatTests")
-      ?.addEventListener("click", executeTests);
-    const checkMarks: HTMLCollectionOf<Element> =
-      document.getElementsByClassName("sovendus-info");
-    for (const element of checkMarks) {
-      element.parentElement?.parentElement?.addEventListener(
-        "mouseover",
-        this.showInfoText,
-      );
-      element.parentElement?.parentElement?.addEventListener(
-        "mouseout",
-        this.hideInfoText,
-      );
-    }
+    this.addButtonAndInfoEventListener();
     // this.moveOverlayAboveAll();
   }
 
@@ -363,6 +346,28 @@ class SelfTesterOverlay {
       }
     }
   }
+
+  addButtonAndInfoEventListener() {
+    document
+      .getElementById("toggleSovendusOverlay")
+      ?.addEventListener("click", this.toggleOverlay);
+    document
+      .getElementById("sovendusOverlayRepeatTests")
+      ?.addEventListener("click", executeTests);
+    const checkMarks: HTMLCollectionOf<Element> =
+      document.getElementsByClassName("sovendus-info");
+    for (const element of checkMarks) {
+      element.parentElement?.parentElement?.addEventListener(
+        "mouseover",
+        this.showInfoText,
+      );
+      element.parentElement?.parentElement?.addEventListener(
+        "mouseout",
+        this.hideInfoText,
+      );
+    }
+  }
+
   showInfoText(event: MouseEvent) {
     const label = (event.currentTarget as HTMLElement)?.lastElementChild
       ?.firstElementChild;
@@ -370,6 +375,7 @@ class SelfTesterOverlay {
       (label as HTMLElement).style.display = "block";
     }
   }
+
   hideInfoText(event: MouseEvent) {
     const label = (event.currentTarget as HTMLElement)?.lastElementChild
       ?.firstElementChild;
@@ -377,6 +383,7 @@ class SelfTesterOverlay {
       (label as HTMLElement).style.display = "none";
     }
   }
+
   // moveOverlayAboveAll() {
   //   function checkAndChangeZIndex(element: HTMLElement) {
   //     if (
