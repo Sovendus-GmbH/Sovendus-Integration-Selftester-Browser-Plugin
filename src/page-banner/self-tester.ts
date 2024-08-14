@@ -1771,7 +1771,6 @@ export interface SovWindow extends Window {
   sovConsumer?: SovConsumer;
   sovApplication?: SovApplication;
   AWIN?: Awin;
-  didLoad: boolean;
 }
 
 declare let window: SovWindow;
