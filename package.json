@@ -20,7 +20,7 @@
     "copy-browser-specific-files": "copyfiles --flat src/chrome/* build/chrome && copyfiles --flat src/firefox/* build/firefox",
     "copy-icon": "copyfiles --flat src/sovendus.png build/firefox/ && copyfiles --flat src/sovendus.png build/chrome/",
     "zip-builds": "zip-build build/chrome release_zips -t 'chrome-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%' && zip-build build/firefox release_zips -t 'firefox-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%'",
-    "zip-builds-for-tests": "rimraf release_zips/chrome-test-sovendus-integration_TESTING.crx && zip-build build/chrome release_zips -t 'chrome-test-sovendus-integration_TESTING.crx' && rimraf release_zips/firefox-test-sovendus-integration_TESTING.xpi &&  zip-build build/firefox release_zips -t 'firefox-test-sovendus-integration_TESTING.xpi'"
+    "zip-builds-for-tests": "rimraf test_zips/chrome-test-sovendus-integration_TESTING.crx && zip-build build/chrome test_zips -t 'chrome-test-sovendus-integration_TESTING.crx' && rimraf test_zips/firefox-test-sovendus-integration_TESTING.xpi &&  zip-build build/firefox test_zips -t 'firefox-test-sovendus-integration_TESTING.xpi'"
   },
   "author": "Marcus Brandstaetter - Sovendus GmbH",
   "license": "GPL-3.0-or-later",

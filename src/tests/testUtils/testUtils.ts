@@ -107,11 +107,11 @@ function initializeWebDriver(browser: Browsers) {
     browser === "firefox"
       ? resolve(
           __dirname,
-          "../../../release_zips/firefox-test-sovendus-integration_TESTING.xpi"
+          "../../../test_zips/firefox-test-sovendus-integration_TESTING.xpi",
         )
       : resolve(
           __dirname,
-          "../../../release_zips/chrome-test-sovendus-integration_TESTING.crx"
+          "../../../test_zips/chrome-test-sovendus-integration_TESTING.crx",
         );
   const preferences = new Preferences();
   // preferences.setLevel(Type.BROWSER, Level.OFF);
