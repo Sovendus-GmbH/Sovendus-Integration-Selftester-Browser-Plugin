@@ -1,8 +1,6 @@
 ## Selftester Plugin
 
 - improve overlay style and fix style issues (style overrides from page css)
-- handle encoding in sovConsumer vs sovApplication.consumer
-- improve timestamp test - check if recent
 - already show overlay in loading state as soon as something is detected
 - improve style of overlay when awin sale not tracked
 - improve overlay loading speed
@@ -10,12 +8,11 @@
 - handle if a test fails - still continue and show error in overlay - also use new status code testFailed
 - dont compile tests with build
 - transmit multiple iframes content when they are different
+- handle overlay scrollable screenshot
 
 ## Tests
 
-- add banner disabled tests
 - add awin tests
 - add spa tests
 - dont spam dev hub api on tests
-- run all tests also on firefox and Edge
 - get a AWIN ID for Tests
