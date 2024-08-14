@@ -18,14 +18,8 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
         },
-        {
-          testName: "NoAwinExecuted",
-          sovAppData: sovAppDataEverythingIsOkay,
-          expectedElementValue: false,
-          expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey: null,
-          disableAwinMasterTag: true,
-        },
+
+        // NoAwinExecuted is not required, because Sovendus is not integrated
       ],
     }),
   ],

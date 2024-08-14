@@ -10,7 +10,7 @@ const config: Config = {
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
-  maxWorkers: 25,
+  maxWorkers: 10,
   setupFiles: ["<rootDir>/jest.setup.js"],
 };
 

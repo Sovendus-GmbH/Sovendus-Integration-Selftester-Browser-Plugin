@@ -14,48 +14,52 @@ import {
 } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
 
+const tests = [
+  ...generateTests({
+    elementKey: "orderCurrency",
+    testsInfo: [
+      {
+        testName: "Success",
+        sovAppData: sovAppDataEverythingIsOkay,
+        expectedElementValue: "EUR",
+        expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+        expectedStatusMessageKey: StatusMessageKeyTypes.currencySuccess,
+      },
+      {
+        testName: "MalformedCurrencyName",
+        sovAppData: {
+          sovConsumer: sovAppConsumerAllValidData,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderCurrency: "EURO",
+          },
+        },
+        expectedElementValue: "EURO",
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: StatusMessageKeyTypes.currencyNotValid,
+      },
+      {
+        testName: "MalformedCurrencyName_WhenScriptDoesNotRun",
+        sovAppData: {
+          sovConsumer: sovAppConsumerAllValidData,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderCurrency: "EURO",
+          },
+        },
+        expectedElementValue: "EURO",
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: StatusMessageKeyTypes.currencyNotValid,
+        disableFlexibleIframeJs: true,
+      },
+    ],
+  }),
+];
+
 executeOverlayTests({
   testName: "orderCurrency",
   tests: [
-    ...generateTests({
-      elementKey: "orderCurrency",
-      testsInfo: [
-        {
-          testName: "Success",
-          sovAppData: sovAppDataEverythingIsOkay,
-          expectedElementValue: "EUR",
-          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
-          expectedStatusMessageKey: StatusMessageKeyTypes.currencySuccess,
-        },
-        {
-          testName: "MalformedCurrencyName",
-          sovAppData: {
-            sovConsumer: sovAppConsumerAllValidData,
-            sovIframes1: {
-              ...sovAppIFramesAllValidData,
-              orderCurrency: "EURO",
-            },
-          },
-          expectedElementValue: "EURO",
-          expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey: StatusMessageKeyTypes.currencyNotValid,
-        },
-        {
-          testName: "MalformedCurrencyName_WhenScriptDoesNotRun",
-          sovAppData: {
-            sovConsumer: sovAppConsumerAllValidData,
-            sovIframes1: {
-              ...sovAppIFramesAllValidData,
-              orderCurrency: "EURO",
-            },
-          },
-          expectedElementValue: "EURO",
-          expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey: StatusMessageKeyTypes.currencyNotValid,
-          disableFlexibleIframeJs: true,
-        },
-      ],
-    }),
+    ...tests,
     ...generateMalformedDataTests({
       elementKey: "orderCurrency",
       expectedMalformedStatusMessageKey: StatusMessageKeyTypes.currencyNotValid,
@@ -63,4 +67,19 @@ executeOverlayTests({
       objectElementValueType: "objectObject",
     }),
   ],
+});
+
+executeOverlayTests({
+  testName: "orderCurrencyAwin",
+  tests: [
+    ...tests,
+    ...generateMalformedDataTests({
+      elementKey: "orderCurrency",
+      expectedMalformedStatusMessageKey: StatusMessageKeyTypes.currencyNotValid,
+      expectedMissingStatusMessageKey: StatusMessageKeyTypes.currencyMissing,
+      objectElementValueType: "objectObject",
+      isAwinTest: true,
+    }),
+  ],
+  isAwinTest: true,
 });

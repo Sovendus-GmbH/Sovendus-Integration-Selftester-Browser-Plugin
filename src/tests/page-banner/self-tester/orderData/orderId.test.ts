@@ -10,21 +10,25 @@ import {
 import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
 
+const tests = [
+  ...generateTests({
+    elementKey: "orderId",
+    testsInfo: [
+      {
+        testName: "Success",
+        sovAppData: sovAppDataEverythingIsOkay,
+        expectedElementValue: "order-1234",
+        expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderIdSuccess,
+      },
+    ],
+  }),
+];
+
 executeOverlayTests({
   testName: "orderId",
   tests: [
-    ...generateTests({
-      elementKey: "orderId",
-      testsInfo: [
-        {
-          testName: "Success",
-          sovAppData: sovAppDataEverythingIsOkay,
-          expectedElementValue: "order-1234",
-          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
-          expectedStatusMessageKey: StatusMessageKeyTypes.orderIdSuccess,
-        },
-      ],
-    }),
+    ...tests,
     ...generateMalformedDataTests({
       elementKey: "orderId",
       expectedMalformedStatusMessageKey: StatusMessageKeyTypes.orderIdMalformed,
@@ -32,4 +36,19 @@ executeOverlayTests({
       objectElementValueType: "objectObject",
     }),
   ],
+});
+
+executeOverlayTests({
+  testName: "orderIdAwin",
+  tests: [
+    ...tests,
+    ...generateMalformedDataTests({
+      elementKey: "orderId",
+      expectedMalformedStatusMessageKey: StatusMessageKeyTypes.orderIdMalformed,
+      expectedMissingStatusMessageKey: StatusMessageKeyTypes.missingOrderId,
+      objectElementValueType: "objectObject",
+      isAwinTest: true,
+    }),
+  ],
+  isAwinTest: true,
 });

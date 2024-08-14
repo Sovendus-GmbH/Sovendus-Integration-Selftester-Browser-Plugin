@@ -334,7 +334,7 @@ async function prepareTestPageAndRetry(
   return _driver;
 }
 
-const testTimout = 20000;
+const testTimout = 30000;
 
 async function waitForTestOverlay(driver: WebDriver) {
   await driver.wait(

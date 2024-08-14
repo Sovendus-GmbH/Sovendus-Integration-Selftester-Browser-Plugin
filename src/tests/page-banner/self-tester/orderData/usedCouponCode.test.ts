@@ -10,21 +10,25 @@ import {
 import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
 
+const tests = [
+  ...generateTests({
+    elementKey: "usedCouponCode",
+    testsInfo: [
+      {
+        testName: "Success",
+        sovAppData: sovAppDataEverythingIsOkay,
+        expectedElementValue: "coupon-1234",
+        expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+        expectedStatusMessageKey: StatusMessageKeyTypes.couponCodeSuccess,
+      },
+    ],
+  }),
+];
+
 executeOverlayTests({
   testName: "usedCouponCode",
   tests: [
-    ...generateTests({
-      elementKey: "usedCouponCode",
-      testsInfo: [
-        {
-          testName: "Success",
-          sovAppData: sovAppDataEverythingIsOkay,
-          expectedElementValue: "coupon-1234",
-          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
-          expectedStatusMessageKey: StatusMessageKeyTypes.couponCodeSuccess,
-        },
-      ],
-    }),
+    ...tests,
     ...generateMalformedDataTests({
       elementKey: "usedCouponCode",
       expectedMalformedStatusMessageKey:
@@ -33,4 +37,20 @@ executeOverlayTests({
       objectElementValueType: "objectObject",
     }),
   ],
+});
+
+executeOverlayTests({
+  testName: "usedCouponCodeAwin",
+  tests: [
+    ...tests,
+    ...generateMalformedDataTests({
+      elementKey: "usedCouponCode",
+      expectedMalformedStatusMessageKey:
+        StatusMessageKeyTypes.couponCodeMalformed,
+      expectedMissingStatusMessageKey: StatusMessageKeyTypes.missingCouponCode,
+      objectElementValueType: "objectObject",
+      isAwinTest: true,
+    }),
+  ],
+  isAwinTest: true,
 });
