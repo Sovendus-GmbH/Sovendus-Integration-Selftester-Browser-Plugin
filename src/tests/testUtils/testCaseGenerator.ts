@@ -43,6 +43,7 @@ export function generateTests({
     disableFlexibleIframeJs: testInfo.disableFlexibleIframeJs,
     disableAwinMasterTag: testInfo.disableAwinMasterTag,
     disableAwinSalesTracking: testInfo.disableAwinSalesTracking,
+    deleteSovIFrame: testInfo.removeSovIFrame,
   }));
 }
 
@@ -191,6 +192,7 @@ export type TestsInfoType = {
   disableSovendusDiv?: boolean;
   disableAwinMasterTag?: boolean;
   disableAwinSalesTracking?: boolean;
+  removeSovIFrame?: boolean;
 }[];
 
 export type TestsType = {
@@ -209,4 +211,5 @@ export type TestsType = {
   disableSovendusDiv?: boolean | undefined;
   disableAwinMasterTag?: boolean | undefined;
   disableAwinSalesTracking?: boolean | undefined;
+  deleteSovIFrame?: boolean | undefined;
 }[];

@@ -13,12 +13,14 @@
     "sourceType": "module"
   },
   "plugins": [
-    "simple-import-sort"
+    "simple-import-sort",
+    "eslint-plugin-unused-imports"
   ],
   "rules": {
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     "@typescript-eslint/consistent-type-imports": "error",
-    "prefer-template": "error"
+    "prefer-template": "error",
+    "unused-imports/no-unused-imports": "error"
   }
 }

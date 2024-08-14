@@ -1,31 +1,30 @@
 import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
-import {
-  sovAppDataEverythingIsOkay,
-} from "../../../testUtils/sovAppData";
+import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
 
 executeOverlayTests({
-  testName: "wasExecuted",
+  testName: "awinIntegrationDetectedTestResult",
+  isAwinTest: true,
   tests: [
     ...generateTests({
-      elementKey: "wasExecuted",
+      elementKey: "awinIntegrationDetectedTestResult",
       testsInfo: [
         {
-          testName: "Executed",
+          testName: "awinIntegrationDetected",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: true,
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
         },
         {
-          testName: "notExecuted",
+          testName: "NoAwinIntegrationDetected",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: null,
-          disableFlexibleIframeJs: true,
+          disableAwinMasterTag: true,
         },
       ],
     }),

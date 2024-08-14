@@ -6,7 +6,6 @@ import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 import {
   sovAppDataEverythingIsOkay,
-  sovAppDataUndefinedButIsOkay,
 } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
 
@@ -26,7 +25,7 @@ executeOverlayTests({
         },
         {
           testName: "NoAwinSaleTracked",
-          sovAppData: sovAppDataUndefinedButIsOkay,
+          sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: StatusMessageKeyTypes.awinNoSalesTracked,
