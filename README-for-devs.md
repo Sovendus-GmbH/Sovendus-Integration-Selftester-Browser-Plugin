@@ -1,6 +1,6 @@
 # Integration Tester Browser Extension
 
-This project is a Chrome and Firefox browser extension designed for testing the integration of Sovendus integrations. The extension provides tools for validating backend configurations and integration setups within the browser environment.
+This project is a Chrome and Firefox browser extension designed for testing the integration of Sovendus Voucher Network and Checkout Benefits. The extension provides an overlay for validating configurations and integration setups within the browser environment.
 
 ## Table of Contents
 

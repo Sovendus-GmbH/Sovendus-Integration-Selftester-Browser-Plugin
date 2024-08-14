@@ -23,6 +23,7 @@ interface testsFn {
 
 async function repeatTestsOnSPA(tests: testsFn) {
   let visitedPath = "";
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     if (visitedPath !== window.location.pathname) {
       visitedPath = window.location.pathname;
@@ -193,9 +194,7 @@ class SelfTesterOverlay {
           selfTester.sessionId.statusCode === StatusCodes.TestDidNotRun
             ? ""
             : `<li class='sovendus-overlay-font sovendus-overlay-text'>` +
-              `sessionId: ${ 
-              selfTester.sessionId.getFormattedStatusMessage() 
-              }</li>`
+              `sessionId: ${selfTester.sessionId.getFormattedStatusMessage()}</li>`
         }
         <li class='sovendus-overlay-font sovendus-overlay-text'>
           timestamp: ${selfTester.timestamp.getFormattedStatusMessage()}
