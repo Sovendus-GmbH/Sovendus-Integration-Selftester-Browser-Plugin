@@ -1,6 +1,7 @@
 import type {
   ElementValue,
-  TestResultResponseDataType} from "./self-tester-data-to-sync-with-dev-hub.js";
+  TestResultResponseDataType,
+} from "./self-tester-data-to-sync-with-dev-hub.js";
 import {
   BrowserTypes,
   StatusCodes,
@@ -58,7 +59,7 @@ export default class SelfTester {
       (this.awinIntegrationDetectedTestResult =
         this.getAwinIntegrationDetectedTestResult());
     this.integrationType = this.getIntegrationType(
-      awinIntegrationDetectedTestResult,
+      awinIntegrationDetectedTestResult
     );
     this.browserName = this.getBrowserName();
     this.websiteURL = this.getWebsiteURL();
@@ -70,7 +71,7 @@ export default class SelfTester {
 
     const wasExecuted = (this.wasExecuted = this.getWasExecutedTestResult(
       trafficSourceNumber,
-      trafficMediumNumber,
+      trafficMediumNumber
     ));
 
     const sovConsumer = (this.sovConsumer = this.getSovConsumerData());
@@ -79,7 +80,7 @@ export default class SelfTester {
       this.executeAwinTests(
         wasExecuted,
         trafficSourceNumber,
-        trafficMediumNumber,
+        trafficMediumNumber
       );
     } else {
       this.executeConsumerDataTests(sovConsumer);
@@ -87,7 +88,7 @@ export default class SelfTester {
       this.executeGeneralTests(
         wasExecuted,
         trafficSourceNumber,
-        trafficMediumNumber,
+        trafficMediumNumber
       );
     }
     this.transmitTestResult();
@@ -152,7 +153,7 @@ export default class SelfTester {
       this.getConsumerEmailTestResult(sovConsumer));
     this.consumerEmailHash = this.getConsumerEmailHashTestResult(
       sovConsumer,
-      consumerEmail,
+      consumerEmail
     );
     this.consumerStreet = this.getConsumerStreetTestResult(sovConsumer);
     this.consumerStreetNumber =
@@ -177,7 +178,7 @@ export default class SelfTester {
   executeGeneralTests(
     wasExecuted: TestResultType<boolean>,
     trafficSourceNumber: TestResultType<string | undefined>,
-    trafficMediumNumber: TestResultType<string | undefined>,
+    trafficMediumNumber: TestResultType<string | undefined>
   ) {
     const iframeContainerId = (this.iframeContainerId =
       this.getIframeContainerIdTestResult());
@@ -188,23 +189,23 @@ export default class SelfTester {
       this.getSovDivIdInIFramesTestResult(sovIFramesAmount, iframeContainerId));
     this.sovendusDivFound = this.getSovendusDivFoundTestResult(
       sovDivIdInIFrames,
-      iframeContainerId,
+      iframeContainerId
     );
     const multipleSovIFramesDetected = (this.multipleSovIFramesDetected =
       this.getMultipleSovIFramesDetectedTestResult(sovIFramesAmount));
     this.multipleIFramesAreSame = this.getMultipleIFramesAreSameTestResult(
       multipleSovIFramesDetected,
-      sovIFramesAmount,
+      sovIFramesAmount
     );
     this.executeSovendusJsFilesTests(
       wasExecuted,
       trafficSourceNumber,
-      trafficMediumNumber,
+      trafficMediumNumber
     );
   }
 
   getIntegrationType(
-    awinIntegrationDetectedTestResult: TestResultType<boolean>,
+    awinIntegrationDetectedTestResult: TestResultType<boolean>
   ): TestResultType<string> {
     const valueTestResult = this.validValueTestResult({
       value: window.sovIframes?.[0]?.integrationType,
@@ -233,7 +234,7 @@ export default class SelfTester {
   executeAwinTests(
     wasExecuted: TestResultType<boolean>,
     trafficSourceNumber: TestResultType<string | undefined>,
-    trafficMediumNumber: TestResultType<string | undefined>,
+    trafficMediumNumber: TestResultType<string | undefined>
   ): void {
     const awinSaleTrackedTestResult = (this.awinSaleTrackedTestResult =
       this.getAwinSaleTrackedTestResult());
@@ -246,7 +247,7 @@ export default class SelfTester {
         this.executeGeneralTests(
           wasExecuted,
           trafficSourceNumber,
-          trafficMediumNumber,
+          trafficMediumNumber
         );
       }
     }
@@ -299,7 +300,7 @@ export default class SelfTester {
   }
 
   getAwinExecutedTestResult(
-    awinSaleTrackedTestResult: TestResultType<boolean>,
+    awinSaleTrackedTestResult: TestResultType<boolean>
   ): TestResultType<boolean> {
     const sovIframesExists = !!window.sovIframes;
     if (awinSaleTrackedTestResult.elementValue) {
@@ -318,7 +319,7 @@ export default class SelfTester {
   }
 
   getConsumerSalutationTestResult(
-    consumer: MergedSovConsumer,
+    consumer: MergedSovConsumer
   ): TestResultType<string | undefined> {
     const valueTestResult = this.validValueTestResult({
       value: consumer.salutation,
@@ -345,7 +346,7 @@ export default class SelfTester {
   }
 
   getConsumerFirstNameTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: SovApplicationConsumer
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.firstName,
@@ -356,7 +357,7 @@ export default class SelfTester {
   }
 
   getConsumerLastNameTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: SovApplicationConsumer
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.lastName,
@@ -367,7 +368,7 @@ export default class SelfTester {
   }
 
   getConsumerYearOfBirthTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: SovApplicationConsumer
   ): TestResultType<string | undefined> {
     const valueTestResult = this.validValueTestResult({
       value: consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
@@ -403,7 +404,7 @@ export default class SelfTester {
   }
 
   getConsumerEmailTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: SovApplicationConsumer
   ): TestResultType<string | undefined> {
     const emailTestResult = this.validValueTestResult({
       value: consumer.email,
@@ -436,7 +437,7 @@ export default class SelfTester {
 
   getConsumerEmailHashTestResult(
     consumer: SovApplicationConsumer,
-    consumerEmail: TestResultType<string | undefined>,
+    consumerEmail: TestResultType<string | undefined>
   ): TestResultType<string | undefined> {
     let elementValue: ElementValue;
     let statusMessageKey: StatusMessageKeyTypes;
@@ -454,7 +455,7 @@ export default class SelfTester {
       statusMessageKey = testResult.statusMessageKey;
       if (testResult.statusCode === StatusCodes.SuccessButNeedsReview) {
         const hashIsValid = this.checkIfValidMd5Hash(
-          String(testResult.elementValue),
+          String(testResult.elementValue)
         );
         if (hashIsValid) {
           statusCode = StatusCodes.SuccessButNeedsReview;
@@ -481,7 +482,7 @@ export default class SelfTester {
   }
 
   getConsumerStreetTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: SovApplicationConsumer
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.street,
@@ -492,7 +493,7 @@ export default class SelfTester {
   }
 
   getConsumerStreetNumberTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: SovApplicationConsumer
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.streetNumber,
@@ -503,7 +504,7 @@ export default class SelfTester {
   }
 
   getConsumerZipCodeTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: SovApplicationConsumer
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.zipCode,
@@ -519,7 +520,7 @@ export default class SelfTester {
   }
 
   getConsumerPhoneTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: SovApplicationConsumer
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.phone,
@@ -535,7 +536,7 @@ export default class SelfTester {
   }
 
   getConsumerCityTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: SovApplicationConsumer
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.city,
@@ -546,7 +547,7 @@ export default class SelfTester {
   }
 
   getConsumerCountryTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: SovApplicationConsumer
   ): TestResultType<string | undefined> {
     const valueResult = this.validValueTestResult({
       value: consumer.country,
@@ -558,7 +559,7 @@ export default class SelfTester {
     let statusMessageKey = valueResult.statusMessageKey;
     if (valueResult.elementValue) {
       const isValidCountry = validCountries.includes(
-        String(valueResult.elementValue),
+        String(valueResult.elementValue)
       );
       if (!isValidCountry) {
         statusCode = StatusCodes.Error;
@@ -631,31 +632,31 @@ export default class SelfTester {
   executeSovendusJsFilesTests(
     wasExecuted: TestResultType<boolean>,
     trafficSourceNumber: TestResultType<string | undefined>,
-    trafficMediumNumber: TestResultType<string | undefined>,
+    trafficMediumNumber: TestResultType<string | undefined>
   ) {
     const flexibleIframeJs: HTMLScriptElement | null = document.querySelector(
-      '[src$="api.sovendus.com/sovabo/common/js/flexibleIframe.js"]',
+      '[src$="api.sovendus.com/sovabo/common/js/flexibleIframe.js"]'
     );
     const flexibleIFrameOnDOM = (this.flexibleIFrameOnDOM =
       this.getIsFlexibleIFrameOnDOM(
         wasExecuted,
         trafficSourceNumber,
         trafficMediumNumber,
-        flexibleIframeJs,
+        flexibleIframeJs
       ));
     const isFlexibleIframeExecutable = (this.isFlexibleIframeExecutable =
       this.getIsFlexibleIframeExecutable(
         flexibleIframeJs,
-        flexibleIFrameOnDOM,
+        flexibleIFrameOnDOM
       ));
     const sovendusJs: HTMLScriptElement | null = document.getElementById(
-      "sovloader-script",
+      "sovloader-script"
     ) as HTMLScriptElement | null;
     const isSovendusJsOnDom = (this.isSovendusJsOnDom =
       this.getIsSovendusJsOnDom(isFlexibleIframeExecutable, sovendusJs));
     this.isSovendusJsExecutable = this.getIsSovendusJsExecutable(
       isSovendusJsOnDom,
-      sovendusJs,
+      sovendusJs
     );
   }
 
@@ -663,7 +664,7 @@ export default class SelfTester {
     wasExecuted: TestResultType<boolean>,
     trafficSourceNumber: TestResultType<string | undefined>,
     trafficMediumNumber: TestResultType<string | undefined>,
-    flexibleIframeJs: HTMLScriptElement | null,
+    flexibleIframeJs: HTMLScriptElement | null
   ): TestResultType<boolean | undefined> {
     if (
       wasExecuted.statusCode === StatusCodes.Error &&
@@ -689,7 +690,7 @@ export default class SelfTester {
 
   getIsFlexibleIframeExecutable(
     flexibleIframeJs: HTMLScriptElement | null,
-    flexibleIFrameOnDOM: TestResultType<boolean | undefined>,
+    flexibleIFrameOnDOM: TestResultType<boolean | undefined>
   ): TestResultType<boolean | undefined> {
     if (
       flexibleIFrameOnDOM.statusCode === StatusCodes.Success &&
@@ -716,7 +717,7 @@ export default class SelfTester {
 
   getIsSovendusJsOnDom(
     isFlexibleIframeExecutable: TestResultType<boolean | undefined>,
-    sovendusJs: HTMLScriptElement | null,
+    sovendusJs: HTMLScriptElement | null
   ): TestResultType<boolean | undefined> {
     if (!isFlexibleIframeExecutable) {
       return new DidNotRunTestResult<boolean | undefined>();
@@ -735,7 +736,7 @@ export default class SelfTester {
 
   getIsSovendusJsExecutable(
     isSovendusJsOnDom: TestResultType<boolean | undefined>,
-    sovendusJs: HTMLScriptElement | null,
+    sovendusJs: HTMLScriptElement | null
   ): TestResultType<boolean | string | undefined> {
     if (isSovendusJsOnDom && sovendusJs) {
       const isExecutable =
@@ -764,7 +765,7 @@ export default class SelfTester {
 
   getWasExecutedTestResult(
     trafficSourceNumber: TestResultType<string | undefined>,
-    trafficMediumNumber: TestResultType<string | undefined>,
+    trafficMediumNumber: TestResultType<string | undefined>
   ): TestResultType<boolean> {
     const wasExecuted =
       trafficSourceNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
@@ -789,14 +790,14 @@ export default class SelfTester {
   }
 
   getIsEnabledInBackendTestResult(
-    wasExecuted: TestResultType<boolean>,
+    wasExecuted: TestResultType<boolean>
   ): TestResultType<boolean | undefined> {
     if (wasExecuted.statusCode === StatusCodes.Success) {
       const isEnabled = window.sovApplication?.instances?.some(
         (instance) =>
           Object.keys(instance.config?.overlay || {}).length > 0 ||
           Object.keys(instance.config?.stickyBanner || {}).length > 0 ||
-          instance?.banner?.bannerExists,
+          instance?.banner?.bannerExists
       );
       if (isEnabled) {
         return new SuccessTestResult({
@@ -814,7 +815,7 @@ export default class SelfTester {
 
   getSovDivIdInIFramesTestResult(
     sovIFramesAmount: TestResultType<bigint | undefined>,
-    iframeContainerId: TestResultType<string | undefined>,
+    iframeContainerId: TestResultType<string | undefined>
   ): TestResultType<boolean | undefined> {
     if (
       sovIFramesAmount.statusCode === StatusCodes.TestDidNotRun ||
@@ -823,7 +824,7 @@ export default class SelfTester {
       return new DidNotRunTestResult<boolean | undefined>();
     }
     const elementValue: boolean = Boolean(
-      window.sovIframes?.[0]?.iframeContainerId,
+      window.sovIframes?.[0]?.iframeContainerId
     );
     if (elementValue && sovIFramesAmount.elementValue) {
       return new SuccessTestResult({
@@ -839,14 +840,14 @@ export default class SelfTester {
 
   getSovendusDivFoundTestResult(
     sovDivIdInIFrames: TestResultType<boolean | undefined>,
-    iframeContainerId: TestResultType<string | undefined>,
+    iframeContainerId: TestResultType<string | undefined>
   ): TestResultType<boolean | string | undefined> {
     if (sovDivIdInIFrames.elementValue) {
       const sovendusDivFound: boolean =
         sovDivIdInIFrames.statusCode === StatusCodes.Success &&
         Boolean(
           typeof iframeContainerId.elementValue === "string" &&
-            document.getElementById(iframeContainerId.elementValue),
+            document.getElementById(iframeContainerId.elementValue)
         );
       if (sovendusDivFound) {
         return new SuccessTestResult({
@@ -863,7 +864,7 @@ export default class SelfTester {
   }
 
   getMultipleSovIFramesDetectedTestResult(
-    sovIframesAmount: TestResultType<bigint | undefined>,
+    sovIframesAmount: TestResultType<bigint | undefined>
   ): TestResultType<boolean | undefined> {
     if (sovIframesAmount.statusCode === StatusCodes.TestDidNotRun) {
       return new DidNotRunTestResult<boolean | undefined>();
@@ -900,7 +901,7 @@ export default class SelfTester {
 
   getMultipleIFramesAreSameTestResult(
     multipleSovIframesDetected: TestResultType<boolean | undefined>,
-    sovIframesAmount: TestResultType<bigint | undefined>,
+    sovIframesAmount: TestResultType<bigint | undefined>
   ): TestResultType<bigint | undefined> {
     if (multipleSovIframesDetected.statusCode === StatusCodes.Error) {
       let prevSovIframe: SovIframes | undefined = undefined;
@@ -939,7 +940,7 @@ export default class SelfTester {
     });
     if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
       const isValidCurrency = validCurrencies.includes(
-        String(valueTestResult.elementValue),
+        String(valueTestResult.elementValue)
       );
       let statusMessageKey: StatusMessageKeyTypes;
       let statusCode: StatusCodes;
@@ -1203,7 +1204,7 @@ export default class SelfTester {
       (instance) =>
         instance.banner?.bannerExists ||
         instance.collapsableOverlayClosingType ||
-        instance.stickyBanner?.bannerExists,
+        instance.stickyBanner?.bannerExists
     );
   }
 
@@ -1523,7 +1524,7 @@ class SuccessTestResult<
   }
 
   override getFormattedStatusMessage(
-    showSuccessCheckMark: boolean = true,
+    showSuccessCheckMark: boolean = true
   ): string {
     return (
       String(this.elementValue ? this.elementValue : "") +
@@ -1578,50 +1579,47 @@ class WarningOrFailTestResult<
   }
 
   override getFormattedStatusMessage(
-    _showSuccessCheckMark: boolean = true,
+    _showSuccessCheckMark: boolean = true
   ): string {
     try {
       if (this.statusCode === StatusCodes.SuccessButNeedsReview) {
         if (!this.statusMessageKey) {
           throw new Error(
-            `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
+            `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`
           );
         }
         return `${String(
-          this.elementValue ? this.elementValue : "",
+          this.elementValue ? this.elementValue : ""
         )}${this.getInfoMarkWithLabel(
           this.replaceElementValueInMessage(
-            statusMessages[this.statusMessageKey].infoText,
-          ),
+            statusMessages[this.statusMessageKey].infoText
+          )
         )}`;
       }
       if (this.statusCode === StatusCodes.Error) {
         if (!this.statusMessageKey) {
           throw new Error(
-            `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
+            `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`
           );
         }
         return `${String(
-          this.elementValue ? this.elementValue : "",
+          this.elementValue ? this.elementValue : ""
         )}<span class='sovendus-overlay-error' style="padding-left: 5px;">${
           statusMessages[this.statusMessageKey].errorText
         }</span>${this.getInfoMarkWithLabel(
           this.replaceElementValueInMessage(
-            statusMessages[this.statusMessageKey].infoText,
-          ),
+            statusMessages[this.statusMessageKey].infoText
+          )
         )}`;
       }
       return "";
     } catch (error) {
       throw new Error(
-        `getFormattedStatusMessage() crashed: ${ 
-          error 
-          }\n\nElementValue: ${ 
-          this.elementValue 
-          }\nStatusCode: ${ 
-          this.statusCode 
-          }\nStatusMessageKey: ${ 
-          this.statusMessageKey}`,
+        `getFormattedStatusMessage() crashed: ${error}\n\nElementValue: ${
+          this.elementValue
+        }\nStatusCode: ${this.statusCode}\nStatusMessageKey: ${
+          this.statusMessageKey
+        }`
       );
     }
   }
@@ -1630,11 +1628,11 @@ class WarningOrFailTestResult<
     if (this.statusCode === StatusCodes.Error) {
       if (!this.statusMessageKey) {
         throw new Error(
-          `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
+          `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`
         );
       }
       return `<li><h3 class='sovendus-overlay-error'>${this.replaceElementValueInMessage(
-        statusMessages[this.statusMessageKey].errorText,
+        statusMessages[this.statusMessageKey].errorText
       )}</h3></li>`;
     }
     return "";
@@ -1646,7 +1644,7 @@ class WarningOrFailTestResult<
 
   private getInfoMarkWithLabel(
     labelText: string,
-    isWarning: boolean = true,
+    isWarning: boolean = true
   ): string {
     const infoIcon = isWarning
       ? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAOVJREFUWEftl10OhDAIhNtz7vn2nG58cFMrMMPYpGr01QKfw0+xlslPnRy/3BNg+ZbFUq5+8h9EK+AF9VLIwkCAbOAeCIGEAGeDbzARhAug5jlrZwJknfSyZ+xpAEvGNhB6v0JaZw4AFj3j3AvQ++t9QQCvgFTQFABqIZSCrTYiFXYKILnaYht1VgLIVPkKPVyB6QBMbtl0SSl4LgAqGDRy2ZnRnpMHEQuL2hUCeCOWAWCm5fUuI+vLmMUiarvI/poLidfn6j+EtJKNgkA3KtyKVRAU+F8XiqzZyyiKQSuggDI2L8APUoSuITyX8cMAAAAASUVORK5CYII="

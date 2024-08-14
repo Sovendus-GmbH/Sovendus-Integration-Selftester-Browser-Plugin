@@ -11,8 +11,9 @@ import { Preferences } from "selenium-webdriver/lib/logging";
 import { pathToFileURL } from "url";
 
 import type { SovFinalDataType } from "./sovAppData";
-import { getSovAppData } from "./sovAppData";
+import { getSovAppData, sovAwinID } from "./sovAppData";
 import type { TestsType } from "./testCaseGenerator";
+import { SovIframes } from "@src/page-banner/self-tester";
 
 export enum Browsers {
   Chrome = "chrome",
@@ -36,10 +37,12 @@ export async function executeOverlayTests({
   testName,
   tests,
   browser,
+  isAwinTest = false,
 }: {
   testName: string;
   tests: TestsType;
   browser?: Browsers;
+  isAwinTest?: boolean;
 }) {
   const buildMode = process.env.npm_config_buildmode === "true";
   for (const _browser of browser
@@ -66,7 +69,7 @@ export async function executeOverlayTests({
         test(`${testName}_${testData.testName}`, async () => {
           if (!driver) {
             throw new Error(
-              "Failed to start tests, webDriver is not initialized",
+              "Failed to start tests, webDriver is not initialized"
             );
           }
           const sovAppData =
@@ -82,6 +85,9 @@ export async function executeOverlayTests({
             1,
             testData.disableFlexibleIframeJs,
             testData.disableSovendusDiv,
+            isAwinTest,
+            testData.disableAwinMasterTag,
+            testData.disableAwinSalesTracking
           );
           const sovSelfTester = await getIntegrationTesterData(driver);
           await testData.testFunction({ driver, sovSelfTester, sovAppData });
@@ -101,11 +107,11 @@ function initializeWebDriver(browser: Browsers) {
     browser === "firefox"
       ? resolve(
           __dirname,
-          "../../../release_zips/firefox-test-sovendus-integration_TESTING.xpi",
+          "../../../release_zips/firefox-test-sovendus-integration_TESTING.xpi"
         )
       : resolve(
           __dirname,
-          "../../../release_zips/chrome-test-sovendus-integration_TESTING.crx",
+          "../../../release_zips/chrome-test-sovendus-integration_TESTING.crx"
         );
   const preferences = new Preferences();
   // preferences.setLevel(Type.BROWSER, Level.OFF);
@@ -192,41 +198,92 @@ async function prepareTestPageAndRetry(
   retryCounter: number = 1,
   disableFlexibleIframeJs: boolean | undefined,
   disableSovendusDiv: boolean | undefined,
+  isAwinTest?: boolean | undefined,
+  disableAwinMasterTag?: boolean | undefined,
+  disableAwinSalesTracking?: boolean | undefined
 ): Promise<WebDriver> {
   let _driver = driver;
   try {
     await executeWithTimeout(async () => {
       await driver.get(fileUrl);
-      const integrationScript = `
-      const consumer = ${JSON.stringify(sovAppData.sovConsumer)};
-      if (consumer){
-        window.sovConsumer = consumer;
-      }
-      window.sovIframes =  ${JSON.stringify(sovAppData.sovIframes)};
+      let integrationScript: string;
+      if (!isAwinTest) {
+        integrationScript = `
+        const consumer = ${JSON.stringify(sovAppData.sovConsumer)};
+        if (consumer){
+          window.sovConsumer = consumer;
+        }
+        window.sovIframes =  ${JSON.stringify(sovAppData.sovIframes)};
+  
+        ${
+          disableSovendusDiv
+            ? ""
+            : `
+              var sovDiv = document.createElement("div");
+              sovDiv.id = "sovendus-integration-container"
+              document.body.appendChild(sovDiv);
+            `
+        }
+  
+        ${
+          disableFlexibleIframeJs
+            ? ""
+            : `
+              var script = document.createElement("script");
+              script.type = "text/javascript";
+              script.async = true;
+              script.src =
+                "https://api.sovendus.com/sovabo/common/js/flexibleIframe.js";
+              document.body.appendChild(script);
+            `
+        }
+      `;
+      } else {
+        integrationScript = `
+        ${
+          disableAwinSalesTracking
+            ? ""
+            : `
+            
+            /*** Do not change ***/
+            var AWIN = AWIN || {};
+            AWIN.Tracking = AWIN.Tracking || {};
+            AWIN.Tracking.Sale = {};
 
-      ${
-        disableSovendusDiv
-          ? ""
-          : `
-            var sovDiv = document.createElement("div");
-            sovDiv.id = "sovendus-integration-container"
-            document.body.appendChild(sovDiv);
+            /*** Set your transaction parameters ***/
+            AWIN.Tracking.Sale.amount = "${sovAppData.sovIframes[0].orderValue}";
+            AWIN.Tracking.Sale.channel = "aw";
+            AWIN.Tracking.Sale.orderRef = "${sovAppData.sovIframes[0].orderId}";
+            AWIN.Tracking.Sale.parts = "DEFAULT:" + "${sovAppData.sovIframes[0].orderValue}";
+            AWIN.Tracking.Sale.currency = "${sovAppData.sovIframes[0].orderCurrency}";
+            AWIN.Tracking.Sale.voucher = "${sovAppData.sovIframes[0].usedCouponCode}";
+            AWIN.Tracking.Sale.test = "0";
+            
+            
+            var img = document.createElement("img");
+            img.border = "0";
+            img.height = "0";
+            img.width = "0";
+            img.style = "display: none;";
+            img.src = "https://www.awin1.com/sread.img?tt=ns&tv=2&merchant=${sovAwinID}&amount=${sovAppData.sovIframes[0].orderValue}&ch=aw&parts=DEFAULT:${sovAppData.sovIframes[0].orderValue}&ref=${sovAppData.sovIframes[0].orderId}&cr=${sovAppData.sovIframes[0].orderCurrency}&vc=${sovAppData.sovIframes[0].usedCouponCode}&testmode=0";
+            document.body.appendChild(img);
           `
-      }
+        }
 
-      ${
-        disableFlexibleIframeJs
-          ? ""
-          : `
-            var script = document.createElement("script");
-            script.type = "text/javascript";
-            script.async = true;
-            script.src =
-              "https://api.sovendus.com/sovabo/common/js/flexibleIframe.js";
-            document.body.appendChild(script);
-          `
+        ${
+          disableAwinMasterTag
+            ? ""
+            : `
+              var script = document.createElement("script");
+              script.type = "text/javascript";
+              script.defer = "defer";
+              script.src =
+                "https://www.dwin1.com/${sovAwinID}.js";
+              document.body.appendChild(script);
+            `
+        }
+      `;
       }
-    `;
       await _driver.executeScript(integrationScript);
       await waitForTestOverlay(_driver);
     });
@@ -239,11 +296,11 @@ async function prepareTestPageAndRetry(
       error.message.includes("binary is not a Firefox executable")
     ) {
       throw new Error(
-        "failed to find firefox developer edition binary, make sure it is installed ",
+        "failed to find firefox developer edition binary, make sure it is installed "
       );
     }
     console.log(
-      `Banner didn't load, trying again - tried already ${retryCounter} times - error: ${error}`,
+      `Banner didn't load, trying again - tried already ${retryCounter} times - error: ${error}`
     );
     retryCounter++;
     // try {
@@ -261,6 +318,9 @@ async function prepareTestPageAndRetry(
       retryCounter,
       disableFlexibleIframeJs,
       disableSovendusDiv,
+      isAwinTest,
+      disableAwinMasterTag,
+      disableAwinSalesTracking
     );
   }
   return _driver;
@@ -269,7 +329,7 @@ async function prepareTestPageAndRetry(
 async function waitForTestOverlay(driver: WebDriver) {
   await driver.wait(
     until.elementLocated(By.css("#outerSovendusOverlay")),
-    20000,
+    20000
   );
 }
 
@@ -296,7 +356,7 @@ async function executeWithTimeout(fn) {
 }
 
 async function getIntegrationTesterData(
-  driver: WebDriver,
+  driver: WebDriver
 ): Promise<SelfTester> {
   const script = "return window.sovSelfTester;";
   const sovSelfTester = await driver.executeScript(script);

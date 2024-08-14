@@ -1,4 +1,5 @@
 import type { SovConsumer, SovIframes } from "@src/page-banner/self-tester";
+import internal from "stream";
 
 export function getSovAppData(sovAppData: SovDataType) {
   const sovData: SovFinalDataType = {
@@ -75,6 +76,8 @@ export const sovAppIFramesAllValidData: SovIframes = {
   iframeContainerId: "sovendus-integration-container",
   integrationType: "test-1.0.0",
 };
+
+export const sovAwinID = 18738;
 
 export const sovAppDataEverythingIsOkay: SovDataType = {
   sovConsumer: sovAppConsumerAllValidData,

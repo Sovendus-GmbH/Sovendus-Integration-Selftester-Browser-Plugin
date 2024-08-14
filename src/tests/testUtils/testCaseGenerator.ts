@@ -1,13 +1,9 @@
 import type SelfTester from "@src/page-banner/self-tester";
-import type {
-  StatusMessageKeyTypes} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import {
-  StatusCodes
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import type { StatusMessageKeyTypes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import type { WebDriver } from "selenium-webdriver";
 
-import type {
-  SovDataType} from "./sovAppData";
+import type { SovDataType } from "./sovAppData";
 import {
   malformedArrayData,
   malformedObjectData,
@@ -19,7 +15,7 @@ import {
   sovAppDataNumberButIsOkay,
   sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
   sovAppDataTrueButIsOkay,
-  sovAppDataUndefinedButIsOkay
+  sovAppDataUndefinedButIsOkay,
 } from "./sovAppData";
 
 export function generateTests({
@@ -34,13 +30,13 @@ export function generateTests({
     sovAppData: testInfo.sovAppData,
     testFunction: async ({ sovSelfTester }) => {
       expect((sovSelfTester as any)[elementKey].elementValue).toBe(
-        testInfo.expectedElementValue,
+        testInfo.expectedElementValue
       );
       expect((sovSelfTester as any)[elementKey].statusMessageKey).toBe(
-        testInfo.expectedStatusMessageKey,
+        testInfo.expectedStatusMessageKey
       );
       expect((sovSelfTester as any)[elementKey].statusCode).toBe(
-        testInfo.expectedStatusCode,
+        testInfo.expectedStatusCode
       );
     },
     disableFlexibleIframeJs: testInfo.disableFlexibleIframeJs,
@@ -135,7 +131,7 @@ export function generateMalformedDataTests({
       ...testInfo,
       testName: `${testInfo.testName}_WhenScriptDoesNotRun`,
       disableFlexibleIframeJs: true,
-    }),
+    })
   );
   return generateTests({
     elementKey,
@@ -190,6 +186,8 @@ export type TestsInfoType = {
   expectedStatusMessageKey: StatusMessageKeyTypes | null;
   disableFlexibleIframeJs?: boolean;
   disableSovendusDiv?: boolean;
+  disableAwinMasterTag?: boolean;
+  disableAwinSalesTracking?: boolean;
 }[];
 
 export type TestsType = {
@@ -206,4 +204,6 @@ export type TestsType = {
   }) => Promise<void>;
   disableFlexibleIframeJs?: boolean | undefined;
   disableSovendusDiv?: boolean | undefined;
+  disableAwinMasterTag?: boolean | undefined;
+  disableAwinSalesTracking?: boolean | undefined;
 }[];

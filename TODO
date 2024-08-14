@@ -17,4 +17,5 @@
 - add awin tests
 - add spa tests
 - dont spam dev hub api on tests
-- run all tests also on firefox and edge
+- run all tests also on firefox and Edge
+- get a AWIN ID for Tests
