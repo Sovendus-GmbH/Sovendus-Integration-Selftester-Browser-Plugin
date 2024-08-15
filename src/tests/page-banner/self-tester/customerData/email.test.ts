@@ -6,12 +6,11 @@ import {
   generateMalformedDataTests,
   generateTests,
 } from "@src/tests/testUtils/testCaseGenerator";
-
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataMalformedButIsOkay,
-} from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+} from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 executeOverlayTests({
   testName: "email",

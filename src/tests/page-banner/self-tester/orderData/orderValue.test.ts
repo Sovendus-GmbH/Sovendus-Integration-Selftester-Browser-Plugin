@@ -6,15 +6,14 @@ import {
   generateMalformedDataTests,
   generateTests,
 } from "@src/tests/testUtils/testCaseGenerator";
-
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataFloatNumberButIsOkay,
   sovAppDataMalformedButIsOkay,
   sovAppDataNumberButIsOkay,
   sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
-} from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+} from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 const tests = [
   ...generateTests({
@@ -61,7 +60,7 @@ const tests = [
         expectedElementValue: "1234,56",
         expectedStatusCode: StatusCodes.Error,
         expectedStatusMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
-        disableFlexibleIframeJs: true,
+        disableFlexibleIFrameJs: true,
       },
     ],
   }),

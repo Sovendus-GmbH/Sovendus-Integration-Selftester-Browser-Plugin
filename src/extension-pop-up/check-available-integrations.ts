@@ -1,6 +1,6 @@
 import type { ExplicitAnyType } from "@src/page-banner/self-tester";
 
-function _checkAvailableIntegrations() {
+function _checkAvailableIntegrations(): void {
   const overlay = document.getElementById(
     "outerSovedusIntegrationMethodCheckerOverlay",
   );
@@ -13,12 +13,12 @@ function _checkAvailableIntegrations() {
       supportedSystems: {
         [key in SupportedSystemsKeyType]: SupportedSystemType;
       } = {
-        WooCommerce: {
+        "WooCommerce": {
           name: "WooCommerce",
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-Wordpress-WooCommerce-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-plugin-for-wordpress-woocommerce",
         },
-        Shopware: {
+        "Shopware": {
           name: "Shopware",
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-Shopware-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-plugin-for-shopware",
@@ -28,7 +28,7 @@ function _checkAvailableIntegrations() {
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-Voucher-Network-and-Checkout-Benefits-Component-for-Vue?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-component-for-vue",
         },
-        Magento: {
+        "Magento": {
           name: "Magento",
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-Magento-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-magento",
@@ -38,7 +38,7 @@ function _checkAvailableIntegrations() {
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-Voucher-Network-and-Checkout-Benefits-Component-for-React?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-component-for-react",
         },
-        Shopify: {
+        "Shopify": {
           name: "Shopify",
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-Shopify-Voucher-Network-and-Checkout-Benefits-Documentation?tab=readme-ov-file#shopify-sovendus-voucher-network--checkout-benefits-integration-documentation",
@@ -63,7 +63,7 @@ function _checkAvailableIntegrations() {
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
         },
-        PrestaShop: {
+        "PrestaShop": {
           name: "PrestaShop",
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-Prestashop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-prestashop",
@@ -73,17 +73,17 @@ function _checkAvailableIntegrations() {
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-JTL-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-jtl",
         },
-        BigCommerce: {
+        "BigCommerce": {
           name: "BigCommerce",
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-BigCommerce-Voucher-Network-and-Checkout-Benefits-Documentation?tab=readme-ov-file#sovendus-bigcommerce-voucher-network-and-checkout-benefits-documentation",
         },
-        gtm: {
+        "gtm": {
           name: "Google Tag Manager",
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-GTM-v2?tab=readme-ov-file#sovendus-google-tag-manager-template-for-voucher-network-and-checkout-benefits-integration",
         },
-        generic: {
+        "generic": {
           name: "Generic",
           docsLink:
             "https://github.com/Sovendus-GmbH/Sovendus-generic-documentation-for-Voucher-Network-and-Checkout-Benefits?tab=readme-ov-file",
@@ -94,7 +94,7 @@ function _checkAvailableIntegrations() {
         fail: "fail",
       };
       constructor() {
-        this.createCheckIntegrationMethodsOverlay();
+        void this.createCheckIntegrationMethodsOverlay();
       }
 
       async getAvailableMethodsMessage(): Promise<string> {
@@ -226,7 +226,13 @@ function _checkAvailableIntegrations() {
 
       getAvailableMethodsFromResponse(
         responseJson: AvailableMethodsResponseType,
-      ) {
+      ): {
+        shopSystemName: SupportedSystemsKeyType;
+        cmsName: SupportedSystemsKeyType;
+        webFrameworkName: SupportedSystemsKeyType;
+        statusCode: StatusCodeType;
+        errorMessage: string;
+      } {
         let statusCode: StatusCodeType = this.statusCodes.fail;
         let shopSystemName = "";
         let cmsName = "";

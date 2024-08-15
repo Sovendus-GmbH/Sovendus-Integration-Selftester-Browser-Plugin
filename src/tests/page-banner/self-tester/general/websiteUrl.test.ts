@@ -1,8 +1,7 @@
 import { resolve } from "path";
+import { sovAppDataEverythingIsOkay } from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 import { pathToFileURL } from "url";
-
-import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
 
 executeOverlayTests({
   testName: "website",
@@ -10,7 +9,7 @@ executeOverlayTests({
     {
       testName: "URL",
       sovAppData: sovAppDataEverythingIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
+      testFunction: ({ sovSelfTester }): void => {
         const localFilePath = resolve(
           __dirname,
           "../../../testUtils/testHtmlFiles/empty.html",

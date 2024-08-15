@@ -1,6 +1,6 @@
 _showOverlay();
 
-function _showOverlay() {
+function _showOverlay(): void {
   const overlay = document.getElementById("sovendusOverlay");
   if (overlay) {
     overlay.style.display = "block";
@@ -15,7 +15,7 @@ function _showOverlay() {
   }
 }
 
-function _hideRepeatTestsButton() {
+function _hideRepeatTestsButton(): void {
   const repeatTestsButton = document.getElementById(
     "sovendusOverlayRepeatTests",
   );
@@ -75,7 +75,7 @@ function _getOverlayStyle(): string {
     `;
 }
 
-function _createNotDetectedOverlay() {
+function _createNotDetectedOverlay(): void {
   const overlay = document.createElement("div");
   overlay.id = "outerSovendusNotDetectedOverlay";
   overlay.innerHTML = `

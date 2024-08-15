@@ -3,12 +3,11 @@ import {
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
-
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataUndefined,
-} from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+} from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 executeOverlayTests({
   testName: "flexibleIFrameOnDOM",
@@ -24,12 +23,12 @@ executeOverlayTests({
           expectedStatusMessageKey: null,
         },
         {
-          testName: "flexibleIFrameOnDOM",
+          testName: "flexibleIFrameNotOnDOM",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: StatusMessageKeyTypes.iFrameNotOnDOM,
-          disableFlexibleIframeJs: true,
+          disableFlexibleIFrameJs: true,
         },
         {
           testName: "FlexibleIFrameOnDOMScriptTypePlain",

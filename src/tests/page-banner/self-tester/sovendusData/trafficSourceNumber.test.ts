@@ -4,7 +4,6 @@ import {
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import type { TestsInfoType } from "@src/tests/testUtils/testCaseGenerator";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
-
 import {
   malformedArrayData,
   malformedObjectData,
@@ -19,8 +18,8 @@ import {
   sovAppDataUndefined,
   sovAppIFramesAllValidData,
   sovTestTrafficSourceNumber,
-} from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+} from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 const testCasesWhenScriptRuns: TestsInfoType = [
   {
@@ -131,7 +130,7 @@ executeOverlayTests({
           expectedElementValue: JSON.stringify(malformedObjectData),
           expectedStatusMessageKey:
             StatusMessageKeyTypes.trafficSourceNumberMalformed,
-          disableFlexibleIframeJs: true,
+          disableFlexibleIFrameJs: true,
         },
         {
           testName: "MalformedArray_WhenScriptDoesNotRun",
@@ -140,7 +139,7 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.trafficSourceNumberMalformed,
-          disableFlexibleIframeJs: true,
+          disableFlexibleIFrameJs: true,
         },
       ],
     }),

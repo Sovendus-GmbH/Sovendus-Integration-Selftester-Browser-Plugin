@@ -3,15 +3,14 @@ import {
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
-
-import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+import { sovAppDataEverythingIsOkay } from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 executeOverlayTests({
-  testName: "isFlexibleIframeExecutable",
+  testName: "isFlexibleIFrameExecutable",
   tests: [
     ...generateTests({
-      elementKey: "isFlexibleIframeExecutable",
+      elementKey: "isFlexibleIFrameExecutable",
       testsInfo: [
         {
           testName: "FlexibleIFrameIsExecutable",
@@ -26,7 +25,7 @@ executeOverlayTests({
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
-          disableFlexibleIframeJs: true,
+          disableFlexibleIFrameJs: true,
         },
         {
           testName: "FlexibleIFrameNotExecutableScriptTypePlain",
@@ -34,7 +33,7 @@ executeOverlayTests({
           expectedElementValue: "text/plain",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
-            StatusMessageKeyTypes.flexibleIframeJsBlockedByCookieConsent,
+            StatusMessageKeyTypes.flexibleIFrameJsBlockedByCookieConsent,
           flexibleIFrameJsScriptType: "text/plain",
         },
         {
@@ -59,7 +58,7 @@ executeOverlayTests({
           expectedElementValue: "undefined",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
-            StatusMessageKeyTypes.flexibleIframeJsBlockedByCookieConsent,
+            StatusMessageKeyTypes.flexibleIFrameJsBlockedByCookieConsent,
           flexibleIFrameJsScriptType: "undefined",
         },
         {
@@ -68,7 +67,7 @@ executeOverlayTests({
           expectedElementValue: "null",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
-            StatusMessageKeyTypes.flexibleIframeJsBlockedByCookieConsent,
+            StatusMessageKeyTypes.flexibleIFrameJsBlockedByCookieConsent,
           flexibleIFrameJsScriptType: null,
         },
       ],

@@ -22,7 +22,7 @@ export interface TestResultResponseDataType {
   sessionId?: TestResultType<string | undefined>;
   timestamp?: TestResultType<string | undefined>;
   usedCouponCode?: TestResultType<string | undefined>;
-  iframeContainerId?: TestResultType<string | undefined>;
+  iFrameContainerId?: TestResultType<string | undefined>;
   isEnabledInBackend?: TestResultType<boolean | undefined>;
   wasExecuted?: TestResultType<boolean>;
   sovendusDivFound?: TestResultType<boolean | string | undefined>;
@@ -30,9 +30,10 @@ export interface TestResultResponseDataType {
   sovIFramesAmount?: TestResultType<number | undefined>;
   multipleIFramesAreSame?: TestResultType<number | undefined>;
   flexibleIFrameOnDOM?: TestResultType<boolean | undefined>;
-  isFlexibleIframeExecutable?: TestResultType<boolean | string | undefined>;
+  isFlexibleIFrameExecutable?: TestResultType<boolean | string | undefined>;
   isSovendusJsOnDom?: TestResultType<boolean | undefined>;
   isSovendusJsExecutable?: TestResultType<boolean | string | undefined>;
+  isUnknownSovendusJsError?: TestResultType<boolean | undefined>;
 }
 
 export interface TestResultType<TElementValueType> {
@@ -41,7 +42,13 @@ export interface TestResultType<TElementValueType> {
   statusCode: StatusCodes;
 }
 
-export type ElementValue = undefined | null | string | number | boolean;
+export type ElementValue =
+  | undefined
+  | null
+  | string
+  | number
+  | boolean
+  | object;
 
 export enum StatusCodes {
   Success = "Success",
@@ -74,8 +81,8 @@ export enum StatusMessageKeyTypes {
   iFrameNotOnDOM = "iFrameNotOnDOM",
   unknownErrorIntegrationScriptFailed = "unknownErrorIntegrationScriptFailed",
   sovendusJsBlockedByCookieConsent = "sovendusJsBlockedByCookieConsent",
-  flexibleIframeJsExecutedTooEarly = "flexibleIframeJsExecutedTooEarly",
-  flexibleIframeJsBlockedByCookieConsent = "flexibleIframeJsBlockedByCookieConsent",
+  flexibleIFrameJsExecutedTooEarly = "flexibleIFrameJsExecutedTooEarly",
+  flexibleIFrameJsBlockedByCookieConsent = "flexibleIFrameJsBlockedByCookieConsent",
   sovendusBannerDisabled = "sovendusBannerDisabled",
   containerDivNotFoundOnDOM = "containerDivNotFoundOnDOM",
   multipleSovIframesDetected = "multipleSovIframesDetected",
@@ -135,8 +142,8 @@ export enum StatusMessageKeyTypes {
   consumerYearOfBirthNotValid = "consumerYearOfBirthNotValid",
   missingConsumerEmail = "missingConsumerEmail",
   missingIframeContainerId = "missingIframeContainerId",
-  iframeContainerIdMalformed = "iframeContainerIdMalformed",
-  iframeContainerIdHasSpaces = "iframeContainerIdHasSpaces",
+  iFrameContainerIdMalformed = "iFrameContainerIdMalformed",
+  iFrameContainerIdHasSpaces = "iFrameContainerIdHasSpaces",
   empty = "empty",
 }
 
@@ -286,13 +293,13 @@ export const statusMessages: {
     infoText: "",
   },
 
-  flexibleIframeJsExecutedTooEarly: {
+  flexibleIFrameJsExecutedTooEarly: {
     errorText:
       "Sovendus was detected but flexibleiframe.js was not executed. This is probably because the flexibleiframe.js script got placed on the DOM / executed before the Sovendus integration script. Make sure the flexibleiframe.js gets placed on the DOM / executed after the the Sovendus integration script.",
     infoText: "",
   },
 
-  flexibleIframeJsBlockedByCookieConsent: {
+  flexibleIFrameJsBlockedByCookieConsent: {
     errorText:
       "Sovendus was detected but flexibleiframe.js was not executed because the script type is {elementValue} instead of text/javascript. This probably happened because your cookie consent tool blocked the script.",
     infoText: "",
@@ -319,13 +326,13 @@ export const statusMessages: {
   currencyNotValid: {
     errorText: "NOT A VALID CURRENCY",
     infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
-      ", "
+      ", ",
     )}`,
   },
   currencyMissing: {
     errorText: "VALUE MISSING",
     infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
-      ", "
+      ", ",
     )}`,
   },
 
@@ -503,21 +510,21 @@ export const statusMessages: {
   missingConsumerCountry: {
     errorText: "VALUE MISSING",
     infoText: `Make sure to pass the country id of the delivery address. Valid are: ${validCountries.join(
-      ", "
+      ", ",
     )}`,
   },
 
   consumerCountrySuccess: {
     errorText: "",
     infoText: `Make sure this value aligns with the country of the delivery address. Valid are: ${validCountries.join(
-      ", "
+      ", ",
     )}`,
   },
 
   consumerCountryInvalid: {
     errorText: "INVALID COUNTRY",
     infoText: `Make sure this value aligns with the country of the delivery address. Valid are: ${validCountries.join(
-      ", "
+      ", ",
     )}`,
   },
 
@@ -563,13 +570,13 @@ export const statusMessages: {
       "There was no iframeContainerId specified in sovIframes. Make sure to pass a iframe container id, this id corresponds to an empty div with this id on the DOM.",
   },
 
-  iframeContainerIdMalformed: {
+  iFrameContainerIdMalformed: {
     errorText: "VALUE TYPE NOT ALLOWED",
     infoText:
       "Make sure this value aligns with the id of an empty div element on the DOM.",
   },
 
-  iframeContainerIdHasSpaces: {
+  iFrameContainerIdHasSpaces: {
     errorText: "HAS SPACES",
     infoText:
       "In HTML id's cant have spaces, make sure this value aligns with the id of an empty div element on the DOM.",

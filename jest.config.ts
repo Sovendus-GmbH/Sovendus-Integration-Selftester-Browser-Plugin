@@ -1,6 +1,8 @@
-import type { Config } from "jest";
+import { config as dotenvConfig } from "dotenv";
 
-const config: Config = {
+dotenvConfig();
+
+const config = {
   preset: "ts-jest",
   testEnvironment: "node",
   moduleNameMapper: {
@@ -10,8 +12,9 @@ const config: Config = {
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
-  maxWorkers: 10,
-  setupFiles: ["<rootDir>/jest.setup.js"],
+  maxWorkers: process.env["JEST_WORKERS"]
+    ? parseInt(process.env["JEST_WORKERS"], 10)
+    : 10,
 };
 
 export default config;

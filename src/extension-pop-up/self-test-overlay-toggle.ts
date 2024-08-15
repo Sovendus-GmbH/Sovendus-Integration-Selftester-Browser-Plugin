@@ -1,4 +1,4 @@
-function toggleOverlay() {
+function toggleOverlay(): void {
   const overlay = document.getElementById("sovendusOverlay");
   if (overlay) {
     const overlayToggle = document.getElementById("toggleSovendusOverlay");
