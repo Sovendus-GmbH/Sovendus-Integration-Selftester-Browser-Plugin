@@ -1,5 +1,4 @@
 import type SelfTester from "@src/page-banner/self-tester";
-import type { ExplicitAnyType } from "@src/page-banner/self-tester";
 import type { StatusMessageKeyTypes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import type { WebDriver } from "selenium-webdriver";
@@ -23,20 +22,20 @@ export function generateTests({
   elementKey,
   testsInfo,
 }: {
-  elementKey: string;
+  elementKey: SovSelfTesterKeys;
   testsInfo: TestsInfoType;
 }): TestsType {
   return testsInfo.map((testInfo) => ({
     testName: testInfo.testName,
     sovAppData: testInfo.sovAppData,
     testFunction: ({ sovSelfTester }): void => {
-      expect((sovSelfTester as ExplicitAnyType)[elementKey].elementValue).toBe(
+      expect(sovSelfTester[elementKey].elementValue).toBe(
         testInfo.expectedElementValue,
       );
-      expect(
-        (sovSelfTester as ExplicitAnyType)[elementKey].statusMessageKey,
-      ).toBe(testInfo.expectedStatusMessageKey);
-      expect((sovSelfTester as ExplicitAnyType)[elementKey].statusCode).toBe(
+      expect(sovSelfTester[elementKey].statusMessageKey).toBe(
+        testInfo.expectedStatusMessageKey,
+      );
+      expect(sovSelfTester[elementKey].statusCode).toBe(
         testInfo.expectedStatusCode,
       );
     },
@@ -58,7 +57,7 @@ export function generateMalformedDataTests({
   undefinedValue = null,
   isAwinTest = false,
 }: {
-  elementKey: string;
+  elementKey: SovSelfTesterKeys;
   expectedMalformedStatusMessageKey: StatusMessageKeyTypes;
   expectedMissingStatusMessageKey: StatusMessageKeyTypes;
   canBeANumber?: boolean;
@@ -220,3 +219,43 @@ export type TestsType = {
   removeSovIFrame?: boolean | undefined;
   flexibleIFrameJsScriptType?: string | undefined | null;
 }[];
+
+type SovSelfTesterKeys =
+  | "integrationType"
+  | "browserName"
+  | "websiteURL"
+  | "consumerSalutation"
+  | "consumerFirstName"
+  | "consumerLastName"
+  | "consumerYearOfBirth"
+  | "consumerEmail"
+  | "consumerEmailHash"
+  | "consumerStreet"
+  | "consumerStreetNumber"
+  | "consumerZipCode"
+  | "consumerPhone"
+  | "consumerCity"
+  | "consumerCountry"
+  | "trafficSourceNumber"
+  | "trafficMediumNumber"
+  | "orderCurrency"
+  | "orderId"
+  | "orderValue"
+  | "sessionId"
+  | "timestamp"
+  | "usedCouponCode"
+  | "iFrameContainerId"
+  | "isEnabledInBackend"
+  | "wasExecuted"
+  | "sovendusDivFound"
+  | "multipleSovIFramesDetected"
+  | "sovIFramesAmount"
+  | "multipleIFramesAreSame"
+  | "flexibleIFrameOnDOM"
+  | "isFlexibleIFrameExecutable"
+  | "isSovendusJsOnDom"
+  | "isSovendusJsExecutable"
+  | "isUnknownSovendusJsError"
+  | "awinIntegrationDetectedTestResult"
+  | "awinSaleTrackedTestResult"
+  | "awinExecutedTestResult";

@@ -811,11 +811,13 @@ export default class SelfTester {
         !!window.sovApplication?.instances?.length) ||
       false;
     if (wasExecuted) {
+      // eslint-disable-next-line no-console
       console.log("Sovendus was executed");
       return new SuccessTestResult<boolean>({
         elementValue: true,
       });
     }
+    // eslint-disable-next-line no-console
     console.log("Sovendus was detected but not executed");
     return new WarningOrFailTestResultWithoutStatusMessageKey<boolean>({
       elementValue: wasExecuted,
@@ -1225,6 +1227,7 @@ export default class SelfTester {
   }
 
   async waitForSovendusIntegrationDetected(): Promise<void> {
+    // eslint-disable-next-line no-console
     console.log("No Sovendus integration detected yet");
     let waitedSeconds = 0;
     while (!this.sovIframesOrConsumerExists()) {
@@ -1243,6 +1246,7 @@ export default class SelfTester {
       await new Promise((resolve) => setTimeout(resolve, 500));
       waitedSeconds += 0.5;
     }
+    // eslint-disable-next-line no-console
     console.log("Sovendus has been detected");
     if (this.sovApplicationExists()) {
       await this.waitForBannerToBeLoaded();
@@ -1257,6 +1261,7 @@ export default class SelfTester {
     }
     // wait a bit longer, just in case multiple integrations fire later
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    // eslint-disable-next-line no-console
     console.log("Sovendus banner loaded");
   }
 
@@ -1301,8 +1306,8 @@ export default class SelfTester {
         body: JSON.stringify(this.getTestResultResponseData()),
       });
       const result = response.ok;
-      console.log(result);
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error("Failed to transmit sovendus test result - error:", e);
     }
   }

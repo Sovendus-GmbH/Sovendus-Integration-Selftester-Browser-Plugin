@@ -320,6 +320,7 @@ async function prepareTestPageAndRetry({
         "failed to find firefox developer edition binary, make sure it is installed ",
       );
     }
+    // eslint-disable-next-line no-console
     console.log(
       `Banner didn't load, trying again - tried already ${retryCounter} times - error: ${error}`,
     );

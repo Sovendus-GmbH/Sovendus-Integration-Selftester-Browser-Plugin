@@ -10,8 +10,8 @@
   ],
   "editor.formatOnSave": true, // Format files on save
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true, // Automatically fix ESLint errors on save
-    "source.organizeImports": false // Disable VS Code's default import organizing (handled by ESLint)
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
   },
   "eslint.validate": [
     "javascript",
