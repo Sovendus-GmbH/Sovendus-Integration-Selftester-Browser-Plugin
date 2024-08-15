@@ -31,7 +31,7 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload)),
+          String(Math.floor(sovAppData.payload))
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -52,7 +52,7 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload),
+          String(sovAppData.payload)
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -73,7 +73,7 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload)),
+          String(Math.floor(sovAppData.payload))
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -94,7 +94,7 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload),
+          String(sovAppData.payload)
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -117,10 +117,10 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload)),
+          String(Math.floor(sovAppData.payload))
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -140,10 +140,10 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload),
+          String(sovAppData.payload)
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -163,10 +163,10 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload)),
+          String(Math.floor(sovAppData.payload))
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -186,10 +186,10 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload),
+          String(sovAppData.payload)
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -211,7 +211,7 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload)),
+          String(Math.floor(sovAppData.payload))
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -232,7 +232,7 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload),
+          String(sovAppData.payload)
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -253,7 +253,7 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload)),
+          String(Math.floor(sovAppData.payload))
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -274,7 +274,7 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload),
+          String(sovAppData.payload)
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -293,17 +293,17 @@ executeOverlayTests({
           sovIframes1: {
             ...sovAppIFramesAllValidData,
             timestamp: String(
-              Math.floor(testTimestamp1MinuteOldInMilliSeconds),
+              Math.floor(testTimestamp1MinuteOldInMilliSeconds)
             ),
           },
         };
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload)),
+          String(Math.floor(sovAppData.payload))
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -324,10 +324,10 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload),
+          String(sovAppData.payload)
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -348,10 +348,10 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload)),
+          String(Math.floor(sovAppData.payload))
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -372,10 +372,10 @@ executeOverlayTests({
       },
       testFunction: async ({ sovSelfTester, sovAppData }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload),
+          String(sovAppData.payload)
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -386,7 +386,7 @@ executeOverlayTests({
       testFunction: async ({ sovSelfTester }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe("dubidub");
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.notAUnixTimestamp,
+          StatusMessageKeyTypes.notAUnixTimestamp
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -395,11 +395,9 @@ executeOverlayTests({
       testName: "MalformedNumberWithCommaInsteadOfDot",
       sovAppData: sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
       testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.timestamp.elementValue).toBe(
-          encodeURI(encodeURIComponent("1234,56")),
-        );
+        expect(sovSelfTester.timestamp.elementValue).toBe("1234,56");
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.notAUnixTimestamp,
+          StatusMessageKeyTypes.notAUnixTimestamp
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -410,7 +408,7 @@ executeOverlayTests({
       testFunction: async ({ sovSelfTester }) => {
         expect(sovSelfTester.timestamp.elementValue).toBe("1234,56");
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.notAUnixTimestamp,
+          StatusMessageKeyTypes.notAUnixTimestamp
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },

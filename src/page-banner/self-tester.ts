@@ -43,7 +43,7 @@ export default class SelfTester {
   sovIFramesAmount: TestResultType<number | undefined>;
   multipleIFramesAreSame: TestResultType<number | undefined>;
   flexibleIFrameOnDOM: TestResultType<boolean | undefined>;
-  isFlexibleIframeExecutable: TestResultType<boolean | undefined>;
+  isFlexibleIframeExecutable: TestResultType<boolean | string | undefined>;
   isSovendusJsOnDom: TestResultType<boolean | undefined>;
   isSovendusJsExecutable: TestResultType<boolean | string | undefined>;
 
@@ -610,9 +610,12 @@ export default class SelfTester {
       malformedMessageKey: StatusMessageKeyTypes.iframeContainerIdMalformed,
       successMessageKey: undefined,
     });
-    if (valueTestResult.elementValue?.includes(" ")) {
+    const decodedValue = decodeURIComponent(
+      decodeURI(valueTestResult.elementValue)
+    );
+    if (decodedValue?.includes(" ")) {
       return new WarningOrFailTestResult<string | undefined>({
-        elementValue: valueTestResult.elementValue,
+        elementValue: decodedValue,
         statusCode: StatusCodes.Error,
         statusMessageKey: StatusMessageKeyTypes.iframeContainerIdHasSpaces,
       });
@@ -668,8 +671,8 @@ export default class SelfTester {
   ): TestResultType<boolean | undefined> {
     if (
       wasExecuted.statusCode === StatusCodes.Error &&
-      trafficSourceNumber.statusCode === StatusCodes.Success &&
-      trafficMediumNumber.statusCode === StatusCodes.Success
+      trafficSourceNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
+      trafficMediumNumber.statusCode === StatusCodes.SuccessButNeedsReview
     ) {
       const isOnDom: boolean = !!flexibleIframeJs;
       if (isOnDom) {
@@ -691,22 +694,21 @@ export default class SelfTester {
   getIsFlexibleIframeExecutable(
     flexibleIframeJs: HTMLScriptElement | null,
     flexibleIFrameOnDOM: TestResultType<boolean | undefined>
-  ): TestResultType<boolean | undefined> {
+  ): TestResultType<boolean | string | undefined> {
     if (
       flexibleIFrameOnDOM.statusCode === StatusCodes.Success &&
       flexibleIframeJs
     ) {
       const isExecutable =
         flexibleIframeJs.type === "text/javascript" ||
-        flexibleIframeJs.type === null ||
         flexibleIframeJs.type === "";
       if (isExecutable) {
         return new SuccessTestResult<boolean | undefined>({
           elementValue: isExecutable,
         });
       }
-      return new WarningOrFailTestResult<boolean | undefined>({
-        elementValue: isExecutable,
+      return new WarningOrFailTestResult<boolean | string | undefined>({
+        elementValue: flexibleIframeJs.type,
         statusCode: StatusCodes.Error,
         statusMessageKey:
           StatusMessageKeyTypes.flexibleIframeJsBlockedByCookieConsent,
@@ -716,10 +718,10 @@ export default class SelfTester {
   }
 
   getIsSovendusJsOnDom(
-    isFlexibleIframeExecutable: TestResultType<boolean | undefined>,
+    isFlexibleIframeExecutable: TestResultType<boolean | string | undefined>,
     sovendusJs: HTMLScriptElement | null
   ): TestResultType<boolean | undefined> {
-    if (!isFlexibleIframeExecutable) {
+    if (isFlexibleIframeExecutable.statusCode === StatusCodes.Error) {
       return new DidNotRunTestResult<boolean | undefined>();
     }
     if (sovendusJs) {
@@ -1122,7 +1124,7 @@ export default class SelfTester {
         ) {
           statusCode = StatusCodes.Error;
           statusMessageKey = malformedMessageKey;
-          elementValue = "[object Object]";
+          elementValue = "[object-Object]";
         } else if (value === "true" || value === "false") {
           statusCode = StatusCodes.Error;
           statusMessageKey = malformedMessageKey;

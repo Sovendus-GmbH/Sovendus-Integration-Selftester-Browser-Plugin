@@ -1,4 +1,7 @@
-import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import {
+  StatusCodes,
+  StatusMessageKeyTypes,
+} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 import {
@@ -22,11 +25,19 @@ executeOverlayTests({
         },
         {
           testName: "noDivFound",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: "sovendus-integration-container",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.containerDivNotFoundOnDOM,
+          disableSovendusDiv: true,
+        },
+        {
+          testName: "noDivInIFrame",
           sovAppData: sovAppDataUndefinedButIsOkay,
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
-          disableSovendusDiv: true,
         },
       ],
     }),
