@@ -10,6 +10,7 @@
 - transmit multiple iframes content when they are different
 - handle overlay scrollable screenshot
 - Remove Timestamp when integrated using Awin
+- show overlay not detected when show hide button is clicked
 
 ## Tests
 
