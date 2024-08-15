@@ -84,6 +84,19 @@ export const sovAppIFramesAllValidData: SovIframes = {
   integrationType: "test-1.0.0",
 };
 
+export const sovAppIFramesAllValidDataDifferent: SovIframes = {
+  trafficSourceNumber: sovTestTrafficSourceNumber,
+  trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+  sessionId: "session-4321",
+  timestamp: "1235484567",
+  orderId: "order-4321",
+  orderValue: "15",
+  orderCurrency: "EUR",
+  usedCouponCode: "coupon-4321",
+  iframeContainerId: "sovendus-integration-container",
+  integrationType: "test-2.0.0",
+};
+
 export const sovAwinID = 18738;
 
 export const sovAppDataEverythingIsOkay: SovDataType = {

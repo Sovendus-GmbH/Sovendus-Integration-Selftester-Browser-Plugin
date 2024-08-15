@@ -3,7 +3,8 @@ import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 import {
   sovAppDataEverythingIsOkay,
-  sovAppDataUndefinedButIsOkay,
+  sovAppIFramesAllValidData,
+  sovAppIFramesAllValidDataDifferent,
 } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
 
@@ -16,19 +17,87 @@ executeOverlayTests({
       elementKey: "multipleIFramesAreSame",
       testsInfo: [
         {
-          testName: "multipleIFramesAreSame",
+          testName: "multipleIFramesAreSameOneIFrame",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
         },
         {
-          testName: "NoMultipleIFramesAreSame",
-          sovAppData: sovAppDataUndefinedButIsOkay,
-          expectedElementValue: null,
-          expectedStatusCode: StatusCodes.TestDidNotRun,
+          testName: "multipleIFramesAreSameNoIFrames",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+          },
+          expectedElementValue: false,
+          expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: null,
-          disableFlexibleIframeJs: true,
+          removeSovIFrame: true,
+        },
+        {
+          testName: "multipleIFramesAreSameTwoIFramesSame",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes2: {
+              ...sovAppIFramesAllValidData,
+            },
+          },
+          expectedElementValue: true,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: null,
+        },
+        {
+          testName: "multipleIFramesAreSameThreeIFramesSame",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes2: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes3: {
+              ...sovAppIFramesAllValidData,
+            },
+          },
+          expectedElementValue: true,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: null,
+        },
+        {
+          testName: "multipleIFramesAreSameTwoIFramesDifferent",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes2: {
+              ...sovAppIFramesAllValidDataDifferent,
+            },
+          },
+          expectedElementValue: false,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: null,
+        },
+        {
+          testName: "multipleIFramesAreSameThreeIFramesDifferent",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes2: {
+              ...sovAppIFramesAllValidDataDifferent,
+            },
+            sovIframes3: {
+              ...sovAppIFramesAllValidData,
+            },
+          },
+          expectedElementValue: false,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: null,
         },
       ],
     }),

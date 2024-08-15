@@ -26,7 +26,7 @@ executeOverlayTests({
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
-          disableFlexibleIframeJs: true,
+          disableSovendusDiv: true,
         },
       ],
     }),

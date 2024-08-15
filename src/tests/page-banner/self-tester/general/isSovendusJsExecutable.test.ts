@@ -1,7 +1,4 @@
-import {
-  StatusCodes,
-  StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 import {
@@ -9,6 +6,8 @@ import {
   sovAppDataUndefinedButIsOkay,
 } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
+
+// Was ist der Unterschied zwischen SovendusJs und FlexibleIFrameJS
 
 executeOverlayTests({
   testName: "isSovendusJsExecutable",
@@ -20,15 +19,8 @@ executeOverlayTests({
           testName: "sovendusJsIsExecutable",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: true,
-
-          // Hier sollte StatusCodes.Success kommen
-
-          expectedStatusCode: StatusCodes.Error,
-
-          // Dieser Fehler sollte nicht enstehen StatusMessageKeyTypes.unknownErrorIntegrationScriptFailed
-
-          expectedStatusMessageKey:
-            StatusMessageKeyTypes.unknownErrorIntegrationScriptFailed,
+          expectedStatusCode: StatusCodes.Success,
+          expectedStatusMessageKey: null,
         },
         {
           testName: "sovendusJsNotExecutable",
