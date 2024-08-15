@@ -1255,6 +1255,8 @@ export default class SelfTester {
   }
 
   async transmitTestResult() {
+    const event = new Event("triggerScreenshot");
+    document.dispatchEvent(event);
     try {
       const response = await fetch("http://localhost:3000/api/testing-plugin", {
         method: "POST",

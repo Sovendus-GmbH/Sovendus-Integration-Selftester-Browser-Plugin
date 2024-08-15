@@ -2,83 +2,91 @@ document.addEventListener("DOMContentLoaded", () => {
   const captureButton = document.getElementById(
     "capture-button",
   ) as HTMLElement;
-  captureButton.addEventListener("click", () => {
-    captureButton.innerText = "Copying In Progress...";
-    const { ctx, screenshotContainer } = getScreenshotCanvas();
-    async function callback(tabs: chrome.tabs.Tab[]) {
-      const tabId = getTabIdFromTabs(tabs);
-      if (tabId) {
-        await hideOverlay(tabId);
-        const {
-          mobileDeviceEmulatorIsOverlappedByDevTools,
-          mobileDeviceEmulatorZoomLevelSet,
-        } = await drawFullPageScreenshot(tabId, ctx, screenshotContainer);
-        const alertContainer = document.getElementById("alertContainer");
-        if (mobileDeviceEmulatorIsOverlappedByDevTools) {
-          if (captureButton) {
-            captureButton.innerText = "Failed to copy";
-            captureButton.style.background = "red";
-            captureButton.style.color = "white";
-          }
-          alertContainer.innerText =
-            "Error: The mobile device emulation window can not be overlapped by the developer console.";
-          alertContainer.style.display = "block";
-          restoreOverlay(tabId);
-          return;
-        }
-        await showOverlay(tabId);
-        await createDebugInfoScreenshot(ctx);
-        copyScreenshotsToClipboard(screenshotContainer);
-        if (captureButton) {
-          captureButton.innerText = "Copy Test Result Again";
-          captureButton.style.background = "green";
-          captureButton.style.color = "white";
-        }
-        if (mobileDeviceEmulatorZoomLevelSet) {
-          alertContainer.innerText =
-            "Warning: Zoom detected, the screenshot might be blurry. Set the zoom to 100% if possible!";
-          alertContainer.style.display = "block";
-          alertContainer.style.background = "orange";
-        }
-        restoreOverlay(tabId);
-      } else {
-        throw new Error("Failed to get tabId for create screenshots function");
-      }
-    }
-    const query = { active: true, currentWindow: true };
-    chrome.tabs.query(query, callback);
-  });
+  captureButton.addEventListener("click", () =>
+    copyTestResultClick(captureButton),
+  );
   const hideButton = document.getElementById("hide-button") as HTMLElement;
-  hideButton.addEventListener("click", async () => {
-    async function callback(tabs: chrome.tabs.Tab[]) {
-      const tabId = getTabIdFromTabs(tabs);
-      if (tabId) {
-        toggleOverlayVisibility(tabId);
-      } else {
-        throw new Error("Failed to get tabId to toggle overlay visibility");
-      }
-    }
-    const query = { active: true, currentWindow: true };
-    chrome.tabs.query(query, callback);
-  });
+  hideButton.addEventListener("click", hideOverlayClick);
   const checkMethodsButton = document.getElementById(
     "check-methods-button",
   ) as HTMLElement;
-  checkMethodsButton.addEventListener("click", async () => {
-    async function callback(tabs: chrome.tabs.Tab[]) {
-      const tabId = getTabIdFromTabs(tabs);
-      if (tabId) {
-        await checkAvailableIntegrations(tabId);
-      } else {
-        throw new Error(
-          "Failed to get tabId for checkAvailableIntegrations function",
-        );
-      }
-    }
-    const query = { active: true, currentWindow: true };
-    chrome.tabs.query(query, callback);
-  });
+  checkMethodsButton.addEventListener("click", checkAvailableIntegrationsClick);
 });
+
+function copyTestResultClick(captureButton: HTMLElement) {
+  captureButton.innerText = "Copying In Progress...";
+  const { ctx, screenshotContainer } = getScreenshotCanvas();
+  async function callback(tabs: chrome.tabs.Tab[]) {
+    const tabId = getTabIdFromTabs(tabs);
+    if (tabId) {
+      await hideOverlay(tabId);
+      const {
+        mobileDeviceEmulatorIsOverlappedByDevTools,
+        mobileDeviceEmulatorZoomLevelSet,
+      } = await drawFullPageScreenshot(tabId, ctx, screenshotContainer);
+      const alertContainer = document.getElementById("alertContainer");
+      if (mobileDeviceEmulatorIsOverlappedByDevTools) {
+        if (captureButton) {
+          captureButton.innerText = "Failed to copy";
+          captureButton.style.background = "red";
+          captureButton.style.color = "white";
+        }
+        alertContainer.innerText =
+          "Error: The mobile device emulation window can not be overlapped by the developer console.";
+        alertContainer.style.display = "block";
+        restoreOverlay(tabId);
+        return;
+      }
+      await showOverlay(tabId);
+      await createDebugInfoScreenshot(ctx);
+      copyScreenshotsToClipboard(screenshotContainer);
+      if (captureButton) {
+        captureButton.innerText = "Copy Test Result Again";
+        captureButton.style.background = "green";
+        captureButton.style.color = "white";
+      }
+      if (mobileDeviceEmulatorZoomLevelSet) {
+        alertContainer.innerText =
+          "Warning: Zoom detected, the screenshot might be blurry. Set the zoom to 100% if possible!";
+        alertContainer.style.display = "block";
+        alertContainer.style.background = "orange";
+      }
+      restoreOverlay(tabId);
+    } else {
+      throw new Error("Failed to get tabId for create screenshots function");
+    }
+  }
+  const query = { active: true, currentWindow: true };
+  chrome.tabs.query(query, callback);
+}
+
+function hideOverlayClick() {
+  async function callback(tabs: chrome.tabs.Tab[]) {
+    const tabId = getTabIdFromTabs(tabs);
+    if (tabId) {
+      toggleOverlayVisibility(tabId);
+    } else {
+      throw new Error("Failed to get tabId to toggle overlay visibility");
+    }
+  }
+  const query = { active: true, currentWindow: true };
+  chrome.tabs.query(query, callback);
+}
+
+function checkAvailableIntegrationsClick() {
+  async function callback(tabs: chrome.tabs.Tab[]) {
+    const tabId = getTabIdFromTabs(tabs);
+    if (tabId) {
+      await checkAvailableIntegrations(tabId);
+    } else {
+      throw new Error(
+        "Failed to get tabId for checkAvailableIntegrations function",
+      );
+    }
+  }
+  const query = { active: true, currentWindow: true };
+  chrome.tabs.query(query, callback);
+}
 
 function getTabIdFromTabs(tabs: chrome.tabs.Tab[]) {
   const currentTab = tabs[0];

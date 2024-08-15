@@ -5,7 +5,8 @@
   "description": "Use this extension to verify if your Sovendus integration is setup properly",
   "background": {
     "scripts": [
-      "service-worker.js"
+      "service-worker.js",
+      "page-banner/screenshotCreator.js"
     ],
     "persistent": true
   },
