@@ -143,13 +143,15 @@ async function checkSovendusOverlayIntegration(
     target: { tabId },
     world: "MAIN",
     func: (): boolean => {
-      return window.sovApplication?.instances?.some((instance) => {
-        return !!instance.config?.overlay?.showInOverlay;
-      });
+      return (
+        window.sovApplication?.instances?.some((instance) => {
+          return !!instance.config?.overlay?.showInOverlay;
+        }) ?? false
+      );
     },
   });
 
-  return result[0].result;
+  return result[0]?.result ?? false;
 }
 
 async function drawFullPageScreenshot(
