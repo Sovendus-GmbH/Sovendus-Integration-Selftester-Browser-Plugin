@@ -48,26 +48,30 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     const query = { active: true, currentWindow: true };
-    chrome.tabs.query(query, callback);
+    chrome.tabs.query(query, (tabs: chrome.tabs.Tab[]) => {
+      void callback(tabs);
+    });
   });
   const hideButton = document.getElementById("hide-button") as HTMLElement;
-  hideButton.addEventListener("click", async () => {
-    async function callback(tabs: chrome.tabs.Tab[]) {
+  hideButton.addEventListener("click", (): void => {
+    async function callback(tabs: chrome.tabs.Tab[]): Promise<void> {
       const tabId = getTabIdFromTabs(tabs);
       if (tabId) {
-        toggleOverlayVisibility(tabId);
+        await toggleOverlayVisibility(tabId);
       } else {
         throw new Error("Failed to get tabId to toggle overlay visibility");
       }
     }
     const query = { active: true, currentWindow: true };
-    chrome.tabs.query(query, callback);
+    chrome.tabs.query(query, (tabs: chrome.tabs.Tab[]) => {
+      void callback(tabs);
+    });
   });
   const checkMethodsButton = document.getElementById(
     "check-methods-button",
   ) as HTMLElement;
-  checkMethodsButton.addEventListener("click", async () => {
-    async function callback(tabs: chrome.tabs.Tab[]) {
+  checkMethodsButton.addEventListener("click", (): void => {
+    async function callback(tabs: chrome.tabs.Tab[]): Promise<void> {
       const tabId = getTabIdFromTabs(tabs);
       if (tabId) {
         await checkAvailableIntegrations(tabId);
@@ -78,7 +82,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     const query = { active: true, currentWindow: true };
-    chrome.tabs.query(query, callback);
+    chrome.tabs.query(query, (tabs: chrome.tabs.Tab[]) => {
+      void callback(tabs);
+    });
   });
 });
 
@@ -91,17 +97,21 @@ function copyScreenshotsToClipboard(
   screenshotContainer: HTMLCanvasElement,
 ): void {
   if (window.ClipboardItem) {
-    screenshotContainer.toBlob(async (blob: Blob | null) => {
+    screenshotContainer.toBlob((blob: Blob | null): void => {
       if (!blob) {
         throw new Error("Failed to save to clipboard");
       }
       const data = [new ClipboardItem({ [blob.type]: blob })];
-      await navigator.clipboard.write(data);
+      void navigator.clipboard.write(data);
     });
   } else {
     fetch(screenshotContainer.toDataURL())
       .then((response) => response.arrayBuffer())
-      .then((buffer) => browser.clipboard.setImageData(buffer, "png"));
+      .then((buffer) => browser.clipboard.setImageData(buffer, "png"))
+      .catch(() => {
+        // eslint-disable-next-line no-console
+        console.error("Failed to copy to clipboard");
+      });
   }
 }
 
@@ -112,7 +122,7 @@ async function createDebugInfoScreenshot(
     chrome.tabs.captureVisibleTab((screenshotDataUrl) => {
       const screenshotImage = new Image();
       screenshotImage.src = screenshotDataUrl;
-      screenshotImage.onload = () => {
+      screenshotImage.onload = (): void => {
         ctx.drawImage(
           screenshotImage,
           0,
@@ -139,7 +149,6 @@ async function drawFullPageScreenshot(
     zoomAdjustedHeight,
     scrollHeight,
     viewPortHeight,
-    viewPortWidth,
     mobileDeviceEmulatorIsOverlappedByDevTools,
     mobileDeviceEmulatorZoomLevelSet,
     zoomLevel,
@@ -147,24 +156,6 @@ async function drawFullPageScreenshot(
   // skip when screenshot will be malformed
   if (!mobileDeviceEmulatorIsOverlappedByDevTools) {
     await scrollToTop(tabId);
-    console.log(
-      "zoomAdjustedWidth",
-      zoomAdjustedWidth,
-      "zoomAdjustedHeight",
-      zoomAdjustedHeight,
-      "scrollHeight",
-      scrollHeight,
-      "viewPortHeight",
-      viewPortHeight,
-      "viewPortWidth",
-      viewPortWidth,
-      "mobileDeviceEmulatorIsOverlappedByDevTools",
-      mobileDeviceEmulatorIsOverlappedByDevTools,
-      "mobileDeviceEmulatorZoomLevelSet",
-      mobileDeviceEmulatorZoomLevelSet,
-      "zoomLevel",
-      zoomLevel,
-    );
 
     // Adjust canvas size considering the zoom factor
     screenshotContainer.height = scrollHeight * zoomLevel + zoomAdjustedHeight;
@@ -214,10 +205,10 @@ async function drawSegmentScreenshot({
   await new Promise((r) => setTimeout(r, 1000));
 
   return new Promise((resolve) => {
-    chrome.tabs.captureVisibleTab(async (screenshotDataUrl) => {
+    chrome.tabs.captureVisibleTab((screenshotDataUrl): void => {
       const screenshotImage = new Image();
       screenshotImage.src = screenshotDataUrl;
-      screenshotImage.onload = async () => {
+      screenshotImage.onload = async (): Promise<void> => {
         let imagePosition = imageDrawHeight;
         if (remainingScrollHeight < viewPortHeight) {
           imagePosition =
@@ -270,7 +261,6 @@ async function getScreenShotDimensions(tabId: number): Promise<{
   zoomAdjustedHeight: number;
   scrollHeight: number;
   viewPortHeight: number;
-  viewPortWidth: number;
   mobileDeviceEmulatorIsOverlappedByDevTools: boolean;
   mobileDeviceEmulatorZoomLevelSet: boolean;
   zoomLevel: number;
@@ -296,7 +286,6 @@ async function getScreenShotDimensions(tabId: number): Promise<{
     zoomAdjustedHeight,
     scrollHeight,
     viewPortHeight,
-    viewPortWidth,
     mobileDeviceEmulatorIsOverlappedByDevTools,
     mobileDeviceEmulatorZoomLevelSet,
     zoomLevel: zoomLevelWidth,

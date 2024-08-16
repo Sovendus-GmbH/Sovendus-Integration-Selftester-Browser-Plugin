@@ -1092,7 +1092,7 @@ export default class SelfTester {
     malformedMessageKey,
     numberCheckType,
   }: {
-    value: ElementValue;
+    value: ExplicitAnyType;
     missingErrorMessageKey: StatusMessageKeyTypes;
     successMessageKey: StatusMessageKeyTypes;
     malformedMessageKey: StatusMessageKeyTypes;
@@ -1646,7 +1646,7 @@ class WarningOrFailTestResult<
         )}`;
       }
       return "";
-    } catch (error) {
+    } catch (error: ExplicitAnyType) {
       throw new Error(
         `getFormattedStatusMessage() crashed: ${error}\n
         \n

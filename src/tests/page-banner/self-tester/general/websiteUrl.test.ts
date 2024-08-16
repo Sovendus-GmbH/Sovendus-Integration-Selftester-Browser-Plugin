@@ -1,6 +1,6 @@
+import { sovAppDataEverythingIsOkay } from "@src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 import { resolve } from "path";
-import { sovAppDataEverythingIsOkay } from "src/tests/testUtils/sovAppData";
-import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 import { pathToFileURL } from "url";
 
 executeOverlayTests({

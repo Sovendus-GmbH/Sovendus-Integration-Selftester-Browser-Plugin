@@ -2,9 +2,9 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import { sovAppDataEverythingIsOkay } from "@src/tests/testUtils/sovAppData";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
-import { sovAppDataEverythingIsOkay } from "src/tests/testUtils/sovAppData";
-import { executeOverlayTests } from "src/tests/testUtils/testUtils";
+import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
 executeOverlayTests({
   testName: "isFlexibleIFrameExecutable",
