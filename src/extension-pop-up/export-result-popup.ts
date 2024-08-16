@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function callback(tabs: chrome.tabs.Tab[]): Promise<void> {
       const tabId = getTabIdFromTabs(tabs);
       if (tabId) {
-        await hideOverlay(tabId);
+        await hideSelfTesterOverlay(tabId);
         const {
           mobileDeviceEmulatorIsOverlappedByDevTools,
           mobileDeviceEmulatorZoomLevelSet,
@@ -25,10 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
           alertContainer.innerText =
             "Error: The mobile device emulation window can not be overlapped by the developer console.";
           alertContainer.style.display = "block";
-          await restoreOverlay(tabId);
+          await restoreSelfTesterOverlay(tabId);
           return;
         }
-        await showOverlay(tabId);
+        await showSelfTesterOverlay(tabId);
         await createDebugInfoScreenshot(ctx);
         copyScreenshotsToClipboard(screenshotContainer);
         if (captureButton) {
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
           alertContainer.style.display = "block";
           alertContainer.style.background = "orange";
         }
-        await restoreOverlay(tabId);
+        await restoreSelfTesterOverlay(tabId);
       } else {
         throw new Error("Failed to get tabId for create screenshots function");
       }
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function callback(tabs: chrome.tabs.Tab[]): Promise<void> {
       const tabId = getTabIdFromTabs(tabs);
       if (tabId) {
-        await toggleOverlayVisibility(tabId);
+        await toggleSelfTesterOverlayVisibility(tabId);
       } else {
         throw new Error("Failed to get tabId to toggle overlay visibility");
       }
@@ -136,6 +136,22 @@ async function createDebugInfoScreenshot(
   });
 }
 
+async function checkSovendusOverlayIntegration(
+  tabId: number,
+): Promise<boolean> {
+  const result = await chrome.scripting.executeScript({
+    target: { tabId },
+    world: "MAIN",
+    func: (): boolean => {
+      return window.sovApplication?.instances?.some((instance) => {
+        return !!instance.config?.overlay?.showInOverlay;
+      });
+    },
+  });
+
+  return result[0].result;
+}
+
 async function drawFullPageScreenshot(
   tabId: number,
   ctx: CanvasRenderingContext2D,
@@ -153,16 +169,25 @@ async function drawFullPageScreenshot(
     mobileDeviceEmulatorZoomLevelSet,
     zoomLevel,
   } = await getScreenShotDimensions(tabId);
+
+  const sovendusOverlayIntegration =
+    await checkSovendusOverlayIntegration(tabId);
+
   // skip when screenshot will be malformed
   if (!mobileDeviceEmulatorIsOverlappedByDevTools) {
     await scrollToTop(tabId);
-
     // Adjust canvas size considering the zoom factor
-    screenshotContainer.height = scrollHeight * zoomLevel + zoomAdjustedHeight;
+    screenshotContainer.height =
+      scrollHeight * zoomLevel +
+      (sovendusOverlayIntegration
+        ? zoomAdjustedHeight * 2
+        : zoomAdjustedHeight);
     screenshotContainer.width = zoomAdjustedWidth;
 
     const remainingScrollHeight = scrollHeight;
-    const imageDrawHeight = zoomAdjustedHeight;
+    const imageDrawHeight = sovendusOverlayIntegration
+      ? zoomAdjustedHeight * 2
+      : zoomAdjustedHeight;
 
     await drawSegmentScreenshot({
       tabId,
@@ -173,6 +198,7 @@ async function drawFullPageScreenshot(
       zoomAdjustedWidth,
       zoomAdjustedHeight,
       zoomLevel,
+      OverlayScreenshot: sovendusOverlayIntegration,
     });
   }
   return {
@@ -190,6 +216,7 @@ async function drawSegmentScreenshot({
   zoomAdjustedWidth,
   zoomAdjustedHeight,
   zoomLevel,
+  OverlayScreenshot,
 }: {
   tabId: number;
   ctx: CanvasRenderingContext2D;
@@ -199,7 +226,12 @@ async function drawSegmentScreenshot({
   zoomAdjustedWidth: number;
   zoomAdjustedHeight: number;
   zoomLevel: number;
+  OverlayScreenshot: boolean;
 }): Promise<void> {
+  if (OverlayScreenshot) {
+    await hideAndShowSovendusOverlay(true, tabId);
+  }
+
   // wait a second as captureVisibleTab only supports once per second on chrome
   // TODO don't do that on firefox
   await new Promise((r) => setTimeout(r, 1000));
@@ -227,7 +259,9 @@ async function drawSegmentScreenshot({
         );
 
         imageDrawHeight += zoomAdjustedHeight;
-        remainingScrollHeight -= viewPortHeight;
+        if (!OverlayScreenshot) {
+          remainingScrollHeight -= viewPortHeight;
+        }
 
         await scrollDownToNextSection(tabId, viewPortHeight);
         if (remainingScrollHeight > 0) {
@@ -240,6 +274,7 @@ async function drawSegmentScreenshot({
             zoomAdjustedWidth,
             zoomAdjustedHeight,
             zoomLevel,
+            OverlayScreenshot: false,
           });
         } else {
           await scrollToTop(tabId);
@@ -250,10 +285,32 @@ async function drawSegmentScreenshot({
   });
 }
 
+async function hideAndShowSovendusOverlay(
+  hide: boolean,
+  tabId: number,
+): Promise<void> {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    world: "MAIN",
+    args: [hide],
+    func: (hide) => {
+      const sovOverlay = document.getElementsByClassName("sov-overlay");
+      if (sovOverlay?.[0]) {
+        (sovOverlay[0] as HTMLElement).style.display = hide ? "none" : "block";
+      } else {
+        throw new Error("Error: sovOverlay not found");
+      }
+    },
+  });
+}
+
 async function scrollToTop(tabId: number): Promise<void> {
-  await executeScriptOnPage(tabId, () => {
+  await executeScriptOnPage(tabId, (): void => {
     window.scrollTo(0, 0);
   });
+  if (await checkSovendusOverlayIntegration(tabId)) {
+    await hideAndShowSovendusOverlay(false, tabId);
+  }
 }
 
 async function getScreenShotDimensions(tabId: number): Promise<{
@@ -369,7 +426,7 @@ async function executeScriptOnPage(
   return undefined;
 }
 
-async function toggleOverlayVisibility(tabId: number): Promise<void> {
+async function toggleSelfTesterOverlayVisibility(tabId: number): Promise<void> {
   await chrome.scripting.executeScript({
     target: { tabId },
     files: ["/extension-pop-up/self-test-overlay-toggle.js"],
@@ -377,7 +434,7 @@ async function toggleOverlayVisibility(tabId: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 
-async function showOverlay(tabId: number): Promise<void> {
+async function showSelfTesterOverlay(tabId: number): Promise<void> {
   await chrome.scripting.executeScript({
     target: { tabId },
     files: ["/extension-pop-up/self-test-overlay-show.js"],
@@ -385,14 +442,14 @@ async function showOverlay(tabId: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 
-async function restoreOverlay(tabId: number): Promise<void> {
+async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
   await chrome.scripting.executeScript({
     target: { tabId },
     files: ["/extension-pop-up/self-test-overlay-restore.js"],
   });
 }
 
-async function hideOverlay(tabId: number): Promise<void> {
+async function hideSelfTesterOverlay(tabId: number): Promise<void> {
   await chrome.scripting.executeScript({
     target: { tabId },
     files: ["/extension-pop-up/self-test-overlay-hide.js"],
@@ -420,4 +477,26 @@ async function checkAvailableIntegrations(tabId: number): Promise<void> {
     files: ["/extension-pop-up/check-available-integrations.js"],
   });
   await new Promise((resolve) => setTimeout(resolve, 1000));
+}
+
+interface SovApplication {
+  instances?: Instance[];
+}
+
+interface Config {
+  overlay?: Overlay;
+  stickyBanner?: object;
+}
+
+interface Overlay {
+  showInOverlay?: boolean;
+}
+
+interface Instance {
+  config?: Config;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface Window {
+  sovApplication?: SovApplication;
 }

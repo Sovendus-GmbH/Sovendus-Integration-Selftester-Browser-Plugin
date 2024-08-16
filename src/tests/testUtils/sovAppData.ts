@@ -62,13 +62,15 @@ export const sovTestTrafficMediumNumbers = {
 
   VNInline: { trafficMediumNumber: "15" },
   VNSticky: { trafficMediumNumber: "16" },
-  CBOverlay: { trafficMediumNumber: "17" },
+  CBOverlay: { trafficMediumNumber: "24" },
   CBVNOverlay: { trafficMediumNumber: "18" },
   CBVNInline: { trafficMediumNumber: "19" },
   CBInline: { trafficMediumNumber: "20" },
   CBInlineVNSticky: { trafficMediumNumber: "21" },
   CBOverlayVNInline: { trafficMediumNumber: "22" },
   CBOverlayVNSticky: { trafficMediumNumber: "23" },
+  CBInOverlayCollapsed: { trafficMediumNumber: "25" },
+  CBInOverlayCloseable: { trafficMediumNumber: "26" },
 };
 
 export const sovAppIFramesAllValidData: SovIframes = {
@@ -429,6 +431,35 @@ export const sovAppDataNullButIsOkay: SovDataType = {
     usedCouponCode: null,
     iframeContainerId: null,
     integrationType: null,
+  },
+};
+
+export const sovAppDataEmptyStringButIsOkay: SovDataType = {
+  sovConsumer: {
+    consumerSalutation: "",
+    consumerFirstName: "",
+    consumerLastName: "",
+    consumerEmail: "",
+    consumerCountry: "",
+    consumerZipcode: "",
+    consumerPhone: "",
+    consumerYearOfBirth: "",
+    consumerStreet: "",
+    consumerStreetNumber: "",
+    consumerCity: "",
+  },
+  sovIframes1: {
+    trafficSourceNumber: sovTestTrafficSourceNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    sessionId: "",
+    timestamp: "",
+    orderId: "",
+    orderValue: "",
+    orderCurrency: "",
+    usedCouponCode: "",
+    iframeContainerId: "",
+    integrationType: "",
   },
 };
 

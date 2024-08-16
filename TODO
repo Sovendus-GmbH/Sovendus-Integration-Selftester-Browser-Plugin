@@ -11,6 +11,7 @@
 - handle overlay scrollable screenshot - add tests to check if overlay detection works
 - Remove Timestamp when integrated using Awin
 - show overlay not detected when show hide button is clicked
+- Fix Street Number (Always: Value type not allowed)
 
 ## Tests
 
@@ -19,3 +20,5 @@
 - dont spam dev hub api on tests
 - get a AWIN ID for Tests
 - consider adding more awin not executed tests
+- add Empty String tests
+- street number as string failed

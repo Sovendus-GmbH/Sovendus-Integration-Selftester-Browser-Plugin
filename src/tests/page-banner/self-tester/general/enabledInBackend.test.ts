@@ -287,6 +287,36 @@ executeOverlayTests({
         expectedStatusCode: StatusCodes.Success,
         expectedStatusMessageKey: null,
       },
+
+      {
+        testName: "CBInOverlayCollapsed",
+        sovAppData: {
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            trafficMediumNumber:
+              sovTestTrafficMediumNumbers.CBInOverlayCollapsed
+                .trafficMediumNumber,
+          },
+        },
+        expectedElementValue: true,
+        expectedStatusCode: StatusCodes.Success,
+        expectedStatusMessageKey: null,
+      },
+
+      {
+        testName: "CBInOverlayCloseable",
+        sovAppData: {
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            trafficMediumNumber:
+              sovTestTrafficMediumNumbers.CBInOverlayCloseable
+                .trafficMediumNumber,
+          },
+        },
+        expectedElementValue: true,
+        expectedStatusCode: StatusCodes.Success,
+        expectedStatusMessageKey: null,
+      },
     ],
   }),
 });
