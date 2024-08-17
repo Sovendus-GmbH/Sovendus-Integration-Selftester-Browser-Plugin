@@ -1,139 +1,157 @@
-function _checkAvailableIntegrations(): void {
-  const overlay = document.getElementById(
-    "outerSovedusIntegrationMethodCheckerOverlay",
-  );
-  if (!overlay) {
-    class availableMethodsChecker {
-      apiKeys: string[] = [
-        "whz2mjdra9s0s0s683zodmidj6mo5d1v3gas3hbglcp73j6e16ufvo8k5i7lofnengl94u",
-        "wr9wyithqrnw9nnxuja2yjw2gpcr83cytckmjzcjbxzobm57wjcs0c82aazqm9aufog6v2",
-      ];
-      supportedSystems: {
-        [key in SupportedSystemsKeyType]: SupportedSystemType;
-      } = {
-        "WooCommerce": {
-          name: "WooCommerce",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Wordpress-WooCommerce-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-plugin-for-wordpress-woocommerce",
-        },
-        "Shopware": {
-          name: "Shopware",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Shopware-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-plugin-for-shopware",
-        },
-        "Nuxt.js": {
-          name: "Nuxt.js / Vue",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Voucher-Network-and-Checkout-Benefits-Component-for-Vue?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-component-for-vue",
-        },
-        "Magento": {
-          name: "Magento",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Magento-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-magento",
-        },
-        "Next.js": {
-          name: "Next.js / React",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Voucher-Network-and-Checkout-Benefits-Component-for-React?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-component-for-react",
-        },
-        "Shopify": {
-          name: "Shopify",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Shopify-Voucher-Network-and-Checkout-Benefits-Documentation?tab=readme-ov-file#shopify-sovendus-voucher-network--checkout-benefits-integration-documentation",
-        },
-        "OXID eSales": {
-          name: "OXID eShop",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
-        },
-        "OXID eShop Enterprise Edition": {
-          name: "OXID eShop",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
-        },
-        "OXID eShop Community Edition": {
-          name: "OXID eShop",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
-        },
-        "OXID eShop Professional Edition": {
-          name: "OXID eShop",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
-        },
-        "PrestaShop": {
-          name: "PrestaShop",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-Prestashop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-prestashop",
-        },
-        "JTL-Shop": {
-          name: "JTL-Shop",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-JTL-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-jtl",
-        },
-        "BigCommerce": {
-          name: "BigCommerce",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-BigCommerce-Voucher-Network-and-Checkout-Benefits-Documentation?tab=readme-ov-file#sovendus-bigcommerce-voucher-network-and-checkout-benefits-documentation",
-        },
-        "gtm": {
-          name: "Google Tag Manager",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-GTM-v2?tab=readme-ov-file#sovendus-google-tag-manager-template-for-voucher-network-and-checkout-benefits-integration",
-        },
-        "generic": {
-          name: "Generic",
-          docsLink:
-            "https://github.com/Sovendus-GmbH/Sovendus-generic-documentation-for-Voucher-Network-and-Checkout-Benefits?tab=readme-ov-file",
-        },
-      };
-      statusCodes: StatusCodesType = {
-        success: "success",
-        fail: "fail",
-      };
-      constructor() {
-        void this.createCheckIntegrationMethodsOverlay();
-      }
+import { getTabIdFromTabs } from "./extension-pop-up.js";
 
-      async getAvailableMethodsMessage(): Promise<string> {
-        let availableMethodsText: string;
-        const { data, responseStatusCode, responseErrorMessage } =
-          await this.getAvailableMethodsResponse();
-        if (responseStatusCode === this.statusCodes.fail) {
-          availableMethodsText = responseErrorMessage;
-          return availableMethodsText;
-        }
-        const {
-          shopSystemName,
-          cmsName,
-          webFrameworkName,
-          statusCode,
-          errorMessage,
-        } = this.getAvailableMethodsFromResponse(data);
-        let availableMethods: string = "";
-        if (shopSystemName && this.supportedSystems[shopSystemName]) {
-          availableMethods = this.formatIntegrationOption(
-            this.supportedSystems[shopSystemName],
-          );
-        } else if (cmsName && this.supportedSystems[cmsName]) {
-          availableMethods = this.formatIntegrationOption(
-            this.supportedSystems[cmsName],
-          );
-        } else if (
-          webFrameworkName &&
-          this.supportedSystems[webFrameworkName]
-        ) {
-          availableMethods = this.formatIntegrationOption(
-            this.supportedSystems[webFrameworkName],
-          );
-        }
-        const gtmAvailable = this.checkIfGtmIsIntegrated();
-        // ${this.formatIntegrationOption(
-        //   this.supportedSystems.generic,
-        //   null,
-        //   " Integration"
-        // )}
-        availableMethodsText = `
+export async function checkAvailableIntegrations(
+  tabs: chrome.tabs.Tab[],
+): Promise<void> {
+  const tabId = getTabIdFromTabs(tabs);
+  if (tabId) {
+    await _checkAvailableIntegrations(tabId);
+  } else {
+    throw new Error(
+      "Failed to get tabId for checkAvailableIntegrations function",
+    );
+  }
+}
+
+async function _checkAvailableIntegrations(tabId: number): Promise<void> {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      const overlay = document.getElementById(
+        "outerSovendusIntegrationMethodCheckerOverlay",
+      );
+      if (!overlay) {
+        class availableMethodsChecker {
+          apiKeys: string[] = [
+            "whz2mjdra9s0s0s683zodmidj6mo5d1v3gas3hbglcp73j6e16ufvo8k5i7lofnengl94u",
+            "wr9wyithqrnw9nnxuja2yjw2gpcr83cytckmjzcjbxzobm57wjcs0c82aazqm9aufog6v2",
+          ];
+          supportedSystems: {
+            [key in SupportedSystemsKeyType]: SupportedSystemType;
+          } = {
+            "WooCommerce": {
+              name: "WooCommerce",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Wordpress-WooCommerce-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-plugin-for-wordpress-woocommerce",
+            },
+            "Shopware": {
+              name: "Shopware",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Shopware-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-plugin-for-shopware",
+            },
+            "Nuxt.js": {
+              name: "Nuxt.js / Vue",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Voucher-Network-and-Checkout-Benefits-Component-for-Vue?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-component-for-vue",
+            },
+            "Magento": {
+              name: "Magento",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Magento-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-magento",
+            },
+            "Next.js": {
+              name: "Next.js / React",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Voucher-Network-and-Checkout-Benefits-Component-for-React?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-component-for-react",
+            },
+            "Shopify": {
+              name: "Shopify",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Shopify-Voucher-Network-and-Checkout-Benefits-Documentation?tab=readme-ov-file#shopify-sovendus-voucher-network--checkout-benefits-integration-documentation",
+            },
+            "OXID eSales": {
+              name: "OXID eShop",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
+            },
+            "OXID eShop Enterprise Edition": {
+              name: "OXID eShop",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
+            },
+            "OXID eShop Community Edition": {
+              name: "OXID eShop",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
+            },
+            "OXID eShop Professional Edition": {
+              name: "OXID eShop",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
+            },
+            "PrestaShop": {
+              name: "PrestaShop",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-Prestashop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-prestashop",
+            },
+            "JTL-Shop": {
+              name: "JTL-Shop",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-JTL-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-jtl",
+            },
+            "BigCommerce": {
+              name: "BigCommerce",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-BigCommerce-Voucher-Network-and-Checkout-Benefits-Documentation?tab=readme-ov-file#sovendus-bigcommerce-voucher-network-and-checkout-benefits-documentation",
+            },
+            "gtm": {
+              name: "Google Tag Manager",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-GTM-v2?tab=readme-ov-file#sovendus-google-tag-manager-template-for-voucher-network-and-checkout-benefits-integration",
+            },
+            "generic": {
+              name: "Generic",
+              docsLink:
+                "https://github.com/Sovendus-GmbH/Sovendus-generic-documentation-for-Voucher-Network-and-Checkout-Benefits?tab=readme-ov-file",
+            },
+          };
+          statusCodes: StatusCodesType = {
+            success: "success",
+            fail: "fail",
+          };
+          constructor() {
+            void this.createCheckIntegrationMethodsOverlay();
+          }
+
+          async getAvailableMethodsMessage(): Promise<string> {
+            let availableMethodsText: string;
+            const { data, responseStatusCode, responseErrorMessage } =
+              await this.getAvailableMethodsResponse();
+            if (responseStatusCode === this.statusCodes.fail) {
+              availableMethodsText = responseErrorMessage;
+              return availableMethodsText;
+            }
+            const {
+              shopSystemName,
+              cmsName,
+              webFrameworkName,
+              statusCode,
+              errorMessage,
+            } = this.getAvailableMethodsFromResponse(data);
+            let availableMethods: string = "";
+            if (shopSystemName && this.supportedSystems[shopSystemName]) {
+              availableMethods = this.formatIntegrationOption(
+                this.supportedSystems[shopSystemName],
+              );
+            } else if (cmsName && this.supportedSystems[cmsName]) {
+              availableMethods = this.formatIntegrationOption(
+                this.supportedSystems[cmsName],
+              );
+            } else if (
+              webFrameworkName &&
+              this.supportedSystems[webFrameworkName]
+            ) {
+              availableMethods = this.formatIntegrationOption(
+                this.supportedSystems[webFrameworkName],
+              );
+            }
+            const gtmAvailable = this.checkIfGtmIsIntegrated();
+            // ${this.formatIntegrationOption(
+            //   this.supportedSystems.generic,
+            //   null,
+            //   " Integration"
+            // )}
+            availableMethodsText = `
         <h3 class='sovendus-overlay-font sovendus-overlay-h3' style="border: 1px solid; border-radius: 8px; padding: 8px; text-align: center;">
           Note that the detection can be wrong and incomplete!
         </h3>
@@ -151,22 +169,22 @@ function _checkAvailableIntegrations(): void {
             : ""
         }
       `;
-        console.log("CMS detection result:", {
-          shopSystemName,
-          cmsName,
-          webFrameworkName,
-          statusCode,
-          errorMessage,
-        });
+            console.log("CMS detection result:", {
+              shopSystemName,
+              cmsName,
+              webFrameworkName,
+              statusCode,
+              errorMessage,
+            });
 
-        return availableMethodsText;
-      }
-      formatIntegrationOption(
-        supportedSystem: SupportedSystemType,
-        titlePrefix: string | null = "Integration via ",
-        titleSuffix: string | null = null,
-      ): string {
-        return `
+            return availableMethodsText;
+          }
+          formatIntegrationOption(
+            supportedSystem: SupportedSystemType,
+            titlePrefix: string | null = "Integration via ",
+            titleSuffix: string | null = null,
+          ): string {
+            return `
       <h3 class='sovendus-overlay-font sovendus-overlay-h3'>
         ${titlePrefix ? titlePrefix : ""}${supportedSystem.name}${
           titleSuffix ? titleSuffix : ""
@@ -176,112 +194,112 @@ function _checkAvailableIntegrations(): void {
         ${supportedSystem.name} Integration Documentation
       </a>
     `;
-      }
+          }
 
-      checkIfGtmIsIntegrated(): boolean {
-        return Boolean(
-          document.querySelectorAll(
-            '[src*="https://www.googletagmanager.com/gtm.js?id="]',
-          ).length,
-        );
-      }
+          checkIfGtmIsIntegrated(): boolean {
+            return Boolean(
+              document.querySelectorAll(
+                '[src*="https://www.googletagmanager.com/gtm.js?id="]',
+              ).length,
+            );
+          }
 
-      async getAvailableMethodsResponse(): Promise<{
-        data: AvailableMethodsResponseType;
-        responseStatusCode: StatusCodeType;
-        responseErrorMessage: string;
-      }> {
-        const randomIndex = Math.floor(Math.random() * this.apiKeys.length);
-        let responseStatusCode: StatusCodeType;
-        let responseErrorMessage: string = "";
-        try {
-          const response = await fetch(
-            `https://whatcms.org/API/Tech?key=${this.apiKeys[randomIndex]}&url=${window.location.origin}`,
-          );
-          const data = await response.json();
-          responseStatusCode = this.statusCodes.success;
-          return { data, responseStatusCode, responseErrorMessage };
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, no-console
-          console.error("Error fetching data:", error?.message || error);
-          responseStatusCode = this.statusCodes.fail;
-          responseErrorMessage = this.formatErrorMessage(
-            "Error fetching data:",
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-            error?.message || error,
-          );
-          return { data: {}, responseStatusCode, responseErrorMessage };
-        }
-      }
-      formatErrorMessage(errorTitle: string, errorMessage: string): string {
-        return `
+          async getAvailableMethodsResponse(): Promise<{
+            data: AvailableMethodsResponseType;
+            responseStatusCode: StatusCodeType;
+            responseErrorMessage: string;
+          }> {
+            const randomIndex = Math.floor(Math.random() * this.apiKeys.length);
+            let responseStatusCode: StatusCodeType;
+            let responseErrorMessage: string = "";
+            try {
+              const response = await fetch(
+                `https://whatcms.org/API/Tech?key=${this.apiKeys[randomIndex]}&url=${window.location.origin}`,
+              );
+              const data = await response.json();
+              responseStatusCode = this.statusCodes.success;
+              return { data, responseStatusCode, responseErrorMessage };
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } catch (error: any) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, no-console
+              console.error("Error fetching data:", error?.message || error);
+              responseStatusCode = this.statusCodes.fail;
+              responseErrorMessage = this.formatErrorMessage(
+                "Error fetching data:",
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+                error?.message || error,
+              );
+              return { data: {}, responseStatusCode, responseErrorMessage };
+            }
+          }
+          formatErrorMessage(errorTitle: string, errorMessage: string): string {
+            return `
         <h2 class="sovendus-overlay-font sovendus-overlay-h2 sovendus-overlay-error">${errorTitle}</h2>
         <h3 class="sovendus-overlay-font sovendus-overlay-h3 sovendus-overlay-error">${errorMessage}</h3>
       `;
-      }
-
-      getAvailableMethodsFromResponse(
-        responseJson: AvailableMethodsResponseType,
-      ): {
-        shopSystemName: SupportedSystemsKeyType;
-        cmsName: SupportedSystemsKeyType;
-        webFrameworkName: SupportedSystemsKeyType;
-        statusCode: StatusCodeType;
-        errorMessage: string;
-      } {
-        let statusCode: StatusCodeType = this.statusCodes.fail;
-        let shopSystemName = "";
-        let cmsName = "";
-        let errorMessage = "";
-        let webFrameworkName = "";
-        if (responseJson.results && responseJson.result) {
-          for (const technology of responseJson.results) {
-            if (technology.categories.includes("E-commerce")) {
-              statusCode = this.statusCodes.success;
-              shopSystemName += shopSystemName
-                ? `, ${technology.name}`
-                : technology.name;
-            }
-            if (technology.categories.includes("CMS")) {
-              cmsName += cmsName ? `, ${technology.name}` : technology.name;
-            }
-            if (technology.categories.includes("Web Framework")) {
-              webFrameworkName += webFrameworkName
-                ? `, ${technology.name}`
-                : technology.name;
-            }
           }
 
-          if (statusCode === this.statusCodes.fail && cmsName === "") {
-            errorMessage = responseJson.result.msg;
-            if (![201, 202].includes(responseJson.result.code)) {
-              if (responseJson.result.code === 200) {
-                errorMessage = "Error, no CMS or Shopsystem detected";
-              } else {
-                console.error("Error");
+          getAvailableMethodsFromResponse(
+            responseJson: AvailableMethodsResponseType,
+          ): {
+            shopSystemName: SupportedSystemsKeyType;
+            cmsName: SupportedSystemsKeyType;
+            webFrameworkName: SupportedSystemsKeyType;
+            statusCode: StatusCodeType;
+            errorMessage: string;
+          } {
+            let statusCode: StatusCodeType = this.statusCodes.fail;
+            let shopSystemName = "";
+            let cmsName = "";
+            let errorMessage = "";
+            let webFrameworkName = "";
+            if (responseJson.results && responseJson.result) {
+              for (const technology of responseJson.results) {
+                if (technology.categories.includes("E-commerce")) {
+                  statusCode = this.statusCodes.success;
+                  shopSystemName += shopSystemName
+                    ? `, ${technology.name}`
+                    : technology.name;
+                }
+                if (technology.categories.includes("CMS")) {
+                  cmsName += cmsName ? `, ${technology.name}` : technology.name;
+                }
+                if (technology.categories.includes("Web Framework")) {
+                  webFrameworkName += webFrameworkName
+                    ? `, ${technology.name}`
+                    : technology.name;
+                }
               }
+
+              if (statusCode === this.statusCodes.fail && cmsName === "") {
+                errorMessage = responseJson.result.msg;
+                if (![201, 202].includes(responseJson.result.code)) {
+                  if (responseJson.result.code === 200) {
+                    errorMessage = "Error, no CMS or Shopsystem detected";
+                  } else {
+                    console.error("Error");
+                  }
+                }
+              }
+            } else {
+              errorMessage = "Failed to get detection result - unknown error";
             }
+
+            return {
+              shopSystemName: shopSystemName as SupportedSystemsKeyType,
+              cmsName: cmsName as SupportedSystemsKeyType,
+              webFrameworkName: webFrameworkName as SupportedSystemsKeyType,
+              statusCode,
+              errorMessage,
+            };
           }
-        } else {
-          errorMessage = "Failed to get detection result - unknown error";
-        }
 
-        return {
-          shopSystemName: shopSystemName as SupportedSystemsKeyType,
-          cmsName: cmsName as SupportedSystemsKeyType,
-          webFrameworkName: webFrameworkName as SupportedSystemsKeyType,
-          statusCode,
-          errorMessage,
-        };
-      }
-
-      async createCheckIntegrationMethodsOverlay(): Promise<void> {
-        const overlay = document.createElement("div");
-        overlay.id = "outerSovedusIntegrationMethodCheckerOverlay";
-        overlay.innerHTML = `
+          async createCheckIntegrationMethodsOverlay(): Promise<void> {
+            const overlay = document.createElement("div");
+            overlay.id = "outerSovendusIntegrationMethodCheckerOverlay";
+            overlay.innerHTML = `
       ${this.getCheckerOverlayStyle()}
-      <div class="sovendus-overlay-font" id="sovedusIntegrationMethodCheckerOverlay">  
+      <div class="sovendus-overlay-font" id="sovendusIntegrationMethodCheckerOverlay">  
         <div style="margin:auto;max-width:500px;">
           <div>
           <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Integration Methods Checker</h1>
@@ -292,20 +310,21 @@ function _checkAvailableIntegrations(): void {
         </div>
       </div>
       `;
-        document.body.appendChild(overlay);
-        const availableMethodsMessage = await this.getAvailableMethodsMessage();
-        const sovendusDetectionResultDiv = document.getElementById(
-          "sovendusDetectionResult",
-        );
-        if (sovendusDetectionResultDiv) {
-          sovendusDetectionResultDiv.innerHTML = availableMethodsMessage;
-        }
-      }
+            document.body.appendChild(overlay);
+            const availableMethodsMessage =
+              await this.getAvailableMethodsMessage();
+            const sovendusDetectionResultDiv = document.getElementById(
+              "sovendusDetectionResult",
+            );
+            if (sovendusDetectionResultDiv) {
+              sovendusDetectionResultDiv.innerHTML = availableMethodsMessage;
+            }
+          }
 
-      getCheckerOverlayStyle(): string {
-        return `
+          getCheckerOverlayStyle(): string {
+            return `
           <style>
-            #sovedusIntegrationMethodCheckerOverlay {
+            #sovendusIntegrationMethodCheckerOverlay {
               position: fixed !important;
               left: calc(50% - 300px) !important;
               right: calc(50% - 300px) !important;  
@@ -321,7 +340,7 @@ function _checkAvailableIntegrations(): void {
               line-height: normal !important;  
             }
             @media only screen and (max-width: 700px) {
-              #sovedusIntegrationMethodCheckerOverlay {
+              #sovendusIntegrationMethodCheckerOverlay {
                 left: 0 !important;
                 right: 0 !important;
               }
@@ -356,13 +375,13 @@ function _checkAvailableIntegrations(): void {
             }
           </style>
         `;
+          }
+        }
+        new availableMethodsChecker();
       }
-    }
-    new availableMethodsChecker();
-  }
+    },
+  });
 }
-_checkAvailableIntegrations();
-
 type StatusCodeType = "fail" | "success";
 
 interface StatusCodesType {
