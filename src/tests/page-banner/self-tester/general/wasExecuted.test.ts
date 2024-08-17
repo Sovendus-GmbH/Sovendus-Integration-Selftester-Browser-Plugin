@@ -22,7 +22,11 @@ executeOverlayTests({
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: null,
-          disableFlexibleIFrameJs: true,
+          testOptions: {
+            regular: {
+              disableFlexibleIFrameJs: true,
+            },
+          },
         },
       ],
     }),

@@ -132,7 +132,11 @@ executeOverlayTests({
           expectedElementValue: JSON.stringify(malformedObjectData),
           expectedStatusMessageKey:
             StatusMessageKeyTypes.trafficSourceNumberMalformed,
-          disableFlexibleIFrameJs: true,
+          testOptions: {
+            regular: {
+              disableFlexibleIFrameJs: true,
+            },
+          },
         },
         {
           testName: "MalformedArray_WhenScriptDoesNotRun",
@@ -141,7 +145,11 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.trafficSourceNumberMalformed,
-          disableFlexibleIFrameJs: true,
+          testOptions: {
+            regular: {
+              disableFlexibleIFrameJs: true,
+            },
+          },
         },
       ],
     }),

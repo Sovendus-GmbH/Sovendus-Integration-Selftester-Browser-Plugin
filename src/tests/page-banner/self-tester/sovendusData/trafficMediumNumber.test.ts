@@ -21,7 +21,6 @@ import type { TestsInfoType } from "@src/tests/testUtils/testCaseGenerator";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
-
 // TODO Add EmptyString Test
 
 const testCasesWhenScriptRuns: TestsInfoType = [
@@ -136,7 +135,11 @@ executeOverlayTests({
           expectedElementValue: JSON.stringify(malformedObjectData),
           expectedStatusMessageKey:
             StatusMessageKeyTypes.trafficMediumNumberMalformed,
-          disableFlexibleIFrameJs: true,
+          testOptions: {
+            regular: {
+              disableFlexibleIFrameJs: true,
+            },
+          },
         },
         {
           testName: "MalformedArray_WhenScriptDoesNotRun",
@@ -145,7 +148,11 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.trafficMediumNumberMalformed,
-          disableFlexibleIFrameJs: true,
+          testOptions: {
+            regular: {
+              disableFlexibleIFrameJs: true,
+            },
+          },
         },
       ],
     }),

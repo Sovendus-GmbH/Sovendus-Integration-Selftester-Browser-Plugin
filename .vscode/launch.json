@@ -12,7 +12,7 @@
         "--no-cache",
         "--watchAll",
         "--silent=false",
-        "-t=awinSaleTracked"
+        "-t=isSovendusJsOnDom_NotOnDOM"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"

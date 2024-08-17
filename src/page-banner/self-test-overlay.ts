@@ -162,7 +162,6 @@ class SelfTesterOverlay {
           iframeContainerId: ${selfTester.iFrameContainerId.getFormattedStatusMessage()}
         </li>
         ${selfTester.sovendusDivFound.getFormattedGeneralStatusMessage()}
-        ${selfTester.iFrameContainerId.getFormattedGeneralStatusMessage()}
       </ul>
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
@@ -181,9 +180,12 @@ class SelfTesterOverlay {
             : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
               `sessionId: ${selfTester.sessionId.getFormattedStatusMessage()}</li>`
         }
-        <li class='sovendus-overlay-font sovendus-overlay-text'>
-          timestamp: ${selfTester.timestamp.getFormattedStatusMessage()}
-        </li>
+        ${
+          selfTester.timestamp.statusCode === StatusCodes.TestDidNotRun
+            ? ""
+            : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
+              `timestamp: ${selfTester.timestamp.getFormattedStatusMessage()}</li>`
+        }
         <li class='sovendus-overlay-font sovendus-overlay-text'>
           usedCouponCode: ${selfTester.usedCouponCode.getFormattedStatusMessage()}
         </li>

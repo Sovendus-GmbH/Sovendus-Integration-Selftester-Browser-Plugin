@@ -28,7 +28,11 @@ executeOverlayTests({
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: StatusMessageKeyTypes.iFrameNotOnDOM,
-          disableFlexibleIFrameJs: true,
+          testOptions: {
+            regular: {
+              disableFlexibleIFrameJs: true,
+            },
+          },
         },
         {
           testName: "FlexibleIFrameOnDOMScriptTypePlain",
@@ -36,7 +40,11 @@ executeOverlayTests({
           expectedElementValue: true,
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
-          flexibleIFrameJsScriptType: "text/plain",
+          testOptions: {
+            regular: {
+              flexibleIFrameJsScriptType: "text/plain",
+            },
+          },
         },
         {
           testName: "FlexibleIFrameOnDOMScriptTypeJavascript",
@@ -44,7 +52,11 @@ executeOverlayTests({
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
-          flexibleIFrameJsScriptType: "text/javascript",
+          testOptions: {
+            regular: {
+              flexibleIFrameJsScriptType: "text/javascript",
+            },
+          },
         },
         {
           testName: "flexibleIFrameOnDOMScriptTypeEmpty",
@@ -52,7 +64,11 @@ executeOverlayTests({
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
-          flexibleIFrameJsScriptType: "",
+          testOptions: {
+            regular: {
+              flexibleIFrameJsScriptType: "",
+            },
+          },
         },
         {
           testName: "flexibleIFrameOnDOMScriptTypeUndefined",
@@ -60,7 +76,11 @@ executeOverlayTests({
           expectedElementValue: true,
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
-          flexibleIFrameJsScriptType: "undefined",
+          testOptions: {
+            regular: {
+              flexibleIFrameJsScriptType: "undefined",
+            },
+          },
         },
         {
           testName: "flexibleIFrameOnDOMScriptTypeNull",
@@ -68,7 +88,11 @@ executeOverlayTests({
           expectedElementValue: true,
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
-          flexibleIFrameJsScriptType: null,
+          testOptions: {
+            regular: {
+              flexibleIFrameJsScriptType: null,
+            },
+          },
         },
         {
           testName: "flexibleIFrameOnDOMDataUndefined",

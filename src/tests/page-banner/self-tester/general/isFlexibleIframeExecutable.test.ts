@@ -25,7 +25,11 @@ executeOverlayTests({
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
-          disableFlexibleIFrameJs: true,
+          testOptions: {
+            regular: {
+              disableFlexibleIFrameJs: true,
+            },
+          },
         },
         {
           testName: "FlexibleIFrameNotExecutableScriptTypePlain",
@@ -34,7 +38,11 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.flexibleIFrameJsBlockedByCookieConsent,
-          flexibleIFrameJsScriptType: "text/plain",
+          testOptions: {
+            regular: {
+              flexibleIFrameJsScriptType: "text/plain",
+            },
+          },
         },
         {
           testName: "FlexibleIFrameNotExecutableScriptTypeJavascript",
@@ -42,7 +50,11 @@ executeOverlayTests({
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
-          flexibleIFrameJsScriptType: "text/javascript",
+          testOptions: {
+            regular: {
+              flexibleIFrameJsScriptType: "text/javascript",
+            },
+          },
         },
         {
           testName: "FlexibleIFrameNotExecutableScriptTypeEmpty",
@@ -50,7 +62,11 @@ executeOverlayTests({
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
-          flexibleIFrameJsScriptType: "",
+          testOptions: {
+            regular: {
+              flexibleIFrameJsScriptType: "",
+            },
+          },
         },
         {
           testName: "FlexibleIFrameNotExecutableScriptTypeUndefined",
@@ -59,7 +75,11 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.flexibleIFrameJsBlockedByCookieConsent,
-          flexibleIFrameJsScriptType: "undefined",
+          testOptions: {
+            regular: {
+              flexibleIFrameJsScriptType: "undefined",
+            },
+          },
         },
         {
           testName: "FlexibleIFrameNotExecutableScriptTypeNull",
@@ -68,7 +88,11 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.flexibleIFrameJsBlockedByCookieConsent,
-          flexibleIFrameJsScriptType: null,
+          testOptions: {
+            regular: {
+              flexibleIFrameJsScriptType: null,
+            },
+          },
         },
       ],
     }),

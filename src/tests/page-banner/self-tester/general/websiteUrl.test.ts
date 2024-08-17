@@ -4,7 +4,7 @@ import { resolve } from "path";
 import { pathToFileURL } from "url";
 
 executeOverlayTests({
-  testName: "website",
+  testName: "websiteURL",
   tests: [
     {
       testName: "URL",

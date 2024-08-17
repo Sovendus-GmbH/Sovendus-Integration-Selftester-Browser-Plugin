@@ -60,7 +60,11 @@ const tests = [
         expectedElementValue: "1234,56",
         expectedStatusCode: StatusCodes.Error,
         expectedStatusMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
-        disableFlexibleIFrameJs: true,
+        testOptions: {
+          regular: {
+            disableFlexibleIFrameJs: true,
+          },
+        },
       },
     ],
   }),

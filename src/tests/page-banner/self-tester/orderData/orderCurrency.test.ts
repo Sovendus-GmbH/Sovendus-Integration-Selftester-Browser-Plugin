@@ -49,7 +49,11 @@ const tests = [
         expectedElementValue: "EURO",
         expectedStatusCode: StatusCodes.Error,
         expectedStatusMessageKey: StatusMessageKeyTypes.currencyNotValid,
-        disableFlexibleIFrameJs: true,
+        testOptions: {
+          regular: {
+            disableFlexibleIFrameJs: true,
+          },
+        },
       },
     ],
   }),

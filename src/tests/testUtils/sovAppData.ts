@@ -4,20 +4,29 @@ import type {
   SovIframes,
 } from "@src/page-banner/self-tester";
 
-export function getSovAppData(sovAppData: SovDataType): SovFinalDataType {
-  const sovData: SovFinalDataType = {
+import type { TestDataType } from "./testCaseGenerator";
+
+export function getSovAppData(testData: TestDataType): {
+  sovFinalData: SovFinalDataType;
+  sovAppData: SovDataType;
+} {
+  const sovAppData =
+    typeof testData.sovAppData === "function"
+      ? testData.sovAppData()
+      : testData.sovAppData;
+  const sovFinalData: SovFinalDataType = {
     sovIframes: [sovAppData.sovIframes1],
   };
   if (sovAppData.sovConsumer) {
-    sovData.sovConsumer = sovAppData.sovConsumer;
+    sovFinalData.sovConsumer = sovAppData.sovConsumer;
   }
   if (sovAppData.sovIframes2) {
-    sovData.sovIframes.push(sovAppData.sovIframes2);
+    sovFinalData.sovIframes.push(sovAppData.sovIframes2);
   }
   if (sovAppData.sovIframes3) {
-    sovData.sovIframes.push(sovAppData.sovIframes3);
+    sovFinalData.sovIframes.push(sovAppData.sovIframes3);
   }
-  return sovData;
+  return { sovFinalData, sovAppData };
 }
 
 export interface SovFinalDataType {

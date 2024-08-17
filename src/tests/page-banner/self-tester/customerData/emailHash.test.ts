@@ -13,7 +13,7 @@ import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 // TODO add more tests (EmptyString Test)
 
 executeOverlayTests({
-  testName: "emailHash",
+  testName: "consumerEmailHash",
   tests: [
     ...generateTests({
       elementKey: "consumerEmailHash",

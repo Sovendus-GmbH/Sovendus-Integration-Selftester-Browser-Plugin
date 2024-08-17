@@ -164,14 +164,14 @@ export default class SelfTester {
     this.consumerCountry = this.getConsumerCountryTestResult(sovConsumer);
   }
 
-  executeOrderDataTests(withSessionId: boolean = true): void {
+  executeOrderDataTests(withSessionIdAndTimestamp: boolean = true): void {
     this.orderCurrency = this.getOrderCurrencyTestResult();
     this.orderId = this.getOrderIdTestResult();
     this.orderValue = this.getOrderValueTestResult();
-    if (withSessionId) {
+    if (withSessionIdAndTimestamp) {
       this.sessionId = this.getSessionIdTestResult();
+      this.timestamp = this.getTimestampTestResult();
     }
-    this.timestamp = this.getTimestampTestResult();
     this.usedCouponCode = this.getUsedCouponCodeTestResult();
   }
 
@@ -632,43 +632,45 @@ export default class SelfTester {
     trafficSourceNumber: TestResultType<string | undefined>,
     trafficMediumNumber: TestResultType<string | undefined>,
   ): void {
-    const flexibleIFrameJs: HTMLScriptElement | null =
-      document.querySelector(
-        '[src$="api.sovendus.com/sovabo/common/js/flexibleIframe.js"]',
-      ) ||
-      document.querySelector(
-        '[src$="testing4.sovendus.com/sovabo/common/js/flexibleIframe.js"]',
-      );
-    const flexibleIFrameOnDOM = (this.flexibleIFrameOnDOM =
-      this.getIsFlexibleIFrameOnDOMTestResult(
-        wasExecuted,
-        trafficSourceNumber,
-        trafficMediumNumber,
-        flexibleIFrameJs,
-      ));
-    const isFlexibleIFrameExecutable = (this.isFlexibleIFrameExecutable =
-      this.getIsFlexibleIFrameExecutable(
-        flexibleIFrameJs,
-        flexibleIFrameOnDOM,
-      ));
-    const sovendusJs: HTMLScriptElement | null = document.getElementById(
-      "sovloader-script",
-    ) as HTMLScriptElement | null;
-    const isSovendusJsOnDom = (this.isSovendusJsOnDom =
-      this.getIsSovendusJsOnDom(
-        isFlexibleIFrameExecutable,
-        flexibleIFrameOnDOM,
-        sovendusJs,
-      ));
-    const isSovendusJsExecutable = (this.isSovendusJsExecutable =
-      this.getIsSovendusJsExecutable(isSovendusJsOnDom, sovendusJs));
-    this.isUnknownSovendusJsError = this.getIsUnknownSovendusJsErrorTestResult({
-      wasExecuted,
-      flexibleIFrameOnDOM,
-      isFlexibleIFrameExecutable,
-      isSovendusJsOnDom,
-      isSovendusJsExecutable,
-    });
+    if (
+      wasExecuted.statusCode === StatusCodes.Error &&
+      trafficSourceNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
+      trafficMediumNumber.statusCode === StatusCodes.SuccessButNeedsReview
+    ) {
+      const flexibleIFrameJs: HTMLScriptElement | null =
+        document.querySelector(
+          '[src$="api.sovendus.com/sovabo/common/js/flexibleIframe.js"]',
+        ) ||
+        document.querySelector(
+          '[src$="testing4.sovendus.com/sovabo/common/js/flexibleIframe.js"]',
+        );
+      const flexibleIFrameOnDOM = (this.flexibleIFrameOnDOM =
+        this.getIsFlexibleIFrameOnDOMTestResult(flexibleIFrameJs));
+      const isFlexibleIFrameExecutable = (this.isFlexibleIFrameExecutable =
+        this.getIsFlexibleIFrameExecutable(
+          flexibleIFrameJs,
+          flexibleIFrameOnDOM,
+        ));
+      const sovendusJs: HTMLScriptElement | null = document.getElementById(
+        "sovloader-script",
+      ) as HTMLScriptElement | null;
+      const isSovendusJsOnDom = (this.isSovendusJsOnDom =
+        this.getIsSovendusJsOnDom(
+          isFlexibleIFrameExecutable,
+          flexibleIFrameOnDOM,
+          sovendusJs,
+        ));
+      const isSovendusJsExecutable = (this.isSovendusJsExecutable =
+        this.getIsSovendusJsExecutable(isSovendusJsOnDom, sovendusJs));
+      this.isUnknownSovendusJsError =
+        this.getIsUnknownSovendusJsErrorTestResult({
+          wasExecuted,
+          flexibleIFrameOnDOM,
+          isFlexibleIFrameExecutable,
+          isSovendusJsOnDom,
+          isSovendusJsExecutable,
+        });
+    }
   }
 
   getIsUnknownSovendusJsErrorTestResult({
@@ -702,29 +704,19 @@ export default class SelfTester {
   }
 
   getIsFlexibleIFrameOnDOMTestResult(
-    wasExecuted: TestResultType<boolean>,
-    trafficSourceNumber: TestResultType<string | undefined>,
-    trafficMediumNumber: TestResultType<string | undefined>,
     flexibleIFrameJs: HTMLScriptElement | null,
   ): TestResultType<boolean | undefined> {
-    if (
-      wasExecuted.statusCode === StatusCodes.Error &&
-      trafficSourceNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
-      trafficMediumNumber.statusCode === StatusCodes.SuccessButNeedsReview
-    ) {
-      const isOnDom: boolean = !!flexibleIFrameJs;
-      if (isOnDom) {
-        return new SuccessTestResult<boolean | undefined>({
-          elementValue: isOnDom,
-        });
-      }
-      return new WarningOrFailTestResult<boolean | undefined>({
+    const isOnDom: boolean = !!flexibleIFrameJs;
+    if (isOnDom) {
+      return new SuccessTestResult<boolean | undefined>({
         elementValue: isOnDom,
-        statusMessageKey: StatusMessageKeyTypes.iFrameNotOnDOM,
-        statusCode: StatusCodes.Error,
       });
     }
-    return new DidNotRunTestResult<boolean | undefined>();
+    return new WarningOrFailTestResult<boolean | undefined>({
+      elementValue: isOnDom,
+      statusMessageKey: StatusMessageKeyTypes.iFrameNotOnDOM,
+      statusCode: StatusCodes.Error,
+    });
   }
 
   getIsFlexibleIFrameExecutable(
@@ -780,7 +772,7 @@ export default class SelfTester {
     isSovendusJsOnDom: TestResultType<boolean | undefined>,
     sovendusJs: HTMLScriptElement | null,
   ): TestResultType<boolean | string | undefined> {
-    if (isSovendusJsOnDom && sovendusJs) {
+    if (isSovendusJsOnDom.statusCode === StatusCodes.Success && sovendusJs) {
       const isExecutable =
         sovendusJs.type === "text/javascript" ||
         sovendusJs.type === null ||
