@@ -1,3 +1,18 @@
+import {
+  fullscreenClass,
+  outerOverlayId,
+  overlayId,
+  sovendusInfoClass,
+  sovendusOverlayButtonClass,
+  sovendusOverlayErrorClass,
+  sovendusOverlayFontClass,
+  sovendusOverlayH1Class,
+  sovendusOverlayH2Class,
+  sovendusOverlayH3Class,
+  sovendusOverlayRepeatTestsId,
+  sovendusOverlayTextClass,
+  toggleSovendusOverlayId,
+} from "./self-test-overlay-css-vars.js";
 import SelfTester from "./self-tester.js";
 import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
 
@@ -11,17 +26,14 @@ async function executeTests(): Promise<void> {
   removeOverlay();
   window.sovSelfTester = new SelfTester();
   await window.sovSelfTester.waitForSovendusIntegrationDetected();
-  window.sovSelfTester.selfTestIntegration();
-
   const overlay = new SelfTesterOverlay();
+  overlay.createLoadingOverlay();
+  await window.sovSelfTester.waitForSovendusIntegrationToBeLoaded();
+  window.sovSelfTester.selfTestIntegration();
   overlay.createOverlay(window.sovSelfTester);
 }
 
-interface testsFn {
-  (): Promise<void>;
-}
-
-async function repeatTestsOnSPA(tests: testsFn): Promise<void> {
+async function repeatTestsOnSPA(tests: () => Promise<void>): Promise<void> {
   let visitedPath = "";
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -34,32 +46,23 @@ async function repeatTestsOnSPA(tests: testsFn): Promise<void> {
 }
 
 function removeOverlay(): void {
-  document.getElementById("outerSovendusOverlay")?.remove();
+  document.getElementById(outerOverlayId)?.remove();
 }
 class SelfTesterOverlay {
   createOverlay(selfTester: SelfTester): void {
-    const overlay = document.createElement("div");
-    overlay.id = "outerSovendusOverlay";
-    overlay.innerHTML = `
-      ${this.getOverlayStyle()}
-      <button class="sovendus-overlay-font sovendus-overlay-button" id="toggleSovendusOverlay">
-        Hide
-      </button>
-      <div class="sovendus-overlay-font" id="sovendusOverlay">  
-        <div style="margin:auto;max-width:700px; background: #293049">
-          <div style="display: flex">
-            <h1 class="sovendus-overlay-font sovendus-overlay-h1" style="margin-right: auto">
-              Sovendus Self-Test Overlay
-            </h1>
-            <button class="sovendus-overlay-font sovendus-overlay-button" id="sovendusOverlayRepeatTests" style="margin-left: auto">
-              repeat tests
-            </button>
-          </div>
-          <ul class="sovendus-overlay-ul sovendus-overlay-font ">
-            <li class="sovendus-overlay-font">
+    const overlay = document.getElementById(outerOverlayId) as HTMLElement;
+    overlay.innerHTML = this.createOuterOverlay({
+      headerRightElement: `
+          <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${sovendusOverlayRepeatTestsId}" style="margin-left: auto">
+            repeat tests
+          </button>
+      `,
+      children: `
+          <ul class="${sovendusOverlayFontClass}">
+            <li class="${sovendusOverlayFontClass}">
               Integration Type: ${selfTester.integrationType.getFormattedStatusMessage(false)}
             </li>
-            <li class="sovendus-overlay-font">
+            <li class="${sovendusOverlayFontClass}">
               Browser: ${selfTester.browserName.elementValue}
             </li>
             ${selfTester.awinExecutedTestResult.getFormattedGeneralStatusMessage()}
@@ -71,12 +74,54 @@ class SelfTesterOverlay {
             ${selfTester.isUnknownSovendusJsError.getFormattedGeneralStatusMessage()}
           </ul>
           ${this.createInnerOverlay(selfTester)}
+      `,
+    });
+    overlay.addEventListener("click", toggleOverlay);
+    this.addButtonAndInfoEventListener();
+    // this.moveOverlayAboveAll();
+  }
+
+  createLoadingOverlay(): void {
+    const overlay = document.createElement("div");
+    overlay.id = outerOverlayId;
+    overlay.innerHTML = this.createOuterOverlay({
+      children: `
+          <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+            Sovendus detected, tests are currently running...
+          </h2>
+          <h3 class="${sovendusOverlayFontClass} ${sovendusOverlayH3Class}">
+            This can take up to 10 seconds
+          </h3>
+      `,
+    });
+    document.body.appendChild(overlay);
+    overlay.addEventListener("click", toggleOverlay);
+  }
+
+  createOuterOverlay({
+    headerRightElement = "",
+    children,
+  }: {
+    headerRightElement?: string;
+    children: string;
+  }): string {
+    return `
+      ${this.getOverlayStyle()}
+      <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${toggleSovendusOverlayId}">
+        Hide
+      </button>
+      <div class="${sovendusOverlayFontClass}" id="${overlayId}">  
+        <div style="margin:auto;max-width:700px; background: #293049">
+          <div style="display: flex">
+            <h1 class="${sovendusOverlayFontClass} ${sovendusOverlayH1Class}" style="margin-right: auto">
+              Sovendus Self-Test Overlay
+            </h1>
+            ${headerRightElement}
+          </div>
+          ${children}
         </div>
       </div>
     `;
-    document.body.appendChild(overlay);
-    this.addButtonAndInfoEventListener();
-    // this.moveOverlayAboveAll();
   }
 
   createInnerOverlay(selfTester: SelfTester): string {
@@ -97,48 +142,50 @@ class SelfTesterOverlay {
 
   generateConsumerDataReport(testResult: SelfTester): string {
     return `
-        <div class="sovendus-overlay-font">
-          <h2 class="sovendus-overlay-font sovendus-overlay-h2">Customer Data:</h2>
-          <ul class="sovendus-overlay-font sovendus-overlay-ul">
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+        <div class="${sovendusOverlayFontClass}">
+          <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+            Customer Data:
+          </h2>
+          <ul class="${sovendusOverlayFontClass}">
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerSalutation: ${testResult.consumerSalutation.getFormattedStatusMessage()}
             </li>
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerFirstName: ${testResult.consumerFirstName.getFormattedStatusMessage()}
             </li>
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerLastName: ${testResult.consumerLastName.getFormattedStatusMessage()}
             </li>
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerYearOfBirth: ${testResult.consumerYearOfBirth.getFormattedStatusMessage()}
             </li>
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerEmail: ${testResult.consumerEmail.getFormattedStatusMessage()}
             </li>
             ${
               testResult.consumerEmailHash.statusCode ===
               StatusCodes.TestDidNotRun
                 ? ""
-                : `<li class='sovendus-overlay-font sovendus-overlay-text'>
+                : `<li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerEmailHash: ${testResult.consumerEmailHash.getFormattedStatusMessage()}
             </li>`
             }
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerPhone: ${testResult.consumerPhone.getFormattedStatusMessage()}
             </li>
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerStreet: ${testResult.consumerStreet.getFormattedStatusMessage()}
             </li>
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerStreetNumber: ${testResult.consumerStreetNumber.getFormattedStatusMessage()}
             </li>
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerZipcode: ${testResult.consumerZipCode.getFormattedStatusMessage()}
             </li>
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerCity: ${testResult.consumerCity.getFormattedStatusMessage()}
             </li>
-            <li class='sovendus-overlay-font sovendus-overlay-text'>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerCountry: ${testResult.consumerCountry.getFormattedStatusMessage()}
             </li>
           </ul>
@@ -156,37 +203,47 @@ class SelfTesterOverlay {
         selfTester.awinSaleTrackedTestResult.getFormattedStatusMessage();
     } else {
       additionalInfo = `
-      <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Container:</h2>
-      <ul class="sovendus-overlay-font sovendus-overlay-ul">
-        <li class='sovendus-overlay-font sovendus-overlay-text'>
+      <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+        Sovendus Container:
+      </h2>
+      <ul class="${sovendusOverlayFontClass}">
+        <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
           iframeContainerId: ${selfTester.iFrameContainerId.getFormattedStatusMessage()}
         </li>
         ${selfTester.sovendusDivFound.getFormattedGeneralStatusMessage()}
       </ul>
-      <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
-      <ul class="sovendus-overlay-font sovendus-overlay-ul">
-        <li class='sovendus-overlay-font sovendus-overlay-text'>
+      <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+        Order Data:
+      </h2>
+      <ul class="${sovendusOverlayFontClass}">
+        <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
           orderCurrency: ${selfTester.orderCurrency.getFormattedStatusMessage()}
         </li>
-        <li class='sovendus-overlay-font sovendus-overlay-text'>
+        <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
           orderId: ${selfTester.orderId.getFormattedStatusMessage()}
         </li>
-        <li class='sovendus-overlay-font sovendus-overlay-text'>
+        <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
           orderValue: ${selfTester.orderValue.getFormattedStatusMessage()}
         </li>
         ${
           selfTester.sessionId.statusCode === StatusCodes.TestDidNotRun
             ? ""
-            : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
-              `sessionId: ${selfTester.sessionId.getFormattedStatusMessage()}</li>`
+            : `
+                <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+                  sessionId: ${selfTester.sessionId.getFormattedStatusMessage()}
+                </li>
+              `
         }
         ${
           selfTester.timestamp.statusCode === StatusCodes.TestDidNotRun
             ? ""
-            : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
-              `timestamp: ${selfTester.timestamp.getFormattedStatusMessage()}</li>`
+            : `
+                <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+                  timestamp: ${selfTester.timestamp.getFormattedStatusMessage()}
+                </li>
+              `
         }
-        <li class='sovendus-overlay-font sovendus-overlay-text'>
+        <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
           usedCouponCode: ${selfTester.usedCouponCode.getFormattedStatusMessage()}
         </li>
       </ul>
@@ -194,12 +251,14 @@ class SelfTesterOverlay {
     }
     return `
       <div>
-        <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Partner Numbers:</h2>
-        <ul class="sovendus-overlay-font sovendus-overlay-ul">
-          <li class='sovendus-overlay-font sovendus-overlay-text'>
+        <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+          Sovendus Partner Numbers:
+        </h2>
+        <ul class="${sovendusOverlayFontClass}">
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
             trafficSourceNumber: ${selfTester.trafficSourceNumber.getFormattedStatusMessage()}
           </li>
-          <li class='sovendus-overlay-font sovendus-overlay-text'>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
             trafficMediumNumber: ${selfTester.trafficMediumNumber.getFormattedStatusMessage()}
           </li>
           ${selfTester.isEnabledInBackend.getFormattedGeneralStatusMessage()}
@@ -211,7 +270,7 @@ class SelfTesterOverlay {
   getOverlayStyle(): string {
     return `
         <style>
-          #sovendusOverlay {
+          #${overlayId} {
             position: fixed !important;
             left: calc(50% - 350px) !important;
             right: calc(50% - 350px) !important;
@@ -227,7 +286,7 @@ class SelfTesterOverlay {
             border-radius: 8px !important;    
             line-height: normal !important;        
           }
-          #sovendusOverlay.fullscreen {
+          #${overlayId}.${fullscreenClass} {
             width: calc(100vw - 44px) !important;
             max-width: calc(100vw - 44px) !important;
             height: 100vh !important;
@@ -235,35 +294,40 @@ class SelfTesterOverlay {
             left: 0 !important;
             max-height: 100vh !important;
           }
-          #sovendusOverlay .sovendus-overlay-font,
-          #sovendusOverlay ul .sovendus-overlay-font,
-          #sovendusOverlay li .sovendus-overlay-font {
+          #${overlayId} .${sovendusOverlayFontClass},
+          #${overlayId} ul .${sovendusOverlayFontClass},
+          #${overlayId} li .${sovendusOverlayFontClass} {
             color: white !important;
             font-family: Arial, Helvetica, sans-serif !important;
           }
-          #sovendusOverlay .sovendus-overlay-error {
+          #${overlayId} .${sovendusOverlayErrorClass} {
             color: red !important;
             font-size: 17px !important;
             margin: 0 !important;
           }
-          #sovendusOverlay .sovendus-overlay-h1 {
+          #${overlayId} .${sovendusOverlayH1Class} {
             font-size: 27px !important;
             margin-top: 0 !important;
             margin-bottom: 5px !important;
           }
-          #sovendusOverlay .sovendus-overlay-h2 {
+          #${overlayId} .${sovendusOverlayH2Class} {
             font-size: 20px !important;
             margin-top: 6px !important;
             margin-bottom: 0px !important;
           }
-          #sovendusOverlay .sovendus-overlay-text {
+          #${overlayId} .${sovendusOverlayH3Class} {
+            font-size: 17px !important;
+            margin-top: 6px !important;
+            margin-bottom: 0px !important;
+          }
+          #${overlayId} .${sovendusOverlayTextClass} {
             font-size: 15px !important;
           }
-          #sovendusOverlay li {
+          #${overlayId} li {
             font-size: 16px !important;
             margin-left: 45px !important;
           }
-          #sovendusOverlay li::marker {
+          #${overlayId} li::marker {
             content: '🞄 ' !important;
             unicode-bidi: isolate !important;
             font-variant-numeric: tabular-nums !important;
@@ -272,17 +336,17 @@ class SelfTesterOverlay {
             text-align: start !important;
             text-align-last: start !important;
           }
-          #sovendusOverlay .sovendus-overlay-ul {
+          #${overlayId} ul {
             margin: 0 !important;
             padding: 0 !important;
           }
-          #sovendusOverlay a {
+          #${overlayId} a {
             color: #197bbd !important;
           }
-          #sovendusOverlay a:hover {
+          #${overlayId} a:hover {
             color: #15669d !important;
           }
-          .sovendus-overlay-button {
+          .${sovendusOverlayButtonClass} {
             background: #293049 !important;
             color: #fff !important;
             padding: 9px !important;
@@ -291,11 +355,11 @@ class SelfTesterOverlay {
             border-radius: 8px !important;
             border: solid 1px #fff;
           }
-          #sovendusOverlayRepeatTests {
+          #${sovendusOverlayRepeatTestsId} {
             float: right !important;
             width: 105px !important;
           }
-          #toggleSovendusOverlay {
+          #${toggleSovendusOverlayId} {
             width: 62px !important;
             position: fixed !important;
             left: calc(50% - 31px) !important;
@@ -306,32 +370,35 @@ class SelfTesterOverlay {
             line-height: normal !important;
           }
           @media only screen and (max-width: 700px) {
-            #sovendusOverlay {
+            #${overlayId} {
               left: 0 !important;
               right: 0 !important;
               top: 50px !important;
               padding: 15px 0 15px 5px !important;
               width: calc(100vw - 5px) !important;
             }
-            #sovendusOverlay.fullscreen {
+            #${overlayId}.${fullscreenClass} {
               width: calc(100vw - 5px) !important;
               max-width: calc(100vw - 5px) !important;
             }
-            #sovendusOverlay li {
+            #${overlayId} li {
               font-size: 15px !important;
               margin-left: 25px !important;
             }
-            #sovendusOverlay .sovendus-overlay-error {
+            #${overlayId} .${sovendusOverlayErrorClass} {
               font-size: 15px !important;
             }
-            #sovendusOverlay .sovendus-overlay-h1 {
+            #${overlayId} .${sovendusOverlayH1Class} {
               font-size: 22px !important;
               margin-bottom: 3px !important;
             }
-            #sovendusOverlay .sovendus-overlay-h2 {
+            #${overlayId} .${sovendusOverlayH2Class} {
               font-size: 18px !important;
             }
-            #sovendusOverlay .sovendus-overlay-text {
+            #${overlayId} .${sovendusOverlayH3Class} {
+              font-size: 15px !important;
+            }
+            #${overlayId} .${sovendusOverlayTextClass} {
               font-size: 14px !important;
             }
           }
@@ -341,15 +408,12 @@ class SelfTesterOverlay {
 
   addButtonAndInfoEventListener(): void {
     document
-      .getElementById("toggleSovendusOverlay")
-      ?.addEventListener("click", toggleOverlay);
-    document
-      .getElementById("sovendusOverlayRepeatTests")
+      .getElementById(sovendusOverlayRepeatTestsId)
       ?.addEventListener("click", () => {
         void executeTests();
       });
     const checkMarks: HTMLCollectionOf<Element> =
-      document.getElementsByClassName("sovendus-info");
+      document.getElementsByClassName(sovendusInfoClass);
     for (const element of checkMarks) {
       element.parentElement?.parentElement?.addEventListener(
         "mouseover",
@@ -365,8 +429,8 @@ class SelfTesterOverlay {
   // moveOverlayAboveAll() {
   //   function checkAndChangeZIndex(element: HTMLElement) {
   //     if (
-  //       element.id !== "sovendusOverlay" &&
-  //       element.id !== "toggleSovendusOverlay" &&
+  //       element.id !== overlayId &&
+  //       element.id !== toggleSovendusOverlayId &&
   //       (getComputedStyle(element).zIndex === "2147483647" ||
   //         element.style.zIndex === "2147483647")
   //     ) {
@@ -385,8 +449,8 @@ class SelfTesterOverlay {
 }
 
 function toggleOverlay(): void {
-  const overlay = document.getElementById("sovendusOverlay");
-  const toggle = document.getElementById("toggleSovendusOverlay");
+  const overlay = document.getElementById(overlayId);
+  const toggle = document.getElementById(toggleSovendusOverlayId);
   if (overlay && toggle) {
     if (overlay.style.display === "none") {
       overlay.style.display = "block";

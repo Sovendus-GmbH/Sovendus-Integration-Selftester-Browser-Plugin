@@ -1,3 +1,4 @@
+import { outerOverlayId } from "@src/page-banner/self-test-overlay-css-vars";
 import type SelfTester from "@src/page-banner/self-tester";
 import type { ExplicitAnyType } from "@src/page-banner/self-tester";
 import { platform } from "os";
@@ -140,7 +141,7 @@ const testTimeout =
 
 async function waitForTestOverlay(driver: WebDriver): Promise<void> {
   await driver.wait(
-    until.elementLocated(By.css("#outerSovendusOverlay")),
+    until.elementLocated(By.css(`#${outerOverlayId}`)),
     testTimeout,
   );
 }

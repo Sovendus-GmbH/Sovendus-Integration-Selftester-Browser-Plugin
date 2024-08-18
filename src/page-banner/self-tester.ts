@@ -1,3 +1,7 @@
+import {
+  sovendusInfoClass,
+  sovendusOverlayErrorClass,
+} from "./self-test-overlay-css-vars.js";
 import type {
   ElementValue,
   TestResultResponseDataType,
@@ -1225,14 +1229,25 @@ export default class SelfTester {
   async waitForSovendusIntegrationDetected(): Promise<void> {
     // eslint-disable-next-line no-console
     console.log("No Sovendus integration detected yet");
-    let waitedSeconds = 0;
-    while (!this.sovIframesOrConsumerExists()) {
-      if (waitedSeconds > 5 && this.awinIntegrationDetected()) {
-        return; // continue with awin diagnostics
-      }
-      waitedSeconds += 0.5;
-      await new Promise((resolve) => setTimeout(resolve, 500));
+    while (
+      !this.sovIframesOrConsumerExists() ||
+      this.awinIntegrationDetected()
+    ) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
     }
+    // eslint-disable-next-line no-console
+    console.log("Sovendus has been detected");
+  }
+
+  async waitForSovendusIntegrationToBeLoaded(): Promise<void> {
+    // let waitedSeconds = 0;
+    // while (!this.sovIframesOrConsumerExists()) {
+    //   if (waitedSeconds > 5 && this.awinIntegrationDetected()) {
+    //     return; // continue with awin diagnostics
+    //   }
+    //   waitedSeconds += 0.5;
+    //   await new Promise((resolve) => setTimeout(resolve, 500));
+    // }
     await this.waitForSovApplicationObject();
   }
 
@@ -1242,8 +1257,6 @@ export default class SelfTester {
       await new Promise((resolve) => setTimeout(resolve, 500));
       waitedSeconds += 0.5;
     }
-    // eslint-disable-next-line no-console
-    console.log("Sovendus has been detected");
     if (this.sovApplicationExists()) {
       await this.waitForBannerToBeLoaded();
     }
@@ -1633,7 +1646,7 @@ class WarningOrFailTestResult<
         }
         return `${String(
           this.elementValue ? this.elementValue : "",
-        )}<span class='sovendus-overlay-error' style="padding-left: 5px;">${
+        )}<span class='${sovendusOverlayErrorClass}' style="padding-left: 5px;">${
           statusMessages[this.statusMessageKey].errorText
         }</span>${this.getInfoMarkWithLabel(
           this.replaceElementValueInMessage(
@@ -1660,7 +1673,7 @@ class WarningOrFailTestResult<
           `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
         );
       }
-      return `<li><h3 class='sovendus-overlay-error'>${this.replaceElementValueInMessage(
+      return `<li><h3 class='${sovendusOverlayErrorClass}'>${this.replaceElementValueInMessage(
         statusMessages[this.statusMessageKey].errorText,
       )}</h3></li>`;
     }
@@ -1680,19 +1693,20 @@ class WarningOrFailTestResult<
       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAONJREFUWEftl9sOhDAIROX/P7obHzS1C8wwNqm70VcLHIdL0bbFjy2Ov/0mQGutecqZWfmDaIMoaJRCFgYCVAOPQAgkBbgb/IDJIEIANc9VOxeg6mSUvWJPA3gy9oHQ+x3SO/MF4NEzzqMAo7/RFwSICkgFLQGgFkIpOGojU+GiAJKrL7ZZZyWASpXv0NMVWA7A5JZNl5SC/wVABYNGLjsz+nPyIGJhUbtCgGjEMgDMtHzeZeR9GbNYZG2X2T9zIYn6XP2HkFayWRDoRoVbsQqCAp91ochavYyyGLQCCihj8wJ8AKPZ6CHFW/ndAAAAAElFTkSuQmCC";
     return `
       <span style="position:relative">
-        <div style="display:none;
-          position: absolute;
-          right: -75px;
-          background: orange;
-          width: 250px;
-          padding: 12px;
-          color: #fff;
-          border-radius: 8px;
-          margin-top: 3px;
-          z-index: 99;  
-          bottom: 25px;
+        <div style="
+            display:none;
+            position: absolute;
+            right: -75px;
+            background: orange;
+            width: 250px;
+            padding: 12px;
+            color: #fff;
+            border-radius: 8px;
+            margin-top: 3px;
+            z-index: 99;  
+            bottom: 25px;
           "
-          class="sovendus-info"
+          class="${sovendusInfoClass}"
         >
         <img style="height:18px;width:auto"
          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAONJREFUWEftl9sOhDAIROX/P7obHzS1C8wwNqm70VcLHIdL0bbFjy2Ov/0mQGutecqZWfmDaIMoaJRCFgYCVAOPQAgkBbgb/IDJIEIANc9VOxeg6mSUvWJPA3gy9oHQ+x3SO/MF4NEzzqMAo7/RFwSICkgFLQGgFkIpOGojU+GiAJKrL7ZZZyWASpXv0NMVWA7A5JZNl5SC/wVABYNGLjsz+nPyIGJhUbtCgGjEMgDMtHzeZeR9GbNYZG2X2T9zIYn6XP2HkFayWRDoRoVbsQqCAp91ochavYyyGLQCCihj8wJ8AKPZ6CHFW/ndAAAAAElFTkSuQmCC"

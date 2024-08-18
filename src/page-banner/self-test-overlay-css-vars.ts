@@ -1,0 +1,13 @@
+export const overlayId = "sovendusOverlay";
+export const outerOverlayId = "outerSovendusOverlay";
+export const toggleSovendusOverlayId = "toggleSovendusOverlay";
+export const sovendusOverlayRepeatTestsId = "sovendusOverlayRepeatTests";
+export const fullscreenClass = "fullscreen";
+export const sovendusOverlayFontClass = "sovendus-overlay-font";
+export const sovendusOverlayErrorClass = "sovendus-overlay-error";
+export const sovendusOverlayH1Class = "sovendus-overlay-h1";
+export const sovendusOverlayH2Class = "sovendus-overlay-h2";
+export const sovendusOverlayH3Class = "sovendus-overlay-h3";
+export const sovendusOverlayTextClass = "sovendus-overlay-text";
+export const sovendusOverlayButtonClass = "sovendus-overlay-button";
+export const sovendusInfoClass = "sovendus-info";
