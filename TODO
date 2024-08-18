@@ -9,19 +9,16 @@
 - dont compile tests with build
 - transmit multiple iframes content when they are different
 - handle overlay scrollable screenshot - add tests to check if overlay detection works
-- show overlay not detected when show hide button is clicked
 - Fix Street Number (Always: Value type not allowed)
 - integration type info popover is cut off - also on mobile if shifted to next line its cut off on the left
-- change show hide button depending on the state
 - check cors api call to dev hub
+
 
 ## Tests
 
-- add awin tests
 - add spa tests
 - dont spam dev hub api on tests
 - get a AWIN ID for Tests
 - consider adding more awin not executed tests
-- add Empty String tests
 - hide sticky banner on not first screenshot
 - add timeout to load flexiblejs to late

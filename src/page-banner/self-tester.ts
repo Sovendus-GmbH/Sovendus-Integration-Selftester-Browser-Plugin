@@ -1046,11 +1046,11 @@ export default class SelfTester {
         // Check if the timestamp is older than 1 minute
         const currentTime = Date.now();
         const timeDifference = currentTime - timestampInMilliSeconds;
-        const oneMinutesInMilliSeconds = 1 * 60 * 1000;
+        const oneMinutesInMilliSeconds = 2 * 60 * 1000;
 
         if (timeDifference > oneMinutesInMilliSeconds) {
           statusMessageKey =
-            StatusMessageKeyTypes.unixTimestampOlderThan1Minute;
+            StatusMessageKeyTypes.unixTimestampOlderThan2Minutes;
           return new WarningOrFailTestResult({
             elementValue: valueTestResult.elementValue,
             statusMessageKey,

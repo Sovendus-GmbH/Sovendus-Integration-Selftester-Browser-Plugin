@@ -1,22 +1,11 @@
-import { getTabIdFromTabs } from "./extension-pop-up.js";
-
 export async function toggleSelfTesterOverlayVisibility(
-  tabs: chrome.tabs.Tab[],
-): Promise<void> {
-  const tabId = getTabIdFromTabs(tabs);
-  if (tabId) {
-    await _toggleSelfTesterOverlayVisibility(tabId);
-  } else {
-    throw new Error("Failed to get tabId to toggle overlay visibility");
-  }
-}
-
-async function _toggleSelfTesterOverlayVisibility(
   tabId: number,
+  hideButton: HTMLElement,
 ): Promise<void> {
-  await chrome.scripting.executeScript({
+  const result = await chrome.scripting.executeScript({
     target: { tabId },
-    func: () => {
+    func: (): boolean => {
+      let isVisibleNow: boolean = false;
       const overlay = document.getElementById("sovendusOverlay");
       if (overlay) {
         const overlayToggle = document.getElementById("toggleSovendusOverlay");
@@ -26,12 +15,14 @@ async function _toggleSelfTesterOverlayVisibility(
           if (overlayToggle) {
             overlayToggle.style.display = "block";
           }
+          isVisibleNow = true;
         } else {
           overlay.style.display = "none";
           overlay.classList.remove("fullscreen");
           if (overlayToggle) {
             overlayToggle.style.display = "none";
           }
+          isVisibleNow = false;
         }
       }
 
@@ -45,6 +36,14 @@ async function _toggleSelfTesterOverlayVisibility(
           checkerOverlay.style.display = "none";
         }
       }
+      return isVisibleNow;
     },
   });
+  if (result?.[0]?.result === undefined) {
+    throw new Error("Failed to check if an overlay is used");
+  }
+  const isVisibleNow = result[0].result;
+  hideButton.innerText = isVisibleNow
+    ? "Hide Self Test Overlay"
+    : "Show Self Test Overlay";
 }

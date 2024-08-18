@@ -123,7 +123,7 @@ executeOverlayTests({
           String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -146,7 +146,7 @@ executeOverlayTests({
           String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -170,7 +170,7 @@ executeOverlayTests({
           String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -193,7 +193,7 @@ executeOverlayTests({
           String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -310,7 +310,7 @@ executeOverlayTests({
           String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -334,7 +334,7 @@ executeOverlayTests({
           String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -359,7 +359,7 @@ executeOverlayTests({
           String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -383,7 +383,7 @@ executeOverlayTests({
           String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
+          StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -446,7 +446,7 @@ function getTestingTimestamps(): {
 } {
   const testValidTimestampInMilliSeconds = Date.now() - 0.1; // make it a float
   const testTimestamp1MinuteOldInMilliSeconds =
-    testValidTimestampInMilliSeconds - 1 * 60 * 1000; // 60 seconds in the past
+    testValidTimestampInMilliSeconds - 2 * 60 * 1000; // 120 seconds in the past
 
   const testValidTimestamp = testValidTimestampInMilliSeconds / 1000;
   const testTimestamp1MinuteOld = testTimestamp1MinuteOldInMilliSeconds / 1000;

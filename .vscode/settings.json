@@ -19,5 +19,6 @@
     "typescript",
     "typescriptreact"
   ],
-  "prettier.requireConfig": true // Ensure Prettier uses your configuration file
+  "prettier.requireConfig": true, // Ensure Prettier uses your configuration file
+  "files.eol": "\n"
 }

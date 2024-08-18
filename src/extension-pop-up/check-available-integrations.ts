@@ -1,19 +1,4 @@
-import { getTabIdFromTabs } from "./extension-pop-up.js";
-
-export async function checkAvailableIntegrations(
-  tabs: chrome.tabs.Tab[],
-): Promise<void> {
-  const tabId = getTabIdFromTabs(tabs);
-  if (tabId) {
-    await _checkAvailableIntegrations(tabId);
-  } else {
-    throw new Error(
-      "Failed to get tabId for checkAvailableIntegrations function",
-    );
-  }
-}
-
-async function _checkAvailableIntegrations(tabId: number): Promise<void> {
+export async function checkAvailableIntegrations(tabId: number): Promise<void> {
   await chrome.scripting.executeScript({
     target: { tabId },
     func: () => {
