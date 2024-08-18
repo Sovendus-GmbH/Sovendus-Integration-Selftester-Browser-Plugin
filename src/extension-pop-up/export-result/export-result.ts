@@ -6,8 +6,8 @@ import {
   showSelfTesterOverlay,
 } from "./self-test-overlay.js";
 import {
-  checkSovendusOverlayIntegration,
-  hideAndShowSovendusOverlay as hideOrShowSovendusOverlay,
+  checkStickyBannerAndOverlayIntegration,
+  hideOrShowStickyBannerAndOverlay,
 } from "./sovendus-overlay.js";
 import {
   addDelayBetweenScreenshotOnChrome,
@@ -24,7 +24,7 @@ export async function exportResultsScreenshot(
   const { ctx, screenshotContainer } = getScreenshotCanvas();
   await hideSelfTesterOverlay(tabId);
   const sovendusOverlayIntegration =
-    await checkSovendusOverlayIntegration(tabId);
+    await checkStickyBannerAndOverlayIntegration(tabId);
   const {
     mobileDeviceEmulatorIsOverlappedByDevTools,
     mobileDeviceEmulatorZoomLevelSet,
@@ -45,7 +45,7 @@ export async function exportResultsScreenshot(
     setZoomDetectedWarningMessage(alertContainer);
   }
   if (sovendusOverlayIntegration) {
-    await hideOrShowSovendusOverlay(false, tabId);
+    await hideOrShowStickyBannerAndOverlay(false, tabId);
   }
   await restoreSelfTesterOverlay(tabId);
   setSuccessMessage(captureButton);
@@ -79,7 +79,7 @@ async function drawFullPageScreenshot(
     await scrollToTop(tabId);
     if (sovendusOverlayIntegration) {
       await createSovendusOverlayScreenshot(ctx, zoomAdjustedHeight);
-      await hideOrShowSovendusOverlay(true, tabId);
+      await hideOrShowStickyBannerAndOverlay(true, tabId);
       await addDelayBetweenScreenshotOnChrome();
     }
     await drawSegmentScreenshot({
