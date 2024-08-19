@@ -95,7 +95,9 @@ export default class SelfTester {
         trafficMediumNumber,
       );
     }
-    void this.transmitTestResult();
+    if (window.transmitTestResult !== false) {
+      void this.transmitTestResult();
+    }
   }
 
   getSovConsumerData(): MergedSovConsumer {
@@ -1812,6 +1814,7 @@ export interface SovWindow extends Window {
   sovConsumer?: SovConsumer;
   sovApplication?: SovApplication;
   AWIN?: Awin;
+  transmitTestResult?: false | undefined;
 }
 
 declare let window: SovWindow;

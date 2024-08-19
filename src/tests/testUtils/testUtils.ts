@@ -1,4 +1,3 @@
-import { innerOverlayId } from "@src/page-banner/self-test-overlay-css-vars";
 import type SelfTester from "@src/page-banner/self-tester";
 import type { ExplicitAnyType } from "@src/page-banner/self-tester";
 import { platform } from "os";
@@ -141,7 +140,9 @@ const testTimeout =
 
 async function waitForTestOverlay(driver: WebDriver): Promise<void> {
   await driver.wait(
-    until.elementLocated(By.css(`#${innerOverlayId}`)),
+    // TODO fix to find the iframe to be loaded (give Iframe ID when loaded and detect it here)
+
+    until.elementLocated(By.css(`#${testLoadedIFrameId}`)),
     testTimeout,
   );
 }
