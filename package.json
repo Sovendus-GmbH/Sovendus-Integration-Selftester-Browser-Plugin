@@ -10,7 +10,7 @@
     "clean": "rimraf build",
     "lint": "eslint src/**/*.ts --no-ignore --fix",
     "test": "jest --silent=false",
-    "test-it": "jest --silent=false -t=isFlexibleIFrameExecutable_FlexibleIFrameIsExecutable",
+    "test-it": "jest --silent=false -t=browsername",
     "build-and-test": "npm run build-test-zips && npm run test",
     "build-and-test-it": "npm run build-test-zips && npm run test-it",
     "build-test-zips": "npm run lint && npm run build-ts && npm run copy-files && npm run zip-builds-for-tests",
@@ -27,6 +27,7 @@
   "license": "GPL-3.0-or-later",
   "devDependencies": {
     "@types/chrome": "^0.0.260",
+    "@types/crypto-js": "^4.2.2",
     "@types/firefox-webext-browser": "^120.0.0",
     "@types/jest": "^29.5.12",
     "@types/node": "20.0.0",
@@ -48,5 +49,8 @@
     "ts-node": "^10.9.2",
     "typescript-eslint": "^7.16.1",
     "zip-build": "^1.8.0"
+  },
+  "dependencies": {
+    "crypto-js": "^4.2.0"
   }
 }

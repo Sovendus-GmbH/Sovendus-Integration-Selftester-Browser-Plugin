@@ -6,6 +6,7 @@ import {
   malformedArrayData,
   malformedObjectData,
   sovAppConsumerAllValidData,
+  sovAppDataEmptyStringButIsOkay,
   sovAppDataEverythingIsOkay,
   sovAppDataFalse,
   sovAppDataMalformedArray,
@@ -20,8 +21,6 @@ import {
 import type { TestsInfoType } from "@src/tests/testUtils/testCaseGenerator";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
-
-// TODO Add more malformed tests and the EmptyString Test
 
 const testCasesWhenScriptRuns: TestsInfoType = [
   {
@@ -54,6 +53,30 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficSourceNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithComma",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: { ...sovAppIFramesAllValidData, trafficSourceNumber: "5,5" },
+    },
+    expectedElementValue: "5,5",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficSourceNumberMalformed,
+  },
+  {
+    testName: "EmptyString",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppDataEmptyStringButIsOkay.sovIframes1,
+        trafficSourceNumber: "",
+      },
+    },
+    expectedElementValue: null,
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey: StatusMessageKeyTypes.missingTrafficSourceNumber,
   },
   {
     testName: "Missing",

@@ -4,13 +4,13 @@ import {
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import {
   sovAppConsumerAllValidData,
+  sovAppDataEmptyStringButIsOkay,
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
 } from "@src/tests/testUtils/sovAppData";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
-
-// TODO add more tests (EmptyString Test)
+import { MD5 } from "crypto-js";
 
 executeOverlayTests({
   testName: "consumerEmailHash",
@@ -32,6 +32,29 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.SuccessButNeedsReview,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerEmailHashSuccess,
+        },
+        {
+          testName: "SuccessHash",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerEmailHash: MD5("test.001@sovendus.de").toString(),
+              consumerEmail: undefined,
+            },
+          },
+          expectedElementValue: MD5("test.001@sovendus.de").toString(),
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerEmailHashSuccess,
+        },
+        {
+          testName: "EmptyString",
+          sovAppData: sovAppDataEmptyStringButIsOkay,
+          expectedElementValue: null,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.missingConsumerEmailHash,
         },
         {
           testName: "Missing",

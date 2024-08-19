@@ -241,6 +241,7 @@ export interface TestOptionsType {
     flexibleIFrameJsScriptType?: string | undefined | null;
     sovendusJsScriptType?: string | undefined | null;
     removeSovendusJs?: boolean | undefined;
+    addConsumerIFrameOneSecTimeout?: boolean | undefined;
   };
 }
 
