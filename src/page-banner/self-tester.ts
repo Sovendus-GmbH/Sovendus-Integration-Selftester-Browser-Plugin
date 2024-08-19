@@ -769,7 +769,7 @@ export default class SelfTester {
       });
     }
     return new WarningOrFailTestResult({
-      statusMessageKey: StatusMessageKeyTypes.flexibleIFrameJsExecutedTooEarly,
+      statusMessageKey: StatusMessageKeyTypes.sovendusJsMissing,
       statusCode: StatusCodes.Error,
       elementValue: false,
     });

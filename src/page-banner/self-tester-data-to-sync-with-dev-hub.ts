@@ -81,7 +81,7 @@ export enum StatusMessageKeyTypes {
   iFrameNotOnDOM = "iFrameNotOnDOM",
   unknownErrorIntegrationScriptFailed = "unknownErrorIntegrationScriptFailed",
   sovendusJsBlockedByCookieConsent = "sovendusJsBlockedByCookieConsent",
-  flexibleIFrameJsExecutedTooEarly = "flexibleIFrameJsExecutedTooEarly",
+  sovendusJsMissing = "sovendusJsMissing",
   flexibleIFrameJsBlockedByCookieConsent = "flexibleIFrameJsBlockedByCookieConsent",
   sovendusBannerDisabled = "sovendusBannerDisabled",
   containerDivNotFoundOnDOM = "containerDivNotFoundOnDOM",
@@ -283,7 +283,7 @@ export const statusMessages: {
 
   unknownErrorIntegrationScriptFailed: {
     errorText:
-      "Sovendus was detected and flexibleiframe.js was executed. For an unknown reason the integration script didn't run successfully tho.",
+      "flexibleiframe.js and sovendus.js scripts were executed successfully, but the integration didn't load. This is probably because the flexibleiframe.js script got placed on the DOM / executed before the Sovendus integration script. Make sure the flexibleiframe.js gets placed on the DOM / executed after the the Sovendus window.sovConsumer and window.sovIframes where defined.",
     infoText: "",
   },
 
@@ -293,9 +293,9 @@ export const statusMessages: {
     infoText: "",
   },
 
-  flexibleIFrameJsExecutedTooEarly: {
+  sovendusJsMissing: {
     errorText:
-      "Sovendus was detected but flexibleiframe.js was not executed. This is probably because the flexibleiframe.js script got placed on the DOM / executed before the Sovendus integration script. Make sure the flexibleiframe.js gets placed on the DOM / executed after the the Sovendus integration script.",
+      "Sovendus was detected but flexibleiframe.js was not executed for an unknown reason.",
     infoText: "",
   },
 
