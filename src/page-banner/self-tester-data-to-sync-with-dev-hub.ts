@@ -283,7 +283,7 @@ export const statusMessages: {
 
   unknownErrorIntegrationScriptFailed: {
     errorText:
-      "flexibleiframe.js and sovendus.js scripts were executed successfully, but the integration didn't load. This is probably because the flexibleiframe.js script got placed on the DOM / executed before the Sovendus integration script. Make sure the flexibleiframe.js gets placed on the DOM / executed after the the Sovendus window.sovConsumer and window.sovIframes where defined.",
+      "flexibleiframe.js and sovendus.js scripts were executed successfully, but the integration didn't load. This is probably because the flexibleiframe.js script got placed on the DOM / executed to early. Make sure the flexibleiframe.js gets placed on the DOM / executed after the the Sovendus window.sovConsumer and window.sovIframes are defined.",
     infoText: "",
   },
 
