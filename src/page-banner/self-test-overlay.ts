@@ -52,6 +52,11 @@ function removeOverlay(): void {
 }
 class SelfTesterOverlay {
   createOverlay(selfTester: SelfTester): void {
+    document.getElementById(outerOverlayId)?.remove();
+    const overlay = document.createElement("div");
+    overlay.id = outerOverlayId;
+    overlay.innerHTML = this.createOuterOverlay();
+    document.body.appendChild(overlay);
     this.createInnerOverlay({
       headerRightElement: `
             <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${sovendusOverlayRepeatTestsId}" style="margin-left: auto">
@@ -130,16 +135,14 @@ class SelfTesterOverlay {
   }): void {
     const iframe = document.createElement("iframe");
     iframe.id = testLoadedIFrameId;
-    iframe.style.width = "100%";
-    iframe.style.border = "none";
     const overlay = document.getElementById(overlayId) as HTMLElement;
     overlay.replaceChildren(iframe);
     if (iframe.contentDocument) {
       iframe.contentDocument.body.innerHTML = `
       ${this.getInnerOverlayStyle()}
-      <div id="${innerOverlayId}" style="margin:auto;max-width:700px; background: #293049" class="${sovendusOverlayFontClass}">
-        <div style="display: flex">
-          <h1 class="${sovendusOverlayFontClass} ${sovendusOverlayH1Class}" style="margin-right: auto">
+      <div id="${innerOverlayId}" style="margin:auto !important;max-width:700px !important; background: #293049 !important" class="${sovendusOverlayFontClass}">
+        <div style="display: flex !important">
+          <h1 class="${sovendusOverlayFontClass} ${sovendusOverlayH1Class}" style="margin-right: auto !important">
             Sovendus Self-Test Overlay
           </h1>
           ${headerRightElement}
@@ -148,19 +151,24 @@ class SelfTesterOverlay {
       </div>
     `;
     }
-    this.updateIFrameHeight(iframe);
+    const iFrameStyle = document.createElement("style");
+    overlay.insertAdjacentElement("afterbegin", iFrameStyle);
 
     window.onresize = (ev: UIEvent): void => {
       window.originalOnresize?.(ev);
-      this.updateIFrameHeight(iframe);
+      this.updateIFrameHeight(iframe, iFrameStyle);
     };
+    this.updateIFrameHeight(iframe, iFrameStyle);
   }
 
-  updateIFrameHeight(iframe: HTMLIFrameElement): void {
+  updateIFrameHeight(
+    iframe: HTMLIFrameElement,
+    iFrameStyle: HTMLStyleElement,
+  ): void {
     const innerOverlay = iframe.contentDocument?.getElementById(innerOverlayId);
     if (innerOverlay) {
-      iframe.style.height = `${innerOverlay.scrollHeight}px`;
-      console.log("heig", iframe.style.height);
+      iFrameStyle.innerHTML = `#${testLoadedIFrameId} { height: ${innerOverlay.scrollHeight}px !important; }`;
+      iframe.style.height = `${innerOverlay.scrollHeight}px !important`;
     } else {
       throw new Error("Failed to get innerOverlay to update iframe height.");
     }
@@ -310,11 +318,16 @@ class SelfTesterOverlay {
   }
 
   getInnerOverlayStyle(): string {
+    const bannerPadding = 22;
+    const mobileBannerPadding = 5;
     return `
         <style>
           body {
             padding: 0;
             margin: 0;
+          }
+          #${innerOverlayId} {
+            padding: ${bannerPadding}px !important;
           }
           #${innerOverlayId} .${sovendusOverlayFontClass},
           #${innerOverlayId} ul .${sovendusOverlayFontClass},
@@ -383,6 +396,9 @@ class SelfTesterOverlay {
           }
 
           @media only screen and (max-width: 600px) {
+            #${innerOverlayId} {
+              padding: 15px ${mobileBannerPadding}px 15px ${mobileBannerPadding}px !important;
+            }
             #${innerOverlayId} li {
               font-size: 15px !important;
               margin-left: 25px !important;
@@ -409,18 +425,20 @@ class SelfTesterOverlay {
   }
   getOuterOverlayStyle(): string {
     const bannerWidth = 700;
-    const bannerPadding = 22;
-    const mobileBannerPadding = 5;
     return `
         <style>
+          #${testLoadedIFrameId} {
+            width: 100% !important;
+            border: none !important;
+          }
           #${overlayId} {
             position: fixed !important;
-            left: calc(50% - ${bannerWidth / 2}px - ${bannerPadding}px) !important;
-            right: calc(50% - ${bannerWidth / 2}px - ${bannerPadding}px) !important;
+            left: calc(50% - ${bannerWidth / 2}px) !important;
+            right: calc(50% - ${bannerWidth / 2}px) !important;
             width: ${bannerWidth}px !important;
             max-width: calc(100vw) !important;
             top: 50px !important;
-            padding: ${bannerPadding}px !important;
+            padding: 0 !important;
             background: #293049 !important;
             z-index: 2147483648 !important;
             overflow-y: auto !important;
@@ -461,12 +479,12 @@ class SelfTesterOverlay {
               left: 0 !important;
               right: 0 !important;
               top: 50px !important;
-              padding: 15px ${mobileBannerPadding}px 15px ${mobileBannerPadding}px !important;
-              width: calc(100vw - ${mobileBannerPadding * 2}px) !important;
+              padding: 15px 0 15px 0 !important;
+              width: 100vw !important;
             }
             #${overlayId}.${fullscreenClass} {
-              width: calc(100vw - ${mobileBannerPadding * 2}px) !important;
-              max-width: calc(100vw - ${mobileBannerPadding * 2}px) !important;
+              width: 100vw !important;
+              max-width: 100vw !important;
             }
           }
         </style>
