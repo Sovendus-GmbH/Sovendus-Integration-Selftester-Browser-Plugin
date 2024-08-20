@@ -542,6 +542,7 @@ export default class SelfTester {
       missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerCity,
       successMessageKey: StatusMessageKeyTypes.consumerCitySuccess,
       malformedMessageKey: StatusMessageKeyTypes.consumerCityMalformed,
+      tooltipPosition: TooltipPositionType.top,
     });
   }
 
@@ -553,6 +554,7 @@ export default class SelfTester {
       missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerCountry,
       successMessageKey: StatusMessageKeyTypes.consumerCountrySuccess,
       malformedMessageKey: StatusMessageKeyTypes.consumerCountryInvalid,
+      tooltipPosition: TooltipPositionType.top,
     });
     let statusCode = valueResult.statusCode;
     let statusMessageKey = valueResult.statusMessageKey;
@@ -569,6 +571,7 @@ export default class SelfTester {
       elementValue: valueResult.elementValue,
       statusCode,
       statusMessageKey,
+      tooltipPosition: TooltipPositionType.top,
     });
   }
 
@@ -1092,6 +1095,7 @@ export default class SelfTester {
     successMessageKey,
     malformedMessageKey,
     numberCheckType,
+    tooltipPosition,
   }: {
     value: ExplicitAnyType;
     missingErrorMessageKey: StatusMessageKeyTypes;
@@ -1102,6 +1106,7 @@ export default class SelfTester {
       numbersInStringsAllowed?: boolean;
       floatNumbersAllowed?: boolean;
     };
+    tooltipPosition?: TooltipPositionType;
   }): WarningOrFailTestResult<string | undefined> {
     let elementValue: string | undefined;
     let statusCode: StatusCodes;
@@ -1200,6 +1205,7 @@ export default class SelfTester {
       elementValue,
       statusMessageKey,
       statusCode,
+      tooltipPosition,
     });
   }
 
@@ -1603,15 +1609,18 @@ class WarningOrFailTestResult<
   declare elementValue: TElementValueType;
   declare statusMessageKey: StatusMessageKeyTypes;
   declare statusCode: StatusCodes.Error | StatusCodes.SuccessButNeedsReview;
+  tooltipPosition: TooltipPositionType | undefined;
 
   constructor({
     elementValue,
     statusMessageKey,
     statusCode,
+    tooltipPosition,
   }: {
     elementValue: TElementValueType;
     statusMessageKey: StatusMessageKeyTypes;
     statusCode: StatusCodes.Error | StatusCodes.SuccessButNeedsReview;
+    tooltipPosition?: TooltipPositionType | undefined;
   }) {
     super({
       elementValue,
@@ -1621,6 +1630,7 @@ class WarningOrFailTestResult<
     this.elementValue = elementValue;
     this.statusMessageKey = statusMessageKey;
     this.statusCode = statusCode;
+    this.tooltipPosition = tooltipPosition;
   }
 
   override getFormattedStatusMessage(): string {
@@ -1637,6 +1647,7 @@ class WarningOrFailTestResult<
           this.replaceElementValueInMessage(
             statusMessages[this.statusMessageKey].infoText,
           ),
+          this.tooltipPosition,
         )}`;
       }
       if (this.statusCode === StatusCodes.Error) {
@@ -1653,6 +1664,7 @@ class WarningOrFailTestResult<
           this.replaceElementValueInMessage(
             statusMessages[this.statusMessageKey].infoText,
           ),
+          this.tooltipPosition,
         )}`;
       }
       return "";
@@ -1685,36 +1697,33 @@ class WarningOrFailTestResult<
     return message.replace(/{elementValue}/g, String(this.elementValue));
   }
 
-  private getInfoMarkWithLabel(labelText: string): string {
+  private getInfoMarkWithLabel(
+    labelText: string,
+    tooltipPosition?: TooltipPositionType | undefined,
+  ): string {
     const infoIcon =
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAOVJREFUWEftl10OhDAIhNtz7vn2nG58cFMrMMPYpGr01QKfw0+xlslPnRy/3BNg+ZbFUq5+8h9EK+AF9VLIwkCAbOAeCIGEAGeDbzARhAug5jlrZwJknfSyZ+xpAEvGNhB6v0JaZw4AFj3j3AvQ++t9QQCvgFTQFABqIZSCrTYiFXYKILnaYht1VgLIVPkKPVyB6QBMbtl0SSl4LgAqGDRy2ZnRnpMHEQuL2hUCeCOWAWCm5fUuI+vLmMUiarvI/poLidfn6j+EtJKNgkA3KtyKVRAU+F8XiqzZyyiKQSuggDI2L8APUoSuITyX8cMAAAAASUVORK5CYII=";
+    const whiteInfoIcon =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAONJREFUWEftl9sOhDAIROX/P7obHzS1C8wwNqm70VcLHIdL0bbFjy2Ov/0mQGutecqZWfmDaIMoaJRCFgYCVAOPQAgkBbgb/IDJIEIANc9VOxeg6mSUvWJPA3gy9oHQ+x3SO/MF4NEzzqMAo7/RFwSICkgFLQGgFkIpOGojU+GiAJKrL7ZZZyWASpXv0NMVWA7A5JZNl5SC/wVABYNGLjsz+nPyIGJhUbtCgGjEMgDMtHzeZeR9GbNYZG2X2T9zIYn6XP2HkFayWRDoRoVbsQqCAp91ochavYyyGLQCCihj8wJ8AKPZ6CHFW/ndAAAAAElFTkSuQmCC";
     return `
       <span style="position:relative">
-        <div style="
-            display:none;
-            position: absolute;
-            right: -75px;
-            background: orange;
-            width: 250px;
-            padding: 12px;
-            color: #fff;
-            border-radius: 8px;
-            margin-top: 3px;
-            z-index: 99;  
-            bottom: 25px;
-          "
-          class="${sovendusInfoClass}"
-        >
-        <img style="height:18px;width:auto"
-         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAONJREFUWEftl9sOhDAIROX/P7obHzS1C8wwNqm70VcLHIdL0bbFjy2Ov/0mQGutecqZWfmDaIMoaJRCFgYCVAOPQAgkBbgb/IDJIEIANc9VOxeg6mSUvWJPA3gy9oHQ+x3SO/MF4NEzzqMAo7/RFwSICkgFLQGgFkIpOGojU+GiAJKrL7ZZZyWASpXv0NMVWA7A5JZNl5SC/wVABYNGLjsz+nPyIGJhUbtCgGjEMgDMtHzeZeR9GbNYZG2X2T9zIYn6XP2HkFayWRDoRoVbsQqCAp91ochavYyyGLQCCihj8wJ8AKPZ6CHFW/ndAAAAAElFTkSuQmCC"
-         />
-          ${labelText}
+        <div class="${sovendusInfoClass} ${tooltipPosition || ""}>
+          <span style="display:flex;">
+            <img style="height:20px;width:auto;padding-right:5px"
+            src="${whiteInfoIcon}"
+            />
+            ${labelText}
+          </span>
         </div>
         <img style="height:20px;width:auto;margin-bottom: -4px;"
          src=${infoIcon} />
       </span>
     `;
   }
+}
+
+export enum TooltipPositionType {
+  top = "top",
 }
 
 interface MergedSovConsumer {

@@ -15,7 +15,7 @@ import {
   testLoadedIFrameId,
   toggleSovendusOverlayId,
 } from "./self-test-overlay-css-vars.js";
-import SelfTester from "./self-tester.js";
+import SelfTester, { TooltipPositionType } from "./self-tester.js";
 import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
 
 void (async (): Promise<void> => {
@@ -420,6 +420,33 @@ class SelfTesterOverlay {
               font-size: 14px !important;
             }
           }
+
+          .${sovendusInfoClass} {
+            position: absolute;
+            padding: 6px;
+            border-radius: 5px;
+            z-index: 1000;
+            background: orange;
+            max-width: 250px;
+            color: #fff;
+            display: none;
+            right: -250px;
+            top: -5px;
+            left: -5px;
+          }
+          .${sovendusInfoClass}.${TooltipPositionType.top} {
+            position: absolute;
+            padding: 6px;
+            border-radius: 5px;
+            z-index: 1000;
+            background: orange;
+            max-width: 250px;
+            color: #fff;
+            display: none;
+            right: -250px;
+            top: -65px;
+            left: 1px;
+          }
         </style>
         `;
   }
@@ -506,16 +533,11 @@ class SelfTesterOverlay {
         iframe.contentWindow?.document.getElementsByClassName(
           sovendusInfoClass,
         );
+
       if (checkMarks) {
         for (const element of checkMarks) {
-          element.parentElement?.parentElement?.addEventListener(
-            "mouseover",
-            showInfoText,
-          );
-          element.parentElement?.parentElement?.addEventListener(
-            "mouseout",
-            hideInfoText,
-          );
+          element.parentElement?.addEventListener("mouseover", showInfoText);
+          element.parentElement?.addEventListener("mouseout", hideInfoText);
         }
       } else {
         throw new Error("Failed to find info icons");
@@ -564,16 +586,23 @@ function toggleOverlay(): void {
 }
 
 function showInfoText(event: MouseEvent): void {
-  const label = (event.currentTarget as HTMLElement)?.lastElementChild
-    ?.firstElementChild;
+  const label = (event.currentTarget as HTMLElement)?.firstElementChild;
+  // ?.lastElementChild
+  //   ?.firstElementChild;
   if (label) {
+    // const rect = label.getBoundingClientRect();
+    // (label as HTMLElement).style.left =
+    //   `${rect.left + window.pageXOffset - 5}px`;
+    // (label as HTMLElement).style.top =
+    //   `${rect.top + window.pageYOffset - (label as HTMLElement).offsetHeight - 5}px`;
     (label as HTMLElement).style.display = "block";
   }
 }
 
 function hideInfoText(event: MouseEvent): void {
-  const label = (event.currentTarget as HTMLElement)?.lastElementChild
-    ?.firstElementChild;
+  const label = (event.currentTarget as HTMLElement)?.firstElementChild;
+  // ?.lastElementChild
+  //   ?.firstElementChild;
   if (label) {
     (label as HTMLElement).style.display = "none";
   }
