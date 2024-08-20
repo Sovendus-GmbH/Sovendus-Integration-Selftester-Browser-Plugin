@@ -1,3 +1,4 @@
+import { testLoadedIFrameId } from "@src/page-banner/self-test-overlay-css-vars";
 import type SelfTester from "@src/page-banner/self-tester";
 import type { ExplicitAnyType } from "@src/page-banner/self-tester";
 import { platform } from "os";
