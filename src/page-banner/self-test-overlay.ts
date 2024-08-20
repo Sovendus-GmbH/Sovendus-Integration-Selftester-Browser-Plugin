@@ -92,7 +92,7 @@ class SelfTesterOverlay {
     overlay.id = outerOverlayId;
     overlay.innerHTML = this.createOuterOverlay();
     document.body.appendChild(overlay);
-
+    window.originalOnresize = window.onresize;
     this.createInnerOverlay({
       children: `
         <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
@@ -130,6 +130,7 @@ class SelfTesterOverlay {
   }): void {
     const iframe = document.createElement("iframe");
     iframe.id = testLoadedIFrameId;
+    iframe.style.width = "100%";
     iframe.style.border = "none";
     const overlay = document.getElementById(overlayId) as HTMLElement;
     overlay.replaceChildren(iframe);
@@ -147,8 +148,22 @@ class SelfTesterOverlay {
       </div>
     `;
     }
-    iframe.style.height = `${iframe.contentDocument?.body.scrollHeight}px`;
-    iframe.style.width = "100%";
+    this.updateIFrameHeight(iframe);
+
+    window.onresize = (ev: UIEvent): void => {
+      window.originalOnresize?.(ev);
+      this.updateIFrameHeight(iframe);
+    };
+  }
+
+  updateIFrameHeight(iframe: HTMLIFrameElement): void {
+    const innerOverlay = iframe.contentDocument?.getElementById(innerOverlayId);
+    if (innerOverlay) {
+      iframe.style.height = `${innerOverlay.scrollHeight}px`;
+      console.log("heig", iframe.style.height);
+    } else {
+      throw new Error("Failed to get innerOverlay to update iframe height.");
+    }
   }
 
   createInnerInnerOverlay(selfTester: SelfTester): string {
@@ -297,6 +312,10 @@ class SelfTesterOverlay {
   getInnerOverlayStyle(): string {
     return `
         <style>
+          body {
+            padding: 0;
+            margin: 0;
+          }
           #${innerOverlayId} .${sovendusOverlayFontClass},
           #${innerOverlayId} ul .${sovendusOverlayFontClass},
           #${innerOverlayId} li .${sovendusOverlayFontClass} {
@@ -389,16 +408,19 @@ class SelfTesterOverlay {
         `;
   }
   getOuterOverlayStyle(): string {
+    const bannerWidth = 700;
+    const bannerPadding = 22;
+    const mobileBannerPadding = 5;
     return `
         <style>
           #${overlayId} {
             position: fixed !important;
-            left: calc(50% - 350px) !important;
-            right: calc(50% - 350px) !important;
-            width: 700px !important;
+            left: calc(50% - ${bannerWidth / 2}px - ${bannerPadding}px) !important;
+            right: calc(50% - ${bannerWidth / 2}px - ${bannerPadding}px) !important;
+            width: ${bannerWidth}px !important;
             max-width: calc(100vw) !important;
             top: 50px !important;
-            padding: 22px !important;
+            padding: ${bannerPadding}px !important;
             background: #293049 !important;
             z-index: 2147483648 !important;
             overflow-y: auto !important;
@@ -435,16 +457,16 @@ class SelfTesterOverlay {
             line-height: normal !important;
           }
           @media only screen and (max-width: 700px) {
-            #${innerOverlayId} {
+            #${overlayId} {
               left: 0 !important;
               right: 0 !important;
               top: 50px !important;
-              padding: 15px 0 15px 5px !important;
-              width: calc(100vw - 5px) !important;
+              padding: 15px ${mobileBannerPadding}px 15px ${mobileBannerPadding}px !important;
+              width: calc(100vw - ${mobileBannerPadding * 2}px) !important;
             }
-            #${innerOverlayId}.${fullscreenClass} {
-              width: calc(100vw - 5px) !important;
-              max-width: calc(100vw - 5px) !important;
+            #${overlayId}.${fullscreenClass} {
+              width: calc(100vw - ${mobileBannerPadding * 2}px) !important;
+              max-width: calc(100vw - ${mobileBannerPadding * 2}px) !important;
             }
           }
         </style>
@@ -452,26 +474,37 @@ class SelfTesterOverlay {
   }
 
   addButtonAndInfoEventListener(): void {
-    const iframe: HTMLIFrameElement = document.getElementById(
+    const iframe = document.getElementById(
       testLoadedIFrameId,
-    ) as HTMLIFrameElement;
+    ) as HTMLIFrameElement | null;
+    if (iframe) {
+      iframe.contentWindow?.document
+        .getElementById(sovendusOverlayRepeatTestsId)
+        ?.addEventListener("click", () => {
+          void executeTests();
+        });
 
-    iframe.contentWindow?.document
-      .getElementById(sovendusOverlayRepeatTestsId)
-      ?.addEventListener("click", () => {
-        void executeTests();
-      });
-
-    const checkMarks: HTMLCollectionOf<Element> =
-      document.getElementsByClassName(sovendusInfoClass);
-    for (const element of checkMarks) {
-      element.parentElement?.parentElement?.addEventListener(
-        "mouseover",
-        showInfoText,
-      );
-      element.parentElement?.parentElement?.addEventListener(
-        "mouseout",
-        hideInfoText,
+      const checkMarks: HTMLCollectionOf<Element> | undefined =
+        iframe.contentWindow?.document.getElementsByClassName(
+          sovendusInfoClass,
+        );
+      if (checkMarks) {
+        for (const element of checkMarks) {
+          element.parentElement?.parentElement?.addEventListener(
+            "mouseover",
+            showInfoText,
+          );
+          element.parentElement?.parentElement?.addEventListener(
+            "mouseout",
+            hideInfoText,
+          );
+        }
+      } else {
+        throw new Error("Failed to find info icons");
+      }
+    } else {
+      throw new Error(
+        "Failed to find iframe to add event listeners for repeat button and info icons.",
       );
     }
   }
@@ -530,6 +563,7 @@ function hideInfoText(event: MouseEvent): void {
 
 interface SovWindow extends Window {
   sovSelfTester?: SelfTester;
+  originalOnresize?: ((this: GlobalEventHandlers, ev: UIEvent) => void) | null;
 }
 
 declare let window: SovWindow;
