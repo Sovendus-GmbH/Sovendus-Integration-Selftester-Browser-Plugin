@@ -1,4 +1,5 @@
 export const overlayId = "sovendusOverlay";
+export const innerOverlayId = "sovendusInnerOverlay";
 export const outerOverlayId = "outerSovendusOverlay";
 export const toggleSovendusOverlayId = "toggleSovendusOverlay";
 export const sovendusOverlayRepeatTestsId = "sovendusOverlayRepeatTests";

@@ -1,6 +1,6 @@
 import { browserAPI } from "../extension-pop-up.js";
 
-export async function checkSovendusOverlayIntegration(
+export async function checkStickyBannerAndOverlayIntegration(
   tabId: number,
 ): Promise<boolean> {
   const result = await browserAPI.scripting.executeScript({
@@ -8,7 +8,10 @@ export async function checkSovendusOverlayIntegration(
     world: "MAIN",
     func: (): boolean => {
       return !!window.sovApplication?.instances?.some((instance) => {
-        return instance.config?.overlay?.showInOverlay;
+        return (
+          instance.config?.overlay?.showInOverlay ||
+          instance.stickyBanner?.bannerExists
+        );
       });
     },
   });
@@ -18,7 +21,7 @@ export async function checkSovendusOverlayIntegration(
   return result[0].result;
 }
 
-export async function hideAndShowSovendusOverlay(
+export async function hideOrShowStickyBannerAndOverlay(
   hide: boolean,
   tabId: number,
 ): Promise<void> {
@@ -26,12 +29,30 @@ export async function hideAndShowSovendusOverlay(
     target: { tabId },
     world: "MAIN",
     args: [hide],
-    func: (hide) => {
-      const sovOverlay = document.getElementsByClassName("sov-overlay");
-      if (sovOverlay?.[0]) {
-        (sovOverlay[0] as HTMLElement).style.display = hide ? "none" : "block";
-      } else {
-        throw new Error("Error: sovOverlay not found");
+    func: async (hide) => {
+      const sovOverlay = document.getElementsByClassName(
+        "sov-overlay",
+      )?.[0] as HTMLElement | null;
+      if (sovOverlay) {
+        sovOverlay.style.display = hide ? "none" : "block";
+      }
+      const stickyBanner = document.querySelector(
+        '[id^="sov_"][id$="Toggle"]',
+      ) as HTMLElement;
+      const parentElement = stickyBanner?.parentElement;
+      if (stickyBanner && parentElement) {
+        parentElement.style.display = hide ? "none" : "block";
+        if (
+          [...parentElement.classList].some((cls) => cls.includes("-folded"))
+        ) {
+          if (!hide) {
+            stickyBanner.click();
+            await new Promise((r) => setTimeout(r, 500));
+          }
+        }
+      }
+      if (!sovOverlay && (!stickyBanner || !parentElement)) {
+        throw new Error("Error: sovOverlay or sticky banner not found");
       }
     },
   });
@@ -44,7 +65,9 @@ export interface SovWindow extends Window {
         overlay?: {
           showInOverlay?: boolean;
         };
-        stickyBanner?: object;
+      };
+      stickyBanner?: {
+        bannerExists?: boolean;
       };
     }[];
   };

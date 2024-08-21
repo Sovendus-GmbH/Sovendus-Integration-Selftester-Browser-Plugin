@@ -1,5 +1,6 @@
 import {
   fullscreenClass,
+  innerOverlayId,
   outerOverlayId,
   overlayId,
   sovendusInfoClass,
@@ -58,7 +59,7 @@ class SelfTesterOverlay {
           </button>
       `,
       children: `
-          <ul class="${sovendusOverlayFontClass}">
+          <ul id="${innerOverlayId}" class="${sovendusOverlayFontClass}">
             <li class="${sovendusOverlayFontClass}">
               Integration Type: ${selfTester.integrationType.getFormattedStatusMessage(false)}
             </li>
@@ -76,7 +77,9 @@ class SelfTesterOverlay {
           ${this.createInnerOverlay(selfTester)}
       `,
     });
-    overlay.addEventListener("click", toggleOverlay);
+    document
+      .getElementById(toggleSovendusOverlayId)
+      ?.addEventListener("click", toggleOverlay);
     this.addButtonAndInfoEventListener();
     // this.moveOverlayAboveAll();
   }
@@ -95,7 +98,9 @@ class SelfTesterOverlay {
       `,
     });
     document.body.appendChild(overlay);
-    overlay.addEventListener("click", toggleOverlay);
+    document
+      .getElementById(toggleSovendusOverlayId)
+      ?.addEventListener("click", toggleOverlay);
   }
 
   createOuterOverlay({

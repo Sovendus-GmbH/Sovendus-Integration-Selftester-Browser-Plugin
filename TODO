@@ -1,7 +1,6 @@
 ## Selftester Plugin
 
 - improve overlay style and fix style issues (style overrides from page css)
-- already show overlay in loading state as soon as something is detected
 - improve style of overlay when awin sale not tracked
 - improve overlay loading speed
 - add error when invalid email hash is used - banner will not load
@@ -9,9 +8,10 @@
 - dont compile tests with build
 - transmit multiple iframes content when they are different
 - handle overlay scrollable screenshot - add tests to check if overlay detection works
-- Fix Street Number (Always: Value type not allowed)
 - integration type info popover is cut off - also on mobile if shifted to next line its cut off on the left
 - check cors api call to dev hub
+- hide sticky banner on not first screenshot
+- log thrown errors to dev hub api with sovSelfTester, sovIframes and sovConsumer
 
 
 ## Tests
@@ -20,5 +20,4 @@
 - dont spam dev hub api on tests
 - get a AWIN ID for Tests
 - consider adding more awin not executed tests
-- hide sticky banner on not first screenshot
 - add timeout to load flexiblejs to late

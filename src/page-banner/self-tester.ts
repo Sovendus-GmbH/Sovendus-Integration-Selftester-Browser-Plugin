@@ -1230,8 +1230,7 @@ export default class SelfTester {
     // eslint-disable-next-line no-console
     console.log("No Sovendus integration detected yet");
     while (
-      !this.sovIframesOrConsumerExists() ||
-      this.awinIntegrationDetected()
+      !(this.sovIframesOrConsumerExists() || this.awinIntegrationDetected())
     ) {
       await new Promise((resolve) => setTimeout(resolve, 300));
     }
