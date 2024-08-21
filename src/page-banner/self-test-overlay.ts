@@ -58,7 +58,7 @@ class SelfTesterOverlay {
             </button>
         `,
       children: `
-            <ul id="${innerOverlayId}" class="${sovendusOverlayFontClass}">
+            <ul class="${sovendusOverlayFontClass}">
               <li class="${sovendusOverlayFontClass}">
                 Integration Type: ${selfTester.integrationType.getFormattedStatusMessage(false)}
               </li>
@@ -112,7 +112,7 @@ class SelfTesterOverlay {
   createOuterOverlay(): string {
     // TODO OuterOverlayStyle entfernen
     return `
-      ${this.getOverlayStyle()}
+      ${this.getOuterOverlayStyle()}
       <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${toggleSovendusOverlayId}">
         Hide
       </button>
@@ -134,11 +134,10 @@ class SelfTesterOverlay {
     iframe.style.height = "850px"; // TODO Mit JS berechnen
     const overlay = document.getElementById(overlayId) as HTMLElement;
     overlay.replaceChildren(iframe);
-    document.body.appendChild(overlay);
     if (iframe.contentDocument) {
       iframe.contentDocument.body.innerHTML = `
-      ${this.getOverlayStyle()}
-      <div style="margin:auto;max-width:700px; background: #293049" class="${sovendusOverlayFontClass}">
+      ${this.getInnerOverlayStyle()}
+      <div id="${innerOverlayId}" style="margin:auto;max-width:700px; background: #293049" class="${sovendusOverlayFontClass}">
         <div style="display: flex">
           <h1 class="${sovendusOverlayFontClass} ${sovendusOverlayH1Class}" style="margin-right: auto">
             Sovendus Self-Test Overlay
@@ -294,7 +293,101 @@ class SelfTesterOverlay {
       </div>`;
   }
 
-  getOverlayStyle(): string {
+  getInnerOverlayStyle(): string {
+    return `
+        <style>
+          #${innerOverlayId} .${sovendusOverlayFontClass},
+          #${innerOverlayId} ul .${sovendusOverlayFontClass},
+          #${innerOverlayId} li .${sovendusOverlayFontClass} {
+            color: white !important;
+            font-family: Arial, Helvetica, sans-serif !important;
+          }
+          #${innerOverlayId} .${sovendusOverlayErrorClass} {
+            color: red !important;
+            font-size: 17px !important;
+            margin: 0 !important;
+          }
+          #${innerOverlayId} .${sovendusOverlayH1Class} {
+            font-size: 27px !important;
+            margin-top: 0 !important;
+            margin-bottom: 5px !important;
+          }
+          #${innerOverlayId} .${sovendusOverlayH2Class} {
+            font-size: 20px !important;
+            margin-top: 6px !important;
+            margin-bottom: 0px !important;
+          }
+          #${innerOverlayId} .${sovendusOverlayH3Class} {
+            font-size: 17px !important;
+            margin-top: 6px !important;
+            margin-bottom: 0px !important;
+          }
+          #${innerOverlayId} .${sovendusOverlayTextClass} {
+            font-size: 15px !important;
+          }
+          #${innerOverlayId} li {
+            font-size: 16px !important;
+            margin-left: 45px !important;
+          }
+          #${innerOverlayId} li::marker {
+            content: '🞄 ' !important;
+            unicode-bidi: isolate !important;
+            font-variant-numeric: tabular-nums !important;
+            text-transform: none !important;
+            text-indent: 0px !important;
+            text-align: start !important;
+            text-align-last: start !important;
+          }
+          #${innerOverlayId} ul {
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          #${innerOverlayId} a {
+            color: #197bbd !important;
+          }
+          #${innerOverlayId} a:hover {
+            color: #15669d !important;
+          }
+          .${sovendusOverlayButtonClass} {
+            background: #293049 !important;
+            color: #fff !important;
+            padding: 9px !important;
+            cursor: pointer;
+            font-size: 16px !important;
+            border-radius: 8px !important;
+            border: solid 1px #fff;
+          }
+          #${sovendusOverlayRepeatTestsId} {
+            float: right !important;
+            width: 105px !important;
+          }
+
+          @media only screen and (max-width: 600px) {
+            #${innerOverlayId} li {
+              font-size: 15px !important;
+              margin-left: 25px !important;
+            }
+            #${innerOverlayId} .${sovendusOverlayErrorClass} {
+              font-size: 15px !important;
+            }
+            #${innerOverlayId} .${sovendusOverlayH1Class} {
+              font-size: 22px !important;
+              margin-bottom: 3px !important;
+            }
+            #${innerOverlayId} .${sovendusOverlayH2Class} {
+              font-size: 18px !important;
+            }
+            #${innerOverlayId} .${sovendusOverlayH3Class} {
+              font-size: 15px !important;
+            }
+            #${innerOverlayId} .${sovendusOverlayTextClass} {
+              font-size: 14px !important;
+            }
+          }
+        </style>
+        `;
+  }
+  getOuterOverlayStyle(): string {
     return `
         <style>
           #${overlayId} {
@@ -313,66 +406,6 @@ class SelfTesterOverlay {
             border-radius: 8px !important;    
             line-height: normal !important;        
           }
-          #${overlayId}.${fullscreenClass} {
-            width: calc(100vw - 44px) !important;
-            max-width: calc(100vw - 44px) !important;
-            height: 100vh !important;
-            top: 0 !important;
-            left: 0 !important;
-            max-height: 100vh !important;
-          }
-          #${overlayId} .${sovendusOverlayFontClass},
-          #${overlayId} ul .${sovendusOverlayFontClass},
-          #${overlayId} li .${sovendusOverlayFontClass} {
-            color: white !important;
-            font-family: Arial, Helvetica, sans-serif !important;
-          }
-          #${overlayId} .${sovendusOverlayErrorClass} {
-            color: red !important;
-            font-size: 17px !important;
-            margin: 0 !important;
-          }
-          #${overlayId} .${sovendusOverlayH1Class} {
-            font-size: 27px !important;
-            margin-top: 0 !important;
-            margin-bottom: 5px !important;
-          }
-          #${overlayId} .${sovendusOverlayH2Class} {
-            font-size: 20px !important;
-            margin-top: 6px !important;
-            margin-bottom: 0px !important;
-          }
-          #${overlayId} .${sovendusOverlayH3Class} {
-            font-size: 17px !important;
-            margin-top: 6px !important;
-            margin-bottom: 0px !important;
-          }
-          #${overlayId} .${sovendusOverlayTextClass} {
-            font-size: 15px !important;
-          }
-          #${overlayId} li {
-            font-size: 16px !important;
-            margin-left: 45px !important;
-          }
-          #${overlayId} li::marker {
-            content: '🞄 ' !important;
-            unicode-bidi: isolate !important;
-            font-variant-numeric: tabular-nums !important;
-            text-transform: none !important;
-            text-indent: 0px !important;
-            text-align: start !important;
-            text-align-last: start !important;
-          }
-          #${overlayId} ul {
-            margin: 0 !important;
-            padding: 0 !important;
-          }
-          #${overlayId} a {
-            color: #197bbd !important;
-          }
-          #${overlayId} a:hover {
-            color: #15669d !important;
-          }
           .${sovendusOverlayButtonClass} {
             background: #293049 !important;
             color: #fff !important;
@@ -382,9 +415,13 @@ class SelfTesterOverlay {
             border-radius: 8px !important;
             border: solid 1px #fff;
           }
-          #${sovendusOverlayRepeatTestsId} {
-            float: right !important;
-            width: 105px !important;
+          #${overlayId}.${fullscreenClass} {
+            width: calc(100vw - 44px) !important;
+            max-width: calc(100vw - 44px) !important;
+            height: 100vh !important;
+            top: 0 !important;
+            left: 0 !important;
+            max-height: 100vh !important;
           }
           #${toggleSovendusOverlayId} {
             width: 62px !important;
@@ -407,26 +444,6 @@ class SelfTesterOverlay {
             #${overlayId}.${fullscreenClass} {
               width: calc(100vw - 5px) !important;
               max-width: calc(100vw - 5px) !important;
-            }
-            #${overlayId} li {
-              font-size: 15px !important;
-              margin-left: 25px !important;
-            }
-            #${overlayId} .${sovendusOverlayErrorClass} {
-              font-size: 15px !important;
-            }
-            #${overlayId} .${sovendusOverlayH1Class} {
-              font-size: 22px !important;
-              margin-bottom: 3px !important;
-            }
-            #${overlayId} .${sovendusOverlayH2Class} {
-              font-size: 18px !important;
-            }
-            #${overlayId} .${sovendusOverlayH3Class} {
-              font-size: 15px !important;
-            }
-            #${overlayId} .${sovendusOverlayTextClass} {
-              font-size: 14px !important;
             }
           }
         </style>
