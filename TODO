@@ -1,0 +1,18 @@
+# TODO
+
+## Selftester Plugin
+
+- handle overlay scrollable screenshot - add tests to check if overlay detection works
+- improve overlay loading speed
+- add error when invalid email hash is used - banner will not load
+- handle if a test fails - still continue and show error in overlay - also use new status code testFailed
+- dont compile tests with build
+- transmit multiple iframes content when they are different
+- check cors api call to dev hub
+- log thrown errors to dev hub api with sovSelfTester, sovIframes and sovConsumer
+
+## Tests
+
+- get a AWIN ID for Tests
+- add spa tests
+- consider adding more awin not executed tests

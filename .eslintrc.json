@@ -1,0 +1,72 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "webextensions": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking", // Adds stricter rules that require type-checking
+    "plugin:prettier/recommended" // Integrates Prettier for consistent formatting
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": [
+    "simple-import-sort",
+    "eslint-plugin-unused-imports",
+    "@typescript-eslint",
+    "prettier",
+    "import"
+  ],
+  "rules": {
+    // Import sorting and unused import rules
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "unused-imports/no-unused-imports": "error",
+    // TypeScript-specific rules
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/consistent-type-imports": "error", // Enforce consistent usage of type imports
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ], // Disallow unused variables, but allow unused variables that start with _
+    "@typescript-eslint/explicit-function-return-type": "error", // Require explicit return types on functions
+    // "@typescript-eslint/no-explicit-any": "error", // Disallow usage of the 'any' type
+    "@typescript-eslint/no-floating-promises": "error", // Require Promises to be handled appropriately
+    "@typescript-eslint/no-misused-promises": "error", // Prevent using promises in places not intended
+    // General JavaScript/TypeScript rules
+    "prefer-template": "error", // Enforce using template literals instead of string concatenation
+    "no-console": "warn", // Warn when console statements are used
+    "no-debugger": "error", // Disallow the use of debugger
+    "curly": "error", // Require consistent use of curly braces for blocks
+    "eqeqeq": ["error", "always"], // Enforce strict equality checks (=== and !==)
+    "no-else-return": "error", // Disallow return before else
+    "no-empty-function": "error", // Disallow empty functions
+    "no-implied-eval": "error", // Disallow implied eval() through setTimeout, setInterval, etc.
+    "no-return-await": "error", // Disallow unnecessary return await
+    "prettier/prettier": "error", // Enforce Prettier formatting
+    "quotes": [
+      "error",
+      "double",
+      {
+        "avoidEscape": true
+      }
+    ], // Enforce double quotes, allow single quotes if escaping
+    "jsx-quotes": ["error", "prefer-double"], // Enforce double quotes in JSX attributes
+    // Import rules
+    "import/order": [
+      "error",
+      {
+        "groups": [["builtin", "external", "internal"]]
+      }
+    ] // Enforce consistent import order
+  }
+}

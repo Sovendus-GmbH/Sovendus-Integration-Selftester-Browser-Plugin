@@ -20,3 +20,7 @@ The Sovendus integration tester plugin can self-test common integration issues a
 ### Checkout Benefits & Voucher Network Combo Testing Procedure
 
 [The steps to use the plugin and how to test a Checkout Benefits integration can be found here](https://github.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/blob/main/docs/VN-CB-procedure.md)
+
+## Developer Documentation
+
+In case you want to customize the extension, please checkout the [developer documentation](https://github.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/blob/main/README-for-devs.md)
