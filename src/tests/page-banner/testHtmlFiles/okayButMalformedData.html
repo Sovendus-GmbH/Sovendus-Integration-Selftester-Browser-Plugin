@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1" />
+  </head>
+  <body>
+    <script type="text/javascript">
+      window.sovConsumer = {
+        consumerSalutation: "Mensch.",
+        consumerFirstName: 21,
+        consumerLastName: 500,
+        consumerEmail: "test.002",
+        consumerCountry: "Deutschland",
+        consumerZipcode: "City",
+        consumerPhone: "test@test.de",
+        consumerYearOfBirth: "12.06.1991",
+        consumerStreet: 1,
+        consumerStreetNumber: "Street Name",
+        consumerCity: { object: "isNotGood" },
+      };
+      window.sovIframes = window.sovIframes || [];
+      window.sovIframes.push({
+        trafficSourceNumber: "4704",
+        trafficMediumNumber: "2",
+        sessionId: true,
+        timestamp: "dubidub",
+        orderId: false,
+        orderValue: "dreitausend",
+        orderCurrency: "EURO",
+        usedCouponCode: { object: "isNotGood" },
+        iframeContainerId: "sovendus-integration-container",
+        integrationType: { object: "isNotGood" },
+      });
+
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.async = true;
+      script.src =
+        "https://api.sovendus.com/sovabo/common/js/flexibleIframe.js";
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>

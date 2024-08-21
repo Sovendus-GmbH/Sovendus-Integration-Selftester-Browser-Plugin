@@ -8,12 +8,12 @@ import SelfTester, { StatusCodes } from "./self-tester.js";
 
 async function executeTests() {
   removeOverlay();
-  const selfTester = new SelfTester();
-  await selfTester.waitForSovendusIntegrationDetected();
-  await selfTester.selfTestIntegration();
-  transmitTestResult(selfTester);
+  window.sovSelfTester = new SelfTester();
+  await window.sovSelfTester.waitForSovendusIntegrationDetected();
+  await window.sovSelfTester.selfTestIntegration();
+  transmitTestResult(window.sovSelfTester);
   const overlay = new SelfTesterOverlay();
-  await overlay.createOverlay(selfTester);
+  await overlay.createOverlay(window.sovSelfTester);
 }
 
 interface testsFn {
@@ -21,16 +21,20 @@ interface testsFn {
 }
 
 async function transmitTestResult(testResult: SelfTester) {
-  const response = await fetch("http://localhost:3000/api/tests", {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(testResult),
-  });
-  const result = response.ok;
-  console.log(result);
+  try {
+    const response = await fetch("http://localhost:3000/api/tests", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(testResult),
+    });
+    const result = response.ok;
+    console.log(result);
+  } catch (e) {
+    console.error("Failed to transmit sovendus test result - error:", e);
+  }
 }
 
 async function repeatTestsOnSPA(tests: testsFn) {
@@ -132,45 +136,43 @@ class SelfTesterOverlay {
           <h2 class="sovendus-overlay-font sovendus-overlay-h2">Customer Data:</h2>
           <ul class="sovendus-overlay-font sovendus-overlay-ul">
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerSalutation: ${testResult.consumerSalutation.statusMessage}
+              consumerSalutation: ${testResult.consumerSalutation.getFormattedStatusMessage()}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerFirstName: ${testResult.consumerFirstName.statusMessage}
+              consumerFirstName: ${testResult.consumerFirstName.getFormattedStatusMessage()}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerLastName: ${testResult.consumerLastName.statusMessage}
+              consumerLastName: ${testResult.consumerLastName.getFormattedStatusMessage()}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerYearOfBirth: ${
-                testResult.consumerYearOfBirth.statusMessage
-              }
+              consumerYearOfBirth: ${testResult.consumerYearOfBirth.getFormattedStatusMessage()}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerEmail: ${testResult.consumerEmail.statusMessage}
+              consumerEmail: ${testResult.consumerEmail.getFormattedStatusMessage()}
             </li>
             ${
-              testResult.consumerEmailHash.statusMessage &&
-              testResult.consumerEmailHash.statusMessage
+              testResult.consumerEmailHash.statusCode !==
+              StatusCodes.TestDidNotRun
+                ? testResult.consumerEmailHash.getFormattedStatusMessage()
+                : ""
             }            
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerPhone: ${testResult.consumerPhone.statusMessage}
+              consumerPhone: ${testResult.consumerPhone.getFormattedStatusMessage()}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerStreet: ${testResult.consumerStreet.statusMessage}
+              consumerStreet: ${testResult.consumerStreet.getFormattedStatusMessage()}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerStreetNumber: ${
-                testResult.consumerStreetNumber.statusMessage
-              }
+              consumerStreetNumber: ${testResult.consumerStreetNumber.getFormattedStatusMessage()}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerZipcode: ${testResult.consumerZipCode.statusMessage}
+              consumerZipcode: ${testResult.consumerZipCode.getFormattedStatusMessage()}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerCity: ${testResult.consumerCity.statusMessage}
+              consumerCity: ${testResult.consumerCity.getFormattedStatusMessage()}
             </li>
             <li class='sovendus-overlay-font sovendus-overlay-text'>
-              consumerCountry: ${testResult.consumerCountry.statusMessage}
+              consumerCountry: ${testResult.consumerCountry.getFormattedStatusMessage()}
             </li>
           </ul>
         </div>
@@ -185,61 +187,61 @@ class SelfTesterOverlay {
     let additionalInfo: string;
     if (awinIntegrationNoSaleTracked) {
       additionalInfo = `
-          ${testResult.awinTest.statusMessage}
+          ${testResult.awinTest.getFormattedStatusMessage()}
     `;
     } else {
       additionalInfo = `
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Container:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          iframeContainerId: ${testResult.iframeContainerId.statusMessage}
+          iframeContainerId: ${testResult.iframeContainerId.getFormattedStatusMessage()}
         </li>
-        ${testResult.isEnabledInBackend.statusMessage}
-        ${testResult.sovendusDivFound.statusMessage}
-        ${testResult.multipleIFramesAreSame.statusMessage}
+        ${testResult.isEnabledInBackend.getFormattedGeneralStatusMessage()}
+        ${testResult.sovendusDivFound.getFormattedGeneralStatusMessage()}
+        ${testResult.multipleIFramesAreSame.getFormattedGeneralStatusMessage()}
+        ${testResult.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
+        ${testResult.isFlexibleIframeExecutable.getFormattedGeneralStatusMessage()}
+        ${testResult.isSovendusJsOnDom.getFormattedGeneralStatusMessage()}
+        ${testResult.isSovendusJsExecutable.getFormattedGeneralStatusMessage()}
+        ${testResult.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
       </ul>
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          orderCurrency: ${testResult.orderCurrency.statusMessage}
+          orderCurrency: ${testResult.orderCurrency.getFormattedStatusMessage()}
         </li>
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          orderId: ${testResult.orderId.statusMessage}
+          orderId: ${testResult.orderId.getFormattedStatusMessage()}
         </li>
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          orderValue: ${testResult.orderValue.statusMessage}
+          orderValue: ${testResult.orderValue.getFormattedStatusMessage()}
         </li>
         ${
           awinIntegrationDetected
             ? ""
             : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
               "sessionId: " +
-              testResult.sessionId.statusMessage +
+              testResult.sessionId.getFormattedStatusMessage() +
               "</li>"
         }
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          timestamp: ${testResult.timestamp.statusMessage}
+          timestamp: ${testResult.timestamp.getFormattedStatusMessage()}
         </li>
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          usedCouponCode: ${testResult.usedCouponCode.statusMessage}
+          usedCouponCode: ${testResult.usedCouponCode.getFormattedStatusMessage()}
         </li>
       </ul>
     `;
     }
     return `
       <div>
-        ${
-          testResult.flexibleIFrameOnDOM
-            ? testResult.flexibleIFrameOnDOM.statusMessage
-            : ""
-        }
         <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Partner Numbers:</h2>
         <ul class="sovendus-overlay-font sovendus-overlay-ul">
           <li class='sovendus-overlay-font sovendus-overlay-text'>
-            trafficSourceNumber: ${testResult.trafficSourceNumber.statusMessage}
+            trafficSourceNumber: ${testResult.trafficSourceNumber.getFormattedStatusMessage()}
           </li>
           <li class='sovendus-overlay-font sovendus-overlay-text'>
-            trafficMediumNumber: ${testResult.trafficMediumNumber.statusMessage}
+            trafficMediumNumber: ${testResult.trafficMediumNumber.getFormattedStatusMessage()}
           </li>
           ${additionalInfo}
         </ul>
@@ -400,3 +402,9 @@ class SelfTesterOverlay {
   //   checkAndChangeZIndex(document.body);
   // }
 }
+
+interface SovWindow extends Window {
+  sovSelfTester?: SelfTester;
+}
+
+declare let window: SovWindow;

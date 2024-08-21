@@ -1,26 +1,3 @@
-class TestResult {
-  elementValue: ElementValue;
-  statusMessage: StatusMessage;
-  statusMessageKey: StatusMessageKeyTypes;
-  statusCode: StatusCode;
-  constructor({
-    elementValue = undefined,
-    statusMessage = undefined,
-    statusMessageKey,
-    statusCode,
-  }: {
-    elementValue: ElementValue;
-    statusMessage: StatusMessage;
-    statusMessageKey: StatusMessageKeyTypes;
-    statusCode: StatusCode;
-  }) {
-    this.elementValue = elementValue;
-    this.statusMessage = statusMessage;
-    this.statusMessageKey = statusMessageKey;
-    this.statusCode = statusCode;
-  }
-}
-
 export default class SelfTester {
   integrationType?: string;
   browserName?: string;
@@ -55,14 +32,16 @@ export default class SelfTester {
   timestamp: TestResult;
   usedCouponCode: TestResult;
   flexibleIFrameOnDOM: TestResult;
+  isFlexibleIframeExecutable: TestResult;
+  isSovendusJsOnDom: TestResult;
+  isSovendusJsExecutable: TestResult;
 
   sovConsumer?: SovApplicationConsumer;
   constructor() {
     const emptyTestResult = new TestResult({
       elementValue: undefined,
       statusCode: StatusCodes.TestDidNotRun,
-      statusMessage: undefined,
-      statusMessageKey: StatusMessageKeyTypes.init,
+      statusMessageKey: StatusMessageKeyTypes.empty,
     });
     this.consumerSalutation = emptyTestResult;
     this.consumerFirstName = emptyTestResult;
@@ -94,6 +73,9 @@ export default class SelfTester {
     this.timestamp = emptyTestResult;
     this.usedCouponCode = emptyTestResult;
     this.flexibleIFrameOnDOM = emptyTestResult;
+    this.isFlexibleIframeExecutable = emptyTestResult;
+    this.isSovendusJsOnDom = emptyTestResult;
+    this.isSovendusJsExecutable = emptyTestResult;
   }
 
   async selfTestIntegration() {
@@ -169,7 +151,7 @@ export default class SelfTester {
         this.sovIFramesAmount
       );
       this.executeOrderDataTests();
-      this.flexibleIFrameOnDOM = this.getIsFlexibleIFrameOnDOM(
+      this.executeSovendusJsFilesTests(
         this.wasExecuted,
         this.trafficSourceNumber,
         this.trafficMediumNumber
@@ -201,8 +183,13 @@ export default class SelfTester {
     const statusCode: StatusCode = StatusCodes.Error;
 
     let statusMessageKey: StatusMessageKeyTypes;
-
-    let statusMessage: StatusMessage = undefined;
+    // TODO
+    // TODO
+    // TODO
+    // TODO
+    // TODO
+    // TODO
+    let statusMessage = undefined;
     if (this.awinSaleTracked()) {
       statusMessage = `
           <h3 class='sovendus-overlay-error'>
@@ -232,28 +219,17 @@ export default class SelfTester {
 
     this.trafficSourceNumber = new TestResult({
       elementValue: window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber,
-      statusMessage:
-        window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber +
-        this.getInfoMarkWithLabel(
-          errorsMessages.trafficSourceNumberSuccess.infoText
-        ),
       statusMessageKey: undefined,
       statusCode: StatusCodes.Success,
     });
     this.trafficMediumNumber = new TestResult({
       elementValue: window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber,
-      statusMessage:
-        window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber +
-        this.getInfoMarkWithLabel(
-          errorsMessages.trafficMediumNumberSuccess.infoText
-        ),
       statusMessageKey: undefined,
       statusCode: StatusCodes.Success,
     });
 
     return new TestResult({
       elementValue,
-      statusMessage,
       statusMessageKey,
       statusCode,
     });
@@ -261,8 +237,6 @@ export default class SelfTester {
   getConsumerSalutationTestResult(
     consumer: SovApplicationConsumer
   ): TestResult {
-    const missingSalutationError =
-      errorsMessages.consumerSalutationNotValid.infoText;
     const valueTestResult: TestResult = this.validValueTestResult(
       consumer.salutation || window.sovConsumer?.consumerSalutation,
       StatusMessageKeyTypes.missingConsumerSalutation,
@@ -271,21 +245,13 @@ export default class SelfTester {
     if (valueTestResult.statusCode === StatusCodes.Success) {
       const validSalutations = ["Mr.", "Mrs."];
       let statusCode: StatusCode = StatusCodes.Success;
-      let statusMessage: StatusMessage =
-        String(valueTestResult.elementValue) + this.getCheckMarkWithLabel();
       let statusMessageKey: StatusMessageKeyTypes;
       if (!validSalutations.includes(String(valueTestResult.elementValue))) {
         statusCode = StatusCodes.Error;
-        statusMessage = `<span class='sovendus-overlay-error' >${
-          valueTestResult.elementValue
-        } ISN'T A VALID SALUTATION${this.getInfoMarkWithLabel(
-          missingSalutationError
-        )}</span>`;
         statusMessageKey = StatusMessageKeyTypes.consumerSalutationNotValid;
       }
       return new TestResult({
         elementValue: valueTestResult.elementValue,
-        statusMessage,
         statusMessageKey,
         statusCode,
       });
@@ -312,8 +278,6 @@ export default class SelfTester {
   getConsumerYearOfBirthTestResult(
     consumer: SovApplicationConsumer
   ): TestResult {
-    const missingMailError: string =
-      errorsMessages.consumerYearOfBirthNotValid.infoText;
     const yearOfBirthTestResult: TestResult = this.validValueTestResult(
       consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
       StatusMessageKeyTypes.missingConsumerYearOfBirth,
@@ -323,9 +287,6 @@ export default class SelfTester {
       const validFromYear: number = 1890;
       const validToYear: number = 2024;
       let statusCode: StatusCode = StatusCodes.Success;
-      let statusMessage: StatusMessage =
-        String(yearOfBirthTestResult.elementValue) +
-        this.getCheckMarkWithLabel();
       const yearOfBirthNumber: number = Number(
         yearOfBirthTestResult.elementValue
       );
@@ -334,16 +295,10 @@ export default class SelfTester {
         !(yearOfBirthNumber < validToYear && yearOfBirthNumber > validFromYear)
       ) {
         statusCode = StatusCodes.Error;
-        statusMessage = `<span class='sovendus-overlay-error' >${
-          yearOfBirthTestResult.elementValue
-        } ISN'T A VALID BIRTH YEAR${this.getInfoMarkWithLabel(
-          missingMailError
-        )}</span>`;
         statusMessageKey = StatusMessageKeyTypes.consumerYearOfBirthNotValid;
       }
       return new TestResult({
         elementValue: yearOfBirthTestResult.elementValue,
-        statusMessage,
         statusMessageKey,
         statusCode,
       });
@@ -352,7 +307,6 @@ export default class SelfTester {
   }
 
   getConsumerEmailTestResult(consumer: SovApplicationConsumer): TestResult {
-    const missingEmailError = errorsMessages.consumerEmailNotValid.infoText;
     const emailTestResult: TestResult = this.validValueTestResult(
       consumer.email,
       StatusMessageKeyTypes.missingConsumerEmail,
@@ -366,22 +320,14 @@ export default class SelfTester {
       const mailIsValid = validateEmail(String(emailTestResult.elementValue));
       let statusCode: StatusCode = StatusCodes.Success;
       let elementValue: ElementValue = emailTestResult.elementValue;
-      let statusMessage: StatusMessage =
-        String(emailTestResult.elementValue) + this.getCheckMarkWithLabel();
       let statusMessageKey: StatusMessageKeyTypes =
         StatusMessageKeyTypes.consumerEmailSuccess;
       if (!mailIsValid) {
         statusCode = StatusCodes.Error;
-        statusMessage = `<span class='sovendus-overlay-error' >${
-          emailTestResult.elementValue
-        } ISN'T A VALID EMAIL${this.getInfoMarkWithLabel(
-          missingEmailError
-        )}</span>`;
         statusMessageKey = StatusMessageKeyTypes.consumerEmailNotValid;
       }
       return new TestResult({
         elementValue,
-        statusMessage,
         statusMessageKey,
         statusCode,
       });
@@ -395,7 +341,6 @@ export default class SelfTester {
   ): TestResult {
     let statusCode: StatusCode = StatusCodes.Success;
     let elementValue: ElementValue = undefined;
-    let statusMessage: StatusMessage = undefined;
     let statusMessageKey: StatusMessageKeyTypes;
     if (!consumerEmail.elementValue) {
       const testResult = this.validValueTestResult(
@@ -410,36 +355,17 @@ export default class SelfTester {
           String(testResult.elementValue)
         );
         if (hashIsValid) {
-          statusMessage =
-            "<li class='sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
-            testResult.elementValue +
-            this.getCheckMarkWithLabel() +
-            "</li>";
           statusMessageKey = StatusMessageKeyTypes.consumerEmailHashSuccess;
         } else {
           statusCode = StatusCodes.Error;
-          statusMessage =
-            "<li class='sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
-            testResult.elementValue +
-            `<span class='sovendus-overlay-error' >${errorsMessages.consumerEmailNotMD5Hash.errorText}` +
-            this.getInfoMarkWithLabel(
-              errorsMessages.consumerEmailNotMD5Hash.infoText
-            ) +
-            "</span>";
-          ("</li>");
           statusMessageKey = StatusMessageKeyTypes.consumerEmailNotMD5Hash;
         }
       } else if (testResult.statusCode === 2) {
-        statusMessage =
-          "<li class='sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
-          testResult.statusMessage +
-          "</li>";
         statusMessageKey = testResult.statusMessageKey;
       }
     }
     return new TestResult({
       elementValue,
-      statusMessage,
       statusMessageKey,
       statusCode,
     });
@@ -524,7 +450,7 @@ export default class SelfTester {
     );
   }
 
-  getIsFlexibleIFrameOnDOM(
+  executeSovendusJsFilesTests(
     wasExecuted: TestResult,
     trafficSourceNumber: TestResult,
     trafficMediumNumber: TestResult
@@ -532,82 +458,144 @@ export default class SelfTester {
     const flexibleIframeJs: HTMLScriptElement | null = document.querySelector(
       '[src$="api.sovendus.com/sovabo/common/js/flexibleIframe.js"]'
     );
-    let errorMessage: StatusMessage = "";
-    let statusCode: StatusCode = StatusCodes.Success;
-    let isSuccess: boolean = true;
-    let statusMessageKey: StatusMessageKeyTypes;
+    this.flexibleIFrameOnDOM = this.getIsFlexibleIFrameOnDOM(
+      wasExecuted,
+      trafficSourceNumber,
+      trafficMediumNumber,
+      flexibleIframeJs
+    );
+    this.isFlexibleIframeExecutable = this.getIsFlexibleIframeExecutable(
+      flexibleIframeJs,
+      this.flexibleIFrameOnDOM
+    );
+    const sovendusJs: HTMLScriptElement | null = document.getElementById(
+      "sovloader-script"
+    ) as HTMLScriptElement | null;
+    this.isSovendusJsOnDom = this.getIsSovendusJsOnDom(
+      this.isFlexibleIframeExecutable,
+      sovendusJs
+    );
+    this.isSovendusJsExecutable = this.getIsSovendusJsExecutable(
+      this.isSovendusJsOnDom,
+      sovendusJs
+    );
+  }
+
+  getIsFlexibleIFrameOnDOM(
+    wasExecuted: TestResult,
+    trafficSourceNumber: TestResult,
+    trafficMediumNumber: TestResult,
+    flexibleIframeJs: HTMLScriptElement | null
+  ) {
+    let statusCode: StatusCode;
+    let isOnDom: boolean | undefined;
+    let statusMessageKey: StatusMessageKeyTypes | undefined;
     if (
       wasExecuted.statusCode === StatusCodes.Error &&
       trafficSourceNumber.statusCode === StatusCodes.Success &&
       trafficMediumNumber.statusCode === StatusCodes.Success
     ) {
-      let innerErrorMessage: string = "";
-      statusCode = StatusCodes.Error;
-      isSuccess = false;
-      const isOnDom = !!flexibleIframeJs;
+      isOnDom = !!flexibleIframeJs;
       if (isOnDom) {
-        const { innerErrorMessage, statusMessageKey } =
-          this.getFlexileIframeDidNotExecuteErrorMessage(flexibleIframeJs);
+        statusCode = StatusCodes.Success;
+        statusMessageKey = undefined;
       } else {
-        innerErrorMessage = errorsMessages.iFrameNotOnDOM.errorText;
+        statusCode = StatusCodes.Error;
         statusMessageKey = StatusMessageKeyTypes.iFrameNotOnDOM;
       }
-      errorMessage = `<h2 class="sovendus-overlay-font sovendus-overlay-h2" style="color:red !important;">Error: ${innerErrorMessage}</h2>`;
+    } else {
+      statusCode = StatusCodes.TestDidNotRun;
+      statusMessageKey = undefined;
+      isOnDom = undefined;
     }
     return new TestResult({
-      elementValue: isSuccess,
-      statusMessage: errorMessage,
+      elementValue: isOnDom,
       statusMessageKey,
       statusCode,
     });
   }
 
-  getFlexileIframeDidNotExecuteErrorMessage(
-    flexibleIframeJs: HTMLScriptElement
-  ): {
-    innerErrorMessage: string;
-    statusMessageKey: StatusMessageKeyTypes;
-  } {
-    let innerErrorMessage: string = "";
-    let statusMessageKey: StatusMessageKeyTypes;
-    if (this.checkIfFlexibleIframeIsExecutable(flexibleIframeJs)) {
-      const sovendusJs: HTMLScriptElement = document.getElementById(
-        "sovloader-script"
-      ) as HTMLScriptElement;
-      if (sovendusJs) {
-        if (sovendusJs.type === "text/javascript" || sovendusJs.type === null) {
-          innerErrorMessage =
-            errorsMessages.unknownErrorIntegrationScriptFailed.errorText;
-          statusMessageKey =
-            StatusMessageKeyTypes.unknownErrorIntegrationScriptFailed;
-        } else {
-          innerErrorMessage =
-            errorsMessages.sovendusJsBlockedByCookieConsent.errorText.replace(
-              "${elementValue}",
-              sovendusJs.type
-            );
-          statusMessageKey = StatusMessageKeyTypes.sovendusJsBlockedByCookieConsent;
-        }
-      } else {
-        innerErrorMessage =
-          errorsMessages.flexibleIframeJsExecutedTooEarly.errorText;
-        statusMessageKey = StatusMessageKeyTypes.flexibleIframeJsExecutedTooEarly;
+  getIsFlexibleIframeExecutable(
+    flexibleIframeJs: HTMLScriptElement,
+    flexibleIFrameOnDOM: TestResult
+  ): TestResult {
+    if (flexibleIFrameOnDOM.statusCode === StatusCodes.Success) {
+      const isExecutable = flexibleIframeJs.type === "text/javascript";
+      if (isExecutable) {
+        return new TestResult({
+          elementValue: isExecutable,
+          statusCode: StatusCodes.Success,
+          statusMessageKey: undefined,
+        });
       }
-    } else {
-      innerErrorMessage =
-        errorsMessages.flexibleIframeJsBlockedByCookieConsent.errorText.replace(
-          "${elementValue}",
-          flexibleIframeJs.type
-        );
-      statusMessageKey = StatusMessageKeyTypes.flexibleIframeJsBlockedByCookieConsent;
+      return new TestResult({
+        elementValue: isExecutable,
+        statusCode: StatusCodes.Error,
+        statusMessageKey:
+          StatusMessageKeyTypes.flexibleIframeJsBlockedByCookieConsent,
+      });
     }
-    return { innerErrorMessage, statusMessageKey };
+    return new TestResult({
+      elementValue: undefined,
+      statusCode: StatusCodes.TestDidNotRun,
+      statusMessageKey: undefined,
+    });
   }
 
-  checkIfFlexibleIframeIsExecutable(
-    flexibleIframeJs: HTMLScriptElement
-  ): boolean {
-    return flexibleIframeJs.type === "text/javascript";
+  getIsSovendusJsOnDom(
+    isFlexibleIframeExecutable: TestResult,
+    sovendusJs: HTMLScriptElement | null
+  ) {
+    if (!isFlexibleIframeExecutable) {
+      return new TestResult({
+        elementValue: undefined,
+        statusCode: StatusCodes.TestDidNotRun,
+        statusMessageKey: undefined,
+      });
+    }
+    if (sovendusJs) {
+      return new TestResult({
+        elementValue: true,
+        statusCode: StatusCodes.Success,
+        statusMessageKey: undefined,
+      });
+    }
+    return new TestResult({
+      statusMessageKey: StatusMessageKeyTypes.flexibleIframeJsExecutedTooEarly,
+      statusCode: StatusCodes.Error,
+      elementValue: false,
+    });
+  }
+
+  getIsSovendusJsExecutable(
+    isSovendusJsOnDom: TestResult,
+    sovendusJs: HTMLScriptElement | null
+  ) {
+    if (isSovendusJsOnDom) {
+      const isExecutable =
+        sovendusJs.type === "text/javascript" || sovendusJs.type === null;
+      if (isExecutable) {
+        return new TestResult({
+          elementValue: isExecutable,
+          statusMessageKey:
+            StatusMessageKeyTypes.unknownErrorIntegrationScriptFailed,
+          statusCode: StatusCodes.Error,
+        });
+      } else {
+        return new TestResult({
+          elementValue: sovendusJs.type,
+          statusCode: StatusCodes.Error,
+          statusMessageKey:
+            StatusMessageKeyTypes.sovendusJsBlockedByCookieConsent,
+        });
+      }
+    } else {
+      return new TestResult({
+        elementValue: undefined,
+        statusCode: StatusCodes.TestDidNotRun,
+        statusMessageKey: undefined,
+      });
+    }
   }
 
   getWasExecutedTestResult(
@@ -621,7 +609,6 @@ export default class SelfTester {
       window.sovApplication?.instances?.length;
     return new TestResult({
       elementValue: wasExecuted,
-      statusMessage: undefined,
       statusMessageKey: undefined,
       statusCode: wasExecuted ? StatusCodes.Success : StatusCodes.Error,
     });
@@ -630,7 +617,6 @@ export default class SelfTester {
   getIsEnabledInBackendTestResult(wasExecuted: TestResult): TestResult {
     let statusCode: StatusCode = StatusCodes.TestDidNotRun;
     let isEnabled: boolean | undefined = undefined;
-    let statusMessage: StatusMessage = undefined;
     let statusMessageKey: StatusMessageKeyTypes;
     if (wasExecuted.statusCode === StatusCodes.Success) {
       isEnabled = window.sovApplication?.instances?.some(
@@ -643,13 +629,11 @@ export default class SelfTester {
         statusCode = StatusCodes.Success;
       } else {
         statusCode = StatusCodes.Error;
-        statusMessage = `<h3 class='sovendus-overlay-error'>${errorsMessages.sovendusBannerDisabled.errorText}</h3>`;
         statusMessageKey = StatusMessageKeyTypes.sovendusBannerDisabled;
       }
     }
     return new TestResult({
       elementValue: isEnabled,
-      statusMessage,
       statusMessageKey,
       statusCode,
     });
@@ -659,17 +643,14 @@ export default class SelfTester {
     const elementValue: boolean = Boolean(
       window.sovIframes?.[0]?.iframeContainerId
     );
-    let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Success;
     let statusMessageKey: StatusMessageKeyTypes;
     if ((elementValue && sovIFramesAmount.elementValue) || 0 > 0) {
       statusCode = StatusCodes.Error;
-      statusMessage = `<h3 class='sovendus-overlay-error'>${errorsMessages.noiframeContainerId.errorText}</h3>`;
       statusMessageKey = StatusMessageKeyTypes.noiframeContainerId;
     }
     return new TestResult({
       elementValue,
-      statusMessage,
       statusMessageKey,
       statusCode,
     });
@@ -679,31 +660,33 @@ export default class SelfTester {
     sovDivIdInIframes: TestResult,
     iframeContainerId: TestResult
   ): TestResult {
-    let statusMessage: StatusMessage = undefined;
-    let statusCode: StatusCode = StatusCodes.Success;
-    let sovendusDivFound: boolean = false;
-    let statusMessageKey: StatusMessageKeyTypes;
     if (sovDivIdInIframes.elementValue) {
-      sovendusDivFound =
-        sovDivIdInIframes &&
+      const sovendusDivFound: boolean =
+        sovDivIdInIframes.statusCode === StatusCodes.Success &&
         Boolean(
           typeof iframeContainerId.elementValue === "string" &&
             document.getElementById(iframeContainerId.elementValue)
         );
-      if (!sovendusDivFound) {
-        statusMessage = `<li><h3 class="sovendus-overlay-error">${errorsMessages.containerDivNotFoundOnDOM.errorText.replace(
-          "${elementValue}",
-          String(iframeContainerId.elementValue) || ""
-        )}</h2></li>`;
-        statusMessageKey = StatusMessageKeyTypes.containerDivNotFoundOnDOM;
+      if (sovendusDivFound) {
+        return new TestResult({
+          elementValue: sovendusDivFound,
+          statusMessageKey: undefined,
+          statusCode: StatusCodes.Success,
+        });
+      } else {
+        return new TestResult({
+          elementValue: iframeContainerId.elementValue,
+          statusMessageKey: StatusMessageKeyTypes.containerDivNotFoundOnDOM,
+          statusCode: StatusCodes.Error,
+        });
       }
+    } else {
+      return new TestResult({
+        elementValue: undefined,
+        statusMessageKey: undefined,
+        statusCode: StatusCodes.TestDidNotRun,
+      });
     }
-    return new TestResult({
-      elementValue: sovendusDivFound,
-      statusMessage,
-      statusMessageKey,
-      statusCode,
-    });
   }
 
   getMultipleSovIFramesDetectedTestResult(
@@ -713,7 +696,6 @@ export default class SelfTester {
       Number(sovIframesAmount.elementValue) > 1;
     return new TestResult({
       elementValue: multipleSovIframesDetected,
-      statusMessage: undefined,
       statusMessageKey: undefined,
       statusCode: multipleSovIframesDetected
         ? StatusCodes.Error
@@ -725,7 +707,6 @@ export default class SelfTester {
     const sovIframesAmount = window.sovIframes?.length;
     return new TestResult({
       elementValue: sovIframesAmount,
-      statusMessage: undefined,
       statusMessageKey: undefined,
       statusCode:
         sovIframesAmount === 1 ? StatusCodes.Success : StatusCodes.Error,
@@ -737,7 +718,7 @@ export default class SelfTester {
     sovIframesAmount: TestResult
   ): TestResult {
     let multipleIframesAreSame = true;
-    if (multipleSovIframesDetected.elementValue) {
+    if (multipleSovIframesDetected.statusCode === StatusCodes.Error) {
       let prevSovIframe: SovIframes | undefined = undefined;
       multipleIframesAreSame = Boolean(
         window.sovIframes?.every((sovIframe) => {
@@ -749,7 +730,6 @@ export default class SelfTester {
               sovIframe.trafficMediumNumber ===
                 prevSovIframe.trafficMediumNumber &&
               sovIframe.sessionId === prevSovIframe.sessionId &&
-              sovIframe.timestamp === prevSovIframe.timestamp &&
               sovIframe.orderId === prevSovIframe.orderId &&
               sovIframe.orderValue === prevSovIframe.orderValue &&
               sovIframe.orderCurrency === prevSovIframe.orderCurrency &&
@@ -760,67 +740,44 @@ export default class SelfTester {
           return isTheSame;
         })
       );
-    }
 
-    const statusMessage = multipleSovIframesDetected.elementValue
-      ? "<li><h3 class='sovendus-overlay-error'>" +
-        (multipleIframesAreSame
-          ? errorsMessages.multipleSovIframesDetectedAndAreSame.errorText.replace(
-              "${elementValue}",
-              String(sovIframesAmount.elementValue)
-            )
-          : errorsMessages.multipleSovIframesDetected.errorText.replace(
-              "${elementValue}",
-              String(sovIframesAmount.elementValue)
-            )) +
-        "</h3></li>"
-      : "";
-
-    const statusMessageKey: StatusMessageKeyTypes =
-      multipleSovIframesDetected.elementValue
-        ? multipleIframesAreSame
+      return new TestResult({
+        elementValue: sovIframesAmount.elementValue,
+        statusMessageKey: multipleIframesAreSame
           ? StatusMessageKeyTypes.multipleSovIframesDetectedAndAreSame
-          : StatusMessageKeyTypes.multipleSovIframesDetected
-        : undefined;
-
-    return new TestResult({
-      elementValue: multipleIframesAreSame,
-      statusMessage,
-      statusMessageKey,
-      statusCode:
-        multipleSovIframesDetected.elementValue && multipleIframesAreSame
-          ? StatusCodes.Error
-          : StatusCodes.Success,
-    });
+          : StatusMessageKeyTypes.multipleSovIframesDetected,
+        statusCode:
+          multipleSovIframesDetected.elementValue && multipleIframesAreSame
+            ? StatusCodes.Error
+            : StatusCodes.Success,
+      });
+    } else {
+      return new TestResult({
+        elementValue: undefined,
+        statusCode: StatusCodes.TestDidNotRun,
+        statusMessageKey: undefined,
+      });
+    }
   }
   getOrderCurrencyTestResult(): TestResult {
-    const missingCurrencyError = errorsMessages.currencyNotValid.infoText;
     const valueTestResult: TestResult = this.validValueTestResult(
       window.sovIframes?.[0]?.orderCurrency,
-      StatusMessageKeyTypes.currencyNotValid,
+      StatusMessageKeyTypes.currencyMissing,
       StatusMessageKeyTypes.currencySuccess
     );
     if (valueTestResult.statusCode === StatusCodes.Success) {
       const isValidCurrency = validCurrencies.includes(
         String(valueTestResult.elementValue)
       );
-      let statusMessage: StatusMessage =
-        String(valueTestResult.elementValue) +
-        this.getInfoMarkWithLabel(errorsMessages.currencySuccess.infoText);
-      let statusMessageKey: StatusMessageKeyTypes = StatusMessageKeyTypes.currencySuccess;
+      let statusMessageKey: StatusMessageKeyTypes =
+        StatusMessageKeyTypes.currencySuccess;
       let statusCode: StatusCode = StatusCodes.Success;
       if (!isValidCurrency) {
-        statusMessage = `<span class='sovendus-overlay-error' >${
-          valueTestResult.elementValue
-        } ISN'T A VALID CURRENCY${this.getInfoMarkWithLabel(
-          missingCurrencyError
-        )}</span>`;
         statusMessageKey = StatusMessageKeyTypes.currencyNotValid;
         statusCode = StatusCodes.Error;
       }
       return new TestResult({
         elementValue: valueTestResult.elementValue,
-        statusMessage,
         statusMessageKey,
         statusCode,
       });
@@ -867,82 +824,54 @@ export default class SelfTester {
   ): TestResult {
     let elementValue: ElementValue = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
-    let statusMessage: StatusMessage = undefined;
     let statusMessageKey: StatusMessageKeyTypes;
     if (value && value !== "undefined") {
       statusCode = StatusCodes.Success;
       elementValue = decodeURIComponent(decodeURI(String(value)));
-      statusMessage =
-        String(elementValue) +
-        (successMessageKey
-          ? this.getInfoMarkWithLabel(
-              errorsMessages[String(successMessageKey)].infoText
-            )
-          : this.getCheckMarkWithLabel());
       statusMessageKey = successMessageKey;
     } else {
-      statusMessage = this.getDataIsMissingWarning(
-        errorsMessages[String(missingErrorMessageKey)].infoText
-      );
       statusMessageKey = missingErrorMessageKey;
     }
     return new TestResult({
       elementValue,
-      statusMessage,
       statusMessageKey,
       statusCode,
     });
   }
 
   validNumberTestResult(value: ElementValue): TestResult {
-    const missingNumberError = errorsMessages.orderValueMissing.infoText;
     const decodedValue: TestResult = this.validValueTestResult(
       value,
       StatusMessageKeyTypes.orderValueMissing,
       StatusMessageKeyTypes.orderValueSuccess
     );
-    let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
     let statusMessageKey: StatusMessageKeyTypes;
     if (decodedValue.statusCode === StatusCodes.Success) {
       if (isNaN(Number(decodedValue.elementValue))) {
-        statusMessage = `<span class='sovendus-overlay-error' >${
-          decodedValue.elementValue
-        } IS NOT A NUMBER${this.getInfoMarkWithLabel(
-          missingNumberError
-        )}</span>`;
         statusMessageKey = StatusMessageKeyTypes.orderValueWrongFormat;
         statusCode = StatusCodes.Error;
       } else {
         statusCode = StatusCodes.Success;
-        statusMessage =
-          String(decodedValue.elementValue) +
-          this.getInfoMarkWithLabel(errorsMessages.orderValueSuccess.infoText);
         statusMessageKey = StatusMessageKeyTypes.orderValueSuccess;
       }
     } else {
-      statusMessage = this.getDataIsMissingWarning(
-        errorsMessages.orderValueWrongFormat.infoText
-      );
       statusMessageKey = StatusMessageKeyTypes.orderValueWrongFormat;
       statusCode = StatusCodes.Error;
     }
     return new TestResult({
       elementValue: decodedValue.elementValue,
-      statusMessage,
       statusMessageKey,
       statusCode,
     });
   }
 
   validUnixTimeTestResult(value: ElementValue): TestResult {
-    const missingUnixTimeError = errorsMessages.notAUnixTimestamp.infoText;
     const decodedValue: TestResult = this.validValueTestResult(
       value,
-      StatusMessageKeyTypes.notAUnixTimestamp,
+      StatusMessageKeyTypes.unixTimestampMissing,
       undefined
     );
-    let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
     let isUnixTime = false;
     let statusMessageKey: StatusMessageKeyTypes;
@@ -953,69 +882,19 @@ export default class SelfTester {
         [13, 10].includes(truncatedTime.toString().length);
       if (isUnixTime) {
         statusCode = StatusCodes.Success;
-        statusMessage =
-          String(decodedValue.elementValue) + this.getCheckMarkWithLabel();
       } else {
-        statusMessage = `<span class='sovendus-overlay-error' >${errorsMessages.notAUnixTimestamp.errorText.replace(
-          "${elementValue}",
-          String(decodedValue.elementValue)
-        )}${this.getInfoMarkWithLabel(missingUnixTimeError)}</span>`;
         statusMessageKey = StatusMessageKeyTypes.notAUnixTimestamp;
         statusCode = StatusCodes.Error;
       }
     } else {
-      statusMessage = this.getDataIsMissingWarning(
-        errorsMessages.notValidUnixTimestamp.errorText
-      );
-      statusMessageKey = StatusMessageKeyTypes.notValidUnixTimestamp;
+      statusMessageKey = StatusMessageKeyTypes.unixTimestampMissing;
       statusCode = StatusCodes.Error;
     }
     return new TestResult({
       elementValue: decodedValue.elementValue,
-      statusMessage,
       statusMessageKey,
       statusCode,
     });
-  }
-
-  getCheckMarkWithLabel(): string {
-    return `
-      <span style="position:relative">
-        <img style="height:18px;width:auto;margin-bottom: -4px" class="sovendus-check-mark"
-         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAS5AAAEuQER4c0nAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAcZJREFUWIXtlT1Lw1AUht+bFOql+A8qCO4Blzalgwo6pLX+AWdxaC1UcHBzlULVdHDzF+jg1+RgoEJSSpfugiJdO2mr9OM6WEqa5japjRmk73jP4T4P54RcYJZZfEqsEKOyKmdxBMF8LvoBV1Ql2BSalwCyYRpeqEfrd9DAfBFQVCXYQOMKQLJ/tGyWID7DzbkoN8o7fyYQK8RoT+xdg2CD0/IodISkwClODw/0bsbAS1SkW/q+3vJ8AgM4sD4GntDS2jsAeCowKdxTgd/ARwTix/H5Nm2fM5EdVtKVNw/hWifYSVZ3q01rYfARSnkp1KbtWwKyLXSFknwiL3oEL1GRpuzgQH8CUl4KzQXn7gnIiqn2Srpk1cgZL1PCR8Y+JNC/5AFA3FpkYM9MZGt263Az9tZXa7N2UPvgwQFA0HP6J4CqrR3Ikt06XMCfqEhTTvAfBgAwkGgxegogy+kbrMMlXBk39lEBlxIAEgDOvIIPC/Ql5KKsMrAMp78DIMCpudq5NcNvAQEz9owsAJXTz4O73rk19n9C53VY4RON3VnAvcRU8PECzhJTw50F+BKewN0JjEp4Bp8sDCSiRjJSXgr5C57lv+cbJ0juWerPx1oAAAAASUVORK5CYII=" />
-      </span>
-    `;
-  }
-
-  getInfoMarkWithLabel(labelText: string, isWarning: boolean = true): string {
-    const infoIcon = isWarning
-      ? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAOVJREFUWEftl10OhDAIhNtz7vn2nG58cFMrMMPYpGr01QKfw0+xlslPnRy/3BNg+ZbFUq5+8h9EK+AF9VLIwkCAbOAeCIGEAGeDbzARhAug5jlrZwJknfSyZ+xpAEvGNhB6v0JaZw4AFj3j3AvQ++t9QQCvgFTQFABqIZSCrTYiFXYKILnaYht1VgLIVPkKPVyB6QBMbtl0SSl4LgAqGDRy2ZnRnpMHEQuL2hUCeCOWAWCm5fUuI+vLmMUiarvI/poLidfn6j+EtJKNgkA3KtyKVRAU+F8XiqzZyyiKQSuggDI2L8APUoSuITyX8cMAAAAASUVORK5CYII="
-      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAONJREFUWEftl9sOhDAIROX/P7obHzS1C8wwNqm70VcLHIdL0bbFjy2Ov/0mQGutecqZWfmDaIMoaJRCFgYCVAOPQAgkBbgb/IDJIEIANc9VOxeg6mSUvWJPA3gy9oHQ+x3SO/MF4NEzzqMAo7/RFwSICkgFLQGgFkIpOGojU+GiAJKrL7ZZZyWASpXv0NMVWA7A5JZNl5SC/wVABYNGLjsz+nPyIGJhUbtCgGjEMgDMtHzeZeR9GbNYZG2X2T9zIYn6XP2HkFayWRDoRoVbsQqCAp91ochavYyyGLQCCihj8wJ8AKPZ6CHFW/ndAAAAAElFTkSuQmCC";
-    return `
-      <span style="position:relative">
-        <div style="display:none;
-          position: absolute;
-          right: -75px;
-          background: orange;
-          width: 250px;
-          padding: 12px;
-          color: #fff;
-          border-radius: 8px;
-          margin-top: 3px;
-          z-index: 99;  
-          bottom: 25px;
-          "
-          class="sovendus-info"
-        >
-        <img style="height:18px;width:auto"
-         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAONJREFUWEftl9sOhDAIROX/P7obHzS1C8wwNqm70VcLHIdL0bbFjy2Ov/0mQGutecqZWfmDaIMoaJRCFgYCVAOPQAgkBbgb/IDJIEIANc9VOxeg6mSUvWJPA3gy9oHQ+x3SO/MF4NEzzqMAo7/RFwSICkgFLQGgFkIpOGojU+GiAJKrL7ZZZyWASpXv0NMVWA7A5JZNl5SC/wVABYNGLjsz+nPyIGJhUbtCgGjEMgDMtHzeZeR9GbNYZG2X2T9zIYn6XP2HkFayWRDoRoVbsQqCAp91ochavYyyGLQCCihj8wJ8AKPZ6CHFW/ndAAAAAElFTkSuQmCC"
-         />
-          ${labelText}
-        </div>
-        <img style="height:20px;width:auto;margin-bottom: -4px;"
-         src=${infoIcon} />
-      </span>
-    `;
   }
 
   sovIframesOrConsumerExists() {
@@ -1085,13 +964,7 @@ export default class SelfTester {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log("Sovendus banner loaded");
   }
-  getDataIsMissingWarning(missingErrorMessage: string) {
-    return (
-      "<span class='sovendus-overlay-error' >DATA MISSING" +
-      this.getInfoMarkWithLabel(missingErrorMessage) +
-      "</span>"
-    );
-  }
+
   getBrowserName(): string {
     if (navigator.userAgent.indexOf("iPhone") != -1) {
       return "iPhone";
@@ -1112,7 +985,108 @@ export default class SelfTester {
   }
 
   getWebsiteURL(): string {
-    return window.location.host;
+    return window.location.href;
+  }
+}
+
+class TestResult {
+  elementValue: ElementValue;
+  statusMessageKey: StatusMessageKeyTypes;
+  statusCode: StatusCode;
+
+  constructor({
+    elementValue,
+    statusMessageKey,
+    statusCode,
+  }: {
+    elementValue: ElementValue;
+    statusMessageKey: StatusMessageKeyTypes;
+    statusCode: StatusCode;
+  }) {
+    this.elementValue = elementValue;
+    this.statusMessageKey = statusMessageKey;
+    this.statusCode = statusCode;
+  }
+
+  getFormattedStatusMessage(): string {
+    if (this.statusCode === StatusCodes.Success) {
+      return String(this.elementValue) + this.getCheckMarkWithLabel();
+    }
+    if (this.statusCode === StatusCodes.Warning) {
+      return `${String(this.elementValue)}${this.getInfoMarkWithLabel(
+        this.replaceElementValueInMessage(
+          statusMessages[this.statusMessageKey].infoText
+        )
+      )}`;
+    }
+    if (this.statusCode === StatusCodes.Error) {
+      return `${String(
+        this.elementValue
+      )}<span class='sovendus-overlay-error' >${
+        statusMessages[this.statusMessageKey].errorText
+      }</span>${this.getInfoMarkWithLabel(
+        this.replaceElementValueInMessage(
+          statusMessages[this.statusMessageKey].infoText
+        )
+      )}`;
+    }
+    return "";
+  }
+
+  getFormattedGeneralStatusMessage(): string {
+    if (this.statusCode === StatusCodes.Error) {
+      return `<li><h3 class='sovendus-overlay-error'>${this.replaceElementValueInMessage(
+        statusMessages[this.statusMessageKey].errorText
+      )}</h3></li>`;
+    }
+    return "";
+  }
+
+  private replaceElementValueInMessage(message: string) {
+    return message.replace(/{elementValue}/g, String(this.elementValue));
+  }
+
+  private getCheckMarkWithLabel(): string {
+    return `
+      <span style="position:relative">
+        <img style="height:18px;width:auto;margin-bottom: -4px" class="sovendus-check-mark"
+         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAS5AAAEuQER4c0nAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAcZJREFUWIXtlT1Lw1AUht+bFOql+A8qCO4Blzalgwo6pLX+AWdxaC1UcHBzlULVdHDzF+jg1+RgoEJSSpfugiJdO2mr9OM6WEqa5japjRmk73jP4T4P54RcYJZZfEqsEKOyKmdxBMF8LvoBV1Ql2BSalwCyYRpeqEfrd9DAfBFQVCXYQOMKQLJ/tGyWID7DzbkoN8o7fyYQK8RoT+xdg2CD0/IodISkwClODw/0bsbAS1SkW/q+3vJ8AgM4sD4GntDS2jsAeCowKdxTgd/ARwTix/H5Nm2fM5EdVtKVNw/hWifYSVZ3q01rYfARSnkp1KbtWwKyLXSFknwiL3oEL1GRpuzgQH8CUl4KzQXn7gnIiqn2Srpk1cgZL1PCR8Y+JNC/5AFA3FpkYM9MZGt263Az9tZXa7N2UPvgwQFA0HP6J4CqrR3Ikt06XMCfqEhTTvAfBgAwkGgxegogy+kbrMMlXBk39lEBlxIAEgDOvIIPC/Ql5KKsMrAMp78DIMCpudq5NcNvAQEz9owsAJXTz4O73rk19n9C53VY4RON3VnAvcRU8PECzhJTw50F+BKewN0JjEp4Bp8sDCSiRjJSXgr5C57lv+cbJ0juWerPx1oAAAAASUVORK5CYII=" />
+      </span>
+    `;
+  }
+
+  private getInfoMarkWithLabel(
+    labelText: string,
+    isWarning: boolean = true
+  ): string {
+    const infoIcon = isWarning
+      ? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAOVJREFUWEftl10OhDAIhNtz7vn2nG58cFMrMMPYpGr01QKfw0+xlslPnRy/3BNg+ZbFUq5+8h9EK+AF9VLIwkCAbOAeCIGEAGeDbzARhAug5jlrZwJknfSyZ+xpAEvGNhB6v0JaZw4AFj3j3AvQ++t9QQCvgFTQFABqIZSCrTYiFXYKILnaYht1VgLIVPkKPVyB6QBMbtl0SSl4LgAqGDRy2ZnRnpMHEQuL2hUCeCOWAWCm5fUuI+vLmMUiarvI/poLidfn6j+EtJKNgkA3KtyKVRAU+F8XiqzZyyiKQSuggDI2L8APUoSuITyX8cMAAAAASUVORK5CYII="
+      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAONJREFUWEftl9sOhDAIROX/P7obHzS1C8wwNqm70VcLHIdL0bbFjy2Ov/0mQGutecqZWfmDaIMoaJRCFgYCVAOPQAgkBbgb/IDJIEIANc9VOxeg6mSUvWJPA3gy9oHQ+x3SO/MF4NEzzqMAo7/RFwSICkgFLQGgFkIpOGojU+GiAJKrL7ZZZyWASpXv0NMVWA7A5JZNl5SC/wVABYNGLjsz+nPyIGJhUbtCgGjEMgDMtHzeZeR9GbNYZG2X2T9zIYn6XP2HkFayWRDoRoVbsQqCAp91ochavYyyGLQCCihj8wJ8AKPZ6CHFW/ndAAAAAElFTkSuQmCC";
+    return `
+      <span style="position:relative">
+        <div style="display:none;
+          position: absolute;
+          right: -75px;
+          background: orange;
+          width: 250px;
+          padding: 12px;
+          color: #fff;
+          border-radius: 8px;
+          margin-top: 3px;
+          z-index: 99;  
+          bottom: 25px;
+          "
+          class="sovendus-info"
+        >
+        <img style="height:18px;width:auto"
+         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAONJREFUWEftl9sOhDAIROX/P7obHzS1C8wwNqm70VcLHIdL0bbFjy2Ov/0mQGutecqZWfmDaIMoaJRCFgYCVAOPQAgkBbgb/IDJIEIANc9VOxeg6mSUvWJPA3gy9oHQ+x3SO/MF4NEzzqMAo7/RFwSICkgFLQGgFkIpOGojU+GiAJKrL7ZZZyWASpXv0NMVWA7A5JZNl5SC/wVABYNGLjsz+nPyIGJhUbtCgGjEMgDMtHzeZeR9GbNYZG2X2T9zIYn6XP2HkFayWRDoRoVbsQqCAp91ochavYyyGLQCCihj8wJ8AKPZ6CHFW/ndAAAAAElFTkSuQmCC"
+         />
+          ${labelText}
+        </div>
+        <img style="height:20px;width:auto;margin-bottom: -4px;"
+         src=${infoIcon} />
+      </span>
+    `;
   }
 }
 
@@ -1124,7 +1098,6 @@ export enum StatusCodes {
   TestDidNotRun,
 }
 type StatusCode = StatusCodes;
-type StatusMessage = string | undefined;
 
 interface SovConsumer {
   consumerSalutation?: "Mr." | "Mrs." | "";
@@ -1227,7 +1200,7 @@ interface SovWindow extends Window {
 
 declare let window: SovWindow;
 
-enum StatusMessageKeyTypes {
+export enum StatusMessageKeyTypes {
   awinNoSalesTracked = "awinNoSalesTracked",
   awinSaleTrackedAfterScript = "awinSaleTrackedAfterScript",
   consumerSalutationNotValid = "consumerSalutationNotValid",
@@ -1247,8 +1220,9 @@ enum StatusMessageKeyTypes {
   multipleSovIframesDetected = "multipleSovIframesDetected",
   multipleSovIframesDetectedAndAreSame = "multipleSovIframesDetectedAndAreSame",
   currencyNotValid = "currencyNotValid",
+  currencyMissing = "currencyMissing",
   currencySuccess = "currencySuccess",
-  notValidUnixTimestamp = "notValidUnixTimestamp",
+  unixTimestampMissing = "unixTimestampMissing",
   notAUnixTimestamp = "notAUnixTimestamp",
   orderValueMissing = "orderValueMissing",
   orderValueWrongFormat = "orderValueWrongFormat",
@@ -1285,12 +1259,14 @@ enum StatusMessageKeyTypes {
   missingConsumerSalutation = "missingConsumerSalutation",
   missingConsumerYearOfBirth = "missingConsumerYearOfBirth",
   missingConsumerEmail = "missingConsumerEmail",
-  init = "init",
+  iframeContainerIdSuccess = "iframeContainerIdSuccess",
+  noiframeContainerId = "noiframeContainerId",
+  empty = "empty",
 }
 
 const validCurrencies = ["EUR", "GBP", "CHF", "PLN", "SEK", "DKK", "NOK"];
 
-const errorsMessages: {
+export const statusMessages: {
   [errorKey in StatusMessageKeyTypes]: {
     errorText: string;
     infoText: string;
@@ -1435,20 +1411,26 @@ const errorsMessages: {
       "Make sure a valid order currency gets passed, valid currencies are: " +
       validCurrencies,
   },
+  currencyMissing: {
+    errorText: "DATA MISSING",
+    infoText:
+      "Make sure a valid order currency gets passed, valid currencies are: " +
+      validCurrencies,
+  },
 
   currencySuccess: {
     errorText: "",
     infoText:
-      "Make sure the value aligns with the actual currency of your order.",
+      "The currency is valid, but make sure the value aligns with the actual currency of your order.",
   },
 
-  notValidUnixTimestamp: {
-    errorText: "A unix timestamp in seconds should be provided",
+  unixTimestampMissing: {
+    errorText: "DATA IS MISSING",
     infoText: "Make sure to pass a unix timestamp in seconds.",
   },
 
   notAUnixTimestamp: {
-    errorText: "${elementValue} IS NOT A UNIX TIME",
+    errorText: "IS NOT A UNIX TIME",
     infoText: "Make sure to pass a unix timestamp in seconds.",
   },
 
@@ -1631,5 +1613,9 @@ const errorsMessages: {
     errorText: "DATA IS MISSING",
     infoText:
       "Make sure to pass the salutation of the customer, valid are Mrs. and Mr.",
+  },
+  empty: {
+    errorText: "",
+    infoText: "",
   },
 };

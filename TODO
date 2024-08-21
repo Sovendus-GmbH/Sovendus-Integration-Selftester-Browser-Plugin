@@ -1,0 +1,11 @@
+## Selftester Plugin
+
+- improve overlay style and fix style issues (style overrides from page css)
+- handle encoding in sovConsumer vs sovApplication.consumer
+- improve timestamp test - check if recent
+
+## Tests
+
+- add banner disabled tests
+- add awin tests
+- add spa tests
