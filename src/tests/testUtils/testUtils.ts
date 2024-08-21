@@ -240,7 +240,7 @@ async function prepareTestPageAndRetry(
               script.type = "text/javascript";
               script.async = true;
               script.src =
-                "https://api.sovendus.com/sovabo/common/js/flexibleIframe.js";
+                "https://testing4.sovendus.com/sovabo/common/js/flexibleIframe.js";
               document.body.appendChild(script);
             `
         }

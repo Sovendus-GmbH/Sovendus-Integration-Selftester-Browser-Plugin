@@ -25,9 +25,7 @@ export interface TestResultResponseDataType {
   iframeContainerId?: TestResultType<string | undefined>;
   isEnabledInBackend?: TestResultType<boolean | undefined>;
   wasExecuted?: TestResultType<boolean>;
-  // awinTest?: TestResultType;
   sovendusDivFound?: TestResultType<boolean | string | undefined>;
-  sovDivIdInIFrames?: TestResultType<boolean | undefined>;
   multipleSovIFramesDetected?: TestResultType<boolean | undefined>;
   sovIFramesAmount?: TestResultType<number | undefined>;
   multipleIFramesAreSame?: TestResultType<number | undefined>;
@@ -124,7 +122,6 @@ export enum StatusMessageKeyTypes {
   missingTrafficMediumNumber = "missingTrafficMediumNumber",
   trafficMediumNumberMalformed = "trafficMediumNumberMalformed",
   trafficMediumNumberSuccess = "trafficMediumNumberSuccess",
-  missingIframeContainerId = "missingIframeContainerId",
   missingConsumerFirstName = "missingConsumerFirstName",
   consumerFirstNameSuccess = "consumerFirstNameSuccess",
   consumerFirstNameMalformed = "consumerFirstNameMalformed",
@@ -137,9 +134,9 @@ export enum StatusMessageKeyTypes {
   consumerYearOfBirthSuccess = "consumerYearOfBirthSuccess",
   consumerYearOfBirthNotValid = "consumerYearOfBirthNotValid",
   missingConsumerEmail = "missingConsumerEmail",
+  missingIframeContainerId = "missingIframeContainerId",
   iframeContainerIdMalformed = "iframeContainerIdMalformed",
   iframeContainerIdHasSpaces = "iframeContainerIdHasSpaces",
-  noIframeContainerId = "noIframeContainerId",
   empty = "empty",
 }
 
@@ -277,12 +274,6 @@ export const statusMessages: {
     infoText: "",
   },
 
-  noIframeContainerId: {
-    errorText:
-      "ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.",
-    infoText: "",
-  },
-
   unknownErrorIntegrationScriptFailed: {
     errorText:
       "Sovendus was detected and flexibleiframe.js was executed. For an unknown reason the integration script didn't run successfully tho.",
@@ -328,13 +319,13 @@ export const statusMessages: {
   currencyNotValid: {
     errorText: "NOT A VALID CURRENCY",
     infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
-      ", ",
+      ", "
     )}`,
   },
   currencyMissing: {
     errorText: "VALUE MISSING",
     infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
-      ", ",
+      ", "
     )}`,
   },
 
@@ -512,21 +503,21 @@ export const statusMessages: {
   missingConsumerCountry: {
     errorText: "VALUE MISSING",
     infoText: `Make sure to pass the country id of the delivery address. Valid are: ${validCountries.join(
-      ", ",
+      ", "
     )}`,
   },
 
   consumerCountrySuccess: {
     errorText: "",
     infoText: `Make sure this value aligns with the country of the delivery address. Valid are: ${validCountries.join(
-      ", ",
+      ", "
     )}`,
   },
 
   consumerCountryInvalid: {
     errorText: "INVALID COUNTRY",
     infoText: `Make sure this value aligns with the country of the delivery address. Valid are: ${validCountries.join(
-      ", ",
+      ", "
     )}`,
   },
 
@@ -569,7 +560,7 @@ export const statusMessages: {
   missingIframeContainerId: {
     errorText: "VALUE MISSING",
     infoText:
-      "Make sure to pass a iframe container id, this id corresponds to an empty div with this id on the DOM.",
+      "There was no iframeContainerId specified in sovIframes. Make sure to pass a iframe container id, this id corresponds to an empty div with this id on the DOM.",
   },
 
   iframeContainerIdMalformed: {

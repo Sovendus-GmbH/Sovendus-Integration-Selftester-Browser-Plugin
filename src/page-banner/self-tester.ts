@@ -39,7 +39,6 @@ export default class SelfTester {
   isEnabledInBackend: TestResultType<boolean | undefined>;
   wasExecuted: TestResultType<boolean>;
   sovendusDivFound: TestResultType<boolean | string | undefined>;
-  sovDivIdInIFrames: TestResultType<boolean | undefined>;
   multipleSovIFramesDetected: TestResultType<boolean | undefined>;
   sovIFramesAmount: TestResultType<number | undefined>;
   multipleIFramesAreSame: TestResultType<number | undefined>;
@@ -180,17 +179,13 @@ export default class SelfTester {
     trafficSourceNumber: TestResultType<string | undefined>,
     trafficMediumNumber: TestResultType<string | undefined>
   ) {
-    const iframeContainerId = (this.iframeContainerId =
-      this.getIframeContainerIdTestResult());
     this.isEnabledInBackend = this.getIsEnabledInBackendTestResult(wasExecuted);
     const sovIFramesAmount = (this.sovIFramesAmount =
       this.getSovIFramesAmountTestResult());
-    const sovDivIdInIFrames = (this.sovDivIdInIFrames =
-      this.getSovDivIdInIFramesTestResult(sovIFramesAmount, iframeContainerId));
-    this.sovendusDivFound = this.getSovendusDivFoundTestResult(
-      sovDivIdInIFrames,
-      iframeContainerId
-    );
+    const iframeContainerId = (this.iframeContainerId =
+      this.getIframeContainerIdTestResult(sovIFramesAmount));
+    this.sovendusDivFound =
+      this.getSovendusDivFoundTestResult(iframeContainerId);
     const multipleSovIFramesDetected = (this.multipleSovIFramesDetected =
       this.getMultipleSovIFramesDetectedTestResult(sovIFramesAmount));
     this.multipleIFramesAreSame = this.getMultipleIFramesAreSameTestResult(
@@ -603,7 +598,12 @@ export default class SelfTester {
     });
   }
 
-  getIframeContainerIdTestResult(): TestResultType<string | undefined> {
+  getIframeContainerIdTestResult(
+    sovIFramesAmount: TestResultType<number | undefined>
+  ): TestResultType<string | undefined> {
+    if (sovIFramesAmount.statusCode === StatusCodes.TestDidNotRun) {
+      return new DidNotRunTestResult<string | undefined>();
+    }
     const valueTestResult = this.validValueTestResult({
       value: window.sovIframes?.[0]?.iframeContainerId,
       missingErrorMessageKey: StatusMessageKeyTypes.missingIframeContainerId,
@@ -630,9 +630,13 @@ export default class SelfTester {
     trafficSourceNumber: TestResultType<string | undefined>,
     trafficMediumNumber: TestResultType<string | undefined>
   ) {
-    const flexibleIframeJs: HTMLScriptElement | null = document.querySelector(
-      '[src$="api.sovendus.com/sovabo/common/js/flexibleIframe.js"]'
-    );
+    const flexibleIframeJs: HTMLScriptElement | null =
+      document.querySelector(
+        '[src$="api.sovendus.com/sovabo/common/js/flexibleIframe.js"]'
+      ) ||
+      document.querySelector(
+        '[src$="testing4.sovendus.com/sovabo/common/js/flexibleIframe.js"]'
+      );
     const flexibleIFrameOnDOM = (this.flexibleIFrameOnDOM =
       this.getIsFlexibleIFrameOnDOM(
         wasExecuted,
@@ -811,42 +815,13 @@ export default class SelfTester {
     return new DidNotRunTestResult<boolean | undefined>();
   }
 
-  getSovDivIdInIFramesTestResult(
-    sovIFramesAmount: TestResultType<number | undefined>,
-    iframeContainerId: TestResultType<string | undefined>
-  ): TestResultType<boolean | undefined> {
-    if (
-      sovIFramesAmount.statusCode === StatusCodes.TestDidNotRun ||
-      iframeContainerId.statusCode !== StatusCodes.Success
-    ) {
-      return new DidNotRunTestResult<boolean | undefined>();
-    }
-    const elementValue: boolean = Boolean(
-      window.sovIframes?.[0]?.iframeContainerId
-    );
-    if (elementValue && sovIFramesAmount.elementValue) {
-      return new SuccessTestResult({
-        elementValue,
-      });
-    }
-    return new WarningOrFailTestResult({
-      elementValue,
-      statusMessageKey: StatusMessageKeyTypes.noIframeContainerId,
-      statusCode: StatusCodes.Error,
-    });
-  }
-
   getSovendusDivFoundTestResult(
-    sovDivIdInIFrames: TestResultType<boolean | undefined>,
     iframeContainerId: TestResultType<string | undefined>
   ): TestResultType<boolean | string | undefined> {
-    if (sovDivIdInIFrames.elementValue) {
-      const sovendusDivFound: boolean =
-        sovDivIdInIFrames.statusCode === StatusCodes.Success &&
-        Boolean(
-          typeof iframeContainerId.elementValue === "string" &&
-            document.getElementById(iframeContainerId.elementValue)
-        );
+    if (iframeContainerId.statusCode === StatusCodes.Success) {
+      const sovendusDivFound: boolean = Boolean(
+        document.getElementById(iframeContainerId.elementValue)
+      );
       if (sovendusDivFound) {
         return new SuccessTestResult({
           elementValue: sovendusDivFound,
@@ -1376,9 +1351,6 @@ export default class SelfTester {
       ...(this.sovendusDivFound.statusCode !== StatusCodes.TestDidNotRun
         ? { sovendusDivFound: this.sovendusDivFound }
         : {}),
-      ...(this.sovDivIdInIFrames.statusCode !== StatusCodes.TestDidNotRun
-        ? { sovDivIdInIFrames: this.sovDivIdInIFrames }
-        : {}),
       ...(this.multipleSovIFramesDetected.statusCode !==
       StatusCodes.TestDidNotRun
         ? { multipleSovIFramesDetected: this.multipleSovIFramesDetected }
@@ -1445,7 +1417,6 @@ export default class SelfTester {
     this.isEnabledInBackend = emptyBooleanUndefinedTestResult;
     this.wasExecuted = emptyBooleanTestResult;
     this.sovendusDivFound = emptyBooleanStringUndefinedTestResult;
-    this.sovDivIdInIFrames = emptyBooleanUndefinedTestResult;
     this.multipleSovIFramesDetected = emptyBooleanUndefinedTestResult;
     this.sovIFramesAmount = emptyNumberTestResult;
     this.multipleIFramesAreSame = emptyNumberTestResult;
