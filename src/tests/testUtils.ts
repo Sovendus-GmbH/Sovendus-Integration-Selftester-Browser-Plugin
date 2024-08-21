@@ -7,9 +7,11 @@ import SelfTester from "@src/page-banner/self-tester";
 export async function executeOverlayTests(
   testName: string,
   testHtmlFileName: string,
-  testFunction: (driver: WebDriver, sovSelfTester: SelfTester) => Promise<void>
+  testFunction: (driver: WebDriver, sovSelfTester: SelfTester) => Promise<void>,
+  testOnly?: boolean
 ) {
-  test(
+  const jestFunction = testOnly ? test.only : test;
+  jestFunction(
     testName,
     async () => {
       const extensionPath = path.resolve(

@@ -2,7 +2,7 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester";
-import { executeOverlayTests } from "../../../testUtils";
+import { executeOverlayTests } from "../../testUtils";
 
 executeOverlayTests(
   "salutationSuccessMr",
