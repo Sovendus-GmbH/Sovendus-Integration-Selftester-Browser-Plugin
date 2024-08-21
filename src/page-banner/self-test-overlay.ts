@@ -239,17 +239,9 @@ class SelfTesterOverlay {
             border-radius: 8px !important;    
             line-height: normal !important;        
           }
-          @media only screen and (max-width: 700px) {
-            #sovendusOverlay {
-              left: 0 !important;
-              right: 0 !important;
-              top: 50px !important;
-              padding: 22px !important;
-            }
-          }
           #sovendusOverlay.fullscreen {
-            width: calc(100vw) !important;
-            max-width: calc(100vw) !important;
+            width: calc(100vw - 44px) !important;
+            max-width: calc(100vw - 44px) !important;
             height: 100vh !important;
             top: 0 !important;
             left: 0 !important;
@@ -318,12 +310,42 @@ class SelfTesterOverlay {
           #toggleSovendusOverlay {
             width: 62px !important;
             position: fixed !important;
-            left: calc(50% - 10px) !important;
-            right: calc(50% - 10px) !important;
+            left: calc(50% - 31px) !important;
+            right: calc(50% - 31px) !important;
             top: 20px !important;
             z-index: 2147483647 !important;
             border: unset !important;
             line-height: normal !important;
+          }
+          @media only screen and (max-width: 700px) {
+            #sovendusOverlay {
+              left: 0 !important;
+              right: 0 !important;
+              top: 50px !important;
+              padding: 15px 0 15px 5px !important;
+              width: calc(100vw - 5px) !important;
+            }
+            #sovendusOverlay.fullscreen {
+              width: calc(100vw - 5px) !important;
+              max-width: calc(100vw - 5px) !important;
+            }
+            #sovendusOverlay li {
+              font-size: 15px !important;
+              margin-left: 25px !important;
+            }
+            #sovendusOverlay .sovendus-overlay-error {
+              font-size: 15px !important;
+            }
+            #sovendusOverlay .sovendus-overlay-h1 {
+              font-size: 22px !important;
+              margin-bottom: 3px !important;
+            }
+            #sovendusOverlay .sovendus-overlay-h2 {
+              font-size: 18px !important;
+            }
+            #sovendusOverlay .sovendus-overlay-text {
+              font-size: 14px !important;
+            }
           }
         </style>
         `;
