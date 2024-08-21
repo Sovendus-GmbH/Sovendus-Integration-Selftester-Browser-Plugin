@@ -12,6 +12,7 @@ import {
   sovendusOverlayH3Class,
   sovendusOverlayRepeatTestsId,
   sovendusOverlayTextClass,
+  testLoadedIFrameId,
   toggleSovendusOverlayId,
 } from "./self-test-overlay-css-vars.js";
 import SelfTester from "./self-tester.js";
@@ -81,7 +82,6 @@ class SelfTesterOverlay {
       .getElementById(toggleSovendusOverlayId)
       ?.addEventListener("click", toggleOverlay);
 
-    // TODO Soll im IFrame passieren (versuchen):
     this.addButtonAndInfoEventListener();
 
     // this.moveOverlayAboveAll();
@@ -110,7 +110,7 @@ class SelfTesterOverlay {
   }
 
   createOuterOverlay(): string {
-    // TODO OuterOverlayStyle entfernen
+    // TODO OuterOverlayStyle bearbeiten damit er im innerOverlay funktioniert
     return `
       ${this.getOuterOverlayStyle()}
       <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${toggleSovendusOverlayId}">
@@ -129,9 +129,8 @@ class SelfTesterOverlay {
     children: string;
   }): void {
     const iframe = document.createElement("iframe");
+    iframe.id = testLoadedIFrameId;
     iframe.style.border = "none";
-    iframe.style.width = "100%";
-    iframe.style.height = "850px"; // TODO Mit JS berechnen
     const overlay = document.getElementById(overlayId) as HTMLElement;
     overlay.replaceChildren(iframe);
     if (iframe.contentDocument) {
@@ -148,6 +147,8 @@ class SelfTesterOverlay {
       </div>
     `;
     }
+    iframe.style.height = `${iframe.contentDocument?.body.scrollHeight}px`;
+    iframe.style.width = "100%";
   }
 
   createInnerInnerOverlay(selfTester: SelfTester): string {
@@ -434,14 +435,14 @@ class SelfTesterOverlay {
             line-height: normal !important;
           }
           @media only screen and (max-width: 700px) {
-            #${overlayId} {
+            #${innerOverlayId} {
               left: 0 !important;
               right: 0 !important;
               top: 50px !important;
               padding: 15px 0 15px 5px !important;
               width: calc(100vw - 5px) !important;
             }
-            #${overlayId}.${fullscreenClass} {
+            #${innerOverlayId}.${fullscreenClass} {
               width: calc(100vw - 5px) !important;
               max-width: calc(100vw - 5px) !important;
             }
@@ -451,11 +452,16 @@ class SelfTesterOverlay {
   }
 
   addButtonAndInfoEventListener(): void {
-    document
+    const iframe: HTMLIFrameElement = document.getElementById(
+      testLoadedIFrameId,
+    ) as HTMLIFrameElement;
+
+    iframe.contentWindow?.document
       .getElementById(sovendusOverlayRepeatTestsId)
       ?.addEventListener("click", () => {
         void executeTests();
       });
+
     const checkMarks: HTMLCollectionOf<Element> =
       document.getElementsByClassName(sovendusInfoClass);
     for (const element of checkMarks) {
