@@ -14,7 +14,7 @@ executeOverlayTests({
       sovAppData: sovAppDataNoParameterButIsOkay,
       testFunction: async ({ sovSelfTester }) => {
         expect(sovSelfTester.browserName.elementValue).toBe(
-          BrowserTypes.Firefox,
+          BrowserTypes.Firefox
         );
       },
     },
@@ -44,7 +44,7 @@ executeOverlayTests({
       sovAppData: sovAppDataEverythingIsOkay,
       testFunction: async ({ sovSelfTester }) => {
         expect(sovSelfTester.browserName.elementValue).toBe(
-          BrowserTypes.Chrome,
+          BrowserTypes.Chrome
         );
       },
     },
@@ -60,7 +60,7 @@ executeOverlayTests({
       sovAppData: sovAppDataEverythingIsOkay,
       testFunction: async ({ sovSelfTester }) => {
         expect(sovSelfTester.browserName.elementValue).toBe(
-          BrowserTypes.iPhone,
+          BrowserTypes.iPhone
         );
       },
     },
@@ -76,7 +76,7 @@ executeOverlayTests({
       sovAppData: sovAppDataEverythingIsOkay,
       testFunction: async ({ sovSelfTester }) => {
         expect(sovSelfTester.browserName.elementValue).toBe(
-          BrowserTypes.Android,
+          BrowserTypes.Android
         );
       },
     },
