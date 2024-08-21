@@ -20,6 +20,7 @@ export async function executeOverlayTests(
       );
 
       const options = new Options();
+      options.addArguments("--disable-search-engine-choice-screen");
       options.addExtensions(extensionPath);
       const driver = new Builder()
         .forBrowser(Browser.CHROME)
@@ -33,6 +34,7 @@ export async function executeOverlayTests(
 
       try {
         await driver.get(fileUrl);
+        await driver.navigate().refresh();
         await waitForTestOverlay(driver);
         const sovSelfTester = await getIntegrationTesterData(driver);
         await testFunction(driver, sovSelfTester);

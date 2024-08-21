@@ -242,10 +242,10 @@ export default class SelfTester {
       StatusMessageKeyTypes.missingConsumerSalutation,
       StatusMessageKeyTypes.consumerSalutationSuccess
     );
-    if (valueTestResult.statusCode === StatusCodes.Success) {
+    if (valueTestResult.statusCode === StatusCodes.Warning) {
       const validSalutations = ["Mr.", "Mrs."];
-      let statusCode: StatusCode = StatusCodes.Success;
-      let statusMessageKey: StatusMessageKeyTypes;
+      let statusCode: StatusCode = StatusCodes.Warning;
+      let statusMessageKey: StatusMessageKeyTypes = StatusMessageKeyTypes.consumerSalutationSuccess;
       if (!validSalutations.includes(String(valueTestResult.elementValue))) {
         statusCode = StatusCodes.Error;
         statusMessageKey = StatusMessageKeyTypes.consumerSalutationNotValid;
@@ -610,7 +610,7 @@ export default class SelfTester {
     return new TestResult({
       elementValue: wasExecuted,
       statusMessageKey: undefined,
-      statusCode: wasExecuted ? StatusCodes.Success : StatusCodes.Error,
+      statusCode: wasExecuted ? StatusCodes.Warning : StatusCodes.Error,
     });
   }
 
@@ -826,7 +826,7 @@ export default class SelfTester {
     let statusCode: StatusCode = StatusCodes.Error;
     let statusMessageKey: StatusMessageKeyTypes;
     if (value && value !== "undefined") {
-      statusCode = StatusCodes.Success;
+      statusCode = StatusCodes.Warning;
       elementValue = decodeURIComponent(decodeURI(String(value)));
       statusMessageKey = successMessageKey;
     } else {
