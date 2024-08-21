@@ -1010,10 +1010,10 @@ class TestResult {
 
   getFormattedStatusMessage(): string {
     if (this.statusCode === StatusCodes.Success) {
-      return String(this.elementValue) + this.getCheckMarkWithLabel();
+      return String(this.elementValue ? this.elementValue : "") + this.getCheckMarkWithLabel();
     }
     if (this.statusCode === StatusCodes.Warning) {
-      return `${String(this.elementValue)}${this.getInfoMarkWithLabel(
+      return `${String(this.elementValue ? this.elementValue : "")}${this.getInfoMarkWithLabel(
         this.replaceElementValueInMessage(
           statusMessages[this.statusMessageKey].infoText
         )
@@ -1021,7 +1021,7 @@ class TestResult {
     }
     if (this.statusCode === StatusCodes.Error) {
       return `${String(
-        this.elementValue
+        this.elementValue ? this.elementValue : ""
       )}<span class='sovendus-overlay-error' >${
         statusMessages[this.statusMessageKey].errorText
       }</span>${this.getInfoMarkWithLabel(
@@ -1452,7 +1452,7 @@ export const statusMessages: {
   },
 
   orderValueWrongFormat: {
-    errorText: "VALUE IS NOT A NUMBER",
+    errorText: "IS NOT A NUMBER",
     infoText:
       "Make sure to pass the order value, it needs to be a number e.g. 20.5 and NOT 20,5",
   },
