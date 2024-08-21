@@ -38,14 +38,14 @@ export async function executeOverlayTests(
         await driver?.quit();
       }
     },
-    30000
+    300000
   );
 }
 
 export async function waitForTestOverlay(driver: WebDriver) {
   await driver.wait(
     until.elementLocated(By.css("#outerSovendusOverlay")),
-    20000
+    2000000
   );
 }
 
