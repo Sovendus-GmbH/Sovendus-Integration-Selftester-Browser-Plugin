@@ -18,3 +18,4 @@
 - add spa tests
 - dont spam dev hub api on tests
 - get a AWIN ID for Tests
+- consider adding more awin not executed tests
