@@ -2,16 +2,7 @@
 
 ## Selftester Plugin
 
-### Todo before release
-
 - handle overlay scrollable screenshot - add tests to check if overlay detection works
-- disable transmit result
-- add tests for usedCouponCode and orderId numbers in strings 
-- rewrite awin flexibleiframe js to testing4
-- use different resize observer - causes recursion errors on ici
-
-### Todo later
-
 - improve overlay loading speed
 - add error when invalid email hash is used - banner will not load
 - handle if a test fails - still continue and show error in overlay - also use new status code testFailed
@@ -22,11 +13,6 @@
 
 ## Tests
 
-### Todo before release
-
 - get a AWIN ID for Tests
-
-### Todo later
-
 - add spa tests
 - consider adding more awin not executed tests

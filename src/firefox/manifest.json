@@ -1,6 +1,6 @@
 {
-  "name": "Sovendus Integration Tester Beta",
-  "version": "1.6.0",
+  "name": "Sovendus Integration Tester",
+  "version": "1.6.1",
   "manifest_version": 2,
   "description": "Use this extension to verify if your Sovendus integration is setup properly",
   "background": {
@@ -24,7 +24,7 @@
   },
   "applications": {
     "gecko": {
-      "id": "SovendusIntegrationTester@sovendus.com"
+      "id": "{9ea53b13-faa1-4963-bb55-481b5adda7b6}"
     }
   }
 }

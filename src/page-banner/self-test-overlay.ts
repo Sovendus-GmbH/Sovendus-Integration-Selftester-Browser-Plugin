@@ -63,6 +63,7 @@ function removeOverlay(): void {
   document.getElementById(outerOverlayId)?.remove();
 }
 class SelfTesterOverlay {
+  resizeEvent: (() => void) | undefined = undefined;
   createOverlay(selfTester: SelfTester): void {
     this.createOuterOverlay();
     this.createInnerOverlay({
@@ -159,13 +160,12 @@ class SelfTesterOverlay {
       const iFrameStyle = document.createElement("style");
       overlay.insertAdjacentElement("afterbegin", iFrameStyle);
 
-      if (!loadingDone) {
-        window.originalOnresize = window.onresize;
-      }
-      window.onresize = (ev: UIEvent): void => {
-        window.originalOnresize?.(ev);
+      this.resizeEvent = (): void =>
         this.updateIFrameHeight(iframe, iFrameStyle);
-      };
+      if (!loadingDone) {
+        window.addEventListener("resize", this.resizeEvent);
+      }
+
       this.updateIFrameHeight(iframe, iFrameStyle);
       if (loadingDone) {
         this.addButtonAndInfoEventListener(iframe);
