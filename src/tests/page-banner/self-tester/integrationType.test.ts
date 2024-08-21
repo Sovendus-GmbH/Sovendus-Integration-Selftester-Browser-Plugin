@@ -7,7 +7,7 @@ import {
 executeOverlayTests({
   testName: "integrationTypeSet",
   sovAppData: sovAppDataEverythingIsOkay,
-  testFunction: async (driver, sovSelfTester) => {
+  testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.integrationType).toBe("test-1.0.0");
   },
 });
@@ -15,7 +15,7 @@ executeOverlayTests({
 executeOverlayTests({
   testName: "integrationTypeNotSet",
   sovAppData: sovAppDataNoParameterButIsOkay,
-  testFunction: async (driver, sovSelfTester) => {
+  testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.integrationType).toBe("unknown");
   },
 });
@@ -23,7 +23,7 @@ executeOverlayTests({
 // executeOverlayTests({
 //   testName: "integrationTypeMalformed",
 //   sovAppData: sovAppDataMalformedButIsOkay,
-//   testFunction: async (driver, sovSelfTester) => {
+//   testFunction: async ({sovSelfTester}) => {
 //     expect(sovSelfTester.integrationType).toBe("unknown");
 //   },
 // });

@@ -284,14 +284,15 @@ export default class SelfTester {
       StatusMessageKeyTypes.missingConsumerYearOfBirth,
       StatusMessageKeyTypes.consumerYearOfBirthSuccess
     );
-    if (yearOfBirthTestResult.statusCode === StatusCodes.Success) {
+    if (yearOfBirthTestResult.statusCode === StatusCodes.Warning) {
       const validFromYear: number = 1890;
       const validToYear: number = 2024;
-      let statusCode: StatusCode = StatusCodes.Success;
+      let statusCode: StatusCode = StatusCodes.Warning;
       const yearOfBirthNumber: number = Number(
         yearOfBirthTestResult.elementValue
       );
-      let statusMessageKey: StatusMessageKeyTypes;
+      let statusMessageKey: StatusMessageKeyTypes =
+        yearOfBirthTestResult.statusMessageKey;
       if (
         !(yearOfBirthNumber < validToYear && yearOfBirthNumber > validFromYear)
       ) {

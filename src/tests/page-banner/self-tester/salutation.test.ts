@@ -13,7 +13,7 @@ import {
 executeOverlayTests({
   testName: "salutationSuccessMr",
   sovAppData: sovAppDataEverythingIsOkay,
-  testFunction: async (driver, sovSelfTester) => {
+  testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerSalutation.elementValue).toBe("Mr.");
     expect(sovSelfTester.consumerSalutation.statusCode).toBe(
       StatusCodes.Warning
@@ -30,7 +30,7 @@ executeOverlayTests({
     ...sovAppDataEverythingIsOkay,
     sovConsumer: { ...sovAppConsumerAllValidData, consumerSalutation: "Mrs." },
   },
-  testFunction: async (driver, sovSelfTester) => {
+  testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerSalutation.elementValue).toBe("Mrs.");
     expect(sovSelfTester.consumerSalutation.statusCode).toBe(
       StatusCodes.Warning
@@ -44,7 +44,7 @@ executeOverlayTests({
 executeOverlayTests({
   testName: "salutationMalformed",
   sovAppData: sovAppDataMalformedButIsOkay,
-  testFunction: async (driver, sovSelfTester) => {
+  testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerSalutation.elementValue).toBe("Mensch.");
     expect(sovSelfTester.consumerSalutation.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerSalutation.statusMessageKey).toBe(
@@ -53,11 +53,10 @@ executeOverlayTests({
   },
 });
 
-
 executeOverlayTests({
   testName: "salutationMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
-  testFunction: async (driver, sovSelfTester) => {
+  testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerSalutation.elementValue).toBe(null);
     expect(sovSelfTester.consumerSalutation.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerSalutation.statusMessageKey).toBe(
