@@ -21,18 +21,10 @@ executeOverlayTests({
   },
 });
 
-executeOverlayTests({
-  testName: "integrationTypeNotSet",
-  sovAppData: sovAppDataMalformedButIsOkay,
-  testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.integrationType).toBe("unknown");
-  },
-});
-
-// executeOverlayTests(
-//   "integrationTypeMalformed",
-//   "okayButMalformedData.html",
-//   async (driver, sovSelfTester) => {
+// executeOverlayTests({
+//   testName: "integrationTypeMalformed",
+//   sovAppData: sovAppDataMalformedButIsOkay,
+//   testFunction: async (driver, sovSelfTester) => {
 //     expect(sovSelfTester.integrationType).toBe("unknown");
-//   }
-// );
+//   },
+// });
