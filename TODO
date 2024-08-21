@@ -6,10 +6,8 @@
 
 - improve style of overlay when awin sale not tracked
 - handle overlay scrollable screenshot - add tests to check if overlay detection works
-- overlays are above test overlay
 - disable transmit result
 - integration type info popover is cut off - also on mobile if shifted to next line its cut off on the left
-- improve overlay style and fix style issues (style overrides from page css)
 
 ### Todo later
 
