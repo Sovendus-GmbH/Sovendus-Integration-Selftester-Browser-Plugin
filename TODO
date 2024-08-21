@@ -9,6 +9,7 @@
 - dont compile tests with build
 - transmit multiple iframes content when they are different
 - handle overlay scrollable screenshot
+- Remove Timestamp when integrated using Awin
 
 ## Tests
 

@@ -55,6 +55,7 @@ export function generateMalformedDataTests({
   skipNumberCheck,
   objectElementValueType = "stringified",
   undefinedValue = null,
+  isAwinTest = false,
 }: {
   elementKey: string;
   expectedMalformedStatusMessageKey: StatusMessageKeyTypes;
@@ -63,6 +64,7 @@ export function generateMalformedDataTests({
   skipNumberCheck?: boolean;
   objectElementValueType?: "stringified" | "objectObject";
   undefinedValue?: string | null;
+  isAwinTest?: boolean;
 }): TestsType {
   const testCasesWhenScriptRuns = [
     {
@@ -129,14 +131,13 @@ export function generateMalformedDataTests({
       expectedStatusMessageKey: expectedMissingStatusMessageKey,
     },
   ];
-
-  const testCasesWhenScriptDoesNotRun = testCasesWhenScriptRuns.map(
-    (testInfo) => ({
-      ...testInfo,
-      testName: `${testInfo.testName}_WhenScriptDoesNotRun`,
-      disableFlexibleIframeJs: true,
-    })
-  );
+  const testCasesWhenScriptDoesNotRun = isAwinTest
+    ? []
+    : testCasesWhenScriptRuns.map((testInfo) => ({
+        ...testInfo,
+        testName: `${testInfo.testName}_WhenScriptDoesNotRun`,
+        disableFlexibleIframeJs: true,
+      }));
   return generateTests({
     elementKey,
     testsInfo: [
@@ -162,22 +163,27 @@ export function generateMalformedDataTests({
         expectedStatusCode: StatusCodes.Error,
         expectedStatusMessageKey: expectedMalformedStatusMessageKey,
       },
-      {
-        testName: "MalformedObject_WhenScriptDoesNotRun",
-        sovAppData: sovAppDataMalformedObjectsButIsOkay,
-        expectedElementValue: JSON.stringify(malformedObjectData),
-        expectedStatusCode: StatusCodes.Error,
-        expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-        disableFlexibleIframeJs: true,
-      },
-      {
-        testName: "MalformedArray_WhenScriptDoesNotRun",
-        sovAppData: sovAppDataMalformedArrayButIsOkay,
-        expectedElementValue: JSON.stringify(malformedArrayData),
-        expectedStatusCode: StatusCodes.Error,
-        expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-        disableFlexibleIframeJs: true,
-      },
+
+      ...(isAwinTest
+        ? []
+        : [
+            {
+              testName: "MalformedObject_WhenScriptDoesNotRun",
+              sovAppData: sovAppDataMalformedObjectsButIsOkay,
+              expectedElementValue: JSON.stringify(malformedObjectData),
+              expectedStatusCode: StatusCodes.Error,
+              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+              disableFlexibleIframeJs: true,
+            },
+            {
+              testName: "MalformedArray_WhenScriptDoesNotRun",
+              sovAppData: sovAppDataMalformedArrayButIsOkay,
+              expectedElementValue: JSON.stringify(malformedArrayData),
+              expectedStatusCode: StatusCodes.Error,
+              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+              disableFlexibleIframeJs: true,
+            },
+          ]),
     ],
   });
 }

@@ -1158,6 +1158,13 @@ export default class SelfTester {
           statusCode = StatusCodes.Error;
           statusMessageKey = malformedMessageKey;
           elementValue = value;
+        } else if (
+          numberCheckType?.numbersInStringsAllowed &&
+          !isNaN(Number(decodeURIComponent(decodeURI(value)).replace(",", ".")))
+        ) {
+          statusCode = StatusCodes.Error;
+          statusMessageKey = malformedMessageKey;
+          elementValue = decodeURIComponent(decodeURI(value));
         } else {
           statusCode = StatusCodes.SuccessButNeedsReview;
           elementValue = value;
