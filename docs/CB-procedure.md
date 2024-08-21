@@ -1,4 +1,9 @@
-# How to Perform a Test on Desktop Chrome
+# How to Perform Sovendus Integration Tests
+
+1. Install the Sovendus Self-Test Extension by following the provided instructions.
+2. Perform two tests: one on Desktop Chrome and one on Mobile Chrome, following the instructions below.
+
+## How to Perform a Test on Desktop Chrome
 
 1. Place an order on your Store in the with the Chrome browser (on Linux, Mac or Windows).
 2. If there is a trace of our integration, the self test overlay will be opened automatically on the page, it will show all order, consumer and integration information.
@@ -7,7 +12,7 @@
 5. Repeat the steps above until all errors are resolved and then send the test result to your account manager as described below.
 6. To copy the test result to your clipboard, click on the Sovendus icon on the top right (If you can't see the Sovendus icon, click on the puzzle icon) and then click on "Copy Test Result", now wait and don't click out of the browser until the button changes the color to green. This will create a screenshot of the page including all information about the integration for your account manager, then you can just navigate to your mail program and paste the screenshot in the mail using "ctrl + v" on your keyboard (or right click and then paste).
 
-# How to Perform a Test on Mobile Chrome
+## How to Perform a Test on Mobile Chrome
 
 1. Right-click on a random spot on the website and select "Inspect."
 2. A pop-up should appear. In the top left corner of this pop-up, there should be an icon that looks like a notebook with a phone in front of it. Click on this icon. ![Mobile symbol image](https://raw.githubusercontent.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/main/docs/Mobilesymbol-image.png)
@@ -21,4 +26,4 @@
 
 ## The optimal result for your integration looks like this (note that some values are not required for checkout benefits)
 
-![CB image](https://raw.githubusercontent.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/main/docs/checkoutbenefits.jpg)
+![CB image](https://raw.githubusercontent.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/main/docs/CheckoutBenefits.png)
