@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   captureButton.addEventListener("click", () => {
     captureButton.innerText = "Copying In Progress...";
     const { ctx, screenshotContainer } = getScreenshotCanvas();
-    async function callback(tabs: chrome.tabs.Tab[]) {
+    async function callback(tabs: chrome.tabs.Tab[]): Promise<void> {
       const tabId = getTabIdFromTabs(tabs);
       if (tabId) {
         await hideOverlay(tabId);
@@ -13,7 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
           mobileDeviceEmulatorIsOverlappedByDevTools,
           mobileDeviceEmulatorZoomLevelSet,
         } = await drawFullPageScreenshot(tabId, ctx, screenshotContainer);
-        const alertContainer = document.getElementById("alertContainer");
+        const alertContainer = document.getElementById(
+          "alertContainer",
+        ) as HTMLElement;
         if (mobileDeviceEmulatorIsOverlappedByDevTools) {
           if (captureButton) {
             captureButton.innerText = "Failed to copy";
@@ -23,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
           alertContainer.innerText =
             "Error: The mobile device emulation window can not be overlapped by the developer console.";
           alertContainer.style.display = "block";
-          restoreOverlay(tabId);
+          await restoreOverlay(tabId);
           return;
         }
         await showOverlay(tabId);
@@ -40,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
           alertContainer.style.display = "block";
           alertContainer.style.background = "orange";
         }
-        restoreOverlay(tabId);
+        await restoreOverlay(tabId);
       } else {
         throw new Error("Failed to get tabId for create screenshots function");
       }
@@ -80,19 +82,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-function getTabIdFromTabs(tabs: chrome.tabs.Tab[]) {
+function getTabIdFromTabs(tabs: chrome.tabs.Tab[]): number | undefined {
   const currentTab = tabs[0];
   return currentTab?.id;
 }
 
-function copyScreenshotsToClipboard(screenshotContainer: HTMLCanvasElement) {
+function copyScreenshotsToClipboard(
+  screenshotContainer: HTMLCanvasElement,
+): void {
   if (window.ClipboardItem) {
-    screenshotContainer.toBlob((blob: Blob | null) => {
+    screenshotContainer.toBlob(async (blob: Blob | null) => {
       if (!blob) {
         throw new Error("Failed to save to clipboard");
       }
       const data = [new ClipboardItem({ [blob.type]: blob })];
-      navigator.clipboard.write(data);
+      await navigator.clipboard.write(data);
     });
   } else {
     fetch(screenshotContainer.toDataURL())
@@ -255,8 +259,8 @@ async function drawSegmentScreenshot({
   });
 }
 
-async function scrollToTop(tabId: number) {
-  await executeScriptOnPage(tabId, async () => {
+async function scrollToTop(tabId: number): Promise<void> {
+  await executeScriptOnPage(tabId, () => {
     window.scrollTo(0, 0);
   });
 }
@@ -307,11 +311,11 @@ async function getScrollableHeight(tabId: number): Promise<{
   const result = await chrome.scripting.executeScript({
     target: { tabId },
     world: "MAIN",
-    func: async (): Promise<{
+    func: (): {
       scrollHeight: number;
       viewPortHeight: number;
       viewPortWidth: number;
-    }> => {
+    } => {
       const body = document.body;
       const html = document.documentElement;
       const scrollHeight = Math.max(
@@ -328,16 +332,22 @@ async function getScrollableHeight(tabId: number): Promise<{
       };
     },
   });
+  if (!result?.[0]?.result) {
+    throw new Error("Failed to get window dimension");
+  }
   const { scrollHeight, viewPortHeight, viewPortWidth } = result[0].result;
   return { scrollHeight, viewPortHeight, viewPortWidth };
 }
 
-async function scrollDownToNextSection(tabId: number, scrollBy: number) {
+async function scrollDownToNextSection(
+  tabId: number,
+  scrollBy: number,
+): Promise<void> {
   await chrome.scripting.executeScript({
     target: { tabId },
     world: "MAIN",
     args: [scrollBy],
-    func: async (scrollBy) => {
+    func: (scrollBy) => {
       window.scrollBy(0, scrollBy);
     },
   });
@@ -351,7 +361,7 @@ async function getZoomAdjustedDimensions(): Promise<{
     chrome.tabs.captureVisibleTab({ format: "png" }, (screenshotDataUrl) => {
       const img = new Image();
       img.src = screenshotDataUrl;
-      img.onload = () => {
+      img.onload = (): void => {
         resolve({ width: img.width, height: img.height });
       };
     });
@@ -360,7 +370,7 @@ async function getZoomAdjustedDimensions(): Promise<{
 
 async function executeScriptOnPage(
   tabId: number,
-  pageFunction: () => Promise<void>,
+  pageFunction: () => void,
 ): Promise<void> {
   await chrome.scripting.executeScript({
     target: { tabId },
@@ -370,31 +380,31 @@ async function executeScriptOnPage(
   return undefined;
 }
 
-async function toggleOverlayVisibility(tabId: number) {
-  chrome.scripting.executeScript({
+async function toggleOverlayVisibility(tabId: number): Promise<void> {
+  await chrome.scripting.executeScript({
     target: { tabId },
     files: ["/extension-pop-up/self-test-overlay-toggle.js"],
   });
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 
-async function showOverlay(tabId: number) {
-  chrome.scripting.executeScript({
+async function showOverlay(tabId: number): Promise<void> {
+  await chrome.scripting.executeScript({
     target: { tabId },
     files: ["/extension-pop-up/self-test-overlay-show.js"],
   });
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 
-async function restoreOverlay(tabId: number) {
-  chrome.scripting.executeScript({
+async function restoreOverlay(tabId: number): Promise<void> {
+  await chrome.scripting.executeScript({
     target: { tabId },
     files: ["/extension-pop-up/self-test-overlay-restore.js"],
   });
 }
 
-async function hideOverlay(tabId: number) {
-  chrome.scripting.executeScript({
+async function hideOverlay(tabId: number): Promise<void> {
+  await chrome.scripting.executeScript({
     target: { tabId },
     files: ["/extension-pop-up/self-test-overlay-hide.js"],
   });
@@ -415,8 +425,8 @@ function getScreenshotCanvas(): {
   return { ctx, screenshotContainer };
 }
 
-async function checkAvailableIntegrations(tabId: number) {
-  chrome.scripting.executeScript({
+async function checkAvailableIntegrations(tabId: number): Promise<void> {
+  await chrome.scripting.executeScript({
     target: { tabId },
     files: ["/extension-pop-up/check-available-integrations.js"],
   });

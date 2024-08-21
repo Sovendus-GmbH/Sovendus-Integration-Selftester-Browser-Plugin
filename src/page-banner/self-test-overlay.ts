@@ -1,27 +1,27 @@
 import SelfTester from "./self-tester.js";
 import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
 
-(async () => {
-  repeatTestsOnSPA(async () => {
+void (async (): Promise<void> => {
+  await repeatTestsOnSPA(async () => {
     await executeTests();
   });
 })();
 
-async function executeTests() {
+async function executeTests(): Promise<void> {
   removeOverlay();
   window.sovSelfTester = new SelfTester();
   await window.sovSelfTester.waitForSovendusIntegrationDetected();
   window.sovSelfTester.selfTestIntegration();
 
   const overlay = new SelfTesterOverlay();
-  await overlay.createOverlay(window.sovSelfTester);
+  overlay.createOverlay(window.sovSelfTester);
 }
 
 interface testsFn {
   (): Promise<void>;
 }
 
-async function repeatTestsOnSPA(tests: testsFn) {
+async function repeatTestsOnSPA(tests: testsFn): Promise<void> {
   let visitedPath = "";
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -33,11 +33,11 @@ async function repeatTestsOnSPA(tests: testsFn) {
   }
 }
 
-function removeOverlay() {
+function removeOverlay(): void {
   document.getElementById("outerSovendusOverlay")?.remove();
 }
 class SelfTesterOverlay {
-  async createOverlay(selfTester: SelfTester) {
+  createOverlay(selfTester: SelfTester): void {
     const overlay = document.createElement("div");
     overlay.id = "outerSovendusOverlay";
     overlay.innerHTML = `
@@ -62,11 +62,13 @@ class SelfTesterOverlay {
             <li class="sovendus-overlay-font">
               Browser: ${selfTester.browserName.elementValue}
             </li>
+            ${selfTester.awinExecutedTestResult.getFormattedGeneralStatusMessage()}
             ${selfTester.multipleIFramesAreSame.getFormattedGeneralStatusMessage()}
-            ${selfTester.isFlexibleIframeExecutable.getFormattedGeneralStatusMessage()}
+            ${selfTester.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
+            ${selfTester.isFlexibleIFrameExecutable.getFormattedGeneralStatusMessage()}
             ${selfTester.isSovendusJsOnDom.getFormattedGeneralStatusMessage()}
             ${selfTester.isSovendusJsExecutable.getFormattedGeneralStatusMessage()}
-            ${selfTester.awinExecutedTestResult.getFormattedGeneralStatusMessage()}
+            ${selfTester.isUnknownSovendusJsError.getFormattedGeneralStatusMessage()}
           </ul>
           ${this.createInnerOverlay(selfTester)}
         </div>
@@ -77,7 +79,7 @@ class SelfTesterOverlay {
     // this.moveOverlayAboveAll();
   }
 
-  createInnerOverlay(selfTester: SelfTester) {
+  createInnerOverlay(selfTester: SelfTester): string {
     const awinIntegrationDetected =
       selfTester.awinIntegrationDetectedTestResult.elementValue;
     const awinIntegrationNoSaleTracked =
@@ -157,10 +159,10 @@ class SelfTesterOverlay {
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Container:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          iframeContainerId: ${selfTester.iframeContainerId.getFormattedStatusMessage()}
+          iframeContainerId: ${selfTester.iFrameContainerId.getFormattedStatusMessage()}
         </li>
         ${selfTester.sovendusDivFound.getFormattedGeneralStatusMessage()}
-        ${selfTester.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
+        ${selfTester.iFrameContainerId.getFormattedGeneralStatusMessage()}
       </ul>
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
@@ -176,7 +178,7 @@ class SelfTesterOverlay {
         ${
           selfTester.sessionId.statusCode === StatusCodes.TestDidNotRun
             ? ""
-            : `<li class='sovendus-overlay-font sovendus-overlay-text'>` +
+            : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
               `sessionId: ${selfTester.sessionId.getFormattedStatusMessage()}</li>`
         }
         <li class='sovendus-overlay-font sovendus-overlay-text'>
@@ -204,7 +206,7 @@ class SelfTesterOverlay {
       </div>`;
   }
 
-  getOverlayStyle() {
+  getOverlayStyle(): string {
     return `
         <style>
           #sovendusOverlay {
@@ -333,54 +335,27 @@ class SelfTesterOverlay {
         </style>
         `;
   }
-  toggleOverlay() {
-    const overlay = document.getElementById("sovendusOverlay");
-    const toggle = document.getElementById("toggleSovendusOverlay");
-    if (overlay && toggle) {
-      if (overlay.style.display === "none") {
-        overlay.style.display = "block";
-        toggle.innerText = "Hide";
-      } else {
-        overlay.style.display = "none";
-        toggle.innerText = "Show";
-      }
-    }
-  }
 
-  addButtonAndInfoEventListener() {
+  addButtonAndInfoEventListener(): void {
     document
       .getElementById("toggleSovendusOverlay")
-      ?.addEventListener("click", this.toggleOverlay);
+      ?.addEventListener("click", toggleOverlay);
     document
       .getElementById("sovendusOverlayRepeatTests")
-      ?.addEventListener("click", executeTests);
+      ?.addEventListener("click", () => {
+        void executeTests();
+      });
     const checkMarks: HTMLCollectionOf<Element> =
       document.getElementsByClassName("sovendus-info");
     for (const element of checkMarks) {
       element.parentElement?.parentElement?.addEventListener(
         "mouseover",
-        this.showInfoText,
+        showInfoText,
       );
       element.parentElement?.parentElement?.addEventListener(
         "mouseout",
-        this.hideInfoText,
+        hideInfoText,
       );
-    }
-  }
-
-  showInfoText(event: MouseEvent) {
-    const label = (event.currentTarget as HTMLElement)?.lastElementChild
-      ?.firstElementChild;
-    if (label) {
-      (label as HTMLElement).style.display = "block";
-    }
-  }
-
-  hideInfoText(event: MouseEvent) {
-    const label = (event.currentTarget as HTMLElement)?.lastElementChild
-      ?.firstElementChild;
-    if (label) {
-      (label as HTMLElement).style.display = "none";
     }
   }
 
@@ -404,6 +379,36 @@ class SelfTesterOverlay {
   //   }
   //   checkAndChangeZIndex(document.body);
   // }
+}
+
+function toggleOverlay(): void {
+  const overlay = document.getElementById("sovendusOverlay");
+  const toggle = document.getElementById("toggleSovendusOverlay");
+  if (overlay && toggle) {
+    if (overlay.style.display === "none") {
+      overlay.style.display = "block";
+      toggle.innerText = "Hide";
+    } else {
+      overlay.style.display = "none";
+      toggle.innerText = "Show";
+    }
+  }
+}
+
+function showInfoText(event: MouseEvent): void {
+  const label = (event.currentTarget as HTMLElement)?.lastElementChild
+    ?.firstElementChild;
+  if (label) {
+    (label as HTMLElement).style.display = "block";
+  }
+}
+
+function hideInfoText(event: MouseEvent): void {
+  const label = (event.currentTarget as HTMLElement)?.lastElementChild
+    ?.firstElementChild;
+  if (label) {
+    (label as HTMLElement).style.display = "none";
+  }
 }
 
 interface SovWindow extends Window {

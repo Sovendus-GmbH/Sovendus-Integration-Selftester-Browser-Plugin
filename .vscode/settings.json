@@ -8,4 +8,16 @@
     "dwin1",
     "flexibleiframe.js"
   ],
+  "editor.formatOnSave": true, // Format files on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true, // Automatically fix ESLint errors on save
+    "source.organizeImports": false // Disable VS Code's default import organizing (handled by ESLint)
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "prettier.requireConfig": true // Ensure Prettier uses your configuration file
 }

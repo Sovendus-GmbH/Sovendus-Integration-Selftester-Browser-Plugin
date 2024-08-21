@@ -6,13 +6,12 @@ import {
   generateMalformedDataTests,
   generateTests,
 } from "@src/tests/testUtils/testCaseGenerator";
-
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
   sovAppIFramesAllValidData,
-} from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+} from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 const tests = [
   ...generateTests({
@@ -50,7 +49,7 @@ const tests = [
         expectedElementValue: "EURO",
         expectedStatusCode: StatusCodes.Error,
         expectedStatusMessageKey: StatusMessageKeyTypes.currencyNotValid,
-        disableFlexibleIframeJs: true,
+        disableFlexibleIFrameJs: true,
       },
     ],
   }),

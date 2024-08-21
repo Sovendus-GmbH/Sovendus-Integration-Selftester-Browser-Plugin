@@ -1,4 +1,4 @@
-function _hideOverlay() {
+function _hideOverlay(): void {
   const overlay = document.getElementById("sovendusOverlay");
   if (overlay) {
     overlay.style.display = "none";

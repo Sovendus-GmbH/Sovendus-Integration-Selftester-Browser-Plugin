@@ -6,28 +6,27 @@ import {
   generateMalformedDataTests,
   generateTests,
 } from "@src/tests/testUtils/testCaseGenerator";
-
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataUndefinedButIsOkay,
-} from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+} from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 executeOverlayTests({
-  testName: "iframeContainerId",
+  testName: "iFrameContainerId",
   tests: [
     ...generateTests({
-      elementKey: "iframeContainerId",
+      elementKey: "iFrameContainerId",
       testsInfo: [
         {
-          testName: "iframeContainerIdIsSet",
+          testName: "iFrameContainerIdIsSet",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: "sovendus-integration-container",
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
         },
         {
-          testName: "iframeContainerIdNotSet",
+          testName: "iFrameContainerIdNotSet",
           sovAppData: sovAppDataUndefinedButIsOkay,
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.Error,
@@ -35,7 +34,7 @@ executeOverlayTests({
             StatusMessageKeyTypes.missingIframeContainerId,
         },
         {
-          testName: "iframeContainerIdWithSpaces",
+          testName: "iFrameContainerIdWithSpaces",
           sovAppData: {
             ...sovAppDataUndefinedButIsOkay,
             sovIframes1: {
@@ -46,14 +45,14 @@ executeOverlayTests({
           expectedElementValue: "sovendus integration container",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
-            StatusMessageKeyTypes.iframeContainerIdHasSpaces,
+            StatusMessageKeyTypes.iFrameContainerIdHasSpaces,
         },
       ],
     }),
     ...generateMalformedDataTests({
-      elementKey: "iframeContainerId",
+      elementKey: "iFrameContainerId",
       expectedMalformedStatusMessageKey:
-        StatusMessageKeyTypes.iframeContainerIdMalformed,
+        StatusMessageKeyTypes.iFrameContainerIdMalformed,
       expectedMissingStatusMessageKey:
         StatusMessageKeyTypes.missingIframeContainerId,
       objectElementValueType: "objectObject",

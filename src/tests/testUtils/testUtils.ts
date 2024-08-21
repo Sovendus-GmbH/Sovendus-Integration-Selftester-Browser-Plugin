@@ -32,7 +32,7 @@ const browserOptions = {
   [Browsers.Android]: ChromeOptions,
 };
 
-export async function executeOverlayTests({
+export function executeOverlayTests({
   testName,
   tests,
   browser,
@@ -42,7 +42,7 @@ export async function executeOverlayTests({
   tests: TestsType;
   browser?: Browsers;
   isAwinTest?: boolean;
-}) {
+}): void {
   const buildMode = process.env["npm_config_buildmode"] === "true";
   for (const _browser of browser
     ? [browser]
@@ -68,7 +68,7 @@ export async function executeOverlayTests({
         test(`${testName}_${testData.testName}`, async () => {
           if (!driver) {
             throw new Error(
-              "Failed to start tests, webDriver is not initialized"
+              "Failed to start tests, webDriver is not initialized",
             );
           }
           const sovAppData =
@@ -83,15 +83,14 @@ export async function executeOverlayTests({
             browser: _browser,
             retryCounter: 1,
             isAwinTest,
-            disableFlexibleIframeJs: testData.disableFlexibleIframeJs,
+            disableFlexibleIFrameJs: testData.disableFlexibleIFrameJs,
             disableSovendusDiv: testData.disableSovendusDiv,
-            disableAwinMasterTag: testData.disableAwinMasterTag,
             disableAwinSalesTracking: testData.disableAwinSalesTracking,
             removeSovIFrame: testData.removeSovIFrame,
             flexibleIFrameJsScriptType: testData.flexibleIFrameJsScriptType,
           });
           const sovSelfTester = await getIntegrationTesterData(driver);
-          await testData.testFunction({ driver, sovSelfTester, sovAppData });
+          testData.testFunction({ driver, sovSelfTester, sovAppData });
         }, 300_000);
       }
 
@@ -102,17 +101,20 @@ export async function executeOverlayTests({
   }
 }
 
-function initializeWebDriver(browser: Browsers) {
+function initializeWebDriver(browser: Browsers): {
+  driver: WebDriver;
+  fileUrl: string;
+} {
   let driver: WebDriver;
   const extensionPath =
-    browser === "firefox"
+    browser === Browsers.Firefox
       ? resolve(
           __dirname,
-          "../../../test_zips/firefox-test-sovendus-integration_TESTING.xpi"
+          "../../../test_zips/firefox-test-sovendus-integration_TESTING.xpi",
         )
       : resolve(
           __dirname,
-          "../../../test_zips/chrome-test-sovendus-integration_TESTING.crx"
+          "../../../test_zips/chrome-test-sovendus-integration_TESTING.crx",
         );
   const preferences = new Preferences();
   // preferences.setLevel(Type.BROWSER, Level.OFF);
@@ -197,10 +199,9 @@ async function prepareTestPageAndRetry({
   fileUrl,
   browser,
   retryCounter,
-  disableFlexibleIframeJs,
+  disableFlexibleIFrameJs,
   disableSovendusDiv,
   isAwinTest,
-  disableAwinMasterTag,
   disableAwinSalesTracking,
   removeSovIFrame,
   flexibleIFrameJsScriptType = "text/javascript",
@@ -210,10 +211,9 @@ async function prepareTestPageAndRetry({
   fileUrl: string;
   browser: Browsers;
   retryCounter: number;
-  disableFlexibleIframeJs: boolean | undefined;
+  disableFlexibleIFrameJs: boolean | undefined;
   disableSovendusDiv: boolean | undefined;
   isAwinTest: boolean | undefined;
-  disableAwinMasterTag: boolean | undefined;
   disableAwinSalesTracking: boolean | undefined;
   removeSovIFrame: boolean | undefined;
   flexibleIFrameJsScriptType: string | undefined | null;
@@ -248,7 +248,7 @@ async function prepareTestPageAndRetry({
         }
   
         ${
-          disableFlexibleIframeJs
+          disableFlexibleIFrameJs
             ? ""
             : `
               var script = document.createElement("script");
@@ -261,12 +261,16 @@ async function prepareTestPageAndRetry({
         }
       `;
       } else {
-        integrationScript = `
-        ${
-          disableAwinSalesTracking
-            ? ""
-            : `
-            
+        let salesTrackingScript: string;
+        if (disableAwinSalesTracking) {
+          salesTrackingScript = "";
+        } else {
+          if (!sovAppData.sovIframes?.[0]) {
+            throw new Error(
+              "You need to pass on sovAppData.sovIframes when using awin sales tracking",
+            );
+          }
+          salesTrackingScript = `
             /*** Do not change ***/
             window.AWIN = window.AWIN || {};
             window.AWIN.Tracking = window.AWIN.Tracking || {};
@@ -289,22 +293,17 @@ async function prepareTestPageAndRetry({
             img.style = "display: none;";
             img.src = "https://www.awin1.com/sread.img?tt=ns&tv=2&merchant=${sovAwinID}&amount=${sovAppData.sovIframes[0].orderValue}&ch=aw&parts=DEFAULT:${sovAppData.sovIframes[0].orderValue}&ref=${sovAppData.sovIframes[0].orderId}&cr=${sovAppData.sovIframes[0].orderCurrency}&vc=${sovAppData.sovIframes[0].usedCouponCode}&testmode=0";
             document.body.appendChild(img);
-          `
+        `;
         }
-
-        ${
-          disableAwinMasterTag
-            ? ""
-            : `
-              var script = document.createElement("script");
-              script.type = "text/javascript";
-              script.defer = "defer";
-              script.src =
-                "https://www.dwin1.com/${sovAwinID}.js";
-              document.body.appendChild(script);
-            `
-        }
-      `;
+        integrationScript = `
+            ${salesTrackingScript}
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.defer = "defer";
+            script.src =
+              "https://www.dwin1.com/${sovAwinID}.js";
+            document.body.appendChild(script);
+        `;
       }
       await _driver.executeScript(integrationScript);
       await waitForTestOverlay(_driver);
@@ -318,11 +317,11 @@ async function prepareTestPageAndRetry({
       error.message.includes("binary is not a Firefox executable")
     ) {
       throw new Error(
-        "failed to find firefox developer edition binary, make sure it is installed "
+        "failed to find firefox developer edition binary, make sure it is installed ",
       );
     }
     console.log(
-      `Banner didn't load, trying again - tried already ${retryCounter} times - error: ${error}`
+      `Banner didn't load, trying again - tried already ${retryCounter} times - error: ${error}`,
     );
     retryCounter++;
     // try {
@@ -338,10 +337,9 @@ async function prepareTestPageAndRetry({
       fileUrl,
       browser,
       retryCounter,
-      disableFlexibleIframeJs,
+      disableFlexibleIFrameJs,
       disableSovendusDiv,
       isAwinTest,
-      disableAwinMasterTag,
       disableAwinSalesTracking,
       removeSovIFrame,
       flexibleIFrameJsScriptType,
@@ -350,21 +348,24 @@ async function prepareTestPageAndRetry({
   return _driver;
 }
 
-const testTimout = 40000;
+const testTimeout =
+  (process.env["TEST_TIMEOUT"]
+    ? parseInt(process.env["TEST_TIMEOUT"], 30)
+    : 30) * 1000;
 
-async function waitForTestOverlay(driver: WebDriver) {
+async function waitForTestOverlay(driver: WebDriver): Promise<void> {
   await driver.wait(
     until.elementLocated(By.css("#outerSovendusOverlay")),
-    testTimout
+    testTimeout,
   );
 }
 
-async function executeWithTimeout(fn: () => Promise<void>) {
+async function executeWithTimeout(fn: () => Promise<void>): Promise<void> {
   return new Promise((resolve, reject) => {
     // Create a timeout promise that rejects after the specified time
     const timeoutId = setTimeout(() => {
       reject(new Error("Failed to wait for the testing page - timed out"));
-    }, testTimout);
+    }, testTimeout);
 
     // Execute the async function and resolve/reject the promise when done
     fn()
@@ -382,7 +383,7 @@ async function executeWithTimeout(fn: () => Promise<void>) {
 }
 
 async function getIntegrationTesterData(
-  driver: WebDriver
+  driver: WebDriver,
 ): Promise<SelfTester> {
   const script = "return window.sovSelfTester;";
   const sovSelfTester = await driver.executeScript(script);

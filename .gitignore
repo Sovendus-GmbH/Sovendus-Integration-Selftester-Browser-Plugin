@@ -4,3 +4,4 @@ build
 **/.DS_Store
 .env
 test_zips
+jest.config.js

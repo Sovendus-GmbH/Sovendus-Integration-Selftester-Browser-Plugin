@@ -3,14 +3,14 @@ import {
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { generateMalformedDataTests } from "@src/tests/testUtils/testCaseGenerator";
-
+import type { SovDataType } from "src/tests/testUtils/sovAppData";
 import {
   sovAppConsumerAllValidData,
   sovAppDataMalformedButIsOkay,
   sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
   sovAppIFramesAllValidData,
-} from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+} from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 executeOverlayTests({
   testName: "timestamp",
@@ -18,7 +18,7 @@ executeOverlayTests({
     // success in seconds
     {
       testName: "SuccessAsStringInSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testValidTimestamp } = getTestingTimestamps();
         return {
           payload: testValidTimestamp,
@@ -29,9 +29,10 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload))
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -39,7 +40,7 @@ executeOverlayTests({
     },
     {
       testName: "SuccessAsFloatStringInSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testValidTimestamp } = getTestingTimestamps();
         return {
           payload: testValidTimestamp,
@@ -50,9 +51,9 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload)
+          String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -60,7 +61,7 @@ executeOverlayTests({
     },
     {
       testName: "SuccessAsNumberInSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testValidTimestamp } = getTestingTimestamps();
         return {
           payload: testValidTimestamp,
@@ -71,9 +72,10 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload))
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -81,7 +83,7 @@ executeOverlayTests({
     },
     {
       testName: "SuccessAsFloatInSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testValidTimestamp } = getTestingTimestamps();
         return {
           payload: testValidTimestamp,
@@ -92,9 +94,9 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload)
+          String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -104,7 +106,7 @@ executeOverlayTests({
     // older than a minute in seconds
     {
       testName: "OlderThanAMinuteAsStringInSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testTimestamp1MinuteOld } = getTestingTimestamps();
         return {
           payload: testTimestamp1MinuteOld,
@@ -115,19 +117,20 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload))
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
     },
     {
       testName: "OlderThanAMinuteAsFloatStringInSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testTimestamp1MinuteOld } = getTestingTimestamps();
         return {
           payload: testTimestamp1MinuteOld,
@@ -138,19 +141,19 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload)
+          String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
     },
     {
       testName: "OlderThanAMinuteAsNumberInSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testTimestamp1MinuteOld } = getTestingTimestamps();
         return {
           payload: testTimestamp1MinuteOld,
@@ -161,19 +164,20 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload))
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
     },
     {
       testName: "OlderThanAMinuteAsFloatInSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testTimestamp1MinuteOld } = getTestingTimestamps();
         return {
           payload: testTimestamp1MinuteOld,
@@ -184,12 +188,12 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload)
+          String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -198,7 +202,7 @@ executeOverlayTests({
     // success in milliseconds
     {
       testName: "SuccessAsStringInMilliSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testValidTimestampInMilliSeconds } = getTestingTimestamps();
         return {
           payload: testValidTimestampInMilliSeconds,
@@ -209,9 +213,10 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload))
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -219,7 +224,7 @@ executeOverlayTests({
     },
     {
       testName: "SuccessAsFloatStringInMilliSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testValidTimestampInMilliSeconds } = getTestingTimestamps();
         return {
           payload: testValidTimestampInMilliSeconds,
@@ -230,9 +235,9 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload)
+          String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -240,7 +245,7 @@ executeOverlayTests({
     },
     {
       testName: "SuccessAsNumberInMilliSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testValidTimestampInMilliSeconds } = getTestingTimestamps();
         return {
           payload: testValidTimestampInMilliSeconds,
@@ -251,9 +256,10 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload))
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -261,7 +267,7 @@ executeOverlayTests({
     },
     {
       testName: "SuccessAsFloatInMilliSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testValidTimestampInMilliSeconds } = getTestingTimestamps();
         return {
           payload: testValidTimestampInMilliSeconds,
@@ -272,9 +278,9 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload)
+          String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(null);
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Success);
@@ -284,7 +290,7 @@ executeOverlayTests({
     // older than a minute in milliseconds
     {
       testName: "OlderThanAMinuteAsStringInMilliSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testTimestamp1MinuteOldInMilliSeconds } =
           getTestingTimestamps();
         return {
@@ -293,24 +299,25 @@ executeOverlayTests({
           sovIframes1: {
             ...sovAppIFramesAllValidData,
             timestamp: String(
-              Math.floor(testTimestamp1MinuteOldInMilliSeconds)
+              Math.floor(testTimestamp1MinuteOldInMilliSeconds),
             ),
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload))
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
     },
     {
       testName: "OlderThanAMinuteAsFloatStringInMilliSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testTimestamp1MinuteOldInMilliSeconds } =
           getTestingTimestamps();
         return {
@@ -322,19 +329,19 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload)
+          String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
     },
     {
       testName: "OlderThanAMinuteAsNumberInMilliSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testTimestamp1MinuteOldInMilliSeconds } =
           getTestingTimestamps();
         return {
@@ -346,19 +353,20 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(Math.floor(sovAppData.payload))
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          String(Math.floor(sovAppData.payload)),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
     },
     {
       testName: "OlderThanAMinuteAsFloatInMilliSeconds",
-      sovAppData: () => {
+      sovAppData: (): SovDataType => {
         const { testTimestamp1MinuteOldInMilliSeconds } =
           getTestingTimestamps();
         return {
@@ -370,12 +378,12 @@ executeOverlayTests({
           },
         };
       },
-      testFunction: async ({ sovSelfTester, sovAppData }) => {
+      testFunction: ({ sovSelfTester, sovAppData }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe(
-          String(sovAppData.payload)
+          String(sovAppData.payload),
         );
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.unixTimestampOlderThan1Minute
+          StatusMessageKeyTypes.unixTimestampOlderThan1Minute,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -383,10 +391,10 @@ executeOverlayTests({
     {
       testName: "Malformed",
       sovAppData: sovAppDataMalformedButIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
+      testFunction: ({ sovSelfTester }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe("dubidub");
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.notAUnixTimestamp
+          StatusMessageKeyTypes.notAUnixTimestamp,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -394,10 +402,10 @@ executeOverlayTests({
     {
       testName: "MalformedNumberWithCommaInsteadOfDot",
       sovAppData: sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
+      testFunction: ({ sovSelfTester }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe("1234,56");
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.notAUnixTimestamp
+          StatusMessageKeyTypes.notAUnixTimestamp,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
@@ -405,14 +413,14 @@ executeOverlayTests({
     {
       testName: "MalformedNumberWithCommaInsteadOfDot_WhenScriptDoesNotRun",
       sovAppData: sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
+      testFunction: ({ sovSelfTester }): void => {
         expect(sovSelfTester.timestamp.elementValue).toBe("1234,56");
         expect(sovSelfTester.timestamp.statusMessageKey).toBe(
-          StatusMessageKeyTypes.notAUnixTimestamp
+          StatusMessageKeyTypes.notAUnixTimestamp,
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
-      disableFlexibleIframeJs: true,
+      disableFlexibleIFrameJs: true,
     },
     ...generateMalformedDataTests({
       elementKey: "timestamp",
@@ -426,7 +434,12 @@ executeOverlayTests({
   ],
 });
 
-function getTestingTimestamps() {
+function getTestingTimestamps(): {
+  testValidTimestampInMilliSeconds: number;
+  testTimestamp1MinuteOldInMilliSeconds: number;
+  testValidTimestamp: number;
+  testTimestamp1MinuteOld: number;
+} {
   const testValidTimestampInMilliSeconds = Date.now() - 0.1; // make it a float
   const testTimestamp1MinuteOldInMilliSeconds =
     testValidTimestampInMilliSeconds - 1 * 60 * 1000; // 60 seconds in the past

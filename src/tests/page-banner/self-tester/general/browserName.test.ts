@@ -1,10 +1,9 @@
 import { BrowserTypes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "../../../testUtils/sovAppData";
-import { Browsers, executeOverlayTests } from "../../../testUtils/testUtils";
+} from "src/tests/testUtils/sovAppData";
+import { Browsers, executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 executeOverlayTests({
   testName: "browserName",
@@ -12,9 +11,9 @@ executeOverlayTests({
     {
       testName: "Firefox",
       sovAppData: sovAppDataNoParameterButIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
+      testFunction: ({ sovSelfTester }): void => {
         expect(sovSelfTester.browserName.elementValue).toBe(
-          BrowserTypes.Firefox
+          BrowserTypes.Firefox,
         );
       },
     },
@@ -28,7 +27,7 @@ executeOverlayTests({
     {
       testName: "Edge",
       sovAppData: sovAppDataNoParameterButIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
+      testFunction: ({ sovSelfTester }): void => {
         expect(sovSelfTester.browserName.elementValue).toBe(BrowserTypes.Edge);
       },
     },
@@ -42,9 +41,9 @@ executeOverlayTests({
     {
       testName: "Chrome",
       sovAppData: sovAppDataEverythingIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
+      testFunction: ({ sovSelfTester }): void => {
         expect(sovSelfTester.browserName.elementValue).toBe(
-          BrowserTypes.Chrome
+          BrowserTypes.Chrome,
         );
       },
     },
@@ -58,9 +57,9 @@ executeOverlayTests({
     {
       testName: "iPhone",
       sovAppData: sovAppDataEverythingIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
+      testFunction: ({ sovSelfTester }): void => {
         expect(sovSelfTester.browserName.elementValue).toBe(
-          BrowserTypes.iPhone
+          BrowserTypes.iPhone,
         );
       },
     },
@@ -74,9 +73,9 @@ executeOverlayTests({
     {
       testName: "Android",
       sovAppData: sovAppDataEverythingIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
+      testFunction: ({ sovSelfTester }): void => {
         expect(sovSelfTester.browserName.elementValue).toBe(
-          BrowserTypes.Android
+          BrowserTypes.Android,
         );
       },
     },

@@ -3,13 +3,12 @@ import {
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
-
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+} from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 // TODO add more tests
 

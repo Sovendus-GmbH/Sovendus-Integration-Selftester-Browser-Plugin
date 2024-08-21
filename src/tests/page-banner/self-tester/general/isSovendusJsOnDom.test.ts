@@ -3,12 +3,11 @@ import {
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
-
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataUndefinedButIsOkay,
-} from "../../../testUtils/sovAppData";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
+} from "src/tests/testUtils/sovAppData";
+import { executeOverlayTests } from "src/tests/testUtils/testUtils";
 
 // Mit Marcus schauen wie man eine andere Fehlermeldung einbauen könnte die besser passt, wenn das sovendusJs gar nicht ausgeführt wird
 
@@ -33,11 +32,11 @@ executeOverlayTests({
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
 
-          // StatusMessageKeyTypes.flexibleIframeJsExecutedTooEarly ist falsch
+          // StatusMessageKeyTypes.flexibleIFrameJsExecutedTooEarly ist falsch
 
           expectedStatusMessageKey:
-            StatusMessageKeyTypes.flexibleIframeJsExecutedTooEarly,
-          disableFlexibleIframeJs: true,
+            StatusMessageKeyTypes.flexibleIFrameJsExecutedTooEarly,
+          disableFlexibleIFrameJs: true,
         },
       ],
     }),

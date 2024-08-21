@@ -29,19 +29,18 @@ export function generateTests({
   return testsInfo.map((testInfo) => ({
     testName: testInfo.testName,
     sovAppData: testInfo.sovAppData,
-    testFunction: async ({ sovSelfTester }) => {
+    testFunction: ({ sovSelfTester }): void => {
       expect((sovSelfTester as ExplicitAnyType)[elementKey].elementValue).toBe(
-        testInfo.expectedElementValue
+        testInfo.expectedElementValue,
       );
       expect(
-        (sovSelfTester as ExplicitAnyType)[elementKey].statusMessageKey
+        (sovSelfTester as ExplicitAnyType)[elementKey].statusMessageKey,
       ).toBe(testInfo.expectedStatusMessageKey);
       expect((sovSelfTester as ExplicitAnyType)[elementKey].statusCode).toBe(
-        testInfo.expectedStatusCode
+        testInfo.expectedStatusCode,
       );
     },
-    disableFlexibleIframeJs: testInfo.disableFlexibleIframeJs,
-    disableAwinMasterTag: testInfo.disableAwinMasterTag,
+    disableFlexibleIFrameJs: testInfo.disableFlexibleIFrameJs,
     disableAwinSalesTracking: testInfo.disableAwinSalesTracking,
     disableSovendusDiv: testInfo.disableSovendusDiv,
     removeSovIFrame: testInfo.removeSovIFrame,
@@ -68,7 +67,7 @@ export function generateMalformedDataTests({
   undefinedValue?: string | null;
   isAwinTest?: boolean;
 }): TestsType {
-  const testCasesWhenScriptRuns = [
+  const testCasesWhenScriptRuns: TestsInfoType = [
     {
       testName: "MalformedTrue",
       sovAppData: sovAppDataTrueButIsOkay,
@@ -133,7 +132,7 @@ export function generateMalformedDataTests({
       expectedStatusMessageKey: expectedMissingStatusMessageKey,
     },
   ];
-  const testCasesWhenScriptDoesNotRun = isAwinTest
+  const testCasesWhenScriptDoesNotRun: TestsInfoType = isAwinTest
     ? []
     : testCasesWhenScriptRuns.map((testInfo) => ({
         ...testInfo,
@@ -175,7 +174,7 @@ export function generateMalformedDataTests({
               expectedElementValue: JSON.stringify(malformedObjectData),
               expectedStatusCode: StatusCodes.Error,
               expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-              disableFlexibleIframeJs: true,
+              disableFlexibleIFrameJs: true,
             },
             {
               testName: "MalformedArray_WhenScriptDoesNotRun",
@@ -183,7 +182,7 @@ export function generateMalformedDataTests({
               expectedElementValue: JSON.stringify(malformedArrayData),
               expectedStatusCode: StatusCodes.Error,
               expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-              disableFlexibleIframeJs: true,
+              disableFlexibleIFrameJs: true,
             },
           ]),
     ],
@@ -196,12 +195,11 @@ export type TestsInfoType = {
   expectedElementValue: string | boolean | number | null;
   expectedStatusCode: StatusCodes;
   expectedStatusMessageKey: StatusMessageKeyTypes | null;
-  disableFlexibleIframeJs?: boolean;
+  disableFlexibleIFrameJs?: boolean;
   disableSovendusDiv?: boolean;
-  disableAwinMasterTag?: boolean;
   disableAwinSalesTracking?: boolean;
   removeSovIFrame?: boolean;
-  flexibleIFrameJsScriptType?: string;
+  flexibleIFrameJsScriptType?: string | undefined | null;
 }[];
 
 export type TestsType = {
@@ -215,10 +213,9 @@ export type TestsType = {
     driver: WebDriver;
     sovSelfTester: SelfTester;
     sovAppData: SovDataType;
-  }) => Promise<void>;
-  disableFlexibleIframeJs?: boolean | undefined;
+  }) => void;
+  disableFlexibleIFrameJs?: boolean | undefined;
   disableSovendusDiv?: boolean | undefined;
-  disableAwinMasterTag?: boolean | undefined;
   disableAwinSalesTracking?: boolean | undefined;
   removeSovIFrame?: boolean | undefined;
   flexibleIFrameJsScriptType?: string | undefined | null;

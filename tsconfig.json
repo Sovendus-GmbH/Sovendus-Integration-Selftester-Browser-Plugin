@@ -15,33 +15,27 @@
     "paths": {
       "@src/*": [
         "src/*"
-      ] // Adjust this as needed
+      ]
     },
     // Strict Checks
-    // TODO enable
-    // "strict": true,
-    // "strictNullChecks": true,
-    // "strictPropertyInitialization": true,
-    // "exactOptionalPropertyTypes": true,
-    //
-    "alwaysStrict": true,
-    "noImplicitAny": true,
-    "useUnknownInCatchVariables": true,
-    "strictFunctionTypes": true,
-    "noImplicitThis": true,
-    "strictBindCallApply": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    // Linter Checks
-    "noImplicitReturns": true,
-    "noImplicitOverride": true,
-    "forceConsistentCasingInFileNames": true,
-    // https://eslint.org/docs/rules/consistent-return ?
-    "noFallthroughCasesInSwitch": true,
-    // https://eslint.org/docs/rules/no-fallthrough
-    "noUnusedLocals": true,
-    // https://eslint.org/docs/rules/no-unused-vars
-    "noUnusedParameters": true,
+    "strict": true, // Enable all strict type-checking options
+    "noImplicitAny": true, // Raise error on expressions and declarations with an implied "any" type
+    "noImplicitThis": true, // Raise error on "this" expressions with an implied "any" type
+    "alwaysStrict": true, // Parse in strict mode and emit "use strict" for each source file
+    "strictNullChecks": true, // Ensure null and undefined are handled correctly
+    "strictFunctionTypes": true, // Ensure function parameters and return types are checked strictly
+    "strictBindCallApply": true, // Ensure methods like bind, call, and apply are correctly typed
+    "strictPropertyInitialization": true, // Ensure class properties are initialized
+    "noImplicitReturns": true, // Raise an error on functions with some code paths that do not return a value
+    "noFallthroughCasesInSwitch": true, // Ensure there is no fall-through in switch statements
+    "noUnusedParameters": true, // Raise errors on unused parameters
+    "noUnusedLocals": true, // Raise errors on unused locals
+    "noImplicitOverride": true, // Ensure that the "override" modifier is used correctly in classes
+    "noUncheckedIndexedAccess": true, // Add undefined to any type when accessing array elements with an index
+    "useUnknownInCatchVariables": true, // Make catch clause variables default to "unknown" instead of "any"
+    "exactOptionalPropertyTypes": true, // Interpret optional property types strictly
+    "forceConsistentCasingInFileNames": true, // Ensure consistent casing in import paths
+    "noPropertyAccessFromIndexSignature": true, // Prevent accessing properties using string indices unless explicitly declared in the type
     // https://eslint.org/docs/rules/no-unused-vars#args
     "allowUnreachableCode": false,
     // https://eslint.org/docs/rules/no-unreachable ?
