@@ -1,23 +1,35 @@
+# TODO
+
 ## Selftester Plugin
 
-- improve overlay style and fix style issues (style overrides from page css)
+### Todo before release
+
 - improve style of overlay when awin sale not tracked
+- handle overlay scrollable screenshot - add tests to check if overlay detection works
+- overlays are above test overlay
+- disable transmit result
+- integration type info popover is cut off - also on mobile if shifted to next line its cut off on the left
+- improve overlay style and fix style issues (style overrides from page css)
+
+### Todo later
+
 - improve overlay loading speed
 - add error when invalid email hash is used - banner will not load
 - handle if a test fails - still continue and show error in overlay - also use new status code testFailed
 - dont compile tests with build
 - transmit multiple iframes content when they are different
-- handle overlay scrollable screenshot - add tests to check if overlay detection works
-- integration type info popover is cut off - also on mobile if shifted to next line its cut off on the left
 - check cors api call to dev hub
-- hide sticky banner on not first screenshot
 - log thrown errors to dev hub api with sovSelfTester, sovIframes and sovConsumer
-
 
 ## Tests
 
+### Todo before release
+
+- get a AWIN ID for Tests
+- add timeout to load flexiblejs to late
+
+### Todo later
+
 - add spa tests
 - dont spam dev hub api on tests
-- get a AWIN ID for Tests
 - consider adding more awin not executed tests
-- add timeout to load flexiblejs to late
