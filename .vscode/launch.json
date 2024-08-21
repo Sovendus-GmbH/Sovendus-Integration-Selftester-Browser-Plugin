@@ -12,7 +12,7 @@
         "--no-cache",
         "--watchAll",
         "--silent=false",
-        "-t=isSovendusJsOnDom_NotOnDOM"
+        "-t=Firefox"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"

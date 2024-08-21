@@ -26,10 +26,8 @@
 ### Todo before release
 
 - get a AWIN ID for Tests
-- add timeout to load flexiblejs to late
 
 ### Todo later
 
 - add spa tests
-- dont spam dev hub api on tests
 - consider adding more awin not executed tests

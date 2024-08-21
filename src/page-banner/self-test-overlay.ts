@@ -51,85 +51,107 @@ function removeOverlay(): void {
 }
 class SelfTesterOverlay {
   createOverlay(selfTester: SelfTester): void {
-    const overlay = document.getElementById(outerOverlayId) as HTMLElement;
-    overlay.innerHTML = this.createOuterOverlay({
+    this.createInnerOverlay({
       headerRightElement: `
-          <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${sovendusOverlayRepeatTestsId}" style="margin-left: auto">
-            repeat tests
-          </button>
-      `,
+            <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${sovendusOverlayRepeatTestsId}" style="margin-left: auto">
+              repeat tests
+            </button>
+        `,
       children: `
-          <ul id="${innerOverlayId}" class="${sovendusOverlayFontClass}">
-            <li class="${sovendusOverlayFontClass}">
-              Integration Type: ${selfTester.integrationType.getFormattedStatusMessage(false)}
-            </li>
-            <li class="${sovendusOverlayFontClass}">
-              Browser: ${selfTester.browserName.elementValue}
-            </li>
-            ${selfTester.awinExecutedTestResult.getFormattedGeneralStatusMessage()}
-            ${selfTester.multipleIFramesAreSame.getFormattedGeneralStatusMessage()}
-            ${selfTester.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
-            ${selfTester.isFlexibleIFrameExecutable.getFormattedGeneralStatusMessage()}
-            ${selfTester.isSovendusJsOnDom.getFormattedGeneralStatusMessage()}
-            ${selfTester.isSovendusJsExecutable.getFormattedGeneralStatusMessage()}
-            ${selfTester.isUnknownSovendusJsError.getFormattedGeneralStatusMessage()}
-          </ul>
-          ${this.createInnerOverlay(selfTester)}
-      `,
+            <ul id="${innerOverlayId}" class="${sovendusOverlayFontClass}">
+              <li class="${sovendusOverlayFontClass}">
+                Integration Type: ${selfTester.integrationType.getFormattedStatusMessage(false)}
+              </li>
+              <li class="${sovendusOverlayFontClass}">
+                Browser: ${selfTester.browserName.elementValue}
+              </li>
+              ${selfTester.awinExecutedTestResult.getFormattedGeneralStatusMessage()}
+              ${selfTester.multipleIFramesAreSame.getFormattedGeneralStatusMessage()}
+              ${selfTester.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
+              ${selfTester.isFlexibleIFrameExecutable.getFormattedGeneralStatusMessage()}
+              ${selfTester.isSovendusJsOnDom.getFormattedGeneralStatusMessage()}
+              ${selfTester.isSovendusJsExecutable.getFormattedGeneralStatusMessage()}
+              ${selfTester.isUnknownSovendusJsError.getFormattedGeneralStatusMessage()}
+            </ul>
+            ${this.createInnerInnerOverlay(selfTester)}
+        `,
     });
+
     document
       .getElementById(toggleSovendusOverlayId)
       ?.addEventListener("click", toggleOverlay);
+
+    // TODO Soll im IFrame passieren (versuchen):
     this.addButtonAndInfoEventListener();
+
     // this.moveOverlayAboveAll();
   }
 
   createLoadingOverlay(): void {
     const overlay = document.createElement("div");
     overlay.id = outerOverlayId;
-    overlay.innerHTML = this.createOuterOverlay({
-      children: `
-          <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
-            Sovendus detected, tests are currently running...
-          </h2>
-          <h3 class="${sovendusOverlayFontClass} ${sovendusOverlayH3Class}">
-            This can take up to 10 seconds
-          </h3>
-      `,
-    });
+    overlay.innerHTML = this.createOuterOverlay();
     document.body.appendChild(overlay);
+
+    this.createInnerOverlay({
+      children: `
+        <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+          Sovendus detected, tests are currently running...
+        </h2>
+        <h3 class="${sovendusOverlayFontClass} ${sovendusOverlayH3Class}">
+          This can take up to 10 seconds
+        </h3>
+    `,
+    });
+
     document
       .getElementById(toggleSovendusOverlayId)
       ?.addEventListener("click", toggleOverlay);
   }
 
-  createOuterOverlay({
-    headerRightElement = "",
-    children,
-  }: {
-    headerRightElement?: string;
-    children: string;
-  }): string {
+  createOuterOverlay(): string {
+    // TODO OuterOverlayStyle entfernen
     return `
       ${this.getOverlayStyle()}
       <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${toggleSovendusOverlayId}">
         Hide
       </button>
-      <div class="${sovendusOverlayFontClass}" id="${overlayId}">  
-        <div style="margin:auto;max-width:700px; background: #293049">
-          <div style="display: flex">
-            <h1 class="${sovendusOverlayFontClass} ${sovendusOverlayH1Class}" style="margin-right: auto">
-              Sovendus Self-Test Overlay
-            </h1>
-            ${headerRightElement}
-          </div>
-          ${children}
-        </div>
+      <div id="${overlayId}">
       </div>
     `;
   }
 
-  createInnerOverlay(selfTester: SelfTester): string {
+  createInnerOverlay({
+    headerRightElement = "",
+    children,
+  }: {
+    headerRightElement?: string;
+    children: string;
+  }): void {
+    const iframe = document.createElement("iframe");
+    iframe.style.border = "none";
+    iframe.style.width = "100%";
+    iframe.style.height = "850px"; // TODO Mit JS berechnen
+    const overlay = document.getElementById(overlayId) as HTMLElement;
+    overlay.replaceChildren(iframe);
+    document.body.appendChild(overlay);
+    if (iframe.contentDocument) {
+      iframe.contentDocument.body.innerHTML = `
+      ${this.getOverlayStyle()}
+      <div style="margin:auto;max-width:700px; background: #293049" class="${sovendusOverlayFontClass}">
+        <div style="display: flex">
+          <h1 class="${sovendusOverlayFontClass} ${sovendusOverlayH1Class}" style="margin-right: auto">
+            Sovendus Self-Test Overlay
+          </h1>
+          ${headerRightElement}
+        </div>
+        ${children}
+      </div>
+    `;
+    }
+  }
+
+  createInnerInnerOverlay(selfTester: SelfTester): string {
     const awinIntegrationDetected =
       selfTester.awinIntegrationDetectedTestResult.elementValue;
     const awinIntegrationNoSaleTracked =
