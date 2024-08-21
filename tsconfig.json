@@ -13,8 +13,9 @@
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "@src/*": [
-        "src/*"
+      "@src/*": ["src/*"],
+      "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.10/+esm": [
+        "node_modules/@floating-ui/dom"
       ]
     },
     // Strict Checks
@@ -47,12 +48,6 @@
     "suppressImplicitAnyIndexErrors": false,
     "noStrictGenericChecks": false
   },
-  "include": [
-    "src/",
-    "src/tests"
-  ],
-  "exclude": [
-    "src/chrome",
-    "src/firefox"
-  ]
+  "include": ["src/", "src/tests"],
+  "exclude": ["src/chrome", "src/firefox"]
 }

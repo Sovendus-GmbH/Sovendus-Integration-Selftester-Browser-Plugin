@@ -1,9 +1,14 @@
+import type { autoPlacement, computePosition } from "@floating-ui/dom";
+import {
+  autoPlacement as autoPlacementFromCDN,
+  computePosition as computePositionFromCDN,
+} from "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.10/+esm";
+
 import {
   fullscreenClass,
   innerOverlayId,
   outerOverlayId,
   overlayId,
-  sovendusInfoClass,
   sovendusOverlayButtonClass,
   sovendusOverlayErrorClass,
   sovendusOverlayFontClass,
@@ -14,8 +19,10 @@ import {
   sovendusOverlayTextClass,
   testLoadedIFrameId,
   toggleSovendusOverlayId,
+  tooltipButtonClass,
+  tooltipClass,
 } from "./self-test-overlay-css-vars.js";
-import SelfTester, { TooltipPositionType } from "./self-tester.js";
+import SelfTester from "./self-tester.js";
 import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
 
 void (async (): Promise<void> => {
@@ -61,7 +68,7 @@ class SelfTesterOverlay {
       headerRightElement: `
             <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${sovendusOverlayRepeatTestsId}" style="margin-left: auto">
               repeat tests
-            </button>
+            </button>        
         `,
       children: `
             <ul class="${sovendusOverlayFontClass}">
@@ -326,6 +333,16 @@ class SelfTesterOverlay {
             padding: 0;
             margin: 0;
           }
+          .${tooltipClass} {
+            max-width: 250px;
+            position: absolute;
+            display: none;
+            background: orange;
+            color: white;
+            padding: 12px;
+            border: unset;
+            border-radius: 8px;
+          }
           #${innerOverlayId} {
             padding: ${bannerPadding}px !important;
           }
@@ -420,33 +437,6 @@ class SelfTesterOverlay {
               font-size: 14px !important;
             }
           }
-
-          .${sovendusInfoClass} {
-            position: absolute;
-            padding: 6px;
-            border-radius: 5px;
-            z-index: 1000;
-            background: orange;
-            max-width: 250px;
-            color: #fff;
-            display: none;
-            right: -250px;
-            top: -5px;
-            left: -5px;
-          }
-          .${sovendusInfoClass}.${TooltipPositionType.top} {
-            position: absolute;
-            padding: 6px;
-            border-radius: 5px;
-            z-index: 1000;
-            background: orange;
-            max-width: 250px;
-            color: #fff;
-            display: none;
-            right: -250px;
-            top: -65px;
-            left: 1px;
-          }
         </style>
         `;
   }
@@ -529,18 +519,44 @@ class SelfTesterOverlay {
           void executeTests();
         });
 
-      const checkMarks: HTMLCollectionOf<Element> | undefined =
-        iframe.contentWindow?.document.getElementsByClassName(
-          sovendusInfoClass,
-        );
+      const tooltipInfoIcons = (
+        document.getElementById(testLoadedIFrameId) as HTMLIFrameElement
+      )?.contentWindow?.document.getElementsByClassName(
+        tooltipButtonClass,
+      ) as HTMLCollectionOf<HTMLElement>;
 
-      if (checkMarks) {
-        for (const element of checkMarks) {
-          element.parentElement?.addEventListener("mouseover", showInfoText);
-          element.parentElement?.addEventListener("mouseout", hideInfoText);
+      for (const item of tooltipInfoIcons) {
+        if (item.nextElementSibling) {
+          const tooltip = item.nextElementSibling as HTMLElement;
+
+          const showTooltip = async (): Promise<void> => {
+            tooltip.style.display = "block";
+
+            const { x, y } = await (
+              computePositionFromCDN as typeof computePosition
+            )(item, tooltip, {
+              middleware: [(autoPlacementFromCDN as typeof autoPlacement)()],
+            });
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y}px`;
+          };
+
+          const hideTooltip = (): void => {
+            tooltip.style.display = "none";
+          };
+
+          [
+            ["mouseenter", showTooltip],
+            ["mouseleave", hideTooltip],
+            ["focus", showTooltip],
+            ["blur", hideTooltip],
+          ].forEach(([event, listener]) => {
+            item.addEventListener(
+              event as "mouseenter" | "mouseleave" | "focus" | "blur",
+              listener as () => void,
+            );
+          });
         }
-      } else {
-        throw new Error("Failed to find info icons");
       }
     } else {
       throw new Error(
@@ -582,29 +598,6 @@ function toggleOverlay(): void {
       overlay.style.display = "none";
       toggle.innerText = "Show";
     }
-  }
-}
-
-function showInfoText(event: MouseEvent): void {
-  const label = (event.currentTarget as HTMLElement)?.firstElementChild;
-  // ?.lastElementChild
-  //   ?.firstElementChild;
-  if (label) {
-    // const rect = label.getBoundingClientRect();
-    // (label as HTMLElement).style.left =
-    //   `${rect.left + window.pageXOffset - 5}px`;
-    // (label as HTMLElement).style.top =
-    //   `${rect.top + window.pageYOffset - (label as HTMLElement).offsetHeight - 5}px`;
-    (label as HTMLElement).style.display = "block";
-  }
-}
-
-function hideInfoText(event: MouseEvent): void {
-  const label = (event.currentTarget as HTMLElement)?.firstElementChild;
-  // ?.lastElementChild
-  //   ?.firstElementChild;
-  if (label) {
-    (label as HTMLElement).style.display = "none";
   }
 }
 

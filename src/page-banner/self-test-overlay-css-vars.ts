@@ -12,4 +12,5 @@ export const sovendusOverlayH2Class = "sovendus-overlay-h2";
 export const sovendusOverlayH3Class = "sovendus-overlay-h3";
 export const sovendusOverlayTextClass = "sovendus-overlay-text";
 export const sovendusOverlayButtonClass = "sovendus-overlay-button";
-export const sovendusInfoClass = "sovendus-info";
+export const tooltipButtonClass = "tooltipButton";
+export const tooltipClass = "tooltip";
