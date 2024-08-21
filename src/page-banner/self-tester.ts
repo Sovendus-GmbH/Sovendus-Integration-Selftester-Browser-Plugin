@@ -1297,7 +1297,7 @@ export default class SelfTester {
 
   async transmitTestResult(): Promise<void> {
     try {
-      const response = await fetch("http://localhost:3000/api/testing-plugin", {
+      await fetch("http://localhost:3000/api/testing-plugin", {
         method: "POST",
         mode: "no-cors",
         headers: {
@@ -1305,7 +1305,6 @@ export default class SelfTester {
         },
         body: JSON.stringify(this.getTestResultResponseData()),
       });
-      const result = response.ok;
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error("Failed to transmit sovendus test result - error:", e);
@@ -1649,11 +1648,11 @@ class WarningOrFailTestResult<
       return "";
     } catch (error) {
       throw new Error(
-        `getFormattedStatusMessage() crashed: ${error}\n\nElementValue: ${
-          this.elementValue
-        }\nStatusCode: ${this.statusCode}\nStatusMessageKey: ${
-          this.statusMessageKey
-        }`,
+        `getFormattedStatusMessage() crashed: ${error}\n
+        \n
+        ElementValue: ${this.elementValue}\n
+        StatusCode: ${this.statusCode}\n
+        StatusMessageKey: ${this.statusMessageKey}`,
       );
     }
   }
