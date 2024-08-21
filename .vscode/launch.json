@@ -6,7 +6,14 @@
       "request": "launch",
       "name": "Jest watch all tests",
       "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
-      "args": ["--verbose", "-i", "--no-cache", "--watchAll"],
+      "args": [
+        "--verbose",
+        "-i",
+        "--no-cache",
+        "--watchAll",
+        "--silent=false",
+        "-t=awinSaleTracked"
+      ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }
