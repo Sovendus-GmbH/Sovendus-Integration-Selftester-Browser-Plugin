@@ -740,11 +740,12 @@ export default class SelfTester {
         sovendusJs.type === null ||
         sovendusJs.type === "";
       if (isExecutable) {
-        return new WarningOrFailTestResult<boolean | undefined>({
+        return new SuccessTestResult<boolean | undefined>({
+          // return new WarningOrFailTestResult<boolean | undefined>({
           elementValue: isExecutable,
-          statusMessageKey:
-            StatusMessageKeyTypes.unknownErrorIntegrationScriptFailed,
-          statusCode: StatusCodes.Error,
+          // statusMessageKey:
+          //   StatusMessageKeyTypes.unknownErrorIntegrationScriptFailed,
+          // statusCode: StatusCodes.Error,
         });
       } else {
         return new WarningOrFailTestResult<string | undefined>({

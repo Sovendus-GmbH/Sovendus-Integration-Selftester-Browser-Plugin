@@ -3,11 +3,9 @@ import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 import {
   sovAppDataEverythingIsOkay,
-  sovAppDataUndefinedButIsOkay,
+  sovAppIFramesAllValidData,
 } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
-
-// Ist immer false
 
 executeOverlayTests({
   testName: "multipleSovIFramesDetected",
@@ -16,19 +14,54 @@ executeOverlayTests({
       elementKey: "multipleSovIFramesDetected",
       testsInfo: [
         {
-          testName: "multipleSovIFramesDetected",
+          testName: "multipleSovIFramesDetectedOneIFrame",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
         },
         {
-          testName: "NoMultipleSovIFramesDetected",
-          sovAppData: sovAppDataUndefinedButIsOkay,
-          expectedElementValue: null,
+          testName: "multipleSovIFramesDetectedNoIFrames",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+          },
+          expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: null,
-          disableFlexibleIframeJs: true,
+          removeSovIFrame: true,
+        },
+        {
+          testName: "multipleSovIFramesDetectedTwoIFrames",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes2: {
+              ...sovAppIFramesAllValidData,
+            },
+          },
+          expectedElementValue: true,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: null,
+        },
+        {
+          testName: "multipleSovIFramesDetectedThreeIFrames",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes2: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes3: {
+              ...sovAppIFramesAllValidData,
+            },
+          },
+          expectedElementValue: true,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: null,
         },
       ],
     }),

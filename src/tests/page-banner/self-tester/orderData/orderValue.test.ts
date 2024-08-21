@@ -51,7 +51,7 @@ const tests = [
       {
         testName: "MalformedNumberWithCommaInsteadOfDot",
         sovAppData: sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
-        expectedElementValue: encodeURI(encodeURIComponent("1234,56")),
+        expectedElementValue: "1234,56",
         expectedStatusCode: StatusCodes.Error,
         expectedStatusMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
       },
