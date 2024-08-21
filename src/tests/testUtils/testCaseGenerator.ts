@@ -41,6 +41,8 @@ export function generateTests({
       );
     },
     disableFlexibleIframeJs: testInfo.disableFlexibleIframeJs,
+    disableAwinMasterTag: testInfo.disableAwinMasterTag,
+    disableAwinSalesTracking: testInfo.disableAwinSalesTracking,
   }));
 }
 
@@ -79,31 +81,31 @@ export function generateMalformedDataTests({
     ...(skipNumberCheck
       ? []
       : canBeANumber
-      ? [
-          {
-            testName: "MalformedNumberWithCommaInsteadOfDot",
-            sovAppData: sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
-            expectedElementValue: "1234,56",
-            expectedStatusCode: StatusCodes.Error,
-            expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-          },
-        ]
-      : [
-          {
-            testName: "MalformedNumber",
-            sovAppData: sovAppDataNumberButIsOkay,
-            expectedElementValue: "1234",
-            expectedStatusCode: StatusCodes.Error,
-            expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-          },
-          {
-            testName: "MalformedFloatNumber",
-            sovAppData: sovAppDataFloatNumberButIsOkay,
-            expectedElementValue: "1234.56",
-            expectedStatusCode: StatusCodes.Error,
-            expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-          },
-        ]),
+        ? [
+            {
+              testName: "MalformedNumberWithCommaInsteadOfDot",
+              sovAppData: sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
+              expectedElementValue: "1234,56",
+              expectedStatusCode: StatusCodes.Error,
+              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+            },
+          ]
+        : [
+            {
+              testName: "MalformedNumber",
+              sovAppData: sovAppDataNumberButIsOkay,
+              expectedElementValue: "1234",
+              expectedStatusCode: StatusCodes.Error,
+              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+            },
+            {
+              testName: "MalformedFloatNumber",
+              sovAppData: sovAppDataFloatNumberButIsOkay,
+              expectedElementValue: "1234.56",
+              expectedStatusCode: StatusCodes.Error,
+              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+            },
+          ]),
     {
       testName: "Missing",
       sovAppData: sovAppDataNullButIsOkay,
@@ -182,7 +184,7 @@ export function generateMalformedDataTests({
 export type TestsInfoType = {
   testName: string;
   sovAppData: SovDataType;
-  expectedElementValue: string | boolean | null;
+  expectedElementValue: string | boolean | number | null;
   expectedStatusCode: StatusCodes;
   expectedStatusMessageKey: StatusMessageKeyTypes | null;
   disableFlexibleIframeJs?: boolean;
