@@ -1611,9 +1611,11 @@ class WarningOrFailTestResult<
     try {
       if (this.statusCode === StatusCodes.SuccessButNeedsReview) {
         if (!this.statusMessageKey) {
-          throw new Error(
+          // eslint-disable-next-line no-console
+          console.error(
             `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
           );
+          return "";
         }
         return `${String(
           this.elementValue ? this.elementValue : "",
@@ -1625,9 +1627,11 @@ class WarningOrFailTestResult<
       }
       if (this.statusCode === StatusCodes.Error) {
         if (!this.statusMessageKey) {
-          throw new Error(
+          // eslint-disable-next-line no-console
+          console.error(
             `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
           );
+          return "";
         }
         return `${String(
           this.elementValue ? this.elementValue : "",
@@ -1641,22 +1645,26 @@ class WarningOrFailTestResult<
       }
       return "";
     } catch (error: ExplicitAnyType) {
-      throw new Error(
+      // eslint-disable-next-line no-console
+      console.error(
         `getFormattedStatusMessage() crashed: ${error}\n
         \n
         ElementValue: ${this.elementValue}\n
         StatusCode: ${this.statusCode}\n
         StatusMessageKey: ${this.statusMessageKey}`,
       );
+      return "";
     }
   }
 
   override getFormattedGeneralStatusMessage(): string {
     if (this.statusCode === StatusCodes.Error) {
       if (!this.statusMessageKey) {
-        throw new Error(
+        // eslint-disable-next-line no-console
+        console.error(
           `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
         );
+        return "";
       }
       return `<li><h3 class='${sovendusOverlayErrorClass}'>${this.replaceElementValueInMessage(
         statusMessages[this.statusMessageKey].errorText,

@@ -10,6 +10,7 @@ import {
 } from "../npm/@floating-ui/dom@1.6.10/+esm.js";
 import {
   fullscreenClass,
+  IFrameStyleId,
   innerOverlayId,
   outerOverlayId,
   overlayId,
@@ -63,8 +64,8 @@ function removeOverlay(): void {
   document.getElementById(outerOverlayId)?.remove();
 }
 class SelfTesterOverlay {
-  resizeEvent: (() => void) | undefined = undefined;
   createOverlay(selfTester: SelfTester): void {
+    document.getElementById(outerOverlayId)?.remove();
     this.createOuterOverlay();
     this.createInnerOverlay({
       loadingDone: true,
@@ -119,9 +120,13 @@ class SelfTesterOverlay {
       </div>
     `;
     document.body.appendChild(overlay);
-    document
-      .getElementById(toggleSovendusOverlayId)
-      ?.addEventListener("click", toggleOverlay);
+    const toggle = document.getElementById(toggleSovendusOverlayId);
+    if (toggle) {
+      toggle.addEventListener("click", toggleOverlay);
+    } else {
+      // eslint-disable-next-line no-console
+      console.error("Failed to add click event to show / hide button");
+    }
   }
 
   createInnerOverlay({
@@ -152,40 +157,25 @@ class SelfTesterOverlay {
       </div>
     `;
       } else {
-        throw new Error(
-          "Failed to get iframe.contentDocument to place content",
-        );
+        // eslint-disable-next-line no-console
+        console.error("Failed to get iframe.contentDocument to place content");
       }
 
       const iFrameStyle = document.createElement("style");
+      iFrameStyle.id = IFrameStyleId;
       overlay.insertAdjacentElement("afterbegin", iFrameStyle);
 
-      this.resizeEvent = (): void =>
-        this.updateIFrameHeight(iframe, iFrameStyle);
       if (!loadingDone) {
-        window.addEventListener("resize", this.resizeEvent);
+        window.addEventListener("resize", (): void => updateIFrameHeight());
       }
 
-      this.updateIFrameHeight(iframe, iFrameStyle);
+      updateIFrameHeight(iframe);
       if (loadingDone) {
         this.addButtonAndInfoEventListener(iframe);
       }
     };
     iframe.id = loadingDone ? testLoadedIFrameId : testNotLoadedIFrameId;
-    overlay.replaceChildren(iframe);
-  }
-
-  updateIFrameHeight(
-    iframe: HTMLIFrameElement,
-    iFrameStyle: HTMLStyleElement,
-  ): void {
-    const innerOverlay = iframe.contentDocument?.getElementById(innerOverlayId);
-    if (innerOverlay) {
-      iFrameStyle.innerHTML = `#${testLoadedIFrameId} { height: ${innerOverlay.scrollHeight}px !important; }`;
-      iframe.style.height = `${innerOverlay.scrollHeight}px !important`;
-    } else {
-      throw new Error("Failed to get innerOverlay to update iframe height.");
-    }
+    overlay.appendChild(iframe);
   }
 
   createInnerInnerOverlay(selfTester: SelfTester): string {
@@ -567,6 +557,32 @@ class SelfTesterOverlay {
         });
       }
     }
+  }
+}
+
+function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
+  const _iframe =
+    iframe ||
+    (document.getElementById(testLoadedIFrameId) as HTMLIFrameElement | null);
+  const innerOverlay = _iframe?.contentDocument?.getElementById(innerOverlayId);
+  const iFrameStyle = document.getElementById(
+    IFrameStyleId,
+  ) as HTMLStyleElement | null;
+  if (!_iframe || !innerOverlay || !iFrameStyle) {
+    if (!_iframe) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to get iframe to update iframe height.");
+    }
+    if (!innerOverlay) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to get innerOverlay to update iframe height.");
+    }
+    if (!iFrameStyle) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to get iFrameStyle to update iframe height.");
+    }
+  } else {
+    iFrameStyle.innerHTML = `#${testLoadedIFrameId} { height: ${innerOverlay.scrollHeight}px !important; }`;
   }
 }
 

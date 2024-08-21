@@ -16,7 +16,9 @@ export async function checkStickyBannerAndOverlayIntegration(
     },
   });
   if (result?.[0]?.result === undefined) {
-    throw new Error("Failed to check if an overlay is used");
+    // eslint-disable-next-line no-console
+    console.error("Failed to check if an overlay is used");
+    return false;
   }
   return result[0].result;
 }
@@ -52,7 +54,7 @@ export async function hideOrShowStickyBannerAndOverlay(
         }
       }
       if (!sovOverlay && (!stickyBanner || !parentElement)) {
-        throw new Error("Error: sovOverlay or sticky banner not found");
+        console.error("Error: sovOverlay or sticky banner not found");
       }
     },
   });

@@ -238,7 +238,7 @@ async function getScreenShotDimensions(
   const mobileDeviceEmulatorIsOverlappedByDevTools =
     percentageDifference > 0.01;
 
-  const mobileDeviceEmulatorZoomLevelSet = zoomLevelWidth < 0.95;
+  const mobileDeviceEmulatorZoomLevelSet = zoomLevelWidth < 0.9;
 
   let screenshotElementVerticalPosition: number;
   if (sovendusOverlayIntegration) {
@@ -254,16 +254,6 @@ async function getScreenShotDimensions(
     screenshotContainer.width = zoomAdjustedWidth;
     screenshotElementVerticalPosition = zoomAdjustedHeight;
   }
-
-  console.log({
-    zoomAdjustedHeight,
-    scrollHeight,
-    viewPortHeight,
-    mobileDeviceEmulatorIsOverlappedByDevTools,
-    mobileDeviceEmulatorZoomLevelSet,
-    zoomLevel: zoomLevelWidth,
-    screenshotElementVerticalPosition,
-  });
 
   return {
     zoomAdjustedHeight,

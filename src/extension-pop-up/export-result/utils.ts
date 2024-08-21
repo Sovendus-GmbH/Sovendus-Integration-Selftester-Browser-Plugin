@@ -26,7 +26,8 @@ export async function copyScreenshotsToClipboard(
               resolve();
             })
             .catch((error) => {
-              console.error(error);
+              // eslint-disable-next-line no-console
+              console.error("Failed to copy to the clipboard, error:", error);
             });
         });
       }
@@ -63,9 +64,11 @@ export async function checkIfSovendusIsDetected(
     },
   });
   if (result?.[0]?.result === undefined) {
-    throw new Error(
+    // eslint-disable-next-line no-console
+    console.error(
       "Failed to check if Sovendus is integrated - script injection failed",
     );
+    return { sovendusIntegrated: false, overlayVisible: false };
   }
   return result[0].result;
 }

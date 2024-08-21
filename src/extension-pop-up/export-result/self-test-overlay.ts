@@ -5,6 +5,7 @@ import {
   sovendusOverlayH1Class,
   sovendusOverlayH2Class,
   sovendusOverlayRepeatTestsId,
+  testLoadedIFrameId,
   toggleSovendusOverlayId,
 } from "../../page-banner/self-test-overlay-css-vars.js";
 import { browserAPI } from "../extension-pop-up.js";
@@ -37,12 +38,14 @@ export async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
       overlayId,
       fullscreenClass,
       sovendusOverlayRepeatTestsId,
+      testLoadedIFrameId,
     ],
     func: (
       toggleSovendusOverlayId,
       overlayId,
       fullscreenClass,
       sovendusOverlayRepeatTestsId,
+      testLoadedIFrameId,
     ) => {
       function _restoreOverlay(): void {
         const overlay = document.getElementById(overlayId);
@@ -62,9 +65,11 @@ export async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
       }
 
       function _showRepeatTestsButton(): void {
-        const repeatTestsButton = document.getElementById(
-          sovendusOverlayRepeatTestsId,
-        );
+        const repeatTestsButton = (
+          document.getElementById(
+            testLoadedIFrameId,
+          ) as HTMLIFrameElement | null
+        )?.contentDocument?.getElementById(sovendusOverlayRepeatTestsId);
         if (repeatTestsButton) {
           repeatTestsButton.style.display = "block";
         }
@@ -94,6 +99,7 @@ export async function showSelfTesterOverlay(tabId: number): Promise<void> {
       sovendusOverlayH1Class,
       sovendusOverlayH2Class,
       sovendusOverlayRepeatTestsId,
+      testLoadedIFrameId,
     ],
     func: (
       toggleSovendusOverlayId,
@@ -103,6 +109,7 @@ export async function showSelfTesterOverlay(tabId: number): Promise<void> {
       sovendusOverlayH1Class,
       sovendusOverlayH2Class,
       sovendusOverlayRepeatTestsId,
+      testLoadedIFrameId,
     ) => {
       _showOverlay();
 
@@ -124,9 +131,11 @@ export async function showSelfTesterOverlay(tabId: number): Promise<void> {
       }
 
       function _hideRepeatTestsButton(): void {
-        const repeatTestsButton = document.getElementById(
-          sovendusOverlayRepeatTestsId,
-        );
+        const repeatTestsButton = (
+          document.getElementById(
+            testLoadedIFrameId,
+          ) as HTMLIFrameElement | null
+        )?.contentDocument?.getElementById(sovendusOverlayRepeatTestsId);
         if (repeatTestsButton) {
           repeatTestsButton.style.display = "none";
         }
