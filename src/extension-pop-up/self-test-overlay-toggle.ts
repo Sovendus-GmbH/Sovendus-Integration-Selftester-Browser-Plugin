@@ -18,7 +18,7 @@ function toggleOverlay() {
   }
 
   const checkerOverlay = document.getElementById(
-    "outerSovedusIntegrationMethodCheckerOverlay"
+    "outerSovedusIntegrationMethodCheckerOverlay",
   );
   if (checkerOverlay) {
     if (checkerOverlay.style.display === "none") {
@@ -28,3 +28,5 @@ function toggleOverlay() {
     }
   }
 }
+
+toggleOverlay();

@@ -413,10 +413,6 @@ export default class SelfTester {
       malformedMessageKey: StatusMessageKeyTypes.consumerEmailNotValid,
     });
     if (emailTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-      function validateEmail(email: string) {
-        const re = /\S+@\S+\.\S+/;
-        return re.test(email);
-      }
       const mailIsValid = validateEmail(String(emailTestResult.elementValue));
       let statusCode: StatusCodes = StatusCodes.SuccessButNeedsReview;
       const elementValue: ElementValue = emailTestResult.elementValue;
@@ -770,7 +766,7 @@ export default class SelfTester {
     const wasExecuted =
       trafficSourceNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
       trafficMediumNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
-      window.hasOwnProperty("sovApplication") &&
+      window.sovApplication &&
       !!window.sovApplication?.instances?.length;
     if (wasExecuted) {
       console.log("Sovendus was executed");
@@ -1185,14 +1181,11 @@ export default class SelfTester {
   }
 
   sovIframesOrConsumerExists() {
-    return (
-      window.hasOwnProperty("sovIframes") ||
-      window.hasOwnProperty("sovConsumer")
-    );
+    return window.sovIframes || window.sovConsumer;
   }
 
   sovApplicationExists() {
-    return window.sovApplication?.hasOwnProperty("consumer");
+    return window.sovApplication?.consumer;
   }
 
   getAwinMerchantId(): number | string {
@@ -1471,6 +1464,11 @@ export default class SelfTester {
   }
 }
 
+function validateEmail(email: string) {
+  const re = /\S+@\S+\.\S+/;
+  return re.test(email);
+}
+
 class TestResultType<TElementValueType> {
   elementValue: TElementValueType;
   statusMessageKey: undefined | StatusMessageKeyTypes;
@@ -1578,9 +1576,7 @@ class WarningOrFailTestResult<
     this.statusCode = statusCode;
   }
 
-  override getFormattedStatusMessage(
-    _showSuccessCheckMark: boolean = true
-  ): string {
+  override getFormattedStatusMessage(): string {
     try {
       if (this.statusCode === StatusCodes.SuccessButNeedsReview) {
         if (!this.statusMessageKey) {
@@ -1619,7 +1615,7 @@ class WarningOrFailTestResult<
           this.elementValue
         }\nStatusCode: ${this.statusCode}\nStatusMessageKey: ${
           this.statusMessageKey
-        }`
+        }`,
       );
     }
   }
@@ -1760,7 +1756,7 @@ interface Instance {
 interface Awin {
   Tracking?: {
     Sovendus?: { trafficSourceNumber?: string; trafficMediumNumber?: string };
-    Sale: {};
+    Sale: object;
     iMerchantId: number;
   };
 }
