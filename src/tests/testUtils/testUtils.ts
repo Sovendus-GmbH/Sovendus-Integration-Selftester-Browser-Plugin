@@ -225,14 +225,14 @@ function getAwinIntegrationScript({
   return integrationScript;
 }
 
-function getSovendusIntegrationScript({
+function addTimeoutIfEnabled({
   sovAppData,
   testOptions,
 }: {
   sovAppData: SovFinalDataType;
   testOptions: TestOptionsType | undefined;
 }): string {
-  const integrationScript = `
+  const consumerIntegration = `
     const consumer = ${JSON.stringify(sovAppData.sovConsumer)};
     if (consumer){
       window.sovConsumer = consumer;
@@ -244,6 +244,25 @@ function getSovendusIntegrationScript({
     window.sovIframes =  ${JSON.stringify(sovAppData.sovIframes)};
     `
     }
+  `;
+  if (testOptions?.regular?.addConsumerIFrameOneSecTimeout) {
+    return `(async () => {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      ${consumerIntegration}
+    })();`;
+  }
+  return consumerIntegration;
+}
+
+function getSovendusIntegrationScript({
+  sovAppData,
+  testOptions,
+}: {
+  sovAppData: SovFinalDataType;
+  testOptions: TestOptionsType | undefined;
+}): string {
+  const integrationScript = `
+    ${addTimeoutIfEnabled({ sovAppData, testOptions })}
 
     ${
       testOptions?.regular?.disableSovendusDiv
