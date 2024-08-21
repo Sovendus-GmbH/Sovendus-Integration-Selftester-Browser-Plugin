@@ -7,6 +7,7 @@ import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
   sovAppDataMalformedButIsOkay,
+  sovAppDataNoParameterButIsOkay,
 } from "../sovAppData";
 
 executeOverlayTests({
@@ -40,18 +41,6 @@ executeOverlayTests({
   },
 });
 
-// executeOverlayTests(
-//   "salutationMissing",
-//   sovAppDataNoParameterButIsOkay,
-//   async (driver, sovSelfTester) => {
-//     expect(sovSelfTester.consumerSalutation.elementValue).toBe(undefined);
-//     expect(sovSelfTester.consumerSalutation.statusCode).toBe(StatusCodes.Error);
-//     expect(sovSelfTester.consumerSalutation.statusMessageKey).toBe(
-//       StatusMessageKeyTypes.missingConsumerSalutation
-//     );
-//   }
-// );
-
 executeOverlayTests({
   testName: "salutationMalformed",
   sovAppData: sovAppDataMalformedButIsOkay,
@@ -60,6 +49,19 @@ executeOverlayTests({
     expect(sovSelfTester.consumerSalutation.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerSalutation.statusMessageKey).toBe(
       StatusMessageKeyTypes.consumerSalutationNotValid
+    );
+  },
+});
+
+
+executeOverlayTests({
+  testName: "salutationMissing",
+  sovAppData: sovAppDataNoParameterButIsOkay,
+  testFunction: async (driver, sovSelfTester) => {
+    expect(sovSelfTester.consumerSalutation.elementValue).toBe(null);
+    expect(sovSelfTester.consumerSalutation.statusCode).toBe(StatusCodes.Error);
+    expect(sovSelfTester.consumerSalutation.statusMessageKey).toBe(
+      StatusMessageKeyTypes.missingConsumerSalutation
     );
   },
 });

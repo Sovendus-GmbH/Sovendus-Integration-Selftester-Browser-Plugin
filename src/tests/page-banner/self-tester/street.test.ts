@@ -23,7 +23,7 @@ executeOverlayTests({
   testName: "streetMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.consumerStreet.elementValue).toBe(undefined);
+    expect(sovSelfTester.consumerStreet.elementValue).toBe(null);
     expect(sovSelfTester.consumerStreet.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerStreet.statusMessageKey).toBe(
       StatusMessageKeyTypes.missingConsumerStreet

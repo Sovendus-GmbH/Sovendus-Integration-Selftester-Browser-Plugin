@@ -23,7 +23,7 @@ executeOverlayTests({
   testName: "phoneMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.consumerPhone.elementValue).toBe(undefined);
+    expect(sovSelfTester.consumerPhone.elementValue).toBe(null);
     expect(sovSelfTester.consumerPhone.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerPhone.statusMessageKey).toBe(
       StatusMessageKeyTypes.missingConsumerPhone

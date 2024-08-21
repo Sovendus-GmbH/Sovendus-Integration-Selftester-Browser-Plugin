@@ -23,7 +23,7 @@ executeOverlayTests({
   testName: "cityMissing",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.consumerCity.elementValue).toBe(undefined);
+    expect(sovSelfTester.consumerCity.elementValue).toBe(null);
     expect(sovSelfTester.consumerCity.statusCode).toBe(StatusCodes.Error);
     expect(sovSelfTester.consumerCity.statusMessageKey).toBe(
       StatusMessageKeyTypes.missingConsumerCity
