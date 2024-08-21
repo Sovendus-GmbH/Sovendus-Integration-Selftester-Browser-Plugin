@@ -17,7 +17,7 @@
     "copy-files": "npm run copy-other-files && npm run copy-to-ff && npm run copy-browser-specific-files && npm run copy-icon",
     "copy-other-files": "copyfiles --flat src/extension-pop-up/extension-pop-up.html build/chrome/extension-pop-up/",
     "copy-src": "copyfiles --flat src/page-banner/*.ts build/chrome/src/page-banner/",
-    "copy-to-ff": "copyfiles --flat build/chrome/extension-pop-up/* build/firefox/extension-pop-up && copyfiles --flat build/chrome/page-banner/* build/firefox/page-banner",
+    "copy-to-ff": "copyfiles --flat build/chrome/extension-pop-up/* build/firefox/extension-pop-up && copyfiles --flat build/chrome/extension-pop-up/export-result/* build/firefox/extension-pop-up/export-result && copyfiles --flat build/chrome/page-banner/* build/firefox/page-banner",
     "copy-browser-specific-files": "copyfiles --flat src/chrome/* build/chrome && copyfiles --flat src/firefox/* build/firefox",
     "copy-icon": "copyfiles --flat src/sovendus.png build/firefox/ && copyfiles --flat src/sovendus.png build/chrome/",
     "zip-builds": "zip-build build/chrome release_zips -t 'chrome-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%' && zip-build build/firefox release_zips -t 'firefox-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%'",

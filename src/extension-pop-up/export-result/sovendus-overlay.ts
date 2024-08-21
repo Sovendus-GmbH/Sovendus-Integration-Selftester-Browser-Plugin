@@ -1,7 +1,9 @@
+import { browserAPI } from "../extension-pop-up.js";
+
 export async function checkSovendusOverlayIntegration(
   tabId: number,
 ): Promise<boolean> {
-  const result = await chrome.scripting.executeScript({
+  const result = await browserAPI.scripting.executeScript({
     target: { tabId },
     world: "MAIN",
     func: (): boolean => {
@@ -20,7 +22,7 @@ export async function hideAndShowSovendusOverlay(
   hide: boolean,
   tabId: number,
 ): Promise<void> {
-  await chrome.scripting.executeScript({
+  await browserAPI.scripting.executeScript({
     target: { tabId },
     world: "MAIN",
     args: [hide],

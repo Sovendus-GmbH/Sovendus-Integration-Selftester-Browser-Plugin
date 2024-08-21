@@ -1,5 +1,8 @@
-import type SelfTester from "../../page-banner/self-tester.js";
-import { StatusCodes } from "../../page-banner/self-tester-data-to-sync-with-dev-hub.js";
+import {
+  outerOverlayId,
+  toggleSovendusOverlayId,
+} from "../../page-banner/self-test-overlay-css-vars.js";
+import { browserAPI } from "../extension-pop-up.js";
 
 export async function copyScreenshotsToClipboard(
   screenshotContainer: HTMLCanvasElement,
@@ -45,18 +48,16 @@ function isFirefox(): boolean {
 export async function checkIfSovendusIsDetected(
   tabId: number,
 ): Promise<{ sovendusIntegrated: boolean; overlayVisible: boolean }> {
-  const result = await chrome.scripting.executeScript({
+  const result = await browserAPI.scripting.executeScript({
     target: { tabId },
     world: "MAIN",
-    args: [StatusCodes.TestDidNotRun],
+    args: [outerOverlayId, toggleSovendusOverlayId],
     func: (
-      testDidNotRunStatusCode,
+      outerOverlayId,
+      toggleSovendusOverlayId,
     ): { sovendusIntegrated: boolean; overlayVisible: boolean } => {
-      const sovendusIntegrated =
-        !!window.sovSelfTester &&
-        window.sovSelfTester.wasExecuted?.statusCode !==
-          testDidNotRunStatusCode;
-      const overlayToggle = document.getElementById("toggleSovendusOverlay");
+      const sovendusIntegrated = !!document.getElementById(outerOverlayId);
+      const overlayToggle = document.getElementById(toggleSovendusOverlayId);
       const overlayVisible = overlayToggle?.style.display !== "none";
       return { sovendusIntegrated, overlayVisible };
     },
@@ -72,7 +73,6 @@ export async function checkIfSovendusIsDetected(
 export interface SovWindow extends Window {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ClipboardItem?: any;
-  sovSelfTester?: SelfTester;
 }
 
 declare let window: SovWindow;

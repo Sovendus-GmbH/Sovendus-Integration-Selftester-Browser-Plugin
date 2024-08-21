@@ -1,12 +1,24 @@
+import {
+  fullscreenClass,
+  overlayId,
+  sovendusOverlayFontClass,
+  sovendusOverlayH1Class,
+  sovendusOverlayH2Class,
+  sovendusOverlayRepeatTestsId,
+  toggleSovendusOverlayId,
+} from "../../page-banner/self-test-overlay-css-vars.js";
+import { browserAPI } from "../extension-pop-up.js";
+
 export async function hideSelfTesterOverlay(tabId: number): Promise<void> {
-  await chrome.scripting.executeScript({
+  await browserAPI.scripting.executeScript({
     target: { tabId },
-    func: () => {
-      const overlay = document.getElementById("sovendusOverlay");
+    args: [toggleSovendusOverlayId, overlayId, fullscreenClass],
+    func: (toggleSovendusOverlayId, overlayId, fullscreenClass) => {
+      const overlay = document.getElementById(overlayId);
       if (overlay) {
         overlay.style.display = "none";
-        overlay.classList.remove("fullscreen");
-        const overlayToggle = document.getElementById("toggleSovendusOverlay");
+        overlay.classList.remove(fullscreenClass);
+        const overlayToggle = document.getElementById(toggleSovendusOverlayId);
         if (overlayToggle) {
           overlayToggle.style.display = "none";
         }
@@ -18,16 +30,27 @@ export async function hideSelfTesterOverlay(tabId: number): Promise<void> {
 }
 
 export async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
-  await chrome.scripting.executeScript({
+  await browserAPI.scripting.executeScript({
     target: { tabId },
-    func: () => {
+    args: [
+      toggleSovendusOverlayId,
+      overlayId,
+      fullscreenClass,
+      sovendusOverlayRepeatTestsId,
+    ],
+    func: (
+      toggleSovendusOverlayId,
+      overlayId,
+      fullscreenClass,
+      sovendusOverlayRepeatTestsId,
+    ) => {
       function _restoreOverlay(): void {
-        const overlay = document.getElementById("sovendusOverlay");
+        const overlay = document.getElementById(overlayId);
         if (overlay) {
           overlay.style.display = "block";
-          overlay.classList.remove("fullscreen");
+          overlay.classList.remove(fullscreenClass);
           const overlayToggle = document.getElementById(
-            "toggleSovendusOverlay",
+            toggleSovendusOverlayId,
           );
           if (overlayToggle) {
             overlayToggle.style.display = "block";
@@ -40,7 +63,7 @@ export async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
 
       function _showRepeatTestsButton(): void {
         const repeatTestsButton = document.getElementById(
-          "sovendusOverlayRepeatTests",
+          sovendusOverlayRepeatTestsId,
         );
         if (repeatTestsButton) {
           repeatTestsButton.style.display = "block";
@@ -61,18 +84,35 @@ export async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
 }
 
 export async function showSelfTesterOverlay(tabId: number): Promise<void> {
-  await chrome.scripting.executeScript({
+  await browserAPI.scripting.executeScript({
     target: { tabId },
-    func: () => {
+    args: [
+      toggleSovendusOverlayId,
+      overlayId,
+      fullscreenClass,
+      sovendusOverlayFontClass,
+      sovendusOverlayH1Class,
+      sovendusOverlayH2Class,
+      sovendusOverlayRepeatTestsId,
+    ],
+    func: (
+      toggleSovendusOverlayId,
+      overlayId,
+      fullscreenClass,
+      sovendusOverlayFontClass,
+      sovendusOverlayH1Class,
+      sovendusOverlayH2Class,
+      sovendusOverlayRepeatTestsId,
+    ) => {
       _showOverlay();
 
       function _showOverlay(): void {
-        const overlay = document.getElementById("sovendusOverlay");
+        const overlay = document.getElementById(overlayId);
         if (overlay) {
           overlay.style.display = "block";
-          overlay.classList.add("fullscreen");
+          overlay.classList.add(fullscreenClass);
           const overlayToggle = document.getElementById(
-            "toggleSovendusOverlay",
+            toggleSovendusOverlayId,
           );
           if (overlayToggle) {
             overlayToggle.style.display = "block";
@@ -85,7 +125,7 @@ export async function showSelfTesterOverlay(tabId: number): Promise<void> {
 
       function _hideRepeatTestsButton(): void {
         const repeatTestsButton = document.getElementById(
-          "sovendusOverlayRepeatTests",
+          sovendusOverlayRepeatTestsId,
         );
         if (repeatTestsButton) {
           repeatTestsButton.style.display = "none";
@@ -113,25 +153,25 @@ export async function showSelfTesterOverlay(tabId: number): Promise<void> {
               #sovendusFontContainer {
                 max-width:333px;
               }
-              .sovendus-overlay-h1 {
+              .${sovendusOverlayH1Class} {
                 font-size: 27px !important;
                 margin-top: 0 !important;
                 margin-bottom: 5px !important;
               }
-              .sovendus-overlay-h2 {
+              .${sovendusOverlayH2Class} {
                 font-size: 20px !important;
                 margin-top: 4px !important;
                 margin-bottom: 4px !important;
               }
-              .sovendus-overlay-font {
+              .${sovendusOverlayFontClass} {
                 color: white !important;
                 font-family: Arial, Helvetica, sans-serif !important;
               }
               @media only screen and (min-width: 700px) {
-                .sovendus-overlay-h1 {
+                .${sovendusOverlayH1Class} {
                   font-size: 35px !important;
                 }
-                .sovendus-overlay-h2 {
+                .${sovendusOverlayH2Class} {
                   font-size: 28px !important;
                 }
                 #sovendusFontContainer {
@@ -147,12 +187,12 @@ export async function showSelfTesterOverlay(tabId: number): Promise<void> {
         overlay.id = "outerSovendusNotDetectedOverlay";
         overlay.innerHTML = `
             ${_getOverlayStyle()}
-            <div class="sovendus-overlay-font" id="sovendusNotDetectedOverlay">  
+            <div class="${sovendusOverlayFontClass}" id="sovendusNotDetectedOverlay">  
               <div id="sovendusFontContainer" style="margin:auto;">
                 <div>
-                  <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Self Test Overlay</h1>
+                  <h1 class="${sovendusOverlayFontClass} ${sovendusOverlayH1Class}">Sovendus Self Test Overlay</h1>
                 </div>
-                <h2 class="sovendus-overlay-font sovendus-overlay-h2" style="color:red !important;">Error: Sovendus was not detected</h2>
+                <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}" style="color:red !important;">Error: Sovendus was not detected</h2>
               </div>
             </div>
           `;

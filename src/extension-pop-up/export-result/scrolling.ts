@@ -1,5 +1,7 @@
+import { browserAPI } from "../extension-pop-up.js";
+
 export async function scrollToTop(tabId: number): Promise<void> {
-  await chrome.scripting.executeScript({
+  await browserAPI.scripting.executeScript({
     target: { tabId },
     world: "MAIN",
     func: () => {
@@ -12,7 +14,7 @@ export async function scrollDownToNextSection(
   tabId: number,
   scrollBy: number,
 ): Promise<void> {
-  await chrome.scripting.executeScript({
+  await browserAPI.scripting.executeScript({
     target: { tabId },
     world: "MAIN",
     args: [scrollBy],

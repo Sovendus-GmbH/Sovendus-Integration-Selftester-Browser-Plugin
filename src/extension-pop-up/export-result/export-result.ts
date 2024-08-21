@@ -1,3 +1,4 @@
+import { browserAPI } from "../extension-pop-up.js";
 import { scrollDownToNextSection, scrollToTop } from "./scrolling.js";
 import {
   hideSelfTesterOverlay,
@@ -270,7 +271,7 @@ async function getScrollableHeight(tabId: number): Promise<{
   viewPortHeight: number;
   viewPortWidth: number;
 }> {
-  const result = await chrome.scripting.executeScript({
+  const result = await browserAPI.scripting.executeScript({
     target: { tabId },
     world: "MAIN",
     func: (): {

@@ -1,7 +1,29 @@
+import {
+  sovendusOverlayErrorClass,
+  sovendusOverlayFontClass,
+  sovendusOverlayH1Class,
+  sovendusOverlayH2Class,
+  sovendusOverlayH3Class,
+} from "../page-banner/self-test-overlay-css-vars.js";
+import { browserAPI } from "./extension-pop-up.js";
+
 export async function checkAvailableIntegrations(tabId: number): Promise<void> {
-  await chrome.scripting.executeScript({
+  await browserAPI.scripting.executeScript({
     target: { tabId },
-    func: () => {
+    args: [
+      sovendusOverlayErrorClass,
+      sovendusOverlayFontClass,
+      sovendusOverlayH1Class,
+      sovendusOverlayH2Class,
+      sovendusOverlayH3Class,
+    ],
+    func: (
+      sovendusOverlayErrorClass,
+      sovendusOverlayFontClass,
+      sovendusOverlayH1Class,
+      sovendusOverlayH2Class,
+      sovendusOverlayH3Class,
+    ) => {
       const overlay = document.getElementById(
         "outerSovendusIntegrationMethodCheckerOverlay",
       );
@@ -137,11 +159,11 @@ export async function checkAvailableIntegrations(tabId: number): Promise<void> {
             //   " Integration"
             // )}
             availableMethodsText = `
-        <h3 class='sovendus-overlay-font sovendus-overlay-h3' style="border: 1px solid; border-radius: 8px; padding: 8px; text-align: center;">
+        <h3 class='${sovendusOverlayFontClass} ${sovendusOverlayH3Class}' style="border: 1px solid; border-radius: 8px; padding: 8px; text-align: center;">
           Note that the detection can be wrong and incomplete!
         </h3>
-        <h2 class="sovendus-overlay-font sovendus-overlay-h2">The following integration methods are available:</h2>
-        <h3 class='sovendus-overlay-font sovendus-overlay-h3'>
+        <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">The following integration methods are available:</h2>
+        <h3 class='${sovendusOverlayFontClass} ${sovendusOverlayH3Class}'>
           Generic Integration
         </h3>
         <p>
@@ -170,7 +192,7 @@ export async function checkAvailableIntegrations(tabId: number): Promise<void> {
             titleSuffix: string | null = null,
           ): string {
             return `
-      <h3 class='sovendus-overlay-font sovendus-overlay-h3'>
+      <h3 class='${sovendusOverlayFontClass} ${sovendusOverlayH3Class}'>
         ${titlePrefix ? titlePrefix : ""}${supportedSystem.name}${
           titleSuffix ? titleSuffix : ""
         }
@@ -219,8 +241,8 @@ export async function checkAvailableIntegrations(tabId: number): Promise<void> {
           }
           formatErrorMessage(errorTitle: string, errorMessage: string): string {
             return `
-        <h2 class="sovendus-overlay-font sovendus-overlay-h2 sovendus-overlay-error">${errorTitle}</h2>
-        <h3 class="sovendus-overlay-font sovendus-overlay-h3 sovendus-overlay-error">${errorMessage}</h3>
+        <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class} ${sovendusOverlayErrorClass}">${errorTitle}</h2>
+        <h3 class="${sovendusOverlayFontClass} ${sovendusOverlayH3Class} ${sovendusOverlayErrorClass}">${errorMessage}</h3>
       `;
           }
 
@@ -284,13 +306,13 @@ export async function checkAvailableIntegrations(tabId: number): Promise<void> {
             overlay.id = "outerSovendusIntegrationMethodCheckerOverlay";
             overlay.innerHTML = `
       ${this.getCheckerOverlayStyle()}
-      <div class="sovendus-overlay-font" id="sovendusIntegrationMethodCheckerOverlay">  
+      <div class="${sovendusOverlayFontClass}" id="sovendusIntegrationMethodCheckerOverlay">  
         <div style="margin:auto;max-width:500px;">
           <div>
-          <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Integration Methods Checker</h1>
+          <h1 class="${sovendusOverlayFontClass} ${sovendusOverlayH1Class}">Sovendus Integration Methods Checker</h1>
           </div>
           <div id="sovendusDetectionResult">
-            <h2 class="sovendus-overlay-font sovendus-overlay-h2">Detection in progress, this can take up to 20 seconds</h2>
+            <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">Detection in progress, this can take up to 20 seconds</h2>
           </div>
         </div>
       </div>
@@ -330,32 +352,32 @@ export async function checkAvailableIntegrations(tabId: number): Promise<void> {
                 right: 0 !important;
               }
             }
-            .sovendus-overlay-h1 {
+            .${sovendusOverlayH1Class} {
               font-size: 27px !important;
               margin-top: 0 !important;
               margin-bottom: 5px !important;
             }
-            .sovendus-overlay-h2 {
+            .${sovendusOverlayH2Class} {
               font-size: 22px !important;
               margin-top: 10px !important;
               margin-bottom: 4px !important;
             }
-            .sovendus-overlay-h3 {
+            .${sovendusOverlayH3Class} {
               font-size: 19px !important;
               margin-top: 10px !important;
               margin-bottom: 3px !important;
             }
-            .sovendus-overlay-font a {
+            .${sovendusOverlayFontClass} a {
               color: rgb(60, 139, 253);
             }
-            .sovendus-overlay-font a:hover {
+            .${sovendusOverlayFontClass} a:hover {
               color: rgb(0 94 230);;
             }
-            .sovendus-overlay-font {
+            .${sovendusOverlayFontClass} {
               color: white !important;
               font-family: Arial, Helvetica, sans-serif !important;
             }
-            .sovendus-overlay-error {
+            .${sovendusOverlayErrorClass} {
               color: red !important;
             }
           </style>
