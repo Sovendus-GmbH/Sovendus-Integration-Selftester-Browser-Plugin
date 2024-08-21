@@ -24,6 +24,6 @@
 8. Repeat the steps above until all errors are resolved and then send the test result to your account manager as described below.
 9. To copy the test result to your clipboard, click on the Sovendus icon on the top right (If you can't see the Sovendus icon, click on the puzzle icon) and then click on "Copy Test Result", now wait and don't click out of the browser until the button changes the color to green. This will create a screenshot of the page including all information about the integration for your account manager, then you can just navigate to your mail program and paste the screenshot in the mail using "ctrl + v" on your keyboard (or right click and then paste).
 
-## The optimal result for your integration looks like this (note that some values are not required for checkout benefits)
+## The optimal result for your integration looks like this (note that some values are not required for Checkout Benefits)
 
 ![CB image](https://raw.githubusercontent.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/main/docs/CheckoutBenefits.png)
