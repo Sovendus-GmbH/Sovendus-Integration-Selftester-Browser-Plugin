@@ -27,8 +27,7 @@ executeOverlayTests({
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey:
-            StatusMessageKeyTypes.flexibleIFrameJsExecutedTooEarly,
+          expectedStatusMessageKey: StatusMessageKeyTypes.sovendusJsMissing,
           testOptions: {
             regular: {
               removeSovendusJs: true,
