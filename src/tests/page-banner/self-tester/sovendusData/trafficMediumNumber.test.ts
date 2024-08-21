@@ -20,13 +20,15 @@ import {
   sovAppDataTrue,
   sovAppDataUndefined,
   sovAppIframesAllValidData,
+  sovTestTrafficMediumNumber,
 } from "../../sovAppData";
 
 const testCasesWhenScriptRuns: TestsInfoType = [
   {
     testName: "SuccessAsString",
     sovAppData: sovAppDataEverythingIsOkay,
-    expectedElementValue: "5",
+    expectedElementValue:
+      sovTestTrafficMediumNumber.CBVNOverlayDisabled.trafficMediumNumber,
     expectedStatusCode: StatusCodes.SuccessButNeedsReview,
     expectedStatusMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
   },
@@ -34,9 +36,14 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     testName: "SuccessAsNumber",
     sovAppData: {
       sovConsumer: sovAppConsumerAllValidData,
-      sovIframes1: { ...sovAppIframesAllValidData, trafficMediumNumber: 5 },
+      sovIframes1: {
+        ...sovAppIframesAllValidData,
+        trafficMediumNumber:
+          sovTestTrafficMediumNumber.CBVNOverlayDisabled.trafficMediumNumber,
+      },
     },
-    expectedElementValue: "5",
+    expectedElementValue:
+      sovTestTrafficMediumNumber.CBVNOverlayDisabled.trafficMediumNumber,
     expectedStatusCode: StatusCodes.SuccessButNeedsReview,
     expectedStatusMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
   },
@@ -48,7 +55,8 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     },
     expectedElementValue: "5.5",
     expectedStatusCode: StatusCodes.Error,
-    expectedStatusMessageKey: StatusMessageKeyTypes.trafficMediumNumberMalformed,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
   },
   {
     testName: "Missing",

@@ -39,9 +39,32 @@ export const sovAppConsumerAllValidData: SovConsumer = {
   consumerCity: "Karlsruhe",
 };
 
+export const sovTestTrafficMediumNumber = {
+  VNInlineDisabled: { trafficMediumNumber: "1" },
+  VNStickyDisabled: { trafficMediumNumber: "4" },
+  CBOverlayDisabled: { trafficMediumNumber: "5" },
+  CBVNOverlayDisabled: { trafficMediumNumber: "9" },
+  CBVNInlineDisabled: { trafficMediumNumber: "10" },
+  CBInlineDisabled: { trafficMediumNumber: "11" },
+  CBInlineVNStickyDisabled: { trafficMediumNumber: "12" },
+  CBOverlayVNInlineDisabled: { trafficMediumNumber: "13" },
+  CBOverlayVNStickyDisabled: { trafficMediumNumber: "14" },
+
+  VNInline: { trafficMediumNumber: "15" },
+  VNSticky: { trafficMediumNumber: "16" },
+  CBOverlay: { trafficMediumNumber: "17" },
+  CBVNOverlay: { trafficMediumNumber: "18" },
+  CBVNInline: { trafficMediumNumber: "19" },
+  CBInline: { trafficMediumNumber: "20" },
+  CBInlineVNSticky: { trafficMediumNumber: "21" },
+  CBOverlayVNInline: { trafficMediumNumber: "22" },
+  CBOverlayVNSticky: { trafficMediumNumber: "23" },
+};
+
 export const sovAppIframesAllValidData: SovIframes = {
-  trafficSourceNumber: "4704",
-  trafficMediumNumber: "5",
+  trafficSourceNumber: "7849",
+  trafficMediumNumber:
+    sovTestTrafficMediumNumber.CBVNOverlayDisabled.trafficMediumNumber,
   sessionId: "session-1234",
   timestamp: "1715872691",
   orderId: "order-1234",
