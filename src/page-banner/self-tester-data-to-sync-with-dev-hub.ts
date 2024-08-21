@@ -1,44 +1,44 @@
 export interface TestResultResponseDataType {
-  integrationType?: TestResultType;
-  browserName?: TestResultType;
-  websiteURL?: TestResultType;
-  consumerSalutation?: TestResultType;
-  consumerFirstName?: TestResultType;
-  consumerLastName?: TestResultType;
-  consumerYearOfBirth?: TestResultType;
-  consumerEmail?: TestResultType;
-  consumerEmailHash?: TestResultType;
-  consumerStreet?: TestResultType;
-  consumerStreetNumber?: TestResultType;
-  consumerZipCode?: TestResultType;
-  consumerPhone?: TestResultType;
-  consumerCity?: TestResultType;
-  consumerCountry?: TestResultType;
-  trafficSourceNumber?: TestResultType;
-  trafficMediumNumber?: TestResultType;
-  orderCurrency?: TestResultType;
-  orderId?: TestResultType;
-  orderValue?: TestResultType;
-  sessionId?: TestResultType;
-  timestamp?: TestResultType;
-  usedCouponCode?: TestResultType;
-  iframeContainerId?: TestResultType;
-  isEnabledInBackend?: TestResultType;
-  wasExecuted?: TestResultType;
-  awinTest?: TestResultType;
-  sovendusDivFound?: TestResultType;
-  sovDivIdInIFrames?: TestResultType;
-  multipleSovIFramesDetected?: TestResultType;
-  sovIFramesAmount?: TestResultType;
-  multipleIFramesAreSame?: TestResultType;
-  flexibleIFrameOnDOM?: TestResultType;
-  isFlexibleIframeExecutable?: TestResultType;
-  isSovendusJsOnDom?: TestResultType;
-  isSovendusJsExecutable?: TestResultType;
+  integrationType?: TestResultType<ElementValue>;
+  browserName?: TestResultType<BrowserTypes>;
+  websiteURL?: TestResultType<string>;
+  consumerSalutation?: TestResultType<string | undefined>;
+  consumerFirstName?: TestResultType<string | undefined>;
+  consumerLastName?: TestResultType<string | undefined>;
+  consumerYearOfBirth?: TestResultType<ElementValue>;
+  consumerEmail?: TestResultType<string | undefined>;
+  consumerEmailHash?: TestResultType<string | undefined>;
+  consumerStreet?: TestResultType<string | undefined>;
+  consumerStreetNumber?: TestResultType<string | undefined>;
+  consumerZipCode?: TestResultType<string | undefined>;
+  consumerPhone?: TestResultType<string | undefined>;
+  consumerCity?: TestResultType<string | undefined>;
+  consumerCountry?: TestResultType<string | undefined>;
+  trafficSourceNumber?: TestResultType<ElementValue>;
+  trafficMediumNumber?: TestResultType<ElementValue>;
+  orderCurrency?: TestResultType<string | undefined>;
+  orderId?: TestResultType<string | undefined>;
+  orderValue?: TestResultType<string | undefined>;
+  sessionId?: TestResultType<string | undefined>;
+  timestamp?: TestResultType<ElementValue>;
+  usedCouponCode?: TestResultType<string | undefined>;
+  iframeContainerId?: TestResultType<ElementValue>;
+  isEnabledInBackend?: TestResultType<ElementValue>;
+  wasExecuted?: TestResultType<ElementValue>;
+  awinTest?: TestResultType<ElementValue>;
+  sovendusDivFound?: TestResultType<ElementValue>;
+  sovDivIdInIFrames?: TestResultType<ElementValue>;
+  multipleSovIFramesDetected?: TestResultType<ElementValue>;
+  sovIFramesAmount?: TestResultType<ElementValue>;
+  multipleIFramesAreSame?: TestResultType<ElementValue>;
+  flexibleIFrameOnDOM?: TestResultType<ElementValue>;
+  isFlexibleIframeExecutable?: TestResultType<ElementValue>;
+  isSovendusJsOnDom?: TestResultType<ElementValue>;
+  isSovendusJsExecutable?: TestResultType<ElementValue>;
 }
 
-export interface TestResultType {
-  elementValue: ElementValue;
+export interface TestResultType<TElementValueType> {
+  elementValue: TElementValueType;
   statusMessageKey: StatusMessageKeyTypes;
   statusCode: StatusCodes;
 }
@@ -52,23 +52,14 @@ export enum StatusCodes {
   TestDidNotRun = "TestDidNotRun",
 }
 
-export const validCountries = [
-  "AT",
-  "CH",
-  "NL",
-  "GB",
-  "IE",
-  "FR",
-  "ES",
-  "BE",
-  "PL",
-  "SE",
-  "DK",
-  "IT",
-  "NO",
-  "PT",
-  "DE",
-];
+export enum BrowserTypes {
+  Chrome = "Chrome",
+  iPhone = "iPhone",
+  Edge = "Edge",
+  Android = "Android",
+  Firefox = "Firefox",
+  NotDetected = "Not detected",
+}
 
 export enum StatusMessageKeyTypes {
   awinNoSalesTracked = "awinNoSalesTracked",
@@ -135,6 +126,24 @@ export enum StatusMessageKeyTypes {
   empty = "empty",
 }
 
+export const validCountries = [
+  "AT",
+  "CH",
+  "NL",
+  "GB",
+  "IE",
+  "FR",
+  "ES",
+  "BE",
+  "PL",
+  "SE",
+  "DK",
+  "IT",
+  "NO",
+  "PT",
+  "DE",
+];
+
 export const validCurrencies = [
   "EUR",
   "GBP",
@@ -156,15 +165,15 @@ export const statusMessages: {
       "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.",
     infoText:
       "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. \
-                A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed. \
-                How to set up sales tracking with Awin? https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag",
+                  A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed. \
+                  How to set up sales tracking with Awin? https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag",
   },
 
   awinSaleTrackedAfterScript: {
     errorText: "ERROR: No Sale tracked yet",
     infoText:
       "If this happens on the order success page, make sure you've implemented Awin sales tracking properly, as no sale was tracked. \
-      How to set up sales tracking with Awin? https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag",
+        How to set up sales tracking with Awin? https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag",
   },
 
   consumerSalutationNotValid: {
@@ -286,11 +295,15 @@ export const statusMessages: {
 
   currencyNotValid: {
     errorText: "NOT A VALID CURRENCY",
-    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies}`,
+    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
+      ", "
+    )}`,
   },
   currencyMissing: {
     errorText: "DATA MISSING",
-    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies}`,
+    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
+      ", "
+    )}`,
   },
 
   currencySuccess: {
@@ -413,17 +426,23 @@ export const statusMessages: {
 
   missingConsumerCountry: {
     errorText: "DATA IS MISSING",
-    infoText: `Make sure to pass the country id of the delivery address. Valid are: ${validCountries}`,
+    infoText: `Make sure to pass the country id of the delivery address. Valid are: ${validCountries.join(
+      ", "
+    )}`,
   },
 
   consumerCountrySuccess: {
     errorText: "",
-    infoText: `Make sure this value aligns with the country of the delivery address. Valid are: ${validCountries}`,
+    infoText: `Make sure this value aligns with the country of the delivery address. Valid are: ${validCountries.join(
+      ", "
+    )}`,
   },
 
   consumerCountryInvalid: {
     errorText: "INVALID COUNTRY",
-    infoText: `Make sure this value aligns with the country of the delivery address. Valid are: ${validCountries}`,
+    infoText: `Make sure this value aligns with the country of the delivery address. Valid are: ${validCountries.join(
+      ", "
+    )}`,
   },
 
   missingTrafficSourceNumber: {
