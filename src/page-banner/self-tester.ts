@@ -54,7 +54,7 @@ export default class SelfTester {
 
   sovConsumer?: SovApplicationConsumer;
 
-  async selfTestIntegration() {
+  selfTestIntegration() {
     const awinIntegrationDetectedTestResult =
       (this.awinIntegrationDetectedTestResult =
         this.getAwinIntegrationDetectedTestResult());
