@@ -98,8 +98,6 @@ class SelfTesterOverlay {
       .getElementById(toggleSovendusOverlayId)
       ?.addEventListener("click", toggleOverlay);
 
-    this.addButtonAndInfoEventListener();
-
     // this.moveOverlayAboveAll();
   }
 
@@ -175,6 +173,9 @@ class SelfTesterOverlay {
         this.updateIFrameHeight(iframe, iFrameStyle);
       };
       this.updateIFrameHeight(iframe, iFrameStyle);
+      if (loadingDone) {
+        this.addButtonAndInfoEventListener(iframe);
+      }
     };
     iframe.id = loadingDone ? testLoadedIFrameId : testNotLoadedIFrameId;
     overlay.replaceChildren(iframe);
@@ -486,8 +487,8 @@ class SelfTesterOverlay {
             border: solid 1px #fff;
           }
           #${overlayId}.${fullscreenClass} {
-            width: calc(100vw - 44px) !important;
-            max-width: calc(100vw - 44px) !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
             height: 100vh !important;
             top: 0 !important;
             left: 0 !important;
@@ -520,67 +521,54 @@ class SelfTesterOverlay {
         `;
   }
 
-  addButtonAndInfoEventListener(): void {
-    const iframe = document.getElementById(
-      testLoadedIFrameId,
-    ) as HTMLIFrameElement | null;
-    if (iframe) {
-      iframe.contentWindow?.document
-        .getElementById(sovendusOverlayRepeatTestsId)
-        ?.addEventListener("click", () => {
-          void executeTests();
+  addButtonAndInfoEventListener(iframe: HTMLIFrameElement): void {
+    iframe.contentWindow?.document
+      .getElementById(sovendusOverlayRepeatTestsId)
+      ?.addEventListener("click", () => {
+        void executeTests();
+      });
+
+    const tooltipInfoIcons = (
+      document.getElementById(testLoadedIFrameId) as HTMLIFrameElement
+    )?.contentWindow?.document.getElementsByClassName(
+      tooltipButtonClass,
+    ) as HTMLCollectionOf<HTMLElement>;
+
+    for (const item of tooltipInfoIcons) {
+      if (item.nextElementSibling) {
+        const tooltip = item.nextElementSibling as HTMLElement;
+
+        const showTooltip = async (): Promise<void> => {
+          tooltip.style.display = "block";
+
+          const { x, y } =
+            await // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+            (computePositionFromCDN as typeof computePosition)(item, tooltip, {
+              middleware: [
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+                (autoPlacementFromCDN as typeof autoPlacement)(),
+              ],
+            });
+          tooltip.style.left = `${x}px`;
+          tooltip.style.top = `${y}px`;
+        };
+
+        const hideTooltip = (): void => {
+          tooltip.style.display = "none";
+        };
+
+        [
+          ["mouseenter", showTooltip],
+          ["mouseleave", hideTooltip],
+          ["focus", showTooltip],
+          ["blur", hideTooltip],
+        ].forEach(([event, listener]) => {
+          item.addEventListener(
+            event as "mouseenter" | "mouseleave" | "focus" | "blur",
+            listener as () => void,
+          );
         });
-
-      const tooltipInfoIcons = (
-        document.getElementById(testLoadedIFrameId) as HTMLIFrameElement
-      )?.contentWindow?.document.getElementsByClassName(
-        tooltipButtonClass,
-      ) as HTMLCollectionOf<HTMLElement>;
-
-      for (const item of tooltipInfoIcons) {
-        if (item.nextElementSibling) {
-          const tooltip = item.nextElementSibling as HTMLElement;
-
-          const showTooltip = async (): Promise<void> => {
-            tooltip.style.display = "block";
-
-            const { x, y } =
-              await // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-              (computePositionFromCDN as typeof computePosition)(
-                item,
-                tooltip,
-                {
-                  middleware: [
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-                    (autoPlacementFromCDN as typeof autoPlacement)(),
-                  ],
-                },
-              );
-            tooltip.style.left = `${x}px`;
-            tooltip.style.top = `${y}px`;
-          };
-
-          const hideTooltip = (): void => {
-            tooltip.style.display = "none";
-          };
-
-          [
-            ["mouseenter", showTooltip],
-            ["mouseleave", hideTooltip],
-            ["focus", showTooltip],
-            ["blur", hideTooltip],
-          ].forEach(([event, listener]) => {
-            item.addEventListener(
-              event as "mouseenter" | "mouseleave" | "focus" | "blur",
-              listener as () => void,
-            );
-          });
-        }
       }
-    } else {
-      throw new Error(
-        "Failed to find iframe to add event listeners for repeat button and info icons.",
-      );
     }
   }
 

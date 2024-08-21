@@ -338,8 +338,9 @@ export const statusMessages: {
 
   currencySuccess: {
     errorText: "",
-    infoText:
-      "The currency is valid, but make sure the value aligns with the actual currency of your order.",
+    infoText: `The currency is valid, but make sure the value aligns with the actual currency of your order. Valid currencies are: ${validCurrencies.join(
+      ", ",
+    )}`,
   },
 
   unixTimestampMissing: {
@@ -428,36 +429,38 @@ export const statusMessages: {
 
   missingConsumerStreet: {
     errorText: "VALUE MISSING",
-    infoText: "Make sure to pass the street name of the delivery address.",
+    infoText:
+      "Make sure to pass the street name of the delivery address and doesn't include the street number.",
   },
 
   consumerStreetSuccess: {
     errorText: "",
     infoText:
-      "Make sure this value aligns with the delivery address street name.",
+      "Make sure this value aligns with the delivery address street name and doesn't include the street number.",
   },
 
   consumerStreetMalformed: {
     errorText: "VALUE TYPE NOT ALLOWED",
     infoText:
-      "Make sure this value is a string and aligns with the delivery address street name.",
+      "Make sure this value is a string and aligns with the delivery address street name and doesn't include the street number.",
   },
 
   missingConsumerStreetNumber: {
     errorText: "VALUE MISSING",
-    infoText: "Make sure to pass the street number from the delivery address.",
+    infoText:
+      "Make sure to pass the street number from the delivery address and doesn't include the street name.",
   },
 
   consumerStreetNumberSuccess: {
     errorText: "",
     infoText:
-      "Make sure this value aligns with the delivery address street number.",
+      "Make sure this value aligns with the delivery address street number and doesn't include the street name.",
   },
 
   consumerStreetNumberMalformed: {
     errorText: "VALUE TYPE NOT ALLOWED",
     infoText:
-      "Make sure this value is a string and aligns with the delivery address street number.",
+      "Make sure this value is a string and aligns with the delivery address street number and doesn't include the street name.",
   },
 
   missingConsumerZipCode: {
