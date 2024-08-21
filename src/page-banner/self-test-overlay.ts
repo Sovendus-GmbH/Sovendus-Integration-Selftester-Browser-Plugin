@@ -366,15 +366,15 @@ class SelfTesterOverlay {
     }
   }
   showInfoText(event: MouseEvent) {
-    const label = (event.currentTarget as HTMLElement).firstElementChild
-      .firstElementChild;
+    const label = (event.currentTarget as HTMLElement)?.firstElementChild
+      ?.firstElementChild;
     if (label) {
       (label as HTMLElement).style.display = "block";
     }
   }
   hideInfoText(event: MouseEvent) {
-    const label = (event.currentTarget as HTMLElement).firstElementChild
-      .firstElementChild;
+    const label = (event.currentTarget as HTMLElement)?.firstElementChild
+      ?.firstElementChild;
     if (label) {
       (label as HTMLElement).style.display = "none";
     }
