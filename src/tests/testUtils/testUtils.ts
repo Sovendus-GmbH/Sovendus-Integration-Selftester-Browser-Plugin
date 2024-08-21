@@ -86,7 +86,8 @@ export async function executeOverlayTests({
             testData.disableSovendusDiv,
             isAwinTest,
             testData.disableAwinMasterTag,
-            testData.disableAwinSalesTracking
+            testData.disableAwinSalesTracking,
+            testData.deleteSovIFrame
           );
           const sovSelfTester = await getIntegrationTesterData(driver);
           await testData.testFunction({ driver, sovSelfTester, sovAppData });
@@ -199,7 +200,8 @@ async function prepareTestPageAndRetry(
   disableSovendusDiv: boolean | undefined,
   isAwinTest: boolean | undefined,
   disableAwinMasterTag: boolean | undefined,
-  disableAwinSalesTracking: boolean | undefined
+  disableAwinSalesTracking: boolean | undefined,
+  removeSovIFrame: boolean | undefined
 ): Promise<WebDriver> {
   let _driver = driver;
   try {
@@ -212,7 +214,13 @@ async function prepareTestPageAndRetry(
         if (consumer){
           window.sovConsumer = consumer;
         }
+        ${
+          removeSovIFrame
+            ? ""
+            : `
         window.sovIframes =  ${JSON.stringify(sovAppData.sovIframes)};
+        `
+        }
   
         ${
           disableSovendusDiv
@@ -319,16 +327,19 @@ async function prepareTestPageAndRetry(
       disableSovendusDiv,
       isAwinTest,
       disableAwinMasterTag,
-      disableAwinSalesTracking
+      disableAwinSalesTracking,
+      removeSovIFrame
     );
   }
   return _driver;
 }
 
+const testTimout = 20000;
+
 async function waitForTestOverlay(driver: WebDriver) {
   await driver.wait(
     until.elementLocated(By.css("#outerSovendusOverlay")),
-    20000
+    testTimout
   );
 }
 
@@ -337,7 +348,7 @@ async function executeWithTimeout(fn: () => Promise<void>) {
     // Create a timeout promise that rejects after the specified time
     const timeoutId = setTimeout(() => {
       reject(new Error("Failed to wait for the testing page - timed out"));
-    }, 20000);
+    }, testTimout);
 
     // Execute the async function and resolve/reject the promise when done
     fn()

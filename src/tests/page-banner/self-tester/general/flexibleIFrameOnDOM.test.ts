@@ -3,7 +3,6 @@ import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 import {
   sovAppDataEverythingIsOkay,
-  sovAppDataUndefinedButIsOkay,
 } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
 
@@ -24,12 +23,14 @@ executeOverlayTests({
         },
         {
           testName: "flexibleIFrameNotOnDOM",
-          sovAppData: sovAppDataUndefinedButIsOkay,
+          sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
           disableFlexibleIframeJs: true,
         },
+
+        //sovAppDataUndefined
       ],
     }),
   ],

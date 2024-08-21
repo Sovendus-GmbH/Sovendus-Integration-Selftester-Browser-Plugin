@@ -3,7 +3,7 @@ import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 import {
   sovAppDataEverythingIsOkay,
-  sovAppDataUndefinedButIsOkay,
+  sovAppIFramesAllValidData,
 } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
 
@@ -16,17 +16,52 @@ executeOverlayTests({
         {
           testName: "oneIFrame",
           sovAppData: sovAppDataEverythingIsOkay,
-          expectedElementValue: Number(1n),
+          expectedElementValue: 1,
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
         },
         {
           testName: "noIFrame",
-          sovAppData: sovAppDataUndefinedButIsOkay,
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+          },
           expectedElementValue: 0,
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: null,
-          disableFlexibleIframeJs: true,
+          removeSovIFrame: true,
+        },
+        {
+          testName: "twoIFrames",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes2: {
+              ...sovAppIFramesAllValidData,
+            },
+          },
+          expectedElementValue: 2,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: null,
+        },
+        {
+          testName: "threeIFrames",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes2: {
+              ...sovAppIFramesAllValidData,
+            },
+            sovIframes3: {
+              ...sovAppIFramesAllValidData,
+            },
+          },
+          expectedElementValue: 3,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: null,
         },
       ],
     }),

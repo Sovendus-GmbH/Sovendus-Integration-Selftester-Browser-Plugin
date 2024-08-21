@@ -41,8 +41,8 @@ export default class SelfTester {
   sovendusDivFound: TestResultType<boolean | string | undefined>;
   sovDivIdInIFrames: TestResultType<boolean | undefined>;
   multipleSovIFramesDetected: TestResultType<boolean | undefined>;
-  sovIFramesAmount: TestResultType<bigint | undefined>;
-  multipleIFramesAreSame: TestResultType<bigint | undefined>;
+  sovIFramesAmount: TestResultType<number | undefined>;
+  multipleIFramesAreSame: TestResultType<number | undefined>;
   flexibleIFrameOnDOM: TestResultType<boolean | undefined>;
   isFlexibleIframeExecutable: TestResultType<boolean | undefined>;
   isSovendusJsOnDom: TestResultType<boolean | undefined>;
@@ -300,7 +300,7 @@ export default class SelfTester {
   }
 
   getAwinExecutedTestResult(
-    awinSaleTrackedTestResult: TestResultType<boolean>,
+    awinSaleTrackedTestResult: TestResultType<boolean>
   ): TestResultType<boolean | undefined> {
     const sovIframesExists = !!window.sovIframes;
     if (awinSaleTrackedTestResult.elementValue) {
@@ -811,7 +811,7 @@ export default class SelfTester {
   }
 
   getSovDivIdInIFramesTestResult(
-    sovIFramesAmount: TestResultType<bigint | undefined>,
+    sovIFramesAmount: TestResultType<number | undefined>,
     iframeContainerId: TestResultType<string | undefined>
   ): TestResultType<boolean | undefined> {
     if (
@@ -861,13 +861,12 @@ export default class SelfTester {
   }
 
   getMultipleSovIFramesDetectedTestResult(
-    sovIframesAmount: TestResultType<bigint | undefined>
+    sovIframesAmount: TestResultType<number | undefined>
   ): TestResultType<boolean | undefined> {
     if (sovIframesAmount.statusCode === StatusCodes.TestDidNotRun) {
       return new DidNotRunTestResult<boolean | undefined>();
     }
-    const multipleSovIframesDetected =
-      Number(sovIframesAmount.elementValue) > 1;
+    const multipleSovIframesDetected = sovIframesAmount.elementValue > 1;
     if (multipleSovIframesDetected) {
       return new WarningOrFailTestResult({
         elementValue: multipleSovIframesDetected,
@@ -880,11 +879,11 @@ export default class SelfTester {
     });
   }
 
-  getSovIFramesAmountTestResult(): TestResultType<bigint | undefined> {
+  getSovIFramesAmountTestResult(): TestResultType<number | undefined> {
     const sovIframesAmount = window.sovIframes?.length
-      ? BigInt(window.sovIframes.length)
-      : undefined;
-    if (sovIframesAmount === 1n) {
+      ? window.sovIframes.length
+      : 0;
+    if (sovIframesAmount === 1) {
       return new SuccessTestResult({
         elementValue: sovIframesAmount,
       });
@@ -898,8 +897,8 @@ export default class SelfTester {
 
   getMultipleIFramesAreSameTestResult(
     multipleSovIframesDetected: TestResultType<boolean | undefined>,
-    sovIframesAmount: TestResultType<bigint | undefined>
-  ): TestResultType<bigint | undefined> {
+    sovIframesAmount: TestResultType<number | undefined>
+  ): TestResultType<number | undefined> {
     if (multipleSovIframesDetected.statusCode === StatusCodes.Error) {
       let prevSovIframe: SovIframes | undefined = undefined;
       const multipleIFramesAreSame = window.sovIframes?.every((sovIframe) => {
@@ -926,7 +925,7 @@ export default class SelfTester {
         statusCode: StatusCodes.Error,
       });
     }
-    return new DidNotRunTestResult<bigint | undefined>();
+    return new DidNotRunTestResult<number | undefined>();
   }
   getOrderCurrencyTestResult(): TestResultType<string | undefined> {
     const valueTestResult = this.validValueTestResult({
@@ -1377,22 +1376,10 @@ export default class SelfTester {
         ? { multipleSovIFramesDetected: this.multipleSovIFramesDetected }
         : {}),
       ...(this.sovIFramesAmount.statusCode !== StatusCodes.TestDidNotRun
-        ? {
-            sovIFramesAmount: new TestResultType({
-              elementValue: Number(this.sovIFramesAmount.elementValue),
-              statusCode: this.sovIFramesAmount.statusCode,
-              statusMessageKey: this.sovIFramesAmount.statusMessageKey,
-            }),
-          }
+        ? { sovIFramesAmount: this.sovIFramesAmount }
         : {}),
       ...(this.multipleIFramesAreSame.statusCode !== StatusCodes.TestDidNotRun
-        ? {
-            multipleIFramesAreSame: new TestResultType({
-              elementValue: Number(this.multipleIFramesAreSame.elementValue),
-              statusCode: this.multipleIFramesAreSame.statusCode,
-              statusMessageKey: this.multipleIFramesAreSame.statusMessageKey,
-            }),
-          }
+        ? { multipleIFramesAreSame: this.multipleIFramesAreSame }
         : {}),
       ...(this.flexibleIFrameOnDOM.statusCode !== StatusCodes.TestDidNotRun
         ? { flexibleIFrameOnDOM: this.flexibleIFrameOnDOM }
@@ -1422,7 +1409,7 @@ export default class SelfTester {
       boolean | string | undefined
     >();
     const emptyBooleanTestResult = new DidNotRunTestResult<boolean>();
-    const emptyBigintTestResult = new DidNotRunTestResult<bigint | undefined>();
+    const emptyNumberTestResult = new DidNotRunTestResult<number | undefined>();
     this.integrationType = emptyStringTestResult;
     this.browserName = new DidNotRunTestResult<BrowserTypes>();
     this.websiteURL = emptyStringTestResult;
@@ -1452,8 +1439,8 @@ export default class SelfTester {
     this.sovendusDivFound = emptyBooleanStringUndefinedTestResult;
     this.sovDivIdInIFrames = emptyBooleanUndefinedTestResult;
     this.multipleSovIFramesDetected = emptyBooleanUndefinedTestResult;
-    this.sovIFramesAmount = emptyBigintTestResult;
-    this.multipleIFramesAreSame = emptyBigintTestResult;
+    this.sovIFramesAmount = emptyNumberTestResult;
+    this.multipleIFramesAreSame = emptyNumberTestResult;
     this.flexibleIFrameOnDOM = emptyBooleanUndefinedTestResult;
     this.isFlexibleIframeExecutable = emptyBooleanUndefinedTestResult;
     this.isSovendusJsOnDom = emptyBooleanUndefinedTestResult;
@@ -1620,7 +1607,7 @@ class WarningOrFailTestResult<
           this.elementValue
         }\nStatusCode: ${this.statusCode}\nStatusMessageKey: ${
           this.statusMessageKey
-        }`,
+        }`
       );
     }
   }

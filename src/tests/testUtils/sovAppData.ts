@@ -14,6 +14,9 @@ export function getSovAppData(sovAppData: SovDataType) {
   if (sovAppData.sovIframes2) {
     sovData.sovIframes.push(sovAppData.sovIframes2);
   }
+  if (sovAppData.sovIframes3) {
+    sovData.sovIframes.push(sovAppData.sovIframes3);
+  }
   return sovData;
 }
 
@@ -26,6 +29,7 @@ export interface SovDataType {
   sovConsumer?: SovConsumer;
   sovIframes1: SovIframes;
   sovIframes2?: SovIframes;
+  sovIframes3?: SovIframes;
   payload?: ExplicitAnyType;
 }
 
