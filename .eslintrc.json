@@ -30,7 +30,7 @@
     "simple-import-sort/exports": "error",
     "unused-imports/no-unused-imports": "error",
     // TypeScript-specific rules
-    "@typescript-eslint/no-unsafe-assignment": "warn",
+    "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/consistent-type-imports": "error", // Enforce consistent usage of type imports
     "@typescript-eslint/no-unused-vars": [
       "error",
