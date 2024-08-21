@@ -1,3 +1,48 @@
+export interface TestResultResponseDataType {
+  integrationType?: TestResultType;
+  browserName?: TestResultType;
+  websiteURL?: TestResultType;
+  consumerSalutation?: TestResultType;
+  consumerFirstName?: TestResultType;
+  consumerLastName?: TestResultType;
+  consumerYearOfBirth?: TestResultType;
+  consumerEmail?: TestResultType;
+  consumerEmailHash?: TestResultType;
+  consumerStreet?: TestResultType;
+  consumerStreetNumber?: TestResultType;
+  consumerZipCode?: TestResultType;
+  consumerPhone?: TestResultType;
+  consumerCity?: TestResultType;
+  consumerCountry?: TestResultType;
+  trafficSourceNumber?: TestResultType;
+  trafficMediumNumber?: TestResultType;
+  orderCurrency?: TestResultType;
+  orderId?: TestResultType;
+  orderValue?: TestResultType;
+  sessionId?: TestResultType;
+  timestamp?: TestResultType;
+  usedCouponCode?: TestResultType;
+  iframeContainerId?: TestResultType;
+  isEnabledInBackend?: TestResultType;
+  wasExecuted?: TestResultType;
+  awinTest?: TestResultType;
+  sovendusDivFound?: TestResultType;
+  sovDivIdInIFrames?: TestResultType;
+  multipleSovIFramesDetected?: TestResultType;
+  sovIFramesAmount?: TestResultType;
+  multipleIFramesAreSame?: TestResultType;
+  flexibleIFrameOnDOM?: TestResultType;
+  isFlexibleIframeExecutable?: TestResultType;
+  isSovendusJsOnDom?: TestResultType;
+  isSovendusJsExecutable?: TestResultType;
+}
+
+export interface TestResultType {
+  elementValue: ElementValue;
+  statusMessageKey: StatusMessageKeyTypes;
+  statusCode: StatusCodes;
+}
+
 export type ElementValue = undefined | null | string | number | boolean;
 
 export enum StatusCodes {

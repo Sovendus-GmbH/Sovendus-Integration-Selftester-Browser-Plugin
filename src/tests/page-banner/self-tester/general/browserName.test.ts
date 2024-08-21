@@ -19,7 +19,7 @@ executeOverlayTests({
   testName: "browserNameEdge",
   sovAppData: sovAppDataNoParameterButIsOkay,
   testFunction: async ({ sovSelfTester }) => {
-    expect(sovSelfTester.browserName).toBe("Edge");
+    expect(sovSelfTester.browserName.elementValue).toBe("Edge");
   },
   browser: Browser.EDGE,
 });
@@ -28,7 +28,7 @@ executeOverlayTests({
   testName: "browserNameChrome",
   sovAppData: sovAppDataEverythingIsOkay,
   testFunction: async ({ sovSelfTester }) => {
-    expect(sovSelfTester.browserName).toBe("Chrome");
+    expect(sovSelfTester.browserName.elementValue).toBe("Chrome");
   },
   browser: Browser.CHROME,
 });

@@ -29,7 +29,7 @@ async function transmitTestResult(testResult: SelfTester) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(testResult),
+      body: JSON.stringify(testResult.getTestResultResponseData()),
     });
     const result = response.ok;
     console.log(result);
@@ -70,10 +70,10 @@ class SelfTesterOverlay {
             <button class="sovendus-overlay-font sovendus-overlay-button" id="sovendusOverlayRepeatTests">repeat tests</button>
           </div>
           <p class="sovendus-overlay-font" style="margin:0 !important">
-            Integration Type: ${selfTester.integrationType}
+            Integration Type: ${selfTester.integrationType.elementValue}
           </p>
           <p class="sovendus-overlay-font" style="margin:0 !important">
-            Browser: ${selfTester.browserName}
+            Browser: ${selfTester.browserName.elementValue}
           </p>
           ${this.createInnerOverlay(selfTester)}
         </div>
