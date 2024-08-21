@@ -212,10 +212,10 @@ export default class SelfTester {
   getConsumerSalutationTestResult(
     consumer: SovApplicationConsumer
   ): TestResult {
-    const missingSalutationError = errorsMessages.salutationNotValid.infoText;
+    const missingSalutationError = errorsMessages.consumerSalutationNotValid.infoText;
     const valueTestResult: TestResult = this.validValueTestResult(
       consumer.salutation || window.sovConsumer?.consumerSalutation,
-      MessageKeyTypes.salutationNotValid,
+      MessageKeyTypes.missingConsumerSalutation,
       MessageKeyTypes.consumerSalutationSuccess
     );
     if (valueTestResult.statusCode === StatusCodes.Success) {
@@ -231,7 +231,7 @@ export default class SelfTester {
         } ISN'T A VALID SALUTATION${this.getInfoMarkWithLabel(
           missingSalutationError
         )}</span>`;
-        statusMessageKey = MessageKeyTypes.salutationNotValid;
+        statusMessageKey = MessageKeyTypes.consumerSalutationNotValid;
       }
       return new TestResult({
         elementValue: valueTestResult.elementValue,
@@ -262,11 +262,11 @@ export default class SelfTester {
   getConsumerYearOfBirthTestResult(
     consumer: SovApplicationConsumer
   ): TestResult {
-    const missingMailError: string = errorsMessages.yearOfBirthNotValid.infoText;
+    const missingMailError: string = errorsMessages.consumerYearOfBirthNotValid.infoText;
     const yearOfBirthTestResult: TestResult = this.validValueTestResult(
       consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
-      MessageKeyTypes.yearOfBirthNotValid,
-      MessageKeyTypes.yearOfBirthSuccess,
+      MessageKeyTypes.missingConsumerYearOfBirth,
+      MessageKeyTypes.consumerYearOfBirthSuccess,
     );
     if (yearOfBirthTestResult.statusCode === StatusCodes.Success) {
       const validFromYear: number = 1890;
@@ -288,7 +288,7 @@ export default class SelfTester {
         } ISN'T A VALID BIRTH YEAR${this.getInfoMarkWithLabel(
           missingMailError
         )}</span>`;
-        statusMessageKey = MessageKeyTypes.yearOfBirthNotValid;
+        statusMessageKey = MessageKeyTypes.consumerYearOfBirthNotValid;
       }
       return new TestResult({
         elementValue: yearOfBirthTestResult.elementValue,
@@ -301,11 +301,11 @@ export default class SelfTester {
   }
 
   getConsumerEmailTestResult(consumer: SovApplicationConsumer): TestResult {
-    const missingEmailError = errorsMessages.emailNotValid.infoText;
+    const missingEmailError = errorsMessages.consumerEmailNotValid.infoText;
     const emailTestResult: TestResult = this.validValueTestResult(
       consumer.email,
-      MessageKeyTypes.emailNotValid,
-      MessageKeyTypes.emailSuccess,
+      MessageKeyTypes.missingConsumerEmail,
+      MessageKeyTypes.consumerEmailSuccess,
     );
     if (emailTestResult.statusCode === StatusCodes.Success) {
       function validateEmail(email: string) {
@@ -317,7 +317,7 @@ export default class SelfTester {
       let elementValue: ElementValue = emailTestResult.elementValue;
       let statusMessage: StatusMessage =
         String(emailTestResult.elementValue) + this.getCheckMarkWithLabel();
-      let statusMessageKey: MessageKeyTypes = MessageKeyTypes.emailSuccess;
+      let statusMessageKey: MessageKeyTypes = MessageKeyTypes.consumerEmailSuccess;
       if (!mailIsValid) {
         statusCode = StatusCodes.Error;
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -325,7 +325,7 @@ export default class SelfTester {
         } ISN'T A VALID EMAIL${this.getInfoMarkWithLabel(
           missingEmailError
         )}</span>`;
-        statusMessageKey = MessageKeyTypes.emailNotValid;
+        statusMessageKey = MessageKeyTypes.consumerEmailNotValid;
       }
       return new TestResult({
         elementValue,
@@ -348,8 +348,8 @@ export default class SelfTester {
     if (!consumerEmail.elementValue) {
       const testResult = this.validValueTestResult(
         consumer.emailHash,
-        MessageKeyTypes.emailNotMD5Hash,
-        MessageKeyTypes.emailHashSuccess
+        MessageKeyTypes.missingConsumerEmailHash,
+        MessageKeyTypes.consumerEmailHashSuccess
       );
       statusCode = testResult.statusCode;
       elementValue = testResult.elementValue;
@@ -363,19 +363,19 @@ export default class SelfTester {
             testResult.elementValue +
             this.getCheckMarkWithLabel() +
             "</li>";
-            statusMessageKey = MessageKeyTypes.emailHashSuccess;
+            statusMessageKey = MessageKeyTypes.consumerEmailHashSuccess;
         } else {
           statusCode = StatusCodes.Error;
           statusMessage =
             "<li class='sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
             testResult.elementValue +
-            `<span class='sovendus-overlay-error' >${errorsMessages.emailNotMD5Hash.errorText}` +
+            `<span class='sovendus-overlay-error' >${errorsMessages.consumerEmailNotMD5Hash.errorText}` +
             this.getInfoMarkWithLabel(
-              errorsMessages.emailNotMD5Hash.infoText
+              errorsMessages.consumerEmailNotMD5Hash.infoText
             ) +
             "</span>";
           ("</li>");
-          statusMessageKey = MessageKeyTypes.emailNotMD5Hash;
+          statusMessageKey = MessageKeyTypes.consumerEmailNotMD5Hash;
         }
       } else if (testResult.statusCode === 2) {
         statusMessage =
@@ -819,7 +819,7 @@ export default class SelfTester {
     const decodedValue: TestResult = this.validValueTestResult(
       value,
       MessageKeyTypes.orderValueMissing,
-      MessageKeyTypes.orderValueMissing
+      MessageKeyTypes.orderValueSuccess
     );
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
@@ -1153,13 +1153,13 @@ declare let window: SovWindow;
 enum MessageKeyTypes {
   awinNoSalesTracked = "awinNoSalesTracked",
   awinSaleTrackedAfterScript = "awinSaleTrackedAfterScript",
-  salutationNotValid = "salutationNotValid",
+  consumerSalutationNotValid = "consumerSalutationNotValid",
   consumerSalutationSuccess = "consumerSalutationSuccess",
-  yearOfBirthNotValid = "yearOfBirthNotValid",
-  emailNotValid = "emailNotValid",
-  emailSuccess = "emailSuccess",
-  emailNotMD5Hash = "emailNotMD5Hash",
-  emailHashSuccess = "emailHashSuccess",
+  consumerYearOfBirthNotValid = "consumerYearOfBirthNotValid",
+  consumerEmailNotValid = "consumerEmailNotValid",
+  consumerEmailSuccess = "consumerEmailSuccess",
+  consumerEmailNotMD5Hash = "consumerEmailNotMD5Hash",
+  consumerEmailHashSuccess = "consumerEmailHashSuccess",
   iFrameNotOnDOM = "iFrameNotOnDOM",
   unknownErrorIntegrationScriptFailed = "unknownErrorIntegrationScriptFailed",
   sovendusJsBlockedByCookieConsent = "sovendusJsBlockedByCookieConsent",
@@ -1203,7 +1203,11 @@ enum MessageKeyTypes {
   consumerFirstNameSuccess = "consumerFirstNameSuccess",
   missingConsumerLastName = "missingConsumerLastName",
   consumerLastNameSuccess = "consumerLastNameSuccess",
-  yearOfBirthSuccess = "yearOfBirthSuccess",
+  consumerYearOfBirthSuccess = "consumerYearOfBirthSuccess",
+  missingConsumerEmailHash = "missingConsumerEmailHash",
+  missingConsumerSalutation = "missingConsumerSalutation",
+  missingConsumerYearOfBirth = "missingConsumerYearOfBirth",
+  missingConsumerEmail = "missingConsumerEmail",
 }
 
 const validCurrencies = ["EUR", "GBP", "CHF", "PLN", "SEK", "DKK", "NOK"]; 
@@ -1227,38 +1231,53 @@ const errorsMessages: {
     How to set up sales tracking with Awin? https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag"
   },
 
-  salutationNotValid: {
+  consumerSalutationNotValid: {
     errorText: "NOT A VALID SALUTATION",
     infoText: "Make sure to pass the salutation of the customer, valid are Mrs. and Mr."
   },
 
-  yearOfBirthNotValid: {
+  consumerYearOfBirthNotValid: {
     errorText: "NOT A VALID BIRTH YEAR",
     infoText: "Make sure to pass the year of birth of the customer, e.g. 1991",
   },
 
-  yearOfBirthSuccess: {
+  consumerYearOfBirthSuccess: {
     errorText: undefined,
     infoText: "Make sure the year of birth aligns with the year of birth you used for the order.",
   },
+  
+  missingConsumerYearOfBirth: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the year of birth of the customer, e.g. 1991",
+  },
 
-  emailNotValid: {
+  consumerEmailNotValid: {
     errorText: "NOT A VALID EMAIL",
     infoText: "Make sure to pass the email address of the customer.",
   },
 
-  emailSuccess: {
+  consumerEmailSuccess: {
     errorText: undefined,
     infoText: "Make sure the email address aligns with the email address you used for the order.",
   },
 
-  emailNotMD5Hash: {
+  missingConsumerEmail: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure the email address aligns with the email address you used for the order.",
+  },
+
+  consumerEmailNotMD5Hash: {
     errorText: "EMAIL HASH IS NOT A MD5 HASH",
     infoText: "The value is not a valid MD5 hash, make sure the email is properly encoded.",
   },
 
-  emailHashSuccess: {
+  consumerEmailHashSuccess: {
     errorText: undefined,
+    infoText: "Make sure either a valid email or a md5 hashed email is provided. Note that hashed email support must be enabled by Sovendus.",
+  },
+
+  missingConsumerEmailHash: {
+    errorText: "DATA IS MISSING",
     infoText: "Make sure either a valid email or a md5 hashed email is provided. Note that hashed email support must be enabled by Sovendus.",
   },
 
@@ -1328,7 +1347,7 @@ const errorsMessages: {
   },
 
   missingOrderId: {
-    errorText: "ERROR: Data is missing!",
+    errorText: "DATA IS MISSING",
     infoText: "Make sure to pass the order id",
   },
 
@@ -1481,5 +1500,10 @@ const errorsMessages: {
   consumerSalutationSuccess: {
     errorText: undefined,
     infoText: "Make sure this value aligns with the salutation you used for the order."
+  },
+
+  missingConsumerSalutation: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the salutation of the customer, valid are Mrs. and Mr."
   },
 };
