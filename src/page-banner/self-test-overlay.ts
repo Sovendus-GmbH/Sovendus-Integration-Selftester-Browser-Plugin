@@ -1,9 +1,11 @@
 import type { autoPlacement, computePosition } from "@floating-ui/dom";
+
 import {
   autoPlacement as autoPlacementFromCDN,
   computePosition as computePositionFromCDN,
-} from "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.10/+esm";
-
+  // downloaded from https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.10/+esm
+  // and adjusted imports from +esm to +esm.js
+} from "../npm/@floating-ui/dom@1.6.10/+esm.js";
 import {
   fullscreenClass,
   innerOverlayId,
@@ -18,6 +20,7 @@ import {
   sovendusOverlayRepeatTestsId,
   sovendusOverlayTextClass,
   testLoadedIFrameId,
+  testNotLoadedIFrameId,
   toggleSovendusOverlayId,
   tooltipButtonClass,
   tooltipClass,
@@ -65,6 +68,7 @@ class SelfTesterOverlay {
     overlay.innerHTML = this.createOuterOverlay();
     document.body.appendChild(overlay);
     this.createInnerOverlay({
+      loadingDone: true,
       headerRightElement: `
             <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${sovendusOverlayRepeatTestsId}" style="margin-left: auto">
               repeat tests
@@ -136,16 +140,18 @@ class SelfTesterOverlay {
   createInnerOverlay({
     headerRightElement = "",
     children,
+    loadingDone,
   }: {
     headerRightElement?: string;
     children: string;
+    loadingDone?: true;
   }): void {
-    const iframe = document.createElement("iframe");
-    iframe.id = testLoadedIFrameId;
     const overlay = document.getElementById(overlayId) as HTMLElement;
-    overlay.replaceChildren(iframe);
-    if (iframe.contentDocument) {
-      iframe.contentDocument.body.innerHTML = `
+
+    const iframe = document.createElement("iframe");
+    iframe.onload = (): void => {
+      if (iframe.contentDocument) {
+        iframe.contentDocument.body.innerHTML = `
       ${this.getInnerOverlayStyle()}
       <div id="${innerOverlayId}" style="margin:auto !important;max-width:700px !important; background: #293049 !important" class="${sovendusOverlayFontClass}">
         <div style="display: flex !important">
@@ -157,15 +163,21 @@ class SelfTesterOverlay {
         ${children}
       </div>
     `;
-    }
-    const iFrameStyle = document.createElement("style");
-    overlay.insertAdjacentElement("afterbegin", iFrameStyle);
-
-    window.onresize = (ev: UIEvent): void => {
-      window.originalOnresize?.(ev);
+      } else {
+        throw new Error(
+          "Failed to get iframe.contentDocument to place content",
+        );
+      }
+      const iFrameStyle = document.createElement("style");
+      overlay.insertAdjacentElement("afterbegin", iFrameStyle);
+      window.onresize = (ev: UIEvent): void => {
+        window.originalOnresize?.(ev);
+        this.updateIFrameHeight(iframe, iFrameStyle);
+      };
       this.updateIFrameHeight(iframe, iFrameStyle);
     };
-    this.updateIFrameHeight(iframe, iFrameStyle);
+    iframe.id = loadingDone ? testLoadedIFrameId : testNotLoadedIFrameId;
+    overlay.replaceChildren(iframe);
   }
 
   updateIFrameHeight(
@@ -444,7 +456,7 @@ class SelfTesterOverlay {
     const bannerWidth = 700;
     return `
         <style>
-          #${testLoadedIFrameId} {
+          #${testLoadedIFrameId}, #${testNotLoadedIFrameId} {
             width: 100% !important;
             border: none !important;
           }

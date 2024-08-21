@@ -15,13 +15,13 @@ executeOverlayTests({
         {
           testName: "SovendusJsExecutedWithOneSecondTimeout",
           sovAppData: sovAppDataEverythingIsOkay,
-          expectedElementValue: null,
+          expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.unknownErrorIntegrationScriptFailed,
           testOptions: {
             regular: {
-              addConsumerIFrameOneSecTimeout: false,
+              addConsumerIFrameOneSecTimeout: true,
             },
           },
         },

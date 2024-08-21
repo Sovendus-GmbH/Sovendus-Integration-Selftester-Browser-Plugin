@@ -704,7 +704,7 @@ export default class SelfTester {
       isSovendusJsExecutable.statusCode === StatusCodes.Success
     ) {
       return new WarningOrFailTestResult<boolean | undefined>({
-        elementValue: true,
+        elementValue: false,
         statusMessageKey:
           StatusMessageKeyTypes.unknownErrorIntegrationScriptFailed,
         statusCode: StatusCodes.Error,

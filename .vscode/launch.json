@@ -12,7 +12,7 @@
         "--no-cache",
         "--watchAll",
         "--silent=false",
-        "-t=Firefox"
+        "-t=isUnknownSovendusJsError_SovendusJsExecutedWithOneSecondTimeout"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
