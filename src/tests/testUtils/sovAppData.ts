@@ -243,6 +243,35 @@ export const sovAppDataNumberButIsOkay: SovDataType = {
   },
 };
 
+export const sovAppDataNumberAsStringButIsOkay: SovDataType = {
+  sovConsumer: {
+    consumerSalutation: "1234",
+    consumerFirstName: "1234",
+    consumerLastName: "1234",
+    consumerEmail: "1234",
+    consumerCountry: "1234",
+    consumerZipcode: "1234",
+    consumerPhone: "1234",
+    consumerYearOfBirth: "1234",
+    consumerStreet: "1234",
+    consumerStreetNumber: "1234",
+    consumerCity: "1234",
+  },
+  sovIframes1: {
+    trafficSourceNumber: sovTestTrafficSourceNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    sessionId: "1234",
+    timestamp: "1234",
+    orderId: "1234",
+    orderValue: "1234",
+    orderCurrency: "1234",
+    usedCouponCode: "1234",
+    iframeContainerId: "1234",
+    integrationType: "1234",
+  },
+};
+
 export const sovAppDataNumberWithCommaInsteadOfDotButIsOkay: SovDataType = {
   sovConsumer: {
     consumerSalutation: "1234,56",

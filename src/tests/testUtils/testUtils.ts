@@ -29,7 +29,7 @@ export function executeOverlayTests({
 }): void {
   for (const browser of getBrowsersToTest(_browser)) {
     describe(`${browser}_${testName}`, () => {
-      let driver: WebDriver | undefined;
+      let driver: WebDriver;
       let fileUrl: string;
 
       beforeAll(() => {
@@ -59,7 +59,7 @@ export function executeOverlayTests({
       }
 
       afterAll(async () => {
-        await driver?.quit();
+        await driver.quit();
       }, 300_000);
     });
   }

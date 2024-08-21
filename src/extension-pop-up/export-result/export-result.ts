@@ -255,6 +255,16 @@ async function getScreenShotDimensions(
     screenshotElementVerticalPosition = zoomAdjustedHeight;
   }
 
+  console.log({
+    zoomAdjustedHeight,
+    scrollHeight,
+    viewPortHeight,
+    mobileDeviceEmulatorIsOverlappedByDevTools,
+    mobileDeviceEmulatorZoomLevelSet,
+    zoomLevel: zoomLevelWidth,
+    screenshotElementVerticalPosition,
+  });
+
   return {
     zoomAdjustedHeight,
     scrollHeight,

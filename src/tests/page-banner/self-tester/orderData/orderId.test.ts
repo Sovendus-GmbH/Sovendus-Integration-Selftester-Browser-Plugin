@@ -2,7 +2,10 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { sovAppDataEverythingIsOkay } from "@src/tests/testUtils/sovAppData";
+import {
+  sovAppDataEverythingIsOkay,
+  sovAppDataNumberAsStringButIsOkay,
+} from "@src/tests/testUtils/sovAppData";
 import {
   generateMalformedDataTests,
   generateTests,
@@ -20,6 +23,13 @@ const tests = [
         expectedStatusCode: StatusCodes.SuccessButNeedsReview,
         expectedStatusMessageKey: StatusMessageKeyTypes.orderIdSuccess,
       },
+      {
+        testName: "SuccessAsNumber",
+        sovAppData: sovAppDataNumberAsStringButIsOkay,
+        expectedElementValue: "1234",
+        expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderIdSuccess,
+      },
     ],
   }),
 ];
@@ -33,6 +43,7 @@ executeOverlayTests({
       expectedMalformedStatusMessageKey: StatusMessageKeyTypes.orderIdMalformed,
       expectedMissingStatusMessageKey: StatusMessageKeyTypes.missingOrderId,
       objectElementValueType: "objectObject",
+      skipNumberCheck: true,
     }),
   ],
 });
