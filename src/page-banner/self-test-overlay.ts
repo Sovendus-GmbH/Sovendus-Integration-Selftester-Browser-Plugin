@@ -532,11 +532,18 @@ class SelfTesterOverlay {
           const showTooltip = async (): Promise<void> => {
             tooltip.style.display = "block";
 
-            const { x, y } = await (
-              computePositionFromCDN as typeof computePosition
-            )(item, tooltip, {
-              middleware: [(autoPlacementFromCDN as typeof autoPlacement)()],
-            });
+            const { x, y } =
+              await // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+              (computePositionFromCDN as typeof computePosition)(
+                item,
+                tooltip,
+                {
+                  middleware: [
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+                    (autoPlacementFromCDN as typeof autoPlacement)(),
+                  ],
+                },
+              );
             tooltip.style.left = `${x}px`;
             tooltip.style.top = `${y}px`;
           };
