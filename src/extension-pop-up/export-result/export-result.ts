@@ -1,123 +1,73 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const captureButton = document.getElementById(
-    "capture-button",
-  ) as HTMLElement;
-  captureButton.addEventListener("click", () => {
+import { getTabIdFromTabs } from "../extension-pop-up.js";
+import { hideSelfTesterOverlay } from "./self-test-overlay-hide.js";
+import { restoreSelfTesterOverlay } from "./self-test-overlay-restore.js";
+import { showSelfTesterOverlay } from "./self-test-overlay-show.js";
+
+export async function exportResultsScreenshot(
+  tabs: chrome.tabs.Tab[],
+  captureButton: HTMLElement,
+): Promise<void> {
+  const tabId = getTabIdFromTabs(tabs);
+  if (tabId) {
     captureButton.innerText = "Copying In Progress...";
+
     const { ctx, screenshotContainer } = getScreenshotCanvas();
-    async function callback(tabs: chrome.tabs.Tab[]): Promise<void> {
-      const tabId = getTabIdFromTabs(tabs);
-      if (tabId) {
-        await hideSelfTesterOverlay(tabId);
-        const {
-          mobileDeviceEmulatorIsOverlappedByDevTools,
-          mobileDeviceEmulatorZoomLevelSet,
-        } = await drawFullPageScreenshot(tabId, ctx, screenshotContainer);
-        const alertContainer = document.getElementById(
-          "alertContainer",
-        ) as HTMLElement;
-        if (mobileDeviceEmulatorIsOverlappedByDevTools) {
-          if (captureButton) {
-            captureButton.innerText = "Failed to copy";
-            captureButton.style.background = "red";
-            captureButton.style.color = "white";
-          }
-          alertContainer.innerText =
-            "Error: The mobile device emulation window can not be overlapped by the developer console.";
-          alertContainer.style.display = "block";
-          await restoreSelfTesterOverlay(tabId);
-          return;
-        }
-        await showSelfTesterOverlay(tabId);
-        await createDebugInfoScreenshot(ctx);
-        copyScreenshotsToClipboard(screenshotContainer);
-        if (captureButton) {
-          captureButton.innerText = "Copy Test Result Again";
-          captureButton.style.background = "green";
-          captureButton.style.color = "white";
-        }
-        if (mobileDeviceEmulatorZoomLevelSet) {
-          alertContainer.innerText =
-            "Warning: Zoom detected, the screenshot might be blurry. Set the zoom to 100% if possible!";
-          alertContainer.style.display = "block";
-          alertContainer.style.background = "orange";
-        }
-        await restoreSelfTesterOverlay(tabId);
-      } else {
-        throw new Error("Failed to get tabId for create screenshots function");
+    await hideSelfTesterOverlay(tabId);
+    const sovendusOverlayIntegration =
+      await checkSovendusOverlayIntegration(tabId);
+    const {
+      mobileDeviceEmulatorIsOverlappedByDevTools,
+      mobileDeviceEmulatorZoomLevelSet,
+    } = await drawFullPageScreenshot(
+      tabId,
+      ctx,
+      screenshotContainer,
+      sovendusOverlayIntegration,
+    );
+    const alertContainer = document.getElementById(
+      "alertContainer",
+    ) as HTMLElement;
+    if (mobileDeviceEmulatorIsOverlappedByDevTools) {
+      if (captureButton) {
+        captureButton.innerText = "Failed to copy";
+        captureButton.style.background = "red";
+        captureButton.style.color = "white";
       }
+      alertContainer.innerText =
+        "Error: The mobile device emulation window can not be overlapped by the developer console.";
+      alertContainer.style.display = "block";
+      if (sovendusOverlayIntegration) {
+        await hideAndShowSovendusOverlay(false, tabId);
+      }
+      await restoreSelfTesterOverlay(tabId);
+      return;
     }
-    const query = { active: true, currentWindow: true };
-    chrome.tabs.query(query, (tabs: chrome.tabs.Tab[]) => {
-      void callback(tabs);
-    });
-  });
-  const hideButton = document.getElementById("hide-button") as HTMLElement;
-  hideButton.addEventListener("click", (): void => {
-    async function callback(tabs: chrome.tabs.Tab[]): Promise<void> {
-      const tabId = getTabIdFromTabs(tabs);
-      if (tabId) {
-        await toggleSelfTesterOverlayVisibility(tabId);
-      } else {
-        throw new Error("Failed to get tabId to toggle overlay visibility");
-      }
+    await showSelfTesterOverlay(tabId);
+    await createDebugInfoScreenshot(ctx);
+    await copyScreenshotsToClipboard(screenshotContainer);
+    if (captureButton) {
+      captureButton.innerText = "Copy Test Result Again";
+      captureButton.style.background = "green";
+      captureButton.style.color = "white";
     }
-    const query = { active: true, currentWindow: true };
-    chrome.tabs.query(query, (tabs: chrome.tabs.Tab[]) => {
-      void callback(tabs);
-    });
-  });
-  const checkMethodsButton = document.getElementById(
-    "check-methods-button",
-  ) as HTMLElement;
-  checkMethodsButton.addEventListener("click", (): void => {
-    async function callback(tabs: chrome.tabs.Tab[]): Promise<void> {
-      const tabId = getTabIdFromTabs(tabs);
-      if (tabId) {
-        await checkAvailableIntegrations(tabId);
-      } else {
-        throw new Error(
-          "Failed to get tabId for checkAvailableIntegrations function",
-        );
-      }
+    if (mobileDeviceEmulatorZoomLevelSet) {
+      alertContainer.innerText =
+        "Warning: Zoom detected, the screenshot might be blurry. Set the zoom to 100% if possible!";
+      alertContainer.style.display = "block";
+      alertContainer.style.background = "orange";
     }
-    const query = { active: true, currentWindow: true };
-    chrome.tabs.query(query, (tabs: chrome.tabs.Tab[]) => {
-      void callback(tabs);
-    });
-  });
-});
-
-function getTabIdFromTabs(tabs: chrome.tabs.Tab[]): number | undefined {
-  const currentTab = tabs[0];
-  return currentTab?.id;
-}
-
-function copyScreenshotsToClipboard(
-  screenshotContainer: HTMLCanvasElement,
-): void {
-  if (window.ClipboardItem) {
-    screenshotContainer.toBlob((blob: Blob | null): void => {
-      if (!blob) {
-        throw new Error("Failed to save to clipboard");
-      }
-      const data = [new ClipboardItem({ [blob.type]: blob })];
-      void navigator.clipboard.write(data);
-    });
+    await restoreSelfTesterOverlay(tabId);
   } else {
-    fetch(screenshotContainer.toDataURL())
-      .then((response) => response.arrayBuffer())
-      .then((buffer) => browser.clipboard.setImageData(buffer, "png"))
-      .catch(() => {
-        // eslint-disable-next-line no-console
-        console.error("Failed to copy to clipboard");
-      });
+    throw new Error("Failed to get tabId for create screenshots function");
   }
 }
 
 async function createDebugInfoScreenshot(
   ctx: CanvasRenderingContext2D,
 ): Promise<void> {
+  // wait a second as captureVisibleTab only supports once per second on chrome
+  // TODO don't do that on firefox
+  await new Promise((r) => setTimeout(r, 1000));
   return new Promise((resolve) => {
     chrome.tabs.captureVisibleTab((screenshotDataUrl) => {
       const screenshotImage = new Image();
@@ -136,28 +86,11 @@ async function createDebugInfoScreenshot(
   });
 }
 
-async function checkSovendusOverlayIntegration(
-  tabId: number,
-): Promise<boolean> {
-  const result = await chrome.scripting.executeScript({
-    target: { tabId },
-    world: "MAIN",
-    func: (): boolean => {
-      return (
-        window.sovApplication?.instances?.some((instance) => {
-          return !!instance.config?.overlay?.showInOverlay;
-        }) ?? false
-      );
-    },
-  });
-
-  return result[0]?.result ?? false;
-}
-
 async function drawFullPageScreenshot(
   tabId: number,
   ctx: CanvasRenderingContext2D,
   screenshotContainer: HTMLCanvasElement,
+  sovendusOverlayIntegration: boolean,
 ): Promise<{
   mobileDeviceEmulatorIsOverlappedByDevTools: boolean;
   mobileDeviceEmulatorZoomLevelSet: boolean;
@@ -171,9 +104,6 @@ async function drawFullPageScreenshot(
     mobileDeviceEmulatorZoomLevelSet,
     zoomLevel,
   } = await getScreenShotDimensions(tabId);
-
-  const sovendusOverlayIntegration =
-    await checkSovendusOverlayIntegration(tabId);
 
   // skip when screenshot will be malformed
   if (!mobileDeviceEmulatorIsOverlappedByDevTools) {
@@ -234,10 +164,6 @@ async function drawSegmentScreenshot({
     await hideAndShowSovendusOverlay(true, tabId);
   }
 
-  // wait a second as captureVisibleTab only supports once per second on chrome
-  // TODO don't do that on firefox
-  await new Promise((r) => setTimeout(r, 1000));
-
   return new Promise((resolve) => {
     chrome.tabs.captureVisibleTab((screenshotDataUrl): void => {
       const screenshotImage = new Image();
@@ -267,6 +193,9 @@ async function drawSegmentScreenshot({
 
         await scrollDownToNextSection(tabId, viewPortHeight);
         if (remainingScrollHeight > 0) {
+          // wait a second as captureVisibleTab only supports once per second on chrome
+          // TODO don't do that on firefox
+          await new Promise((r) => setTimeout(r, 1000));
           await drawSegmentScreenshot({
             tabId,
             ctx,
@@ -285,6 +214,54 @@ async function drawSegmentScreenshot({
       };
     });
   });
+}
+
+async function copyScreenshotsToClipboard(
+  screenshotContainer: HTMLCanvasElement,
+): Promise<void> {
+  await new Promise<void>((resolve) => {
+    void (async (): Promise<void> => {
+      if (window.ClipboardItem) {
+        screenshotContainer.toBlob((blob: Blob | null): void => {
+          if (!blob) {
+            throw new Error("Failed to save to clipboard");
+          }
+          const data = [new ClipboardItem({ [blob.type]: blob })];
+          navigator.clipboard
+            .write(data)
+            .then(() => {
+              resolve();
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        });
+      } else {
+        const response = await fetch(screenshotContainer.toDataURL());
+        const buffer = await response.arrayBuffer();
+        await browser.clipboard.setImageData(buffer, "png");
+        resolve();
+      }
+    })();
+  });
+}
+
+async function checkSovendusOverlayIntegration(
+  tabId: number,
+): Promise<boolean> {
+  const result = await chrome.scripting.executeScript({
+    target: { tabId },
+    world: "MAIN",
+    func: (): boolean => {
+      return !!window.sovApplication?.instances?.some((instance) => {
+        return instance.config?.overlay?.showInOverlay;
+      });
+    },
+  });
+  if (result?.[0]?.result === undefined) {
+    throw new Error("Failed to check if an overlay is used");
+  }
+  return result[0].result;
 }
 
 async function hideAndShowSovendusOverlay(
@@ -307,12 +284,13 @@ async function hideAndShowSovendusOverlay(
 }
 
 async function scrollToTop(tabId: number): Promise<void> {
-  await executeScriptOnPage(tabId, (): void => {
-    window.scrollTo(0, 0);
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    world: "MAIN",
+    func: () => {
+      window.scrollTo(0, 0);
+    },
   });
-  if (await checkSovendusOverlayIntegration(tabId)) {
-    await hideAndShowSovendusOverlay(false, tabId);
-  }
 }
 
 async function getScreenShotDimensions(tabId: number): Promise<{
@@ -416,49 +394,6 @@ async function getZoomAdjustedDimensions(): Promise<{
   });
 }
 
-async function executeScriptOnPage(
-  tabId: number,
-  pageFunction: () => void,
-): Promise<void> {
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    world: "MAIN",
-    func: pageFunction,
-  });
-  return undefined;
-}
-
-async function toggleSelfTesterOverlayVisibility(tabId: number): Promise<void> {
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    files: ["/extension-pop-up/self-test-overlay-toggle.js"],
-  });
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-}
-
-async function showSelfTesterOverlay(tabId: number): Promise<void> {
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    files: ["/extension-pop-up/self-test-overlay-show.js"],
-  });
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-}
-
-async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    files: ["/extension-pop-up/self-test-overlay-restore.js"],
-  });
-}
-
-async function hideSelfTesterOverlay(tabId: number): Promise<void> {
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    files: ["/extension-pop-up/self-test-overlay-hide.js"],
-  });
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-}
-
 function getScreenshotCanvas(): {
   ctx: CanvasRenderingContext2D;
   screenshotContainer: HTMLCanvasElement;
@@ -473,32 +408,19 @@ function getScreenshotCanvas(): {
   return { ctx, screenshotContainer };
 }
 
-async function checkAvailableIntegrations(tabId: number): Promise<void> {
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    files: ["/extension-pop-up/check-available-integrations.js"],
-  });
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+export interface SovWindow extends Window {
+  sovApplication?: {
+    instances?: {
+      config?: {
+        overlay?: {
+          showInOverlay?: boolean;
+        };
+        stickyBanner?: object;
+      };
+    }[];
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ClipboardItem?: any;
 }
 
-interface SovApplication {
-  instances?: Instance[];
-}
-
-interface Config {
-  overlay?: Overlay;
-  stickyBanner?: object;
-}
-
-interface Overlay {
-  showInOverlay?: boolean;
-}
-
-interface Instance {
-  config?: Config;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface Window {
-  sovApplication?: SovApplication;
-}
+declare let window: SovWindow;

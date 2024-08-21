@@ -23,6 +23,14 @@ executeOverlayTests({
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerStreetNumberSuccess,
         },
+        {
+          testName: "SuccessAsStringNumber",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: "11",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerStreetNumberSuccess,
+        },
       ],
     }),
     ...generateMalformedDataTests({

@@ -20,7 +20,7 @@
   "browser_action": {
     "default_icon": "sovendus.png",
     "default_title": "Sovendus Integration Tester",
-    "default_popup": "extension-pop-up/export-result-popup.html"
+    "default_popup": "extension-pop-up/extension-pop-up.html"
   },
   "applications": {
     "gecko": {

@@ -490,6 +490,9 @@ export default class SelfTester {
       missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerStreetNumber,
       successMessageKey: StatusMessageKeyTypes.consumerStreetNumberSuccess,
       malformedMessageKey: StatusMessageKeyTypes.consumerStreetNumberMalformed,
+      numberCheckType: {
+        numbersInStringsAllowed: true,
+      },
     });
   }
 

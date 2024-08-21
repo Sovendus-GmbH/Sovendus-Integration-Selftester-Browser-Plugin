@@ -14,7 +14,7 @@
     "<all_urls>"
   ],
   "action": {
-    "default_popup": "extension-pop-up/export-result-popup.html"
+    "default_popup": "extension-pop-up/extension-pop-up.html"
   },
   "web_accessible_resources": [
     {

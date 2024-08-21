@@ -223,6 +223,7 @@ class SelfTesterOverlay {
             z-index: 2147483648 !important;
             overflow-y: auto !important;
             max-height: calc(100vh - 100px) !important;
+            border: unset !important;
             border-radius: 8px !important;    
             line-height: normal !important;        
           }

@@ -11,7 +11,9 @@
 - handle overlay scrollable screenshot - add tests to check if overlay detection works
 - show overlay not detected when show hide button is clicked
 - Fix Street Number (Always: Value type not allowed)
-- integration type info popover is cut off
+- integration type info popover is cut off - also on mobile if shifted to next line its cut off on the left
+- change show hide button depending on the state
+- check cors api call to dev hub
 
 ## Tests
 
