@@ -1010,10 +1010,15 @@ class TestResult {
 
   getFormattedStatusMessage(): string {
     if (this.statusCode === StatusCodes.Success) {
-      return String(this.elementValue ? this.elementValue : "") + this.getCheckMarkWithLabel();
+      return (
+        String(this.elementValue ? this.elementValue : "") +
+        this.getCheckMarkWithLabel()
+      );
     }
     if (this.statusCode === StatusCodes.Warning) {
-      return `${String(this.elementValue ? this.elementValue : "")}${this.getInfoMarkWithLabel(
+      return `${String(
+        this.elementValue ? this.elementValue : ""
+      )}${this.getInfoMarkWithLabel(
         this.replaceElementValueInMessage(
           statusMessages[this.statusMessageKey].infoText
         )
@@ -1099,7 +1104,7 @@ export enum StatusCodes {
 }
 type StatusCode = StatusCodes;
 
-interface SovConsumer {
+export interface SovConsumer {
   consumerSalutation?: "Mr." | "Mrs." | "";
   consumerFirstName?: string;
   consumerLastName?: string;
@@ -1109,7 +1114,7 @@ interface SovConsumer {
   consumerPhone?: string;
   consumerStreet?: string;
   consumerStreetNumber?: string;
-  consumerZipCode?: string;
+  consumerZipcode?: string;
   consumerCity?: string;
   consumerCountry?: string;
 }
@@ -1126,7 +1131,7 @@ function convertToSovApplicationConsumer(
     emailHash: sovConsumer.consumerEmailHash,
     street: sovConsumer.consumerStreet,
     streetNumber: sovConsumer.consumerStreetNumber,
-    zipCode: sovConsumer.consumerZipCode,
+    zipCode: sovConsumer.consumerZipcode,
     city: sovConsumer.consumerCity,
     country: sovConsumer.consumerCountry,
     phone: sovConsumer.consumerPhone,
@@ -1153,13 +1158,13 @@ interface SovApplication {
   instances?: Instance[];
 }
 
-interface SovIframes {
-  trafficSourceNumber?: number;
-  trafficMediumNumber?: number;
+export interface SovIframes {
+  trafficSourceNumber?: number | string;
+  trafficMediumNumber?: number | string;
   sessionId?: string;
-  timestamp?: number;
+  timestamp?: number | string;
   orderId?: string;
-  orderValue?: number;
+  orderValue?: number | string;
   orderCurrency?: string;
   usedCouponCode?: string;
   iframeContainerId?: string;
