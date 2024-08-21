@@ -5,7 +5,7 @@ function _showOverlay() {
   if (overlay) {
     overlay.style.display = "block";
     overlay.classList.add("fullscreen");
-    var overlayToggle = document.getElementById("toggleSovendusOverlay");
+    const overlayToggle = document.getElementById("toggleSovendusOverlay");
     if (overlayToggle) {
       overlayToggle.style.display = "block";
     }

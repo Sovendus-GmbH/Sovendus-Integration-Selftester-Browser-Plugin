@@ -1,10 +1,11 @@
+import type {
+  ElementValue,
+  TestResultResponseDataType} from "./self-tester-data-to-sync-with-dev-hub.js";
 import {
   BrowserTypes,
-  ElementValue,
   StatusCodes,
   StatusMessageKeyTypes,
   statusMessages,
-  TestResultResponseDataType,
   validCountries,
   validCurrencies,
 } from "./self-tester-data-to-sync-with-dev-hub.js";
@@ -417,7 +418,7 @@ export default class SelfTester {
       }
       const mailIsValid = validateEmail(String(emailTestResult.elementValue));
       let statusCode: StatusCodes = StatusCodes.SuccessButNeedsReview;
-      let elementValue: ElementValue = emailTestResult.elementValue;
+      const elementValue: ElementValue = emailTestResult.elementValue;
       let statusMessageKey: StatusMessageKeyTypes =
         StatusMessageKeyTypes.consumerEmailSuccess;
       if (!mailIsValid) {
@@ -1613,14 +1614,14 @@ class WarningOrFailTestResult<
       return "";
     } catch (error) {
       throw new Error(
-        "getFormattedStatusMessage() crashed: " +
-          error +
-          "\n\nElementValue: " +
-          this.elementValue +
-          "\nStatusCode: " +
-          this.statusCode +
-          "\nStatusMessageKey: " +
-          this.statusMessageKey,
+        `getFormattedStatusMessage() crashed: ${ 
+          error 
+          }\n\nElementValue: ${ 
+          this.elementValue 
+          }\nStatusCode: ${ 
+          this.statusCode 
+          }\nStatusMessageKey: ${ 
+          this.statusMessageKey}`,
       );
     }
   }

@@ -1,16 +1,18 @@
-import { Builder, By, until, WebDriver } from "selenium-webdriver";
+import type SelfTester from "@src/page-banner/self-tester";
+import { platform } from "os";
+import { resolve } from "path";
+import type { WebDriver } from "selenium-webdriver";
+import { Builder, By, until } from "selenium-webdriver";
 import { Options as ChromeOptions } from "selenium-webdriver/chrome";
 import { Options as EdgeOptions } from "selenium-webdriver/edge";
 import { Options as FirefoxOptions } from "selenium-webdriver/firefox";
 import { InvalidArgumentError } from "selenium-webdriver/lib/error"; // Import the specific error class
-
-import { getSovAppData, SovFinalDataType } from "./sovAppData";
-import SelfTester from "@src/page-banner/self-tester";
-import { resolve } from "path";
+import { Preferences } from "selenium-webdriver/lib/logging";
 import { pathToFileURL } from "url";
-import { platform } from "os";
-import { TestsType } from "./testCaseGenerator";
-import { Level, Preferences, Type } from "selenium-webdriver/lib/logging";
+
+import type { SovFinalDataType } from "./sovAppData";
+import { getSovAppData } from "./sovAppData";
+import type { TestsType } from "./testCaseGenerator";
 
 export enum Browsers {
   Chrome = "chrome",
@@ -162,7 +164,7 @@ function initializeWebDriver(browser: Browsers) {
           firefoxDevPath = "/usr/bin/firefox-developer-edition";
           break;
         default:
-          throw new Error("Unsupported OS: " + platform());
+          throw new Error(`Unsupported OS: ${platform()}`);
       }
     }
     options.setBinary(firefoxDevPath);

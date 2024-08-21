@@ -2,11 +2,12 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import { generateMalformedDataTests, generateTests } from "@src/tests/testUtils/testCaseGenerator";
+
+import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
 import {
   executeOverlayTests,
 } from "../../../testUtils/testUtils";
-import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
-import { generateMalformedDataTests, generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 executeOverlayTests({
   testName: "city",

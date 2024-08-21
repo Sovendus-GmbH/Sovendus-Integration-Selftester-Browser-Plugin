@@ -1,5 +1,5 @@
-import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
 import SelfTester from "./self-tester.js";
+import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
 
 (async () => {
   repeatTestsOnSPA(async () => {
@@ -80,7 +80,7 @@ class SelfTesterOverlay {
       ?.addEventListener("click", executeTests);
     const checkMarks: HTMLCollectionOf<Element> =
       document.getElementsByClassName("sovendus-info");
-    for (let element of checkMarks) {
+    for (const element of checkMarks) {
       element.parentElement?.parentElement?.addEventListener(
         "mouseover",
         this.showInfoText,
@@ -192,10 +192,10 @@ class SelfTesterOverlay {
         ${
           selfTester.sessionId.statusCode === StatusCodes.TestDidNotRun
             ? ""
-            : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
-              "sessionId: " +
-              selfTester.sessionId.getFormattedStatusMessage() +
-              "</li>"
+            : `<li class='sovendus-overlay-font sovendus-overlay-text'>` +
+              `sessionId: ${ 
+              selfTester.sessionId.getFormattedStatusMessage() 
+              }</li>`
         }
         <li class='sovendus-overlay-font sovendus-overlay-text'>
           timestamp: ${selfTester.timestamp.getFormattedStatusMessage()}
@@ -330,8 +330,8 @@ class SelfTesterOverlay {
         `;
   }
   toggleOverlay() {
-    var overlay = document.getElementById("sovendusOverlay");
-    var toggle = document.getElementById("toggleSovendusOverlay");
+    const overlay = document.getElementById("sovendusOverlay");
+    const toggle = document.getElementById("toggleSovendusOverlay");
     if (overlay && toggle) {
       if (overlay.style.display === "none") {
         overlay.style.display = "block";

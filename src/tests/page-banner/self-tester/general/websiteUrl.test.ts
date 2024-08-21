@@ -1,7 +1,8 @@
 import { resolve } from "path";
-import { executeOverlayTests } from "../../../testUtils/testUtils";
-import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
 import { pathToFileURL } from "url";
+
+import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
+import { executeOverlayTests } from "../../../testUtils/testUtils";
 
 executeOverlayTests({
   testName: "website",
