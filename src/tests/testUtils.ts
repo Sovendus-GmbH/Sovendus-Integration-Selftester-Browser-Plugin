@@ -5,12 +5,27 @@ import { Options as FirefoxOptions } from "selenium-webdriver/firefox";
 
 import {
   getSovAppData,
+  malformedArrayData,
+  malformedObjectData,
+  sovAppDataEverythingIsOkay,
+  sovAppDataFalseButIsOkay,
+  sovAppDataMalformedArrayButIsOkay,
+  sovAppDataMalformedObjectsButIsOkay,
+  sovAppDataNoParameterButIsOkay,
+  sovAppDataNullButIsOkay,
+  sovAppDataNumberButIsOkay,
+  sovAppDataTrueButIsOkay,
+  sovAppDataUndefinedButIsOkay,
   SovDataType,
   SovFinalDataType,
 } from "./page-banner/sovAppData";
 import SelfTester from "@src/page-banner/self-tester";
 import { resolve } from "path";
 import { pathToFileURL } from "url";
+import {
+  StatusCodes,
+  StatusMessageKeyTypes,
+} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 
 const browserOptions = {
   chrome: ChromeOptions,
@@ -20,37 +35,26 @@ const browserOptions = {
 
 export async function executeOverlayTests({
   testName,
-  sovAppData,
-  testFunction,
-  testOnly,
+  tests,
   browser = Browser.CHROME,
 }: {
   testName: string;
-  sovAppData: SovDataType;
-  testFunction: ({
-    driver,
-    sovSelfTester,
-  }: {
-    driver: WebDriver;
-    sovSelfTester: SelfTester;
-  }) => Promise<void>;
-  testOnly?: boolean;
+  tests: TestsType;
   browser?: "chrome" | "MicrosoftEdge" | "firefox" | "safari";
 }) {
-  const jestFunction = testOnly ? test.only : test;
-  jestFunction(
-    testName,
-    async () => {
+  describe(testName, () => {
+    let driver: WebDriver;
+    let fileUrl: string;
+    beforeAll(() => {
       const extensionPath = resolve(
         __dirname,
-        "../../release_zips/chrome-test-sovendus-integration_TESTING.crx"
+        "../../release_zips/chrome-test-sovendus-integration_TESTING.crx",
       );
 
       const options = new browserOptions[browser]();
       options.addArguments("--disable-search-engine-choice-screen");
       // options.addArguments("--auto-open-devtools-for-tabs");
       options.addExtensions(extensionPath);
-      let driver: WebDriver;
       if (browser === Browser.CHROME) {
         driver = new Builder()
           .forBrowser(browser)
@@ -69,27 +73,169 @@ export async function executeOverlayTests({
       }
       const localFilePath = resolve(
         __dirname,
-        "page-banner/testHtmlFiles/empty.html"
+        "page-banner/testHtmlFiles/empty.html",
       );
-      const fileUrl = pathToFileURL(localFilePath).toString();
-      const _sovAppData = getSovAppData(sovAppData);
-      try {
-        await prepareTestPageAndRetryForever(_sovAppData, driver, fileUrl);
+      fileUrl = pathToFileURL(localFilePath).toString();
+    });
+
+    for (const testData of tests) {
+      test(`${testName}_${testData.testName}`, async () => {
+        const _sovAppData = getSovAppData(testData.sovAppData);
+        await prepareTestPageAndRetryForever(
+          _sovAppData,
+          driver,
+          fileUrl,
+          1,
+          testData.disableFlexibleIframeJs,
+          testData.disableSovendusDiv,
+        );
         const sovSelfTester = await getIntegrationTesterData(driver);
-        await testFunction({ driver, sovSelfTester });
-      } finally {
-        await driver?.quit();
-      }
-    },
-    300000
-  );
+        await testData.testFunction({ driver, sovSelfTester });
+      }, 300_000);
+    }
+
+    afterAll(async () => {
+      await driver.quit();
+    }, 300_000);
+  });
 }
+
+export function generateTests({
+  elementKey,
+  testsInfo,
+}: {
+  elementKey: string;
+  testsInfo: TestsInfoType;
+}): TestsType {
+  return testsInfo.map((testInfo) => ({
+    testName: testInfo.testName,
+    sovAppData: testInfo.sovAppData,
+    testFunction: async ({ sovSelfTester }) => {
+      expect(sovSelfTester[elementKey].elementValue).toBe(
+        testInfo.expectedElementValue,
+      );
+      expect(sovSelfTester[elementKey].statusCode).toBe(
+        testInfo.expectedStatusCode,
+      );
+      expect(sovSelfTester[elementKey].statusMessageKey).toBe(
+        testInfo.expectedStatusMessageKey,
+      );
+    },
+    disableFlexibleIframeJs: testInfo.disableFlexibleIframeJs,
+  }));
+}
+
+export function generateMalformedDataTests({
+  elementKey,
+  expectedMalformedStatusMessageKey,
+  expectedMissingStatusMessageKey,
+  canBeANumber,
+}: {
+  elementKey: string;
+  expectedMalformedStatusMessageKey: StatusMessageKeyTypes;
+  expectedMissingStatusMessageKey: StatusMessageKeyTypes;
+  canBeANumber?: boolean;
+}): TestsType {
+  const testCasesWhenScriptRuns = [
+    {
+      testName: "MalformedTrue",
+      sovAppData: sovAppDataTrueButIsOkay,
+      expectedElementValue: "true",
+      expectedStatusCode: StatusCodes.Error,
+      expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+    },
+    {
+      testName: "MalformedFalse",
+      sovAppData: sovAppDataFalseButIsOkay,
+      expectedElementValue: "false",
+      expectedStatusCode: StatusCodes.Error,
+      expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+    },
+    ...(canBeANumber
+      ? []
+      : [
+          {
+            testName: "MalformedNumber",
+            sovAppData: sovAppDataNumberButIsOkay,
+            expectedElementValue: "1234",
+            expectedStatusCode: StatusCodes.Error,
+            expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+          },
+        ]),
+    {
+      testName: "MalformedObject",
+      sovAppData: sovAppDataMalformedObjectsButIsOkay,
+      expectedElementValue: JSON.stringify(malformedObjectData),
+      expectedStatusCode: StatusCodes.Error,
+      expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+    },
+    {
+      testName: "MalformedArray",
+      sovAppData: sovAppDataMalformedArrayButIsOkay,
+      expectedElementValue: JSON.stringify(malformedArrayData),
+      expectedStatusCode: StatusCodes.Error,
+      expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+    },
+    {
+      testName: "MalformedNull",
+      sovAppData: sovAppDataNullButIsOkay,
+      expectedElementValue: null,
+      expectedStatusCode: StatusCodes.Error,
+      expectedStatusMessageKey: expectedMissingStatusMessageKey,
+    },
+    {
+      testName: "MalformedUndefined",
+      sovAppData: sovAppDataUndefinedButIsOkay,
+      expectedElementValue: null,
+      expectedStatusCode: StatusCodes.Error,
+      expectedStatusMessageKey: expectedMissingStatusMessageKey,
+    },
+  ];
+
+  const testCasesWhenScriptDoesNotRun = testCasesWhenScriptRuns.map(
+    (testInfo) => ({
+      ...testInfo,
+      testName: `${testInfo.testName}_WhenScriptDoesNotRun`,
+      disableFlexibleIframeJs: true,
+    }),
+  );
+  return generateTests({
+    elementKey,
+    testsInfo: [...testCasesWhenScriptRuns, ...testCasesWhenScriptDoesNotRun],
+  });
+}
+
+export type TestsInfoType = {
+  testName: string;
+  sovAppData: SovDataType;
+  expectedElementValue: any;
+  expectedStatusCode: StatusCodes;
+  expectedStatusMessageKey: StatusMessageKeyTypes;
+  disableFlexibleIframeJs?: boolean;
+  disableSovendusDiv?: boolean;
+}[];
+
+export type TestsType = {
+  testName: string;
+  sovAppData: SovDataType;
+  testFunction: ({
+    driver,
+    sovSelfTester,
+  }: {
+    driver: WebDriver;
+    sovSelfTester: SelfTester;
+  }) => Promise<void>;
+  disableFlexibleIframeJs?: boolean | undefined;
+  disableSovendusDiv?: boolean | undefined;
+}[];
 
 async function prepareTestPageAndRetryForever(
   sovAppData: SovFinalDataType,
   driver: WebDriver,
   fileUrl: string,
-  retryCounter: number = 1
+  retryCounter: number = 1,
+  disableFlexibleIframeJs: boolean | undefined,
+  disableSovendusDiv: boolean | undefined,
 ) {
   try {
     await driver.get(fileUrl);
@@ -101,29 +247,43 @@ async function prepareTestPageAndRetryForever(
       }
       window.sovIframes =  ${JSON.stringify(sovAppData.sovIframes)};
 
-      var sovDiv = document.createElement("div");
-      sovDiv.id = "sovendus-integration-container"
-      document.body.appendChild(sovDiv);
+      ${
+        disableSovendusDiv
+          ? ""
+          : `
+            var sovDiv = document.createElement("div");
+            sovDiv.id = "sovendus-integration-container"
+            document.body.appendChild(sovDiv);
+          `
+      }
 
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.async = true;
-      script.src =
-        "https://api.sovendus.com/sovabo/common/js/flexibleIframe.js";
-      document.body.appendChild(script);
+      ${
+        disableFlexibleIframeJs
+          ? ""
+          : `
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.async = true;
+            script.src =
+              "https://api.sovendus.com/sovabo/common/js/flexibleIframe.js";
+            document.body.appendChild(script);
+          `
+      }
     `;
     await driver.executeScript(integrationScript);
     await waitForTestOverlay(driver);
   } catch (e) {
     console.log(
-      `Banner didnt load, trying again - tried already ${retryCounter} times - error: ${e}`
+      `Banner didn't load, trying again - tried already ${retryCounter} times - error: ${e}`,
     );
     retryCounter += 1;
     await prepareTestPageAndRetryForever(
       sovAppData,
       driver,
       fileUrl,
-      retryCounter
+      retryCounter,
+      disableFlexibleIframeJs,
+      disableSovendusDiv,
     );
   }
 }
@@ -131,12 +291,12 @@ async function prepareTestPageAndRetryForever(
 async function waitForTestOverlay(driver: WebDriver) {
   await driver.wait(
     until.elementLocated(By.css("#outerSovendusOverlay")),
-    10000
+    10000,
   );
 }
 
 async function getIntegrationTesterData(
-  driver: WebDriver
+  driver: WebDriver,
 ): Promise<SelfTester> {
   const script = "return window.sovSelfTester;";
   const sovSelfTester = await driver.executeScript(script);

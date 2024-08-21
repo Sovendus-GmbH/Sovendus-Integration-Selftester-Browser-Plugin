@@ -1,11 +1,11 @@
 export interface TestResultResponseDataType {
-  integrationType?: TestResultType<ElementValue>;
+  integrationType?: TestResultType<string>;
   browserName?: TestResultType<BrowserTypes>;
   websiteURL?: TestResultType<string>;
   consumerSalutation?: TestResultType<string | undefined>;
   consumerFirstName?: TestResultType<string | undefined>;
   consumerLastName?: TestResultType<string | undefined>;
-  consumerYearOfBirth?: TestResultType<ElementValue>;
+  consumerYearOfBirth?: TestResultType<string | number | undefined>;
   consumerEmail?: TestResultType<string | undefined>;
   consumerEmailHash?: TestResultType<string | undefined>;
   consumerStreet?: TestResultType<string | undefined>;
@@ -14,27 +14,27 @@ export interface TestResultResponseDataType {
   consumerPhone?: TestResultType<string | undefined>;
   consumerCity?: TestResultType<string | undefined>;
   consumerCountry?: TestResultType<string | undefined>;
-  trafficSourceNumber?: TestResultType<ElementValue>;
-  trafficMediumNumber?: TestResultType<ElementValue>;
+  trafficSourceNumber?: TestResultType<string | undefined>;
+  trafficMediumNumber?: TestResultType<string | undefined>;
   orderCurrency?: TestResultType<string | undefined>;
   orderId?: TestResultType<string | undefined>;
-  orderValue?: TestResultType<string | undefined>;
+  orderValue?: TestResultType<string | number | undefined>;
   sessionId?: TestResultType<string | undefined>;
-  timestamp?: TestResultType<ElementValue>;
+  timestamp?: TestResultType<string | number | undefined>;
   usedCouponCode?: TestResultType<string | undefined>;
-  iframeContainerId?: TestResultType<ElementValue>;
-  isEnabledInBackend?: TestResultType<ElementValue>;
-  wasExecuted?: TestResultType<ElementValue>;
-  awinTest?: TestResultType<ElementValue>;
-  sovendusDivFound?: TestResultType<ElementValue>;
-  sovDivIdInIFrames?: TestResultType<ElementValue>;
-  multipleSovIFramesDetected?: TestResultType<ElementValue>;
-  sovIFramesAmount?: TestResultType<ElementValue>;
-  multipleIFramesAreSame?: TestResultType<ElementValue>;
-  flexibleIFrameOnDOM?: TestResultType<ElementValue>;
-  isFlexibleIframeExecutable?: TestResultType<ElementValue>;
-  isSovendusJsOnDom?: TestResultType<ElementValue>;
-  isSovendusJsExecutable?: TestResultType<ElementValue>;
+  iframeContainerId?: TestResultType<string | undefined>;
+  isEnabledInBackend?: TestResultType<boolean | undefined>;
+  wasExecuted?: TestResultType<boolean>;
+  // awinTest?: TestResultType;
+  sovendusDivFound?: TestResultType<boolean | string | undefined>;
+  sovDivIdInIFrames?: TestResultType<boolean | undefined>;
+  multipleSovIFramesDetected?: TestResultType<boolean | undefined>;
+  sovIFramesAmount?: TestResultType<number | undefined>;
+  multipleIFramesAreSame?: TestResultType<number | undefined>;
+  flexibleIFrameOnDOM?: TestResultType<boolean | undefined>;
+  isFlexibleIframeExecutable?: TestResultType<boolean | undefined>;
+  isSovendusJsOnDom?: TestResultType<boolean | undefined>;
+  isSovendusJsExecutable?: TestResultType<boolean | string | undefined>;
 }
 
 export interface TestResultType<TElementValueType> {
@@ -64,9 +64,9 @@ export enum BrowserTypes {
 export enum StatusMessageKeyTypes {
   awinNoSalesTracked = "awinNoSalesTracked",
   awinSaleTrackedAfterScript = "awinSaleTrackedAfterScript",
+  integrationTypeMalformed = "integrationTypeMalformed",
   consumerSalutationNotValid = "consumerSalutationNotValid",
   consumerSalutationSuccess = "consumerSalutationSuccess",
-  consumerYearOfBirthNotValid = "consumerYearOfBirthNotValid",
   consumerEmailNotValid = "consumerEmailNotValid",
   consumerEmailSuccess = "consumerEmailSuccess",
   consumerEmailNotMD5Hash = "consumerEmailNotMD5Hash",
@@ -85,44 +85,60 @@ export enum StatusMessageKeyTypes {
   currencySuccess = "currencySuccess",
   unixTimestampMissing = "unixTimestampMissing",
   notAUnixTimestamp = "notAUnixTimestamp",
+  unixTimestampOlderThan5Minutes = "unixTimestampOlderThan5Minutes",
   orderValueMissing = "orderValueMissing",
   orderValueWrongFormat = "orderValueWrongFormat",
   orderValueSuccess = "orderValueSuccess",
   orderIdSuccess = "orderIdSuccess",
+  orderIdMalformed = "orderIdMalformed",
   missingOrderId = "missingOrderId",
   missingSessionId = "missingSessionId",
   sessionIdSuccess = "sessionIdSuccess",
+  sessionIdMalformed = "sessionIdMalformed",
   missingCouponCode = "missingCouponCode",
   couponCodeSuccess = "couponCodeSuccess",
+  couponCodeMalformed = "couponCodeMalformed",
   missingConsumerStreet = "missingConsumerStreet",
   consumerStreetSuccess = "consumerStreetSuccess",
+  consumerStreetMalformed = "consumerStreetMalformed",
   missingConsumerStreetNumber = "missingConsumerStreetNumber",
   consumerStreetNumberSuccess = "consumerStreetNumberSuccess",
+  consumerStreetNumberMalformed = "consumerStreetNumberMalformed",
   missingConsumerZipCode = "missingConsumerZipCode",
   consumerZipCodeSuccess = "consumerZipCodeSuccess",
+  consumerZipCodeMalformed = "consumerZipCodeMalformed",
   missingConsumerPhone = "missingConsumerPhone",
   consumerPhoneSuccess = "consumerPhoneSuccess",
+  consumerPhoneMalformed = "consumerPhoneMalformed",
   missingConsumerCity = "missingConsumerCity",
   consumerCitySuccess = "consumerCitySuccess",
+  consumerCityMalformed = "consumerCityMalformed",
   missingConsumerCountry = "missingConsumerCountry",
   consumerCountrySuccess = "consumerCountrySuccess",
   consumerCountryInvalid = "consumerCountryInvalid",
   missingTrafficSourceNumber = "missingTrafficSourceNumber",
+  trafficSourceNumberMalformed = "trafficSourceNumberMalformed",
   trafficSourceNumberSuccess = "trafficSourceNumberSuccess",
   missingTrafficMediumNumber = "missingTrafficMediumNumber",
+  trafficMediumNumberMalformed = "trafficMediumNumberMalformed",
   trafficMediumNumberSuccess = "trafficMediumNumberSuccess",
   missingIframeContainerId = "missingIframeContainerId",
   missingConsumerFirstName = "missingConsumerFirstName",
   consumerFirstNameSuccess = "consumerFirstNameSuccess",
+  consumerFirstNameMalformed = "consumerFirstNameMalformed",
   missingConsumerLastName = "missingConsumerLastName",
   consumerLastNameSuccess = "consumerLastNameSuccess",
-  consumerYearOfBirthSuccess = "consumerYearOfBirthSuccess",
+  consumerLastNameMalformed = "consumerLastNameMalformed",
   missingConsumerEmailHash = "missingConsumerEmailHash",
   missingConsumerSalutation = "missingConsumerSalutation",
   missingConsumerYearOfBirth = "missingConsumerYearOfBirth",
+  consumerYearOfBirthSuccess = "consumerYearOfBirthSuccess",
+  consumerYearOfBirthNotValid = "consumerYearOfBirthNotValid",
   missingConsumerEmail = "missingConsumerEmail",
   iframeContainerIdSuccess = "iframeContainerIdSuccess",
-  noiframeContainerId = "noiframeContainerId",
+  iframeContainerIdMalformed = "iframeContainerIdMalformed",
+  iframeContainerIdHasSpaces = "iframeContainerIdHasSpaces",
+  noIframeContainerId = "noIframeContainerId",
   empty = "empty",
 }
 
@@ -160,7 +176,11 @@ export const statusMessages: {
     infoText: string;
   };
 } = {
-  awinNoSalesTracked: {
+  integrationTypeMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText: "Error: you can only pass a string as the integrationType",
+  },
+  awinSaleTrackedAfterScript: {
     errorText:
       "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.",
     infoText:
@@ -169,7 +189,7 @@ export const statusMessages: {
                   How to set up sales tracking with Awin? https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag",
   },
 
-  awinSaleTrackedAfterScript: {
+  awinNoSalesTracked: {
     errorText: "ERROR: No Sale tracked yet",
     infoText:
       "If this happens on the order success page, make sure you've implemented Awin sales tracking properly, as no sale was tracked. \
@@ -184,7 +204,8 @@ export const statusMessages: {
 
   consumerYearOfBirthNotValid: {
     errorText: "NOT A VALID BIRTH YEAR",
-    infoText: "Make sure to pass the year of birth of the customer, e.g. 1991",
+    infoText:
+      "Make sure to pass the year of birth of the customer as a string or a number, e.g. 1991",
   },
 
   consumerYearOfBirthSuccess: {
@@ -245,7 +266,7 @@ export const statusMessages: {
     infoText: "",
   },
 
-  noiframeContainerId: {
+  noIframeContainerId: {
     errorText:
       "ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.",
     infoText: "",
@@ -259,7 +280,7 @@ export const statusMessages: {
 
   sovendusJsBlockedByCookieConsent: {
     errorText:
-      "Sovendus was detected and flexibleiframe.js was executed. But the sovendus.js script, which gets placed by the flexibleiframe.js script, got blocked most likely because of your cookie consent tool. The type of the sovendus.js script should not be set, but is ${elementValue} instead.",
+      "Sovendus was detected and flexibleiframe.js was executed. But the sovendus.js script, which gets placed by the flexibleiframe.js script, got blocked most likely because of your cookie consent tool. The type of the sovendus.js script should not be set, but is {elementValue} instead.",
     infoText: "",
   },
 
@@ -271,38 +292,38 @@ export const statusMessages: {
 
   flexibleIframeJsBlockedByCookieConsent: {
     errorText:
-      "Sovendus was detected but flexibleiframe.js was not executed because the script type is ${elementValue} instead of text/javascript. This probably happened because your cookie consent tool blocked the script.",
+      "Sovendus was detected but flexibleiframe.js was not executed because the script type is {elementValue} instead of text/javascript. This probably happened because your cookie consent tool blocked the script.",
     infoText: "",
   },
 
   containerDivNotFoundOnDOM: {
     errorText:
-      "ERROR: The sovendus container div with the id ${elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.",
+      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.",
     infoText: "",
   },
 
   multipleSovIframesDetected: {
     errorText:
-      "ERROR: sovIframes was found ${elementValue} times with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to Sovendus being integrated multiple times.",
+      "ERROR: sovIframes was found {elementValue} times with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to Sovendus being integrated multiple times.",
     infoText: "",
   },
 
   multipleSovIframesDetectedAndAreSame: {
     errorText:
-      "ERROR: sovIframes was found ${elementValue} times with the same content. This is probably due to Sovendus being executed multiple times or Sovendus being integrated multiple times.",
+      "ERROR: sovIframes was found {elementValue} times with the same content. This is probably due to Sovendus being executed multiple times or Sovendus being integrated multiple times.",
     infoText: "",
   },
 
   currencyNotValid: {
     errorText: "NOT A VALID CURRENCY",
     infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
-      ", "
+      ", ",
     )}`,
   },
   currencyMissing: {
     errorText: "DATA MISSING",
     infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
-      ", "
+      ", ",
     )}`,
   },
 
@@ -322,6 +343,12 @@ export const statusMessages: {
     infoText: "Make sure to pass a unix timestamp in seconds.",
   },
 
+  unixTimestampOlderThan5Minutes: {
+    errorText: "TIMESTAMP OLDER THAN 5 MINUTES",
+    infoText:
+      "Make sure to pass the unix timestamp in seconds of the order time. If you just refreshed the success page after a while then this is normal and expected",
+  },
+
   missingOrderId: {
     errorText: "DATA IS MISSING",
     infoText: "Make sure to pass the order id",
@@ -329,6 +356,12 @@ export const statusMessages: {
 
   orderIdSuccess: {
     errorText: "",
+    infoText:
+      "Make sure the value aligns with the actual order id of your order.",
+  },
+
+  orderIdMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
     infoText:
       "Make sure the value aligns with the actual order id of your order.",
   },
@@ -361,6 +394,12 @@ export const statusMessages: {
       "Make sure the session id doesn't change after a refresh, but changes with a new session.",
   },
 
+  sessionIdMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure the session id doesn't change after a refresh, but changes with a new session.",
+  },
+
   missingCouponCode: {
     errorText: "DATA IS MISSING",
     infoText: "Make sure the used coupon code from the order gets passed",
@@ -368,6 +407,12 @@ export const statusMessages: {
 
   couponCodeSuccess: {
     errorText: "",
+    infoText:
+      "Make sure the used coupon code from the order aligns with this value.",
+  },
+
+  couponCodeMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
     infoText:
       "Make sure the used coupon code from the order aligns with this value.",
   },
@@ -383,6 +428,12 @@ export const statusMessages: {
       "Make sure this value aligns with the delivery address street name.",
   },
 
+  consumerStreetMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure this value is a string and aligns with the delivery address street name.",
+  },
+
   missingConsumerStreetNumber: {
     errorText: "DATA IS MISSING",
     infoText: "Make sure to pass the street number from the delivery address.",
@@ -392,6 +443,12 @@ export const statusMessages: {
     errorText: "",
     infoText:
       "Make sure this value aligns with the delivery address street number.",
+  },
+
+  consumerStreetNumberMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure this value is a string and aligns with the delivery address street number.",
   },
 
   missingConsumerZipCode: {
@@ -404,9 +461,20 @@ export const statusMessages: {
     infoText: "Make sure this value aligns with the delivery address zip code.",
   },
 
+  consumerZipCodeMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure this value is a string and aligns with the delivery address zip code.",
+  },
+
   missingConsumerPhone: {
     errorText: "DATA IS MISSING",
     infoText: "Make sure to pass the phone number.",
+  },
+
+  consumerPhoneMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText: "Make sure to pass the phone number of the customer as a string.",
   },
 
   consumerPhoneSuccess: {
@@ -424,43 +492,61 @@ export const statusMessages: {
     infoText: "Make sure this value aligns with the delivery address city.",
   },
 
+  consumerCityMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure this value is a string and aligns with the delivery address city.",
+  },
+
   missingConsumerCountry: {
     errorText: "DATA IS MISSING",
     infoText: `Make sure to pass the country id of the delivery address. Valid are: ${validCountries.join(
-      ", "
+      ", ",
     )}`,
   },
 
   consumerCountrySuccess: {
     errorText: "",
     infoText: `Make sure this value aligns with the country of the delivery address. Valid are: ${validCountries.join(
-      ", "
+      ", ",
     )}`,
   },
 
   consumerCountryInvalid: {
     errorText: "INVALID COUNTRY",
     infoText: `Make sure this value aligns with the country of the delivery address. Valid are: ${validCountries.join(
-      ", "
+      ", ",
     )}`,
   },
 
   missingTrafficSourceNumber: {
     errorText: "DATA IS MISSING",
     infoText:
-      "Make sure to pass the traffic source number you've received in your integration docs.",
+      "Make sure to pass the traffic source number you've received in your integration docs as a string or a number.",
+  },
+
+  trafficSourceNumberMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure to pass the traffic source number you've received in your integration docs as a string or a number.",
   },
 
   trafficSourceNumberSuccess: {
     errorText: "",
     infoText:
-      "Make sure this value aligns with the traffic source number you've received in your integration docs.",
+      "Make sure this value aligns with the traffic source number you've received in your integration docs as a string or a number.",
   },
 
   missingTrafficMediumNumber: {
     errorText: "DATA IS MISSING",
     infoText:
-      "Make sure to pass the traffic medium number you've received in your integration docs.",
+      "Make sure to pass the traffic medium number you've received in your integration docs as a string or a number.",
+  },
+
+  trafficMediumNumberMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure to pass the traffic medium number you've received in your integration docs as a string or a number.",
   },
 
   trafficMediumNumberSuccess: {
@@ -472,13 +558,25 @@ export const statusMessages: {
   missingIframeContainerId: {
     errorText: "DATA IS MISSING",
     infoText:
-      "Make sure to pass a iframe container id, this id corresponds to a div with this id on the DOM.",
+      "Make sure to pass a iframe container id, this id corresponds to an empty div with this id on the DOM.",
   },
 
   iframeContainerIdSuccess: {
     errorText: "",
     infoText:
-      "Make sure this value aligns with a iframe container id, this id corresponds to a div with this id on the DOM.",
+      "Make sure this value aligns with the id of an empty div element on the DOM.",
+  },
+
+  iframeContainerIdMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure this value aligns with the id of an empty div element on the DOM.",
+  },
+
+  iframeContainerIdHasSpaces: {
+    errorText: "HAS SPACES",
+    infoText:
+      "In HTML id's cant have spaces, make sure this value aligns with the id of an empty div element on the DOM.",
   },
 
   missingConsumerFirstName: {
@@ -491,6 +589,12 @@ export const statusMessages: {
     infoText: "Make sure this value aligns with the customers first name",
   },
 
+  consumerFirstNameMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure this value is a string and aligns with the customers first name",
+  },
+
   missingConsumerLastName: {
     errorText: "DATA IS MISSING",
     infoText: "Make sure to pass the customers last name.",
@@ -499,6 +603,12 @@ export const statusMessages: {
   consumerLastNameSuccess: {
     errorText: "",
     infoText: "Make sure this value aligns with the customers last name",
+  },
+
+  consumerLastNameMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure this value is a string and aligns with the customers last name",
   },
 
   consumerSalutationSuccess: {
