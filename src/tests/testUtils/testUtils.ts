@@ -44,7 +44,7 @@ export async function executeOverlayTests({
   browser?: Browsers;
   isAwinTest?: boolean;
 }) {
-  const buildMode = process.env.npm_config_buildmode === "true";
+  const buildMode = process.env["npm_config_buildmode"] === "true";
   for (const _browser of browser
     ? [browser]
     : buildMode
@@ -154,8 +154,8 @@ function initializeWebDriver(browser: Browsers) {
     options.addExtensions(extensionPath);
 
     let firefoxDevPath: string;
-    if (process.env.FIREFOX_DEVELOPER_EDITION_BINARY_PATH) {
-      firefoxDevPath = process.env.FIREFOX_DEVELOPER_EDITION_BINARY_PATH;
+    if (process.env["FIREFOX_DEVELOPER_EDITION_BINARY_PATH"]) {
+      firefoxDevPath = process.env["FIREFOX_DEVELOPER_EDITION_BINARY_PATH"];
     } else {
       switch (platform()) {
         case "win32":
@@ -333,7 +333,7 @@ async function waitForTestOverlay(driver: WebDriver) {
   );
 }
 
-async function executeWithTimeout(fn) {
+async function executeWithTimeout(fn: ()=> Promise<void>) {
   return new Promise((resolve, reject) => {
     // Create a timeout promise that rejects after the specified time
     const timeoutId = setTimeout(() => {

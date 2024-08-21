@@ -1,4 +1,5 @@
 import type SelfTester from "@src/page-banner/self-tester";
+import type { ExplicitAnyType } from "@src/page-banner/self-tester";
 import type { StatusMessageKeyTypes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import type { WebDriver } from "selenium-webdriver";
@@ -29,13 +30,13 @@ export function generateTests({
     testName: testInfo.testName,
     sovAppData: testInfo.sovAppData,
     testFunction: async ({ sovSelfTester }) => {
-      expect((sovSelfTester as any)[elementKey].elementValue).toBe(
+      expect((sovSelfTester as ExplicitAnyType)[elementKey].elementValue).toBe(
         testInfo.expectedElementValue
       );
-      expect((sovSelfTester as any)[elementKey].statusMessageKey).toBe(
-        testInfo.expectedStatusMessageKey
-      );
-      expect((sovSelfTester as any)[elementKey].statusCode).toBe(
+      expect(
+        (sovSelfTester as ExplicitAnyType)[elementKey].statusMessageKey
+      ).toBe(testInfo.expectedStatusMessageKey);
+      expect((sovSelfTester as ExplicitAnyType)[elementKey].statusCode).toBe(
         testInfo.expectedStatusCode
       );
     },
@@ -78,31 +79,31 @@ export function generateMalformedDataTests({
     ...(skipNumberCheck
       ? []
       : canBeANumber
-        ? [
-            {
-              testName: "MalformedNumberWithCommaInsteadOfDot",
-              sovAppData: sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
-              expectedElementValue: "1234,56",
-              expectedStatusCode: StatusCodes.Error,
-              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-            },
-          ]
-        : [
-            {
-              testName: "MalformedNumber",
-              sovAppData: sovAppDataNumberButIsOkay,
-              expectedElementValue: "1234",
-              expectedStatusCode: StatusCodes.Error,
-              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-            },
-            {
-              testName: "MalformedFloatNumber",
-              sovAppData: sovAppDataFloatNumberButIsOkay,
-              expectedElementValue: "1234.56",
-              expectedStatusCode: StatusCodes.Error,
-              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-            },
-          ]),
+      ? [
+          {
+            testName: "MalformedNumberWithCommaInsteadOfDot",
+            sovAppData: sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
+            expectedElementValue: "1234,56",
+            expectedStatusCode: StatusCodes.Error,
+            expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+          },
+        ]
+      : [
+          {
+            testName: "MalformedNumber",
+            sovAppData: sovAppDataNumberButIsOkay,
+            expectedElementValue: "1234",
+            expectedStatusCode: StatusCodes.Error,
+            expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+          },
+          {
+            testName: "MalformedFloatNumber",
+            sovAppData: sovAppDataFloatNumberButIsOkay,
+            expectedElementValue: "1234.56",
+            expectedStatusCode: StatusCodes.Error,
+            expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+          },
+        ]),
     {
       testName: "Missing",
       sovAppData: sovAppDataNullButIsOkay,
@@ -181,7 +182,7 @@ export function generateMalformedDataTests({
 export type TestsInfoType = {
   testName: string;
   sovAppData: SovDataType;
-  expectedElementValue: any;
+  expectedElementValue: string | boolean | null;
   expectedStatusCode: StatusCodes;
   expectedStatusMessageKey: StatusMessageKeyTypes | null;
   disableFlexibleIframeJs?: boolean;

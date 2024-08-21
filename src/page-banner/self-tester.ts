@@ -50,7 +50,7 @@ export default class SelfTester {
 
   awinIntegrationDetectedTestResult: TestResultType<boolean>;
   awinSaleTrackedTestResult: TestResultType<boolean>;
-  awinExecutedTestResult: TestResultType<boolean>;
+  awinExecutedTestResult: TestResultType<boolean | undefined>;
 
   sovConsumer?: SovApplicationConsumer;
 
@@ -300,8 +300,8 @@ export default class SelfTester {
   }
 
   getAwinExecutedTestResult(
-    awinSaleTrackedTestResult: TestResultType<boolean>
-  ): TestResultType<boolean> {
+    awinSaleTrackedTestResult: TestResultType<boolean>,
+  ): TestResultType<boolean | undefined> {
     const sovIframesExists = !!window.sovIframes;
     if (awinSaleTrackedTestResult.elementValue) {
       if (sovIframesExists) {
@@ -764,21 +764,22 @@ export default class SelfTester {
     trafficMediumNumber: TestResultType<string | undefined>
   ): TestResultType<boolean> {
     const wasExecuted =
-      trafficSourceNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
-      trafficMediumNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
-      window.sovApplication &&
-      !!window.sovApplication?.instances?.length;
+      (trafficSourceNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
+        trafficMediumNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
+        window.sovApplication &&
+        !!window.sovApplication?.instances?.length) ||
+      false;
     if (wasExecuted) {
       console.log("Sovendus was executed");
     } else {
       console.log("Sovendus was detected but not executed");
     }
     if (wasExecuted) {
-      return new SuccessTestResult({
+      return new SuccessTestResult<boolean>({
         elementValue: true,
       });
     }
-    return new WarningOrFailTestResult({
+    return new WarningOrFailTestResult<boolean>({
       elementValue: wasExecuted,
       statusMessageKey: undefined,
       statusCode: StatusCodes.Error,
@@ -1486,6 +1487,8 @@ class TestResultType<TElementValueType> {
     this.statusMessageKey = statusMessageKey;
     this.statusCode = statusCode;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getFormattedStatusMessage(_showSuccessCheckMark: boolean = true): string {
     return "";
   }
@@ -1531,20 +1534,22 @@ class SuccessTestResult<
   }
 }
 
-class DidNotRunTestResult<TElementValueType> extends TestResultType<
-  TElementValueType | undefined
-> {
+class DidNotRunTestResult<
+  TElementValueType,
+> extends TestResultType<TElementValueType> {
   declare elementValue: TElementValueType;
   declare statusMessageKey: undefined;
   declare statusCode: StatusCodes.TestDidNotRun;
 
   constructor() {
     super({
-      elementValue: undefined,
+      // TODO remove ExplicitAnyType
+      elementValue: undefined as ExplicitAnyType,
       statusMessageKey: undefined,
       statusCode: StatusCodes.TestDidNotRun,
     });
-    this.elementValue = undefined as any;
+    // TODO remove ExplicitAnyType
+    this.elementValue = undefined as ExplicitAnyType;
     this.statusMessageKey = undefined;
     this.statusCode = StatusCodes.TestDidNotRun;
   }
@@ -1674,33 +1679,33 @@ class WarningOrFailTestResult<
 }
 
 interface MergedSovConsumer {
-  salutation: any;
-  firstName: any;
-  lastName: any;
-  yearOfBirth: any;
-  email?: any | undefined;
-  emailHash: any;
-  phone: any;
-  street: any;
-  streetNumber: any;
-  zipCode: any;
-  city: any;
-  country: any;
+  salutation: ExplicitAnyType;
+  firstName: ExplicitAnyType;
+  lastName: ExplicitAnyType;
+  yearOfBirth: ExplicitAnyType;
+  email: ExplicitAnyType;
+  emailHash: ExplicitAnyType;
+  phone: ExplicitAnyType;
+  street: ExplicitAnyType;
+  streetNumber: ExplicitAnyType;
+  zipCode: ExplicitAnyType;
+  city: ExplicitAnyType;
+  country: ExplicitAnyType;
 }
 
 export interface SovConsumer {
-  consumerSalutation?: any;
-  consumerFirstName?: any;
-  consumerLastName?: any;
-  consumerYearOfBirth?: any;
-  consumerEmail?: any;
-  consumerEmailHash?: any;
-  consumerPhone?: any;
-  consumerStreet?: any;
-  consumerStreetNumber?: any;
-  consumerZipcode?: any;
-  consumerCity?: any;
-  consumerCountry?: any;
+  consumerSalutation?: ExplicitAnyType;
+  consumerFirstName?: ExplicitAnyType;
+  consumerLastName?: ExplicitAnyType;
+  consumerYearOfBirth?: ExplicitAnyType;
+  consumerEmail?: ExplicitAnyType;
+  consumerEmailHash?: ExplicitAnyType;
+  consumerPhone?: ExplicitAnyType;
+  consumerStreet?: ExplicitAnyType;
+  consumerStreetNumber?: ExplicitAnyType;
+  consumerZipcode?: ExplicitAnyType;
+  consumerCity?: ExplicitAnyType;
+  consumerCountry?: ExplicitAnyType;
 }
 
 interface SovApplicationConsumer {
@@ -1724,16 +1729,16 @@ interface SovApplication {
 }
 
 export interface SovIframes {
-  trafficSourceNumber?: any;
-  trafficMediumNumber?: any;
-  sessionId?: any;
-  timestamp?: any;
-  orderId?: any;
-  orderValue?: any;
-  orderCurrency?: any;
-  usedCouponCode?: any;
-  iframeContainerId?: any;
-  integrationType?: any;
+  trafficSourceNumber?: ExplicitAnyType;
+  trafficMediumNumber?: ExplicitAnyType;
+  sessionId?: ExplicitAnyType;
+  timestamp?: ExplicitAnyType;
+  orderId?: ExplicitAnyType;
+  orderValue?: ExplicitAnyType;
+  orderCurrency?: ExplicitAnyType;
+  usedCouponCode?: ExplicitAnyType;
+  iframeContainerId?: ExplicitAnyType;
+  integrationType?: ExplicitAnyType;
 }
 
 interface Banner {
@@ -1761,11 +1766,15 @@ interface Awin {
   };
 }
 
-interface SovWindow extends Window {
+export interface SovWindow extends Window {
   sovIframes?: SovIframes[];
   sovConsumer?: SovConsumer;
   sovApplication?: SovApplication;
   AWIN?: Awin;
+  didLoad: boolean;
 }
 
 declare let window: SovWindow;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ExplicitAnyType = any;

@@ -1,3 +1,5 @@
+import type { ExplicitAnyType } from "@src/page-banner/self-tester";
+
 function _checkAvailableIntegrations() {
   const overlay = document.getElementById(
     "outerSovedusIntegrationMethodCheckerOverlay",
@@ -205,12 +207,12 @@ function _checkAvailableIntegrations() {
         } catch (error) {
           console.error(
             "Error fetching data:",
-            (error as any)?.message || error,
+            (error as ExplicitAnyType)?.message || error,
           );
           responseStatusCode = this.statusCodes.fail;
           responseErrorMessage = this.formatErrorMessage(
             "Error fetching data:",
-            (error as any)?.message || error,
+            (error as ExplicitAnyType)?.message || error,
           );
           return { data: {}, responseStatusCode, responseErrorMessage };
         }

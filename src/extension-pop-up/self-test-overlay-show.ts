@@ -17,7 +17,7 @@ function _showOverlay() {
 
 function _hideRepeatTestsButton() {
   const repeatTestsButton = document.getElementById(
-    "sovendusOverlayRepeatTests"
+    "sovendusOverlayRepeatTests",
   );
   if (repeatTestsButton) {
     repeatTestsButton.style.display = "none";

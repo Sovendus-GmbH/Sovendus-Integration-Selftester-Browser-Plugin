@@ -1,4 +1,3 @@
-_hideOverlay();
 function _hideOverlay() {
   const overlay = document.getElementById("sovendusOverlay");
   if (overlay) {
@@ -12,3 +11,5 @@ function _hideOverlay() {
     document.getElementById("outerSovendusNotDetectedOverlay")?.remove();
   }
 }
+
+_hideOverlay();

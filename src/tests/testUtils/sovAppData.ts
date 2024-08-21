@@ -1,5 +1,8 @@
-import type { SovConsumer, SovIframes } from "@src/page-banner/self-tester";
-import internal from "stream";
+import type {
+  ExplicitAnyType,
+  SovConsumer,
+  SovIframes,
+} from "@src/page-banner/self-tester";
 
 export function getSovAppData(sovAppData: SovDataType) {
   const sovData: SovFinalDataType = {
@@ -23,7 +26,7 @@ export interface SovDataType {
   sovConsumer?: SovConsumer;
   sovIframes1: SovIframes;
   sovIframes2?: SovIframes;
-  payload?: any;
+  payload?: ExplicitAnyType;
 }
 
 export const sovAppConsumerAllValidData: SovConsumer = {
