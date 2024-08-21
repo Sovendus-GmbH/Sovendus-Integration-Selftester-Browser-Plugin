@@ -193,22 +193,31 @@ export const statusMessages: {
   integrationTypeMissing: {
     errorText: "",
     infoText:
-      "The integration type can only be detected for integrations that where done since beginning of 2024.",
+      "The integration type can only be detected for integrations that where done after beginning of 2024.",
   },
   awinSaleTrackedAfterScript: {
-    errorText:
-      "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.",
-    infoText:
-      "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. \
-                  A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed. \
-                  How to set up sales tracking with Awin? https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag",
+    errorText: `<h3 class='sovendus-overlay-error'>
+              ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed.
+              A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed / placed on the DOM.
+              <a href="https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag" target="_blank">
+                How to set up sales tracking with Awin?
+              </a>
+            </h3>`,
+    infoText: "",
   },
 
   awinNoSalesTracked: {
-    errorText: "ERROR: No Sale tracked yet",
-    infoText:
-      "If this happens on the order success page, make sure you've implemented Awin sales tracking properly, as no sale was tracked. \
-        How to set up sales tracking with Awin? https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag",
+    errorText: `<h3 class='sovendus-overlay-h3 sovendus-overlay-error'>
+            ERROR: No Sale tracked yet
+          </h3>
+          <h2 class='sovendus-overlay-h2 sovendus-overlay-error'>It's normal if this isn't the order success page!</h2>
+          <h3 class='sovendus-overlay-font sovendus-overlay-h3'>
+            If this happens on the order success page, make sure you've implemented Awin sales tracking properly, as no sale was tracked.
+            <a href="https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag" target="_blank">
+              How to set up sales tracking with Awin?
+            </a>
+          </h3>`,
+    infoText: "",
   },
 
   consumerSalutationNotValid: {

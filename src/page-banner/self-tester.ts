@@ -216,19 +216,18 @@ export default class SelfTester {
       missingErrorMessageKey: StatusMessageKeyTypes.integrationTypeMissing,
       successMessageKey: StatusMessageKeyTypes.empty,
     });
+    if (awinIntegrationDetectedTestResult.elementValue) {
+      return new SuccessTestResult<string>({
+        elementValue: `Awin (Merchant ID: ${this.getAwinMerchantId()})`,
+      });
+    }
     if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
       return new SuccessTestResult<string>({
-        elementValue:
-          valueTestResult.elementValue ||
-          (awinIntegrationDetectedTestResult.elementValue
-            ? `Awin (Merchant ID: ${this.getAwinMerchantId()})`
-            : "unknown"),
+        elementValue: valueTestResult.elementValue as string,
       });
     }
     return new WarningOrFailTestResult<string>({
-      elementValue: valueTestResult.elementValue
-        ? valueTestResult.elementValue
-        : "unknown",
+      elementValue: valueTestResult.elementValue || "unknown",
       statusCode: valueTestResult.statusCode,
       statusMessageKey: valueTestResult.statusMessageKey,
     });
@@ -254,32 +253,6 @@ export default class SelfTester {
         );
       }
     }
-
-    // TODO handle style in overlay
-    // if (this.awinSaleTracked()) {
-    //   statusMessage = `
-    //       <h3 class='sovendus-overlay-error'>
-    //         ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed.
-    //         A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.
-    //         <a href="https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag" target="_blank">
-    //           How to set up sales tracking with Awin?
-    //         </a>
-    //       </h3>`;
-    //   statusMessageKey = StatusMessageKeyTypes.awinSaleTrackedAfterScript;
-    // } else {
-    //   statusMessage = `
-    //       <h3 class='sovendus-overlay-h3 sovendus-overlay-error'>
-    //         ERROR: No Sale tracked yet
-    //       </h3>
-    //       <h2 class='sovendus-overlay-h2 sovendus-overlay-error'>It's normal if this isn't the order success page!</h2>
-    //       <h3 class='sovendus-overlay-font sovendus-overlay-h3'>
-    //         If this happens on the order success page, make sure you've implemented Awin sales tracking properly, as no sale was tracked.
-    //         <a href="https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag" target="_blank">
-    //           How to set up sales tracking with Awin?
-    //         </a>
-    //       </h3>`;
-    //   statusMessageKey = StatusMessageKeyTypes.awinNoSalesTracked;
-    // }
   }
 
   getAwinIntegrationDetectedTestResult(): TestResultType<boolean> {
@@ -978,6 +951,9 @@ export default class SelfTester {
       missingErrorMessageKey: StatusMessageKeyTypes.missingOrderId,
       successMessageKey: StatusMessageKeyTypes.orderIdSuccess,
       malformedMessageKey: StatusMessageKeyTypes.orderIdMalformed,
+      numberCheckType: {
+        numbersInStringsAllowed: true,
+      },
     });
   }
 
@@ -1084,6 +1060,9 @@ export default class SelfTester {
       missingErrorMessageKey: StatusMessageKeyTypes.missingCouponCode,
       successMessageKey: StatusMessageKeyTypes.couponCodeSuccess,
       malformedMessageKey: StatusMessageKeyTypes.couponCodeMalformed,
+      numberCheckType: {
+        numbersInStringsAllowed: true,
+      },
     });
   }
 
@@ -1797,7 +1776,8 @@ export interface SovWindow extends Window {
   sovConsumer?: SovConsumer;
   sovApplication?: SovApplication;
   AWIN?: Awin;
-  transmitTestResult?: false | undefined;
+  // only used by tests
+  transmitTestResult?: false;
 }
 
 declare let window: SovWindow;

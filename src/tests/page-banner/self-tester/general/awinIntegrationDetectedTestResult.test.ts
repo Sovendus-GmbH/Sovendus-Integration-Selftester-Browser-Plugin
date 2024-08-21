@@ -17,8 +17,31 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
         },
+        {
+          testName: "awinIntegrationDetected",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: false,
+          expectedStatusCode: StatusCodes.Success,
+          expectedStatusMessageKey: null,
+        },
+      ],
+    }),
+  ],
+});
 
-        // NoAwinIntegrationDetected is not required, because Sovendus is not integrated
+executeOverlayTests({
+  testName: "awinIntegrationDetectedTestResult",
+  tests: [
+    ...generateTests({
+      elementKey: "awinIntegrationDetectedTestResult",
+      testsInfo: [
+        {
+          testName: "noAwinIntegrated",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: false,
+          expectedStatusCode: StatusCodes.Success,
+          expectedStatusMessageKey: null,
+        },
       ],
     }),
   ],

@@ -5,6 +5,8 @@ import {
   computePosition as computePositionFromCDN,
   // downloaded from https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.10/+esm
   // and adjusted imports from +esm to +esm.js
+  // and removed source maps
+  // TODO figure out a better solution
 } from "../npm/@floating-ui/dom@1.6.10/+esm.js";
 import {
   fullscreenClass,
@@ -62,11 +64,7 @@ function removeOverlay(): void {
 }
 class SelfTesterOverlay {
   createOverlay(selfTester: SelfTester): void {
-    document.getElementById(outerOverlayId)?.remove();
-    const overlay = document.createElement("div");
-    overlay.id = outerOverlayId;
-    overlay.innerHTML = this.createOuterOverlay();
-    document.body.appendChild(overlay);
+    this.createOuterOverlay();
     this.createInnerOverlay({
       loadingDone: true,
       headerRightElement: `
@@ -82,7 +80,6 @@ class SelfTesterOverlay {
               <li class="${sovendusOverlayFontClass}">
                 Browser: ${selfTester.browserName.elementValue}
               </li>
-              ${selfTester.awinExecutedTestResult.getFormattedGeneralStatusMessage()}
               ${selfTester.multipleIFramesAreSame.getFormattedGeneralStatusMessage()}
               ${selfTester.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
               ${selfTester.isFlexibleIFrameExecutable.getFormattedGeneralStatusMessage()}
@@ -93,20 +90,10 @@ class SelfTesterOverlay {
             ${this.createInnerInnerOverlay(selfTester)}
         `,
     });
-
-    document
-      .getElementById(toggleSovendusOverlayId)
-      ?.addEventListener("click", toggleOverlay);
-
-    // this.moveOverlayAboveAll();
   }
 
   createLoadingOverlay(): void {
-    const overlay = document.createElement("div");
-    overlay.id = outerOverlayId;
-    overlay.innerHTML = this.createOuterOverlay();
-    document.body.appendChild(overlay);
-    window.originalOnresize = window.onresize;
+    this.createOuterOverlay();
     this.createInnerOverlay({
       children: `
         <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
@@ -117,15 +104,12 @@ class SelfTesterOverlay {
         </h3>
     `,
     });
-
-    document
-      .getElementById(toggleSovendusOverlayId)
-      ?.addEventListener("click", toggleOverlay);
   }
 
-  createOuterOverlay(): string {
-    // TODO OuterOverlayStyle bearbeiten damit er im innerOverlay funktioniert
-    return `
+  createOuterOverlay(): void {
+    const overlay = document.createElement("div");
+    overlay.id = outerOverlayId;
+    overlay.innerHTML = `
       ${this.getOuterOverlayStyle()}
       <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${toggleSovendusOverlayId}">
         Hide
@@ -133,10 +117,14 @@ class SelfTesterOverlay {
       <div id="${overlayId}">
       </div>
     `;
+    document.body.appendChild(overlay);
+    document
+      .getElementById(toggleSovendusOverlayId)
+      ?.addEventListener("click", toggleOverlay);
   }
 
   createInnerOverlay({
-    headerRightElement = "",
+    headerRightElement,
     children,
     loadingDone,
   }: {
@@ -146,6 +134,7 @@ class SelfTesterOverlay {
   }): void {
     const overlay = document.getElementById(overlayId) as HTMLElement;
 
+    // use an iframe to prevent styles from being overridden by the pages css
     const iframe = document.createElement("iframe");
     iframe.onload = (): void => {
       if (iframe.contentDocument) {
@@ -156,7 +145,7 @@ class SelfTesterOverlay {
           <h1 class="${sovendusOverlayFontClass} ${sovendusOverlayH1Class}" style="margin-right: auto !important">
             Sovendus Self-Test Overlay
           </h1>
-          ${headerRightElement}
+          ${headerRightElement ?? ""}
         </div>
         ${children}
       </div>
@@ -166,8 +155,13 @@ class SelfTesterOverlay {
           "Failed to get iframe.contentDocument to place content",
         );
       }
+
       const iFrameStyle = document.createElement("style");
       overlay.insertAdjacentElement("afterbegin", iFrameStyle);
+
+      if (!loadingDone) {
+        window.originalOnresize = window.onresize;
+      }
       window.onresize = (ev: UIEvent): void => {
         window.originalOnresize?.(ev);
         this.updateIFrameHeight(iframe, iFrameStyle);
@@ -197,11 +191,12 @@ class SelfTesterOverlay {
   createInnerInnerOverlay(selfTester: SelfTester): string {
     const awinIntegrationDetected =
       selfTester.awinIntegrationDetectedTestResult.elementValue;
-    const awinIntegrationNoSaleTracked =
+    const awinIntegrationNoSaleTrackedOrTrackedToEarly =
       awinIntegrationDetected &&
-      !selfTester.awinSaleTrackedTestResult.elementValue;
+      (!selfTester.awinSaleTrackedTestResult.elementValue ||
+        !selfTester.awinExecutedTestResult.elementValue);
     return `
-        ${this.getSovIFramesData(selfTester, awinIntegrationNoSaleTracked)}
+        ${this.getSovIFramesData(selfTester, awinIntegrationNoSaleTrackedOrTrackedToEarly)}
         ${
           awinIntegrationDetected
             ? ""
@@ -265,12 +260,14 @@ class SelfTesterOverlay {
 
   getSovIFramesData(
     selfTester: SelfTester,
-    awinIntegrationNoSaleTracked: boolean = false,
+    awinIntegrationNoSaleTrackedOrTrackedToEarly: boolean = false,
   ): string {
     let additionalInfo: string;
-    if (awinIntegrationNoSaleTracked) {
-      additionalInfo =
-        selfTester.awinSaleTrackedTestResult.getFormattedStatusMessage();
+    if (awinIntegrationNoSaleTrackedOrTrackedToEarly) {
+      additionalInfo = `
+        ${selfTester.awinSaleTrackedTestResult.getFormattedGeneralStatusMessage()}
+        ${selfTester.awinExecutedTestResult.getFormattedGeneralStatusMessage()}
+      `;
     } else {
       additionalInfo = `
       <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
@@ -571,27 +568,6 @@ class SelfTesterOverlay {
       }
     }
   }
-
-  // moveOverlayAboveAll() {
-  //   function checkAndChangeZIndex(element: HTMLElement) {
-  //     if (
-  //       element.id !== overlayId &&
-  //       element.id !== toggleSovendusOverlayId &&
-  //       (getComputedStyle(element).zIndex === "2147483647" ||
-  //         element.style.zIndex === "2147483647")
-  //     ) {
-  //       element.setAttribute("style", "z-index:2147483646 !important");
-  //     }
-
-  //     // Handle child elements
-  //     let childElement = element.firstElementChild;
-  //     while (childElement) {
-  //       checkAndChangeZIndex(childElement as HTMLElement);
-  //       childElement = childElement.nextElementSibling;
-  //     }
-  //   }
-  //   checkAndChangeZIndex(document.body);
-  // }
 }
 
 function toggleOverlay(): void {

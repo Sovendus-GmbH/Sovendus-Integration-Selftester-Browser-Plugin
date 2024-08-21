@@ -2,7 +2,10 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { sovAppDataEverythingIsOkay } from "@src/tests/testUtils/sovAppData";
+import {
+  sovAppDataEverythingIsOkay,
+  sovAwinID,
+} from "@src/tests/testUtils/sovAppData";
 import {
   generateMalformedDataTests,
   generateTests,
@@ -32,6 +35,25 @@ executeOverlayTests({
         StatusMessageKeyTypes.integrationTypeMissing,
       objectElementValueType: "objectObject",
       undefinedValue: "unknown",
+    }),
+  ],
+});
+
+executeOverlayTests({
+  testName: "integrationTypeAwin",
+  isAwinTest: true,
+  tests: [
+    ...generateTests({
+      elementKey: "integrationType",
+      testsInfo: [
+        {
+          testName: "integrationTypeAwin",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: `Awin (Merchant ID: ${sovAwinID})`,
+          expectedStatusCode: StatusCodes.Success,
+          expectedStatusMessageKey: null,
+        },
+      ],
     }),
   ],
 });

@@ -1,4 +1,7 @@
-import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import {
+  StatusCodes,
+  StatusMessageKeyTypes,
+} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { sovAppDataEverythingIsOkay } from "@src/tests/testUtils/sovAppData";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
@@ -17,8 +20,19 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
         },
-
-        // NoAwinExecuted is not required, because Sovendus can not be detected
+        {
+          testName: "awinSalesTrackingToLate",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: false,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.awinSaleTrackedAfterScript,
+          testOptions: {
+            awin: {
+              addSaleTrackingDelay: true,
+            },
+          },
+        },
       ],
     }),
   ],

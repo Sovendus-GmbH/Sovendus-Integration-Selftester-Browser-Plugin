@@ -209,6 +209,12 @@ function getAwinIntegrationScript({
         img.src = "https://www.awin1.com/sread.img?tt=ns&tv=2&merchant=${sovAwinID}&amount=${sovAppData.sovIframes[0].orderValue}&ch=aw&parts=DEFAULT:${sovAppData.sovIframes[0].orderValue}&ref=${sovAppData.sovIframes[0].orderId}&cr=${sovAppData.sovIframes[0].orderCurrency}&vc=${sovAppData.sovIframes[0].usedCouponCode}&testmode=0";
         document.body.appendChild(img);
     `;
+    if (testOptions?.awin?.addSaleTrackingDelay) {
+      salesTrackingScript = `(async () => {
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        ${salesTrackingScript}
+      })();`;
+    }
   }
   const integrationScript = `
         ${salesTrackingScript}
@@ -227,7 +233,7 @@ function getAwinIntegrationScript({
   return integrationScript;
 }
 
-function addTimeoutIfEnabled({
+function getConsumerAndIframeDataAndAddTimeoutIfEnabled({
   sovAppData,
   testOptions,
 }: {
@@ -264,7 +270,7 @@ function getSovendusIntegrationScript({
   testOptions: TestOptionsType | undefined;
 }): string {
   const integrationScript = `
-    ${addTimeoutIfEnabled({ sovAppData, testOptions })}
+    ${getConsumerAndIframeDataAndAddTimeoutIfEnabled({ sovAppData, testOptions })}
 
     ${
       testOptions?.regular?.disableSovendusDiv

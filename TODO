@@ -4,9 +4,9 @@
 
 ### Todo before release
 
-- improve style of overlay when awin sale not tracked
 - handle overlay scrollable screenshot - add tests to check if overlay detection works
 - disable transmit result
+- add tests for usedCouponCode and orderId numbers in strings 
 
 ### Todo later
 

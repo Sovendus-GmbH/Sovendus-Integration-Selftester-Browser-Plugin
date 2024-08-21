@@ -233,6 +233,7 @@ export interface TestOptionsType {
     sovendusJsScriptType?: string | undefined | null;
     flexibleIFrameJsScriptType?: string | undefined | null;
     removeSovendusJs?: boolean | undefined;
+    addSaleTrackingDelay?: boolean | undefined;
   };
   regular?: {
     disableFlexibleIFrameJs?: boolean | undefined;
