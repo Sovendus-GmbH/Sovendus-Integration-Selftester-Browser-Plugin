@@ -1,5 +1,3 @@
-import type { SovWindow } from "./self-tester";
-
 function injectScript() {
   const script = document.createElement("script");
   script.setAttribute("type", "text/javascript");
@@ -15,4 +13,7 @@ if (!window.didLoad) {
   injectScript();
 }
 
-declare let window: SovWindow;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface Window {
+  didLoad: boolean;
+}
