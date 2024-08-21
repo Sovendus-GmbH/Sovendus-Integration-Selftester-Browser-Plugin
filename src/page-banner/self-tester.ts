@@ -16,6 +16,12 @@ export default class SelfTester {
   consumerCountry: TestResult;
   trafficSourceNumber: TestResult;
   trafficMediumNumber: TestResult;
+  orderCurrency: TestResult;
+  orderId: TestResult;
+  orderValue: TestResult;
+  sessionId: TestResult;
+  timestamp: TestResult;
+  usedCouponCode: TestResult;
   iframeContainerId: TestResult;
   isEnabledInBackend: TestResult;
   wasExecuted: TestResult;
@@ -25,12 +31,6 @@ export default class SelfTester {
   multipleSovIFramesDetected: TestResult;
   sovIFramesAmount: TestResult;
   multipleIFramesAreSame: TestResult;
-  orderCurrency: TestResult;
-  orderId: TestResult;
-  orderValue: TestResult;
-  sessionId: TestResult;
-  timestamp: TestResult;
-  usedCouponCode: TestResult;
   flexibleIFrameOnDOM: TestResult;
   isFlexibleIframeExecutable: TestResult;
   isSovendusJsOnDom: TestResult;
