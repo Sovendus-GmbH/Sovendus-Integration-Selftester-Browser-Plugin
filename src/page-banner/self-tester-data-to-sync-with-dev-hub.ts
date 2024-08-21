@@ -92,7 +92,7 @@ export enum StatusMessageKeyTypes {
   currencySuccess = "currencySuccess",
   unixTimestampMissing = "unixTimestampMissing",
   notAUnixTimestamp = "notAUnixTimestamp",
-  unixTimestampOlderThan1Minute = "unixTimestampOlderThan1Minute",
+  unixTimestampOlderThan2Minutes = "unixTimestampOlderThan2Minutes",
   orderValueMissing = "orderValueMissing",
   orderValueWrongFormat = "orderValueWrongFormat",
   orderValueSuccess = "orderValueSuccess",
@@ -352,8 +352,8 @@ export const statusMessages: {
     infoText: "Make sure to pass a unix timestamp in seconds.",
   },
 
-  unixTimestampOlderThan1Minute: {
-    errorText: "TIMESTAMP OLDER THAN 1 MINUTE",
+  unixTimestampOlderThan2Minutes: {
+    errorText: "TIMESTAMP OLDER THAN 2 MINUTES",
     infoText:
       "Make sure to pass the unix timestamp in seconds of the order time. If you just refreshed the success page after a while then this is normal and expected",
   },

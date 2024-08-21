@@ -1,3 +1,65 @@
+export async function hideSelfTesterOverlay(tabId: number): Promise<void> {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      const overlay = document.getElementById("sovendusOverlay");
+      if (overlay) {
+        overlay.style.display = "none";
+        overlay.classList.remove("fullscreen");
+        const overlayToggle = document.getElementById("toggleSovendusOverlay");
+        if (overlayToggle) {
+          overlayToggle.style.display = "none";
+        }
+      } else {
+        document.getElementById("outerSovendusNotDetectedOverlay")?.remove();
+      }
+    },
+  });
+}
+
+export async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      function _restoreOverlay(): void {
+        const overlay = document.getElementById("sovendusOverlay");
+        if (overlay) {
+          overlay.style.display = "block";
+          overlay.classList.remove("fullscreen");
+          const overlayToggle = document.getElementById(
+            "toggleSovendusOverlay",
+          );
+          if (overlayToggle) {
+            overlayToggle.style.display = "block";
+          }
+          _showRepeatTestsButton();
+        } else {
+          _removeSovendusNotDetectedOverlay();
+        }
+      }
+
+      function _showRepeatTestsButton(): void {
+        const repeatTestsButton = document.getElementById(
+          "sovendusOverlayRepeatTests",
+        );
+        if (repeatTestsButton) {
+          repeatTestsButton.style.display = "block";
+        }
+      }
+
+      function _removeSovendusNotDetectedOverlay(): void {
+        document.getElementById("outerSovendusNotDetectedOverlay")?.remove();
+      }
+
+      _restoreOverlay();
+    },
+  });
+  const hideButton = document.getElementById("hide-button");
+  if (hideButton) {
+    hideButton.innerText = "Hide Self Test Overlay";
+  }
+}
+
 export async function showSelfTesterOverlay(tabId: number): Promise<void> {
   await chrome.scripting.executeScript({
     target: { tabId },
