@@ -29,7 +29,11 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.containerDivNotFoundOnDOM,
-          disableSovendusDiv: true,
+          testOptions: {
+            regular: {
+              disableSovendusDiv: true,
+            },
+          },
         },
         {
           testName: "noDivInIFrame",

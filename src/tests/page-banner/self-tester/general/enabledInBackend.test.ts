@@ -10,7 +10,7 @@ import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
 executeOverlayTests({
-  testName: "enabledInBackend",
+  testName: "isEnabledInBackend",
   tests: generateTests({
     elementKey: "isEnabledInBackend",
     testsInfo: [
@@ -26,7 +26,11 @@ executeOverlayTests({
         expectedElementValue: null,
         expectedStatusCode: StatusCodes.TestDidNotRun,
         expectedStatusMessageKey: null,
-        disableFlexibleIFrameJs: true,
+        testOptions: {
+          regular: {
+            disableFlexibleIFrameJs: true,
+          },
+        },
       },
       {
         testName: "BannerDoesNotExist",

@@ -1,7 +1,6 @@
 import type SelfTester from "@src/page-banner/self-tester";
 import type { StatusMessageKeyTypes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import type { WebDriver } from "selenium-webdriver";
 
 import type { SovDataType } from "./sovAppData";
 import {
@@ -40,11 +39,7 @@ export function generateTests({
         testInfo.expectedStatusCode,
       );
     },
-    disableFlexibleIFrameJs: testInfo.disableFlexibleIFrameJs,
-    disableAwinSalesTracking: testInfo.disableAwinSalesTracking,
-    disableSovendusDiv: testInfo.disableSovendusDiv,
-    removeSovIFrame: testInfo.removeSovIFrame,
-    flexibleIFrameJsScriptType: testInfo.flexibleIFrameJsScriptType,
+    testOptions: testInfo.testOptions,
   }));
 }
 
@@ -144,7 +139,11 @@ export function generateMalformedDataTests({
     : testCasesWhenScriptRuns.map((testInfo) => ({
         ...testInfo,
         testName: `${testInfo.testName}_WhenScriptDoesNotRun`,
-        disableFlexibleIframeJs: true,
+        testOptions: {
+          regular: {
+            disableFlexibleIFrameJs: true,
+          },
+        },
       }));
   return generateTests({
     elementKey,
@@ -181,7 +180,11 @@ export function generateMalformedDataTests({
               expectedElementValue: JSON.stringify(malformedObjectData),
               expectedStatusCode: StatusCodes.Error,
               expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-              disableFlexibleIFrameJs: true,
+              testOptions: {
+                regular: {
+                  disableFlexibleIFrameJs: true,
+                },
+              },
             },
             {
               testName: "MalformedArray_WhenScriptDoesNotRun",
@@ -189,7 +192,11 @@ export function generateMalformedDataTests({
               expectedElementValue: JSON.stringify(malformedArrayData),
               expectedStatusCode: StatusCodes.Error,
               expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-              disableFlexibleIFrameJs: true,
+              testOptions: {
+                regular: {
+                  disableFlexibleIFrameJs: true,
+                },
+              },
             },
           ]),
     ],
@@ -202,33 +209,42 @@ export type TestsInfoType = {
   expectedElementValue: string | boolean | number | null;
   expectedStatusCode: StatusCodes;
   expectedStatusMessageKey: StatusMessageKeyTypes | null;
-  disableFlexibleIFrameJs?: boolean;
-  disableSovendusDiv?: boolean;
-  disableAwinSalesTracking?: boolean;
-  removeSovIFrame?: boolean;
-  flexibleIFrameJsScriptType?: string | undefined | null;
+  testOptions?: TestOptionsType;
 }[];
 
-export type TestsType = {
+export type TestsType = TestDataType[];
+
+export type TestDataType = {
   testName: string;
   sovAppData: SovDataType | (() => SovDataType);
   testFunction: ({
-    driver,
     sovSelfTester,
     sovAppData,
   }: {
-    driver: WebDriver;
     sovSelfTester: SelfTester;
     sovAppData: SovDataType;
   }) => void;
-  disableFlexibleIFrameJs?: boolean | undefined;
-  disableSovendusDiv?: boolean | undefined;
-  disableAwinSalesTracking?: boolean | undefined;
-  removeSovIFrame?: boolean | undefined;
-  flexibleIFrameJsScriptType?: string | undefined | null;
-}[];
+  testOptions?: TestOptionsType | undefined;
+};
 
-type SovSelfTesterKeys =
+export interface TestOptionsType {
+  awin?: {
+    disableAwinSalesTracking?: boolean | undefined;
+    sovendusJsScriptType?: string | undefined | null;
+    flexibleIFrameJsScriptType?: string | undefined | null;
+    removeSovendusJs?: boolean | undefined;
+  };
+  regular?: {
+    disableFlexibleIFrameJs?: boolean | undefined;
+    disableSovendusDiv?: boolean | undefined;
+    removeSovIFrame?: boolean | undefined;
+    flexibleIFrameJsScriptType?: string | undefined | null;
+    sovendusJsScriptType?: string | undefined | null;
+    removeSovendusJs?: boolean | undefined;
+  };
+}
+
+export type SovSelfTesterKeys =
   | "integrationType"
   | "browserName"
   | "websiteURL"

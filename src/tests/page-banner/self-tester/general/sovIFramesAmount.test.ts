@@ -27,7 +27,11 @@ executeOverlayTests({
           expectedElementValue: 0,
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: null,
-          removeSovIFrame: true,
+          testOptions: {
+            regular: {
+              removeSovIFrame: true,
+            },
+          },
         },
         {
           testName: "twoIFrames",

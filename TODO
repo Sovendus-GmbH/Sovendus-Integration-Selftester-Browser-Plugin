@@ -9,9 +9,9 @@
 - dont compile tests with build
 - transmit multiple iframes content when they are different
 - handle overlay scrollable screenshot - add tests to check if overlay detection works
-- Remove Timestamp when integrated using Awin
 - show overlay not detected when show hide button is clicked
 - Fix Street Number (Always: Value type not allowed)
+- integration type info popover is cut off
 
 ## Tests
 
@@ -21,4 +21,5 @@
 - get a AWIN ID for Tests
 - consider adding more awin not executed tests
 - add Empty String tests
-- street number as string failed
+- hide sticky banner on not first screenshot
+- add timeout to load flexiblejs to late

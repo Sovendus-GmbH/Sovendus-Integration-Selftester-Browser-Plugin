@@ -4,14 +4,10 @@ import {
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import {
   sovAppDataEverythingIsOkay,
-  sovAppDataUndefinedButIsOkay,
+  sovAppDataUndefined,
 } from "@src/tests/testUtils/sovAppData";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
-
-// Mit Marcus schauen wie man eine andere Fehlermeldung einbauen könnte die besser passt, wenn das sovendusJs gar nicht ausgeführt wird
-
-// Timeout hinzufügen, damit SovendusJs eine Sekunde nach FlexibleIFrameJS ausgeführt wird
 
 executeOverlayTests({
   testName: "isSovendusJsOnDom",
@@ -20,23 +16,91 @@ executeOverlayTests({
       elementKey: "isSovendusJsOnDom",
       testsInfo: [
         {
-          testName: "sovendusJsOnDom",
+          testName: "IsOnDOM",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: null,
+          expectedStatusCode: StatusCodes.TestDidNotRun,
+          expectedStatusMessageKey: null,
+        },
+        {
+          testName: "NotOnDOM",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: false,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.flexibleIFrameJsExecutedTooEarly,
+          testOptions: {
+            regular: {
+              removeSovendusJs: true,
+            },
+          },
+        },
+        {
+          testName: "ScriptTypePlain",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: true,
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
+          testOptions: {
+            regular: {
+              sovendusJsScriptType: "text/plain",
+            },
+          },
         },
         {
-          testName: "sovendusJsNotOnDom",
-          sovAppData: sovAppDataUndefinedButIsOkay,
-          expectedElementValue: false,
-          expectedStatusCode: StatusCodes.Error,
-
-          // StatusMessageKeyTypes.flexibleIFrameJsExecutedTooEarly ist falsch
-
-          expectedStatusMessageKey:
-            StatusMessageKeyTypes.flexibleIFrameJsExecutedTooEarly,
-          disableFlexibleIFrameJs: true,
+          testName: "ScriptTypeJavascript",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: null,
+          expectedStatusCode: StatusCodes.TestDidNotRun,
+          expectedStatusMessageKey: null,
+          testOptions: {
+            regular: {
+              sovendusJsScriptType: "text/javascript",
+            },
+          },
+        },
+        {
+          testName: "ScriptTypeEmpty",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: null,
+          expectedStatusCode: StatusCodes.TestDidNotRun,
+          expectedStatusMessageKey: null,
+          testOptions: {
+            regular: {
+              sovendusJsScriptType: "",
+            },
+          },
+        },
+        {
+          testName: "ScriptTypeUndefined",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: true,
+          expectedStatusCode: StatusCodes.Success,
+          expectedStatusMessageKey: null,
+          testOptions: {
+            regular: {
+              sovendusJsScriptType: "undefined",
+            },
+          },
+        },
+        {
+          testName: "ScriptTypeNull",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: true,
+          expectedStatusCode: StatusCodes.Success,
+          expectedStatusMessageKey: null,
+          testOptions: {
+            regular: {
+              sovendusJsScriptType: null,
+            },
+          },
+        },
+        {
+          testName: "DataUndefined",
+          sovAppData: sovAppDataUndefined,
+          expectedElementValue: null,
+          expectedStatusCode: StatusCodes.TestDidNotRun,
+          expectedStatusMessageKey: null,
         },
       ],
     }),

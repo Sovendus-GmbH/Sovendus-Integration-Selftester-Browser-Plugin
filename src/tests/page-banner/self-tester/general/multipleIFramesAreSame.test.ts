@@ -33,7 +33,11 @@ executeOverlayTests({
           expectedElementValue: null,
           expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
-          removeSovIFrame: true,
+          testOptions: {
+            regular: {
+              removeSovIFrame: true,
+            },
+          },
         },
         {
           testName: "multipleIFramesAreSameTwoIFramesSame",

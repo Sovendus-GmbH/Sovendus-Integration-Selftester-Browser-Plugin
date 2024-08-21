@@ -10,7 +10,7 @@ import {
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
 executeOverlayTests({
-  testName: "city",
+  testName: "consumerCity",
   tests: [
     ...generateTests({
       elementKey: "consumerCity",

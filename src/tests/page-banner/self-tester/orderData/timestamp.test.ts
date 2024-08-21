@@ -420,7 +420,11 @@ executeOverlayTests({
         );
         expect(sovSelfTester.timestamp.statusCode).toBe(StatusCodes.Error);
       },
-      disableFlexibleIFrameJs: true,
+      testOptions: {
+        regular: {
+          disableFlexibleIFrameJs: true,
+        },
+      },
     },
     ...generateMalformedDataTests({
       elementKey: "timestamp",

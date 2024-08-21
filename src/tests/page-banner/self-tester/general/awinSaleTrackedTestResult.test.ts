@@ -26,7 +26,11 @@ executeOverlayTests({
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: StatusMessageKeyTypes.awinNoSalesTracked,
-          disableAwinSalesTracking: true,
+          testOptions: {
+            awin: {
+              disableAwinSalesTracking: true,
+            },
+          },
         },
       ],
     }),

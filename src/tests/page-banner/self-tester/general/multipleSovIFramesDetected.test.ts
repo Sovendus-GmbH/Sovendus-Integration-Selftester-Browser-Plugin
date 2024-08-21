@@ -13,21 +13,23 @@ executeOverlayTests({
       elementKey: "multipleSovIFramesDetected",
       testsInfo: [
         {
+          testName: "multipleSovIFramesDetectedNoIFrames",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: null,
+          expectedStatusCode: StatusCodes.TestDidNotRun,
+          expectedStatusMessageKey: null,
+          testOptions: {
+            regular: {
+              removeSovIFrame: true,
+            },
+          },
+        },
+        {
           testName: "multipleSovIFramesDetectedOneIFrame",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
-        },
-        {
-          testName: "multipleSovIFramesDetectedNoIFrames",
-          sovAppData: {
-            ...sovAppDataEverythingIsOkay,
-          },
-          expectedElementValue: false,
-          expectedStatusCode: StatusCodes.Success,
-          expectedStatusMessageKey: null,
-          removeSovIFrame: true,
         },
         {
           testName: "multipleSovIFramesDetectedTwoIFrames",
