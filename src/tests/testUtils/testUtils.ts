@@ -453,7 +453,6 @@ function initializeWebDriver(browser: Browsers): {
     options.addArguments("log-level=3");
     options.addArguments("disable-cache");
     options.addArguments("--disable-gpu");
-    options.addArguments("--no-sandbox");
     driver = new Builder()
       .forBrowser(Browsers.Chrome)
       .setChromeOptions(options)
@@ -467,7 +466,6 @@ function initializeWebDriver(browser: Browsers): {
     options.addArguments("log-level=3");
     options.addArguments("disable-cache");
     options.addArguments("--disable-gpu");
-    options.addArguments("--no-sandbox");
     driver = new Builder()
       .forBrowser(browser)
       .setEdgeOptions(options)
