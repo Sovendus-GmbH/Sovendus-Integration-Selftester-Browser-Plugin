@@ -29,6 +29,18 @@ executeOverlayTests({
         disableFlexibleIframeJs: true,
       },
       {
+        testName: "BannerDoesNotExist",
+        sovAppData: {
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            trafficMediumNumber: 123,
+          },
+        },
+        expectedElementValue: false,
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: StatusMessageKeyTypes.sovendusBannerDisabled,
+      },
+      {
         testName: "VNInlineDisabled",
         sovAppData: {
           sovIframes1: {
@@ -42,28 +54,17 @@ executeOverlayTests({
         expectedStatusMessageKey: StatusMessageKeyTypes.sovendusBannerDisabled,
       },
       {
-        testName: "BannerDoesNotExist",
+        testName: "VNInlineEnabled",
         sovAppData: {
           sovIframes1: {
             ...sovAppIFramesAllValidData,
-            trafficMediumNumber: 123,
+            trafficMediumNumber:
+              sovTestTrafficMediumNumbers.VNInline.trafficMediumNumber,
           },
         },
-        expectedElementValue: false,
-        expectedStatusCode: StatusCodes.Error,
-        expectedStatusMessageKey: StatusMessageKeyTypes.sovendusBannerDisabled,
-      },
-      {
-        testName: "BannerDoesNotExist",
-        sovAppData: {
-          sovIframes1: {
-            ...sovAppIFramesAllValidData,
-            trafficMediumNumber: 123,
-          },
-        },
-        expectedElementValue: false,
-        expectedStatusCode: StatusCodes.Error,
-        expectedStatusMessageKey: StatusMessageKeyTypes.sovendusBannerDisabled,
+        expectedElementValue: true,
+        expectedStatusCode: StatusCodes.Success,
+        expectedStatusMessageKey: null,
       },
     ],
   }),
