@@ -36,10 +36,8 @@ function removeOverlay() {
   document.getElementById("outerSovendusOverlay")?.remove();
 }
 class SelfTesterOverlay {
-  constructor() {}
-
   async createOverlay(selfTester: SelfTester) {
-    var overlay = document.createElement("div");
+    const overlay = document.createElement("div");
     overlay.id = "outerSovendusOverlay";
     overlay.innerHTML = `
       ${this.getOverlayStyle()}
@@ -47,17 +45,28 @@ class SelfTesterOverlay {
         Hide
       </button>
       <div class="sovendus-overlay-font" id="sovendusOverlay">  
-        <div style="margin:auto;max-width:700px;">
-          <div>
-            <h1 class="sovendus-overlay-font sovendus-overlay-h1">Sovendus Self-Test Overlay</h1>
-            <button class="sovendus-overlay-font sovendus-overlay-button" id="sovendusOverlayRepeatTests">repeat tests</button>
+        <div style="margin:auto;max-width:700px; background: #293049">
+          <div style="display: flex">
+            <h1 class="sovendus-overlay-font sovendus-overlay-h1" style="margin-right: auto">
+              Sovendus Self-Test Overlay
+            </h1>
+            <button class="sovendus-overlay-font sovendus-overlay-button" id="sovendusOverlayRepeatTests" style="margin-left: auto">
+              repeat tests
+            </button>
           </div>
-          <p class="sovendus-overlay-font" style="margin:0 !important">
-            Integration Type: ${selfTester.integrationType.elementValue}
-          </p>
-          <p class="sovendus-overlay-font" style="margin:0 !important">
-            Browser: ${selfTester.browserName.elementValue}
-          </p>
+          <ul class="sovendus-overlay-ul sovendus-overlay-font ">
+            <li class="sovendus-overlay-font">
+              Integration Type: ${selfTester.integrationType.getFormattedStatusMessage(false)}
+            </li>
+            <li class="sovendus-overlay-font">
+              Browser: ${selfTester.browserName.elementValue}
+            </li>
+            ${selfTester.multipleIFramesAreSame.getFormattedGeneralStatusMessage()}
+            ${selfTester.isFlexibleIframeExecutable.getFormattedGeneralStatusMessage()}
+            ${selfTester.isSovendusJsOnDom.getFormattedGeneralStatusMessage()}
+            ${selfTester.isSovendusJsExecutable.getFormattedGeneralStatusMessage()}
+            ${selfTester.awinExecutedTestResult.getFormattedGeneralStatusMessage()}
+          </ul>
           ${this.createInnerOverlay(selfTester)}
         </div>
       </div>
@@ -152,55 +161,47 @@ class SelfTesterOverlay {
   }
 
   getSovIFramesData(
-    testResult: SelfTester,
+    selfTester: SelfTester,
     awinIntegrationNoSaleTracked: boolean = false,
   ): string {
     let additionalInfo: string;
     if (awinIntegrationNoSaleTracked) {
       additionalInfo =
-        testResult.awinSaleTrackedTestResult.getFormattedStatusMessage();
+        selfTester.awinSaleTrackedTestResult.getFormattedStatusMessage();
     } else {
       additionalInfo = `
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Container:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          iframeContainerId: ${testResult.iframeContainerId.getFormattedStatusMessage()}
+          iframeContainerId: ${selfTester.iframeContainerId.getFormattedStatusMessage()}
         </li>
-        ${testResult.isEnabledInBackend.getFormattedGeneralStatusMessage()}
-        ${testResult.sovendusDivFound.getFormattedGeneralStatusMessage()}
-        ${testResult.multipleIFramesAreSame.getFormattedGeneralStatusMessage()}
-        ${testResult.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
-        ${testResult.isFlexibleIframeExecutable.getFormattedGeneralStatusMessage()}
-        ${testResult.isSovendusJsOnDom.getFormattedGeneralStatusMessage()}
-        ${testResult.isSovendusJsExecutable.getFormattedGeneralStatusMessage()}
-        ${testResult.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
-        ${testResult.awinExecutedTestResult.getFormattedGeneralStatusMessage()}
-        ${testResult.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
+        ${selfTester.sovendusDivFound.getFormattedGeneralStatusMessage()}
+        ${selfTester.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
       </ul>
       <h2 class="sovendus-overlay-font sovendus-overlay-h2">Order Data:</h2>
       <ul class="sovendus-overlay-font sovendus-overlay-ul">
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          orderCurrency: ${testResult.orderCurrency.getFormattedStatusMessage()}
+          orderCurrency: ${selfTester.orderCurrency.getFormattedStatusMessage()}
         </li>
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          orderId: ${testResult.orderId.getFormattedStatusMessage()}
+          orderId: ${selfTester.orderId.getFormattedStatusMessage()}
         </li>
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          orderValue: ${testResult.orderValue.getFormattedStatusMessage()}
+          orderValue: ${selfTester.orderValue.getFormattedStatusMessage()}
         </li>
         ${
-          testResult.sessionId.statusCode === StatusCodes.TestDidNotRun
+          selfTester.sessionId.statusCode === StatusCodes.TestDidNotRun
             ? ""
             : "<li class='sovendus-overlay-font sovendus-overlay-text'>" +
               "sessionId: " +
-              testResult.sessionId.getFormattedStatusMessage() +
+              selfTester.sessionId.getFormattedStatusMessage() +
               "</li>"
         }
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          timestamp: ${testResult.timestamp.getFormattedStatusMessage()}
+          timestamp: ${selfTester.timestamp.getFormattedStatusMessage()}
         </li>
         <li class='sovendus-overlay-font sovendus-overlay-text'>
-          usedCouponCode: ${testResult.usedCouponCode.getFormattedStatusMessage()}
+          usedCouponCode: ${selfTester.usedCouponCode.getFormattedStatusMessage()}
         </li>
       </ul>
     `;
@@ -210,11 +211,12 @@ class SelfTesterOverlay {
         <h2 class="sovendus-overlay-font sovendus-overlay-h2">Sovendus Partner Numbers:</h2>
         <ul class="sovendus-overlay-font sovendus-overlay-ul">
           <li class='sovendus-overlay-font sovendus-overlay-text'>
-            trafficSourceNumber: ${testResult.trafficSourceNumber.getFormattedStatusMessage()}
+            trafficSourceNumber: ${selfTester.trafficSourceNumber.getFormattedStatusMessage()}
           </li>
           <li class='sovendus-overlay-font sovendus-overlay-text'>
-            trafficMediumNumber: ${testResult.trafficMediumNumber.getFormattedStatusMessage()}
+            trafficMediumNumber: ${selfTester.trafficMediumNumber.getFormattedStatusMessage()}
           </li>
+          ${selfTester.isEnabledInBackend.getFormattedGeneralStatusMessage()}
           ${additionalInfo}
         </ul>
       </div>`;
@@ -263,7 +265,7 @@ class SelfTesterOverlay {
           #sovendusOverlay .sovendus-overlay-error {
             color: red !important;
             font-size: 17px !important;
-            margin: 5px 0 !important;
+            margin: 0 !important;
           }
           #sovendusOverlay .sovendus-overlay-h1 {
             font-size: 27px !important;
@@ -272,8 +274,8 @@ class SelfTesterOverlay {
           }
           #sovendusOverlay .sovendus-overlay-h2 {
             font-size: 20px !important;
-            margin-top: 4px !important;
-            margin-bottom: 4px !important;
+            margin-top: 6px !important;
+            margin-bottom: 0px !important;
           }
           #sovendusOverlay .sovendus-overlay-text {
             font-size: 15px !important;
@@ -305,6 +307,7 @@ class SelfTesterOverlay {
             background: #293049 !important;
             color: #fff !important;
             padding: 9px !important;
+            cursor: pointer;
             font-size: 16px !important;
             border-radius: 8px !important;
             border: solid 1px #fff;

@@ -17,19 +17,21 @@
         "src/*"
       ] // Adjust this as needed
     },
-    // // // Strict Checks
+    // Strict Checks
+    // TODO enable
     // "strict": true,
+    // "strictNullChecks": true,
+    // "strictPropertyInitialization": true,
+    // "exactOptionalPropertyTypes": true,
+    //
     // "alwaysStrict": true,
     // "noImplicitAny": true,
-    // "strictNullChecks": true,
     // "useUnknownInCatchVariables": true,
-    // "strictPropertyInitialization": true,
     // "strictFunctionTypes": true,
     // "noImplicitThis": true,
     // "strictBindCallApply": true,
     // "noPropertyAccessFromIndexSignature": true,
     // "noUncheckedIndexedAccess": true,
-    // "exactOptionalPropertyTypes": true,
     // // Linter Checks
     // "noImplicitReturns": true,
     // "noImplicitOverride": true,

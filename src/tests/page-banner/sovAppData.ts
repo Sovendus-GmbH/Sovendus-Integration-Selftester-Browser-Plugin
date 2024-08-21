@@ -22,6 +22,7 @@ export interface SovDataType {
   sovConsumer?: SovConsumer;
   sovIframes1: SovIframes;
   sovIframes2?: SovIframes;
+  payload?: any;
 }
 
 export const sovAppConsumerAllValidData: SovConsumer = {
@@ -63,6 +64,10 @@ export const sovAppDataNoParameterButIsOkay: SovDataType = {
   },
 };
 
+export const sovAppDataNoParameter: SovDataType = {
+  sovIframes1: {},
+};
+
 export const sovAppDataMalformedButIsOkay: SovDataType = {
   sovConsumer: {
     consumerSalutation: "Mensch.",
@@ -76,7 +81,7 @@ export const sovAppDataMalformedButIsOkay: SovDataType = {
     consumerStreet: 1,
     consumerStreetNumber: "Street Name",
     consumerCity: { object: "isNotGood" },
-  } as unknown,
+  },
   sovIframes1: {
     trafficSourceNumber: "4704",
     trafficMediumNumber: "5",
@@ -88,9 +93,8 @@ export const sovAppDataMalformedButIsOkay: SovDataType = {
     usedCouponCode: { object: "isNotGood" },
     iframeContainerId: "sovendus-integration-container",
     integrationType: { object: "isNotGood" },
-  } as unknown,
+  },
 };
-
 
 export const malformedObjectData = { object: "isNotGood" };
 export const sovAppDataMalformedObjectsButIsOkay: SovDataType = {
@@ -106,7 +110,7 @@ export const sovAppDataMalformedObjectsButIsOkay: SovDataType = {
     consumerStreet: malformedObjectData,
     consumerStreetNumber: malformedObjectData,
     consumerCity: malformedObjectData,
-  } as unknown,
+  },
   sovIframes1: {
     trafficSourceNumber: "4704",
     trafficMediumNumber: "5",
@@ -118,7 +122,35 @@ export const sovAppDataMalformedObjectsButIsOkay: SovDataType = {
     usedCouponCode: malformedObjectData,
     iframeContainerId: malformedObjectData,
     integrationType: malformedObjectData,
-  } as unknown,
+  },
+};
+
+export const sovAppDataMalformedObjects: SovDataType = {
+  sovConsumer: {
+    consumerSalutation: malformedObjectData,
+    consumerFirstName: malformedObjectData,
+    consumerLastName: malformedObjectData,
+    consumerEmail: malformedObjectData,
+    consumerCountry: malformedObjectData,
+    consumerZipcode: malformedObjectData,
+    consumerPhone: malformedObjectData,
+    consumerYearOfBirth: malformedObjectData,
+    consumerStreet: malformedObjectData,
+    consumerStreetNumber: malformedObjectData,
+    consumerCity: malformedObjectData,
+  },
+  sovIframes1: {
+    trafficSourceNumber: malformedObjectData,
+    trafficMediumNumber: malformedObjectData,
+    sessionId: malformedObjectData,
+    timestamp: malformedObjectData,
+    orderId: malformedObjectData,
+    orderValue: malformedObjectData,
+    orderCurrency: malformedObjectData,
+    usedCouponCode: malformedObjectData,
+    iframeContainerId: malformedObjectData,
+    integrationType: malformedObjectData,
+  },
 };
 
 export const sovAppDataNumberButIsOkay: SovDataType = {
@@ -134,7 +166,7 @@ export const sovAppDataNumberButIsOkay: SovDataType = {
     consumerStreet: 1234,
     consumerStreetNumber: 1234,
     consumerCity: 1234,
-  } as unknown,
+  },
   sovIframes1: {
     trafficSourceNumber: "4704",
     trafficMediumNumber: "5",
@@ -146,7 +178,63 @@ export const sovAppDataNumberButIsOkay: SovDataType = {
     usedCouponCode: 1234,
     iframeContainerId: 1234,
     integrationType: 1234,
-  } as unknown,
+  },
+};
+
+export const sovAppDataNumberWithCommaInsteadOfDotButIsOkay: SovDataType = {
+  sovConsumer: {
+    consumerSalutation: "1234,56",
+    consumerFirstName: "1234,56",
+    consumerLastName: "1234,56",
+    consumerEmail: "1234,56",
+    consumerCountry: "1234,56",
+    consumerZipcode: "1234,56",
+    consumerPhone: "1234,56",
+    consumerYearOfBirth: "1234,56",
+    consumerStreet: "1234,56",
+    consumerStreetNumber: "1234,56",
+    consumerCity: "1234,56",
+  },
+  sovIframes1: {
+    trafficSourceNumber: "4704",
+    trafficMediumNumber: "5",
+    sessionId: "1234,56",
+    timestamp: "1234,56",
+    orderId: "1234,56",
+    orderValue: "1234,56",
+    orderCurrency: "1234,56",
+    usedCouponCode: "1234,56",
+    iframeContainerId: "1234,56",
+    integrationType: "1234,56",
+  },
+};
+
+export const sovAppDataFloatNumberButIsOkay: SovDataType = {
+  sovConsumer: {
+    consumerSalutation: 1234.56,
+    consumerFirstName: 1234.56,
+    consumerLastName: 1234.56,
+    consumerEmail: 1234.56,
+    consumerCountry: 1234.56,
+    consumerZipcode: 1234.56,
+    consumerPhone: 1234.56,
+    consumerYearOfBirth: 1234.56,
+    consumerStreet: 1234.56,
+    consumerStreetNumber: 1234.56,
+    consumerCity: 1234.56,
+  },
+  sovIframes1: {
+    trafficSourceNumber: "4704",
+    trafficMediumNumber: "5",
+    sessionId: 1234.56,
+    timestamp: 1234.56,
+    orderId: 1234.56,
+    orderValue: 1234.56,
+    orderCurrency: 1234.56,
+    usedCouponCode: 1234.56,
+    iframeContainerId: 1234.56,
+    integrationType: 1234.56,
+  },
 };
 
 export const sovAppDataTrueButIsOkay: SovDataType = {
@@ -162,7 +250,7 @@ export const sovAppDataTrueButIsOkay: SovDataType = {
     consumerStreet: true,
     consumerStreetNumber: true,
     consumerCity: true,
-  } as unknown,
+  },
   sovIframes1: {
     trafficSourceNumber: "4704",
     trafficMediumNumber: "5",
@@ -174,7 +262,35 @@ export const sovAppDataTrueButIsOkay: SovDataType = {
     usedCouponCode: true,
     iframeContainerId: true,
     integrationType: true,
-  } as unknown,
+  },
+};
+
+export const sovAppDataTrue: SovDataType = {
+  sovConsumer: {
+    consumerSalutation: true,
+    consumerFirstName: true,
+    consumerLastName: true,
+    consumerEmail: true,
+    consumerCountry: true,
+    consumerZipcode: true,
+    consumerPhone: true,
+    consumerYearOfBirth: true,
+    consumerStreet: true,
+    consumerStreetNumber: true,
+    consumerCity: true,
+  },
+  sovIframes1: {
+    trafficSourceNumber: true,
+    trafficMediumNumber: true,
+    sessionId: true,
+    timestamp: true,
+    orderId: true,
+    orderValue: true,
+    orderCurrency: true,
+    usedCouponCode: true,
+    iframeContainerId: true,
+    integrationType: true,
+  },
 };
 
 export const sovAppDataFalseButIsOkay: SovDataType = {
@@ -190,7 +306,7 @@ export const sovAppDataFalseButIsOkay: SovDataType = {
     consumerStreet: false,
     consumerStreetNumber: false,
     consumerCity: false,
-  } as unknown,
+  },
   sovIframes1: {
     trafficSourceNumber: "4704",
     trafficMediumNumber: "5",
@@ -202,7 +318,35 @@ export const sovAppDataFalseButIsOkay: SovDataType = {
     usedCouponCode: false,
     iframeContainerId: false,
     integrationType: false,
-  } as unknown,
+  },
+};
+
+export const sovAppDataFalse: SovDataType = {
+  sovConsumer: {
+    consumerSalutation: false,
+    consumerFirstName: false,
+    consumerLastName: false,
+    consumerEmail: false,
+    consumerCountry: false,
+    consumerZipcode: false,
+    consumerPhone: false,
+    consumerYearOfBirth: false,
+    consumerStreet: false,
+    consumerStreetNumber: false,
+    consumerCity: false,
+  },
+  sovIframes1: {
+    trafficSourceNumber: false,
+    trafficMediumNumber: false,
+    sessionId: false,
+    timestamp: false,
+    orderId: false,
+    orderValue: false,
+    orderCurrency: false,
+    usedCouponCode: false,
+    iframeContainerId: false,
+    integrationType: false,
+  },
 };
 
 export const sovAppDataNullButIsOkay: SovDataType = {
@@ -218,7 +362,7 @@ export const sovAppDataNullButIsOkay: SovDataType = {
     consumerStreet: null,
     consumerStreetNumber: null,
     consumerCity: null,
-  } as unknown,
+  },
   sovIframes1: {
     trafficSourceNumber: "4704",
     trafficMediumNumber: "5",
@@ -230,7 +374,35 @@ export const sovAppDataNullButIsOkay: SovDataType = {
     usedCouponCode: null,
     iframeContainerId: null,
     integrationType: null,
-  } as unknown,
+  },
+};
+
+export const sovAppDataNull: SovDataType = {
+  sovConsumer: {
+    consumerSalutation: null,
+    consumerFirstName: null,
+    consumerLastName: null,
+    consumerEmail: null,
+    consumerCountry: null,
+    consumerZipcode: null,
+    consumerPhone: null,
+    consumerYearOfBirth: null,
+    consumerStreet: null,
+    consumerStreetNumber: null,
+    consumerCity: null,
+  },
+  sovIframes1: {
+    trafficSourceNumber: null,
+    trafficMediumNumber: null,
+    sessionId: null,
+    timestamp: null,
+    orderId: null,
+    orderValue: null,
+    orderCurrency: null,
+    usedCouponCode: null,
+    iframeContainerId: null,
+    integrationType: null,
+  },
 };
 
 export const sovAppDataUndefinedButIsOkay: SovDataType = {
@@ -246,7 +418,7 @@ export const sovAppDataUndefinedButIsOkay: SovDataType = {
     consumerStreet: undefined,
     consumerStreetNumber: undefined,
     consumerCity: undefined,
-  } as unknown,
+  },
   sovIframes1: {
     trafficSourceNumber: "4704",
     trafficMediumNumber: "5",
@@ -258,7 +430,35 @@ export const sovAppDataUndefinedButIsOkay: SovDataType = {
     usedCouponCode: undefined,
     iframeContainerId: undefined,
     integrationType: undefined,
-  } as unknown,
+  },
+};
+
+export const sovAppDataUndefined: SovDataType = {
+  sovConsumer: {
+    consumerSalutation: undefined,
+    consumerFirstName: undefined,
+    consumerLastName: undefined,
+    consumerEmail: undefined,
+    consumerCountry: undefined,
+    consumerZipcode: undefined,
+    consumerPhone: undefined,
+    consumerYearOfBirth: undefined,
+    consumerStreet: undefined,
+    consumerStreetNumber: undefined,
+    consumerCity: undefined,
+  },
+  sovIframes1: {
+    trafficSourceNumber: undefined,
+    trafficMediumNumber: undefined,
+    sessionId: undefined,
+    timestamp: undefined,
+    orderId: undefined,
+    orderValue: undefined,
+    orderCurrency: undefined,
+    usedCouponCode: undefined,
+    iframeContainerId: undefined,
+    integrationType: undefined,
+  },
 };
 
 export const malformedArrayData = [{ object: "isNotGood" }];
@@ -275,7 +475,7 @@ export const sovAppDataMalformedArrayButIsOkay: SovDataType = {
     consumerStreet: malformedArrayData,
     consumerStreetNumber: malformedArrayData,
     consumerCity: malformedArrayData,
-  } as unknown,
+  },
   sovIframes1: {
     trafficSourceNumber: "4704",
     trafficMediumNumber: "5",
@@ -287,5 +487,33 @@ export const sovAppDataMalformedArrayButIsOkay: SovDataType = {
     usedCouponCode: malformedArrayData,
     iframeContainerId: malformedArrayData,
     integrationType: malformedArrayData,
-  } as unknown,
+  },
+};
+
+export const sovAppDataMalformedArray: SovDataType = {
+  sovConsumer: {
+    consumerSalutation: malformedArrayData,
+    consumerFirstName: malformedArrayData,
+    consumerLastName: malformedArrayData,
+    consumerEmail: malformedArrayData,
+    consumerCountry: malformedArrayData,
+    consumerZipcode: malformedArrayData,
+    consumerPhone: malformedArrayData,
+    consumerYearOfBirth: malformedArrayData,
+    consumerStreet: malformedArrayData,
+    consumerStreetNumber: malformedArrayData,
+    consumerCity: malformedArrayData,
+  },
+  sovIframes1: {
+    trafficSourceNumber: malformedArrayData,
+    trafficMediumNumber: malformedArrayData,
+    sessionId: malformedArrayData,
+    timestamp: malformedArrayData,
+    orderId: malformedArrayData,
+    orderValue: malformedArrayData,
+    orderCurrency: malformedArrayData,
+    usedCouponCode: malformedArrayData,
+    iframeContainerId: malformedArrayData,
+    integrationType: malformedArrayData,
+  },
 };

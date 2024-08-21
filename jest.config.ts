@@ -2,7 +2,6 @@ import type { Config } from "jest";
 
 const config: Config = {
   preset: "ts-jest",
-  // runner: "jest-serial-runner",
   testEnvironment: "node",
   moduleNameMapper: {
     "^@src/(.*)$": "<rootDir>/src/$1",
@@ -11,6 +10,7 @@ const config: Config = {
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
+  maxWorkers: 25,
 };
 
 export default config;

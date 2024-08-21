@@ -5,7 +5,7 @@ export interface TestResultResponseDataType {
   consumerSalutation?: TestResultType<string | undefined>;
   consumerFirstName?: TestResultType<string | undefined>;
   consumerLastName?: TestResultType<string | undefined>;
-  consumerYearOfBirth?: TestResultType<string | number | undefined>;
+  consumerYearOfBirth?: TestResultType<string | undefined>;
   consumerEmail?: TestResultType<string | undefined>;
   consumerEmailHash?: TestResultType<string | undefined>;
   consumerStreet?: TestResultType<string | undefined>;
@@ -18,9 +18,9 @@ export interface TestResultResponseDataType {
   trafficMediumNumber?: TestResultType<string | undefined>;
   orderCurrency?: TestResultType<string | undefined>;
   orderId?: TestResultType<string | undefined>;
-  orderValue?: TestResultType<string | number | undefined>;
+  orderValue?: TestResultType<string | undefined>;
   sessionId?: TestResultType<string | undefined>;
-  timestamp?: TestResultType<string | number | undefined>;
+  timestamp?: TestResultType<string | undefined>;
   usedCouponCode?: TestResultType<string | undefined>;
   iframeContainerId?: TestResultType<string | undefined>;
   isEnabledInBackend?: TestResultType<boolean | undefined>;
@@ -39,7 +39,7 @@ export interface TestResultResponseDataType {
 
 export interface TestResultType<TElementValueType> {
   elementValue: TElementValueType;
-  statusMessageKey: StatusMessageKeyTypes;
+  statusMessageKey: StatusMessageKeyTypes | undefined;
   statusCode: StatusCodes;
 }
 
@@ -58,13 +58,15 @@ export enum BrowserTypes {
   Edge = "Edge",
   Android = "Android",
   Firefox = "Firefox",
-  NotDetected = "Not detected",
+  NotDetected = "Failed to detect",
 }
 
 export enum StatusMessageKeyTypes {
   awinNoSalesTracked = "awinNoSalesTracked",
   awinSaleTrackedAfterScript = "awinSaleTrackedAfterScript",
   integrationTypeMalformed = "integrationTypeMalformed",
+  integrationTypeMissing = "integrationTypeMissing",
+  failedToDetectBrowserType = "failedToDetectBrowserType",
   consumerSalutationNotValid = "consumerSalutationNotValid",
   consumerSalutationSuccess = "consumerSalutationSuccess",
   consumerEmailNotValid = "consumerEmailNotValid",
@@ -85,7 +87,7 @@ export enum StatusMessageKeyTypes {
   currencySuccess = "currencySuccess",
   unixTimestampMissing = "unixTimestampMissing",
   notAUnixTimestamp = "notAUnixTimestamp",
-  unixTimestampOlderThan5Minutes = "unixTimestampOlderThan5Minutes",
+  unixTimestampOlderThan1Minute = "unixTimestampOlderThan1Minute",
   orderValueMissing = "orderValueMissing",
   orderValueWrongFormat = "orderValueWrongFormat",
   orderValueSuccess = "orderValueSuccess",
@@ -135,7 +137,6 @@ export enum StatusMessageKeyTypes {
   consumerYearOfBirthSuccess = "consumerYearOfBirthSuccess",
   consumerYearOfBirthNotValid = "consumerYearOfBirthNotValid",
   missingConsumerEmail = "missingConsumerEmail",
-  iframeContainerIdSuccess = "iframeContainerIdSuccess",
   iframeContainerIdMalformed = "iframeContainerIdMalformed",
   iframeContainerIdHasSpaces = "iframeContainerIdHasSpaces",
   noIframeContainerId = "noIframeContainerId",
@@ -149,6 +150,7 @@ export const validCountries = [
   "GB",
   "IE",
   "FR",
+  "FI",
   "ES",
   "BE",
   "PL",
@@ -179,6 +181,15 @@ export const statusMessages: {
   integrationTypeMalformed: {
     errorText: "VALUE TYPE NOT ALLOWED",
     infoText: "Error: you can only pass a string as the integrationType",
+  },
+  failedToDetectBrowserType: {
+    errorText: "", // error is in BrowserTypes.NotDetected
+    infoText: "",
+  },
+  integrationTypeMissing: {
+    errorText: "",
+    infoText:
+      "The integration type can only be detected for integrations that where done since beginning of 2024.",
   },
   awinSaleTrackedAfterScript: {
     errorText:
@@ -215,7 +226,7 @@ export const statusMessages: {
   },
 
   missingConsumerYearOfBirth: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure to pass the year of birth of the customer, e.g. 1991",
   },
 
@@ -231,7 +242,7 @@ export const statusMessages: {
   },
 
   missingConsumerEmail: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText:
       "Make sure the email address aligns with the email address you used for the order.",
   },
@@ -249,7 +260,7 @@ export const statusMessages: {
   },
 
   missingConsumerEmailHash: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText:
       "Make sure either a valid email or a md5 hashed email is provided. Note that hashed email support must be enabled by Sovendus.",
   },
@@ -298,19 +309,19 @@ export const statusMessages: {
 
   containerDivNotFoundOnDOM: {
     errorText:
-      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.",
+      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.",
     infoText: "",
   },
 
   multipleSovIframesDetected: {
     errorText:
-      "ERROR: sovIframes was found {elementValue} times with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to Sovendus being integrated multiple times.",
+      "ERROR: sovIframes was found {elementValue} times with different content. Make sure to check the window.sovIframes variable in the browser console.<br/> This is probably due to Sovendus being integrated multiple times.",
     infoText: "",
   },
 
   multipleSovIframesDetectedAndAreSame: {
     errorText:
-      "ERROR: sovIframes was found {elementValue} times with the same content. This is probably due to Sovendus being executed multiple times or Sovendus being integrated multiple times.",
+      "ERROR: sovIframes was found {elementValue} times with the same content.<br/> This is probably due to Sovendus being executed multiple times or Sovendus being integrated multiple times.",
     infoText: "",
   },
 
@@ -334,7 +345,7 @@ export const statusMessages: {
   },
 
   unixTimestampMissing: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure to pass a unix timestamp in seconds.",
   },
 
@@ -343,14 +354,14 @@ export const statusMessages: {
     infoText: "Make sure to pass a unix timestamp in seconds.",
   },
 
-  unixTimestampOlderThan5Minutes: {
-    errorText: "TIMESTAMP OLDER THAN 5 MINUTES",
+  unixTimestampOlderThan1Minute: {
+    errorText: "TIMESTAMP OLDER THAN 1 MINUTE",
     infoText:
       "Make sure to pass the unix timestamp in seconds of the order time. If you just refreshed the success page after a while then this is normal and expected",
   },
 
   missingOrderId: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure to pass the order id",
   },
 
@@ -367,7 +378,7 @@ export const statusMessages: {
   },
 
   orderValueMissing: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText:
       "Make sure to pass the order value, it needs to be a number e.g. 20.5 and NOT 20,5",
   },
@@ -384,7 +395,7 @@ export const statusMessages: {
   },
 
   missingSessionId: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure a session id gets passed",
   },
 
@@ -401,7 +412,7 @@ export const statusMessages: {
   },
 
   missingCouponCode: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure the used coupon code from the order gets passed",
   },
 
@@ -418,7 +429,7 @@ export const statusMessages: {
   },
 
   missingConsumerStreet: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure to pass the street name of the delivery address.",
   },
 
@@ -435,7 +446,7 @@ export const statusMessages: {
   },
 
   missingConsumerStreetNumber: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure to pass the street number from the delivery address.",
   },
 
@@ -452,7 +463,7 @@ export const statusMessages: {
   },
 
   missingConsumerZipCode: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure to pass the zip code of the delivery address.",
   },
 
@@ -468,7 +479,7 @@ export const statusMessages: {
   },
 
   missingConsumerPhone: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure to pass the phone number.",
   },
 
@@ -483,7 +494,7 @@ export const statusMessages: {
   },
 
   missingConsumerCity: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure to pass the city of the delivery address.",
   },
 
@@ -499,7 +510,7 @@ export const statusMessages: {
   },
 
   missingConsumerCountry: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: `Make sure to pass the country id of the delivery address. Valid are: ${validCountries.join(
       ", ",
     )}`,
@@ -520,33 +531,33 @@ export const statusMessages: {
   },
 
   missingTrafficSourceNumber: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText:
-      "Make sure to pass the traffic source number you've received in your integration docs as a string or a number.",
+      "Make sure the value aligns with the traffic medium number you have received for this country as a string or a number.",
   },
 
   trafficSourceNumberMalformed: {
     errorText: "VALUE TYPE NOT ALLOWED",
     infoText:
-      "Make sure to pass the traffic source number you've received in your integration docs as a string or a number.",
+      "Make sure the value aligns with the traffic medium number you have received for this country as a string or a number.",
   },
 
   trafficSourceNumberSuccess: {
     errorText: "",
     infoText:
-      "Make sure this value aligns with the traffic source number you've received in your integration docs as a string or a number.",
+      "Make sure the value aligns with the traffic medium number you have received for this country.",
   },
 
   missingTrafficMediumNumber: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText:
-      "Make sure to pass the traffic medium number you've received in your integration docs as a string or a number.",
+      "Make sure the value aligns with the traffic medium number you have received for this country as a string or a number.",
   },
 
   trafficMediumNumberMalformed: {
     errorText: "VALUE TYPE NOT ALLOWED",
     infoText:
-      "Make sure to pass the traffic medium number you've received in your integration docs as a string or a number.",
+      "Make sure the value aligns with the traffic medium number you have received for this country as a string or a number.",
   },
 
   trafficMediumNumberSuccess: {
@@ -556,15 +567,9 @@ export const statusMessages: {
   },
 
   missingIframeContainerId: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText:
       "Make sure to pass a iframe container id, this id corresponds to an empty div with this id on the DOM.",
-  },
-
-  iframeContainerIdSuccess: {
-    errorText: "",
-    infoText:
-      "Make sure this value aligns with the id of an empty div element on the DOM.",
   },
 
   iframeContainerIdMalformed: {
@@ -580,7 +585,7 @@ export const statusMessages: {
   },
 
   missingConsumerFirstName: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure to pass the customers first name.",
   },
 
@@ -596,7 +601,7 @@ export const statusMessages: {
   },
 
   missingConsumerLastName: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText: "Make sure to pass the customers last name.",
   },
 
@@ -618,7 +623,7 @@ export const statusMessages: {
   },
 
   missingConsumerSalutation: {
-    errorText: "DATA IS MISSING",
+    errorText: "VALUE MISSING",
     infoText:
       "Make sure to pass the salutation of the customer, valid are Mrs. and Mr.",
   },

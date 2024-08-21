@@ -5,41 +5,26 @@ import {
 import {
   executeOverlayTests,
   generateMalformedDataTests,
+  generateTests,
 } from "../../../testUtils";
-import {
-  sovAppDataEverythingIsOkay,
-  sovAppDataNoParameterButIsOkay,
-} from "../../sovAppData";
+import { sovAppDataEverythingIsOkay } from "../../sovAppData";
 
 executeOverlayTests({
   testName: "streetNumber",
   tests: [
-    {
-      testName: "Success",
-      sovAppData: sovAppDataEverythingIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.consumerStreetNumber.elementValue).toBe("1a");
-        expect(sovSelfTester.consumerStreetNumber.statusCode).toBe(
-          StatusCodes.SuccessButNeedsReview,
-        );
-        expect(sovSelfTester.consumerStreetNumber.statusMessageKey).toBe(
-          StatusMessageKeyTypes.consumerStreetNumberSuccess,
-        );
-      },
-    },
-    {
-      testName: "Missing",
-      sovAppData: sovAppDataNoParameterButIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.consumerStreetNumber.elementValue).toBe(null);
-        expect(sovSelfTester.consumerStreetNumber.statusCode).toBe(
-          StatusCodes.Error,
-        );
-        expect(sovSelfTester.consumerStreetNumber.statusMessageKey).toBe(
-          StatusMessageKeyTypes.missingConsumerStreetNumber,
-        );
-      },
-    },
+    ...generateTests({
+      elementKey: "consumerStreetNumber",
+      testsInfo: [
+        {
+          testName: "Success",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: "1a",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerStreetNumberSuccess,
+        },
+      ],
+    }),
     ...generateMalformedDataTests({
       elementKey: "consumerStreetNumber",
       expectedMalformedStatusMessageKey:

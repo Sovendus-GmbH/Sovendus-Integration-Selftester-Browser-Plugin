@@ -5,39 +5,71 @@ import {
 import {
   executeOverlayTests,
   generateMalformedDataTests,
+  generateTests,
 } from "../../../testUtils";
 import {
+  sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
-  sovAppDataNoParameterButIsOkay,
+  sovAppIframesAllValidData,
 } from "../../sovAppData";
 
 executeOverlayTests({
   testName: "phone",
   tests: [
-    {
-      testName: "SuccessAsString",
-      sovAppData: sovAppDataEverythingIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.consumerPhone.elementValue).toBe("+4915512005211");
-        expect(sovSelfTester.consumerPhone.statusCode).toBe(
-          StatusCodes.SuccessButNeedsReview,
-        );
-        expect(sovSelfTester.consumerPhone.statusMessageKey).toBe(
-          StatusMessageKeyTypes.consumerPhoneSuccess,
-        );
-      },
-    },
-    {
-      testName: "Missing",
-      sovAppData: sovAppDataNoParameterButIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.consumerPhone.elementValue).toBe(null);
-        expect(sovSelfTester.consumerPhone.statusCode).toBe(StatusCodes.Error);
-        expect(sovSelfTester.consumerPhone.statusMessageKey).toBe(
-          StatusMessageKeyTypes.missingConsumerPhone,
-        );
-      },
-    },
+    ...generateTests({
+      elementKey: "consumerPhone",
+      testsInfo: [
+        {
+          testName: "SuccessAsStringLeadingPlus",
+          sovAppData: sovAppDataEverythingIsOkay,
+
+          expectedElementValue: "+4915512005211",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey: StatusMessageKeyTypes.consumerPhoneSuccess,
+        },
+        {
+          testName: "SuccessAsStringLeadingZeros",
+          sovAppData: {
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerPhone: "004915512005211",
+            },
+            sovIframes1: sovAppIframesAllValidData,
+          },
+          expectedElementValue: "004915512005211",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey: StatusMessageKeyTypes.consumerPhoneSuccess,
+        },
+        {
+          testName: "AsANumber",
+          sovAppData: {
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerPhone: 123456,
+            },
+            sovIframes1: sovAppIframesAllValidData,
+          },
+          expectedElementValue: "123456",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerPhoneMalformed,
+        },
+        {
+          testName: "AsAFloatNumber",
+          sovAppData: {
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerPhone: 123456.78,
+            },
+            sovIframes1: sovAppIframesAllValidData,
+          },
+          expectedElementValue: "123456.78",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerPhoneMalformed,
+        },
+      ],
+    }),
     ...generateMalformedDataTests({
       elementKey: "consumerPhone",
       expectedMalformedStatusMessageKey:

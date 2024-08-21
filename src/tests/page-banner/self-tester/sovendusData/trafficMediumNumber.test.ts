@@ -4,70 +4,141 @@ import {
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import {
   executeOverlayTests,
-  generateMalformedDataTests,
+  generateTests,
+  TestsInfoType,
 } from "../../../testUtils";
 import {
+  malformedArrayData,
+  malformedObjectData,
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
-  sovAppDataNoParameterButIsOkay,
+  sovAppDataFalse,
+  sovAppDataMalformedArray,
+  sovAppDataMalformedObjects,
+  sovAppDataNoParameter,
+  sovAppDataNull,
+  sovAppDataTrue,
+  sovAppDataUndefined,
   sovAppIframesAllValidData,
 } from "../../sovAppData";
+
+const testCasesWhenScriptRuns: TestsInfoType = [
+  {
+    testName: "SuccessAsString",
+    sovAppData: sovAppDataEverythingIsOkay,
+    expectedElementValue: "5",
+    expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+    expectedStatusMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
+  },
+  {
+    testName: "SuccessAsNumber",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: { ...sovAppIframesAllValidData, trafficMediumNumber: 5 },
+    },
+    expectedElementValue: "5",
+    expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+    expectedStatusMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
+  },
+  {
+    testName: "FailAsFloat",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: { ...sovAppIframesAllValidData, trafficMediumNumber: 5.5 },
+    },
+    expectedElementValue: "5.5",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey: StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "Missing",
+    sovAppData: sovAppDataNoParameter,
+    expectedElementValue: null,
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey: StatusMessageKeyTypes.missingTrafficMediumNumber,
+  },
+  {
+    testName: "MalformedTrue",
+    sovAppData: sovAppDataTrue,
+    expectedElementValue: "true",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "MalformedFalse",
+    sovAppData: sovAppDataFalse,
+    expectedElementValue: "false",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "MalformedNull",
+    sovAppData: sovAppDataNull,
+    expectedElementValue: null,
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey: StatusMessageKeyTypes.missingTrafficMediumNumber,
+  },
+  {
+    testName: "MalformedUndefined",
+    sovAppData: sovAppDataUndefined,
+    expectedElementValue: null,
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey: StatusMessageKeyTypes.missingTrafficMediumNumber,
+  },
+];
+
+const testCasesWhenScriptDoesNotRun: TestsInfoType =
+  testCasesWhenScriptRuns.map((testInfo) => ({
+    ...testInfo,
+    testName: `${testInfo.testName}_WhenScriptDoesNotRun`,
+    disableFlexibleIframeJs: true,
+  }));
 
 executeOverlayTests({
   testName: "trafficMediumNumber",
   tests: [
-    {
-      testName: "SuccessAsString",
-      sovAppData: sovAppDataEverythingIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.trafficMediumNumber.elementValue).toBe("5");
-        expect(sovSelfTester.trafficMediumNumber.statusCode).toBe(
-          StatusCodes.SuccessButNeedsReview,
-        );
-        expect(sovSelfTester.trafficMediumNumber.statusMessageKey).toBe(
-          StatusMessageKeyTypes.trafficMediumNumberSuccess,
-        );
-      },
-    },
-    {
-      testName: "SuccessAsNumber",
-      sovAppData: {
-        sovConsumer: sovAppConsumerAllValidData,
-        sovIframes1: {
-          ...sovAppIframesAllValidData,
-          trafficMediumNumber: 5,
-        },
-      },
-      testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.trafficMediumNumber.elementValue).toBe("5");
-        expect(sovSelfTester.trafficMediumNumber.statusCode).toBe(
-          StatusCodes.SuccessButNeedsReview,
-        );
-        expect(sovSelfTester.trafficMediumNumber.statusMessageKey).toBe(
-          StatusMessageKeyTypes.trafficMediumNumberSuccess,
-        );
-      },
-    },
-    {
-      testName: "Missing",
-      sovAppData: sovAppDataNoParameterButIsOkay,
-      testFunction: async ({ sovSelfTester }) => {
-        expect(sovSelfTester.trafficMediumNumber.elementValue).toBe(null);
-        expect(sovSelfTester.trafficMediumNumber.statusCode).toBe(
-          StatusCodes.Error,
-        );
-        expect(sovSelfTester.trafficMediumNumber.statusMessageKey).toBe(
-          StatusMessageKeyTypes.missingTrafficMediumNumber,
-        );
-      },
-    },
-    ...generateMalformedDataTests({
+    ...generateTests({
       elementKey: "trafficMediumNumber",
-      expectedMalformedStatusMessageKey:
-        StatusMessageKeyTypes.trafficMediumNumberMalformed,
-      expectedMissingStatusMessageKey:
-        StatusMessageKeyTypes.missingTrafficMediumNumber,
-      canBeANumber: true,
+      testsInfo: [
+        ...testCasesWhenScriptRuns,
+        ...testCasesWhenScriptDoesNotRun,
+        {
+          testName: "MalformedObject",
+          sovAppData: sovAppDataMalformedObjects,
+          expectedElementValue: "[object Object]",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.trafficMediumNumberMalformed,
+        },
+        {
+          testName: "MalformedArray",
+          sovAppData: sovAppDataMalformedArray,
+          expectedElementValue: "[object Object]",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.trafficMediumNumberMalformed,
+        },
+        {
+          testName: "MalformedObject_WhenScriptDoesNotRun",
+          sovAppData: sovAppDataMalformedObjects,
+          expectedStatusCode: StatusCodes.Error,
+          expectedElementValue: JSON.stringify(malformedObjectData),
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.trafficMediumNumberMalformed,
+          disableFlexibleIframeJs: true,
+        },
+        {
+          testName: "MalformedArray_WhenScriptDoesNotRun",
+          sovAppData: sovAppDataMalformedArray,
+          expectedElementValue: JSON.stringify(malformedArrayData),
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.trafficMediumNumberMalformed,
+          disableFlexibleIframeJs: true,
+        },
+      ],
     }),
   ],
 });

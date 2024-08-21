@@ -1,4 +1,4 @@
-import { Builder, Browser, By, until, WebDriver } from "selenium-webdriver";
+import { Builder, By, until, WebDriver } from "selenium-webdriver";
 import { Options as ChromeOptions } from "selenium-webdriver/chrome";
 import { Options as EdgeOptions } from "selenium-webdriver/edge";
 import { Options as FirefoxOptions } from "selenium-webdriver/firefox";
@@ -7,13 +7,13 @@ import {
   getSovAppData,
   malformedArrayData,
   malformedObjectData,
-  sovAppDataEverythingIsOkay,
   sovAppDataFalseButIsOkay,
+  sovAppDataFloatNumberButIsOkay,
   sovAppDataMalformedArrayButIsOkay,
   sovAppDataMalformedObjectsButIsOkay,
-  sovAppDataNoParameterButIsOkay,
   sovAppDataNullButIsOkay,
   sovAppDataNumberButIsOkay,
+  sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
   sovAppDataTrueButIsOkay,
   sovAppDataUndefinedButIsOkay,
   SovDataType,
@@ -26,78 +26,160 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import { platform } from "os";
+
+export enum Browsers {
+  Chrome = "chrome",
+  Edge = "MicrosoftEdge",
+  Firefox = "firefox",
+  // Safari = "safari",
+  iPhone = "iphone",
+  Android = "android",
+}
 
 const browserOptions = {
-  chrome: ChromeOptions,
-  MicrosoftEdge: EdgeOptions,
-  firefox: FirefoxOptions,
+  [Browsers.Chrome]: ChromeOptions,
+  [Browsers.Edge]: EdgeOptions,
+  [Browsers.Firefox]: FirefoxOptions,
+  // [Browsers.Safari]: SafariOptions,
+  [Browsers.iPhone]: ChromeOptions,
+  [Browsers.Android]: ChromeOptions,
 };
 
 export async function executeOverlayTests({
   testName,
   tests,
-  browser = Browser.CHROME,
+  browser,
 }: {
   testName: string;
   tests: TestsType;
-  browser?: "chrome" | "MicrosoftEdge" | "firefox" | "safari";
+  browser?: Browsers;
 }) {
-  describe(testName, () => {
-    let driver: WebDriver;
-    let fileUrl: string;
-    beforeAll(() => {
-      const extensionPath = resolve(
-        __dirname,
-        "../../release_zips/chrome-test-sovendus-integration_TESTING.crx",
-      );
+  const buildMode = process.env.npm_config_buildmode === "true";
+  for (const _browser of browser
+    ? [browser]
+    : buildMode
+      ? [
+          Browsers.Firefox,
+          Browsers.Chrome,
+          Browsers.Edge,
+          Browsers.Android,
+          Browsers.iPhone,
+        ]
+      : [Browsers.Chrome]) {
+    describe(`${_browser}_${testName}`, () => {
+      let driver: WebDriver;
+      let fileUrl: string;
 
-      const options = new browserOptions[browser]();
-      options.addArguments("--disable-search-engine-choice-screen");
-      // options.addArguments("--auto-open-devtools-for-tabs");
-      options.addExtensions(extensionPath);
-      if (browser === Browser.CHROME) {
-        driver = new Builder()
-          .forBrowser(browser)
-          .setChromeOptions(options)
-          .build();
-      } else if (browser === Browser.EDGE) {
-        driver = new Builder()
-          .forBrowser(browser)
-          .setEdgeOptions(options)
-          .build();
-      } else {
-        driver = new Builder()
-          .forBrowser(browser)
-          .setFirefoxOptions(options)
-          .build();
+      beforeAll(() => {
+        const driverData = initializeWebDriver(_browser);
+        driver = driverData.driver;
+        fileUrl = driverData.fileUrl;
+      });
+
+      for (const testData of tests) {
+        test(`${_browser}_${testName}_${testData.testName}`, async () => {
+          const sovAppData =
+            typeof testData.sovAppData === "function"
+              ? testData.sovAppData()
+              : testData.sovAppData;
+          const _sovAppData = getSovAppData(sovAppData);
+          await prepareTestPageAndRetry(
+            _sovAppData,
+            driver,
+            fileUrl,
+            1,
+            testData.disableFlexibleIframeJs,
+            testData.disableSovendusDiv,
+          );
+          const sovSelfTester = await getIntegrationTesterData(driver);
+          await testData.testFunction({ driver, sovSelfTester, sovAppData });
+        }, 300_000);
       }
-      const localFilePath = resolve(
-        __dirname,
-        "page-banner/testHtmlFiles/empty.html",
-      );
-      fileUrl = pathToFileURL(localFilePath).toString();
-    });
 
-    for (const testData of tests) {
-      test(`${testName}_${testData.testName}`, async () => {
-        const _sovAppData = getSovAppData(testData.sovAppData);
-        await prepareTestPageAndRetryForever(
-          _sovAppData,
-          driver,
-          fileUrl,
-          1,
-          testData.disableFlexibleIframeJs,
-          testData.disableSovendusDiv,
-        );
-        const sovSelfTester = await getIntegrationTesterData(driver);
-        await testData.testFunction({ driver, sovSelfTester });
+      afterAll(async () => {
+        await driver.quit();
       }, 300_000);
-    }
+    });
+  }
+}
 
-    afterAll(async () => {
-      await driver.quit();
-    }, 300_000);
-  });
+function initializeWebDriver(browser: Browsers) {
+  let driver: WebDriver;
+  const extensionPath =
+    browser === "firefox"
+      ? resolve(
+          __dirname,
+          "../../release_zips/firefox-test-sovendus-integration_TESTING.xpi",
+        )
+      : resolve(
+          __dirname,
+          "../../release_zips/chrome-test-sovendus-integration_TESTING.crx",
+        );
+
+  if (
+    browser === Browsers.Chrome ||
+    browser === Browsers.Android ||
+    browser === Browsers.iPhone
+  ) {
+    const options = new browserOptions[browser]();
+    if (browser === Browsers.Android || browser === Browsers.iPhone) {
+      const mobileEmulation = {
+        deviceName: browser === Browsers.Android ? "Pixel 7" : "iPhone 12 Pro",
+      };
+      options.setMobileEmulation(mobileEmulation);
+    }
+    options.addArguments("--disable-search-engine-choice-screen");
+    // options.addArguments("--auto-open-devtools-for-tabs");
+    options.addExtensions(extensionPath);
+    driver = new Builder()
+      .forBrowser(Browsers.Chrome)
+      .setChromeOptions(options)
+      .build();
+  } else if (browser === Browsers.Edge) {
+    const options = new browserOptions[browser]();
+    options.addArguments("--disable-search-engine-choice-screen");
+    // options.addArguments("--auto-open-devtools-for-tabs");
+    options.addExtensions(extensionPath);
+    driver = new Builder().forBrowser(browser).setEdgeOptions(options).build();
+  } else {
+    const options = new browserOptions[browser]();
+    options.addArguments("--disable-search-engine-choice-screen");
+    options.addExtensions(extensionPath);
+
+    let firefoxDevPath: string;
+    switch (platform()) {
+      case "win32":
+        firefoxDevPath =
+          "C:\\Program Files\\Firefox Developer Edition\\firefox.exe";
+        break;
+      case "darwin":
+        firefoxDevPath =
+          "/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox";
+        break;
+      case "linux":
+        firefoxDevPath = "/usr/bin/firefox-developer-edition";
+        break;
+      default:
+        throw new Error("Unsupported OS: " + platform());
+    }
+    options.setBinary(firefoxDevPath);
+    options.setPreference("xpinstall.signatures.required", false);
+    options.setPreference("extensions.experiments.enabled", true);
+    driver = new Builder()
+      .forBrowser(browser)
+      .setFirefoxOptions(options)
+      .build();
+  }
+  const localFilePath = resolve(
+    __dirname,
+    "page-banner/testHtmlFiles/empty.html",
+  );
+  const fileUrl = pathToFileURL(localFilePath).toString();
+  return {
+    driver,
+    fileUrl,
+  };
 }
 
 export function generateTests({
@@ -111,14 +193,14 @@ export function generateTests({
     testName: testInfo.testName,
     sovAppData: testInfo.sovAppData,
     testFunction: async ({ sovSelfTester }) => {
-      expect(sovSelfTester[elementKey].elementValue).toBe(
+      expect((sovSelfTester as any)[elementKey].elementValue).toBe(
         testInfo.expectedElementValue,
       );
-      expect(sovSelfTester[elementKey].statusCode).toBe(
-        testInfo.expectedStatusCode,
-      );
-      expect(sovSelfTester[elementKey].statusMessageKey).toBe(
+      expect((sovSelfTester as any)[elementKey].statusMessageKey).toBe(
         testInfo.expectedStatusMessageKey,
+      );
+      expect((sovSelfTester as any)[elementKey].statusCode).toBe(
+        testInfo.expectedStatusCode,
       );
     },
     disableFlexibleIframeJs: testInfo.disableFlexibleIframeJs,
@@ -130,11 +212,15 @@ export function generateMalformedDataTests({
   expectedMalformedStatusMessageKey,
   expectedMissingStatusMessageKey,
   canBeANumber,
+  skipNumberCheck,
+  objectElementValueType = "stringified",
 }: {
   elementKey: string;
   expectedMalformedStatusMessageKey: StatusMessageKeyTypes;
   expectedMissingStatusMessageKey: StatusMessageKeyTypes;
   canBeANumber?: boolean;
+  skipNumberCheck?: boolean;
+  objectElementValueType?: "stringified" | "objectObject";
 }): TestsType {
   const testCasesWhenScriptRuns = [
     {
@@ -151,30 +237,40 @@ export function generateMalformedDataTests({
       expectedStatusCode: StatusCodes.Error,
       expectedStatusMessageKey: expectedMalformedStatusMessageKey,
     },
-    ...(canBeANumber
+    ...(skipNumberCheck
       ? []
-      : [
-          {
-            testName: "MalformedNumber",
-            sovAppData: sovAppDataNumberButIsOkay,
-            expectedElementValue: "1234",
-            expectedStatusCode: StatusCodes.Error,
-            expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-          },
-        ]),
+      : canBeANumber
+        ? [
+            {
+              testName: "MalformedNumberWithCommaInsteadOfDot",
+              sovAppData: sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
+              expectedElementValue: "1234,56",
+              expectedStatusCode: StatusCodes.Error,
+              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+            },
+          ]
+        : [
+            {
+              testName: "MalformedNumber",
+              sovAppData: sovAppDataNumberButIsOkay,
+              expectedElementValue: "1234",
+              expectedStatusCode: StatusCodes.Error,
+              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+            },
+            {
+              testName: "MalformedFloatNumber",
+              sovAppData: sovAppDataFloatNumberButIsOkay,
+              expectedElementValue: "1234.56",
+              expectedStatusCode: StatusCodes.Error,
+              expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+            },
+          ]),
     {
-      testName: "MalformedObject",
-      sovAppData: sovAppDataMalformedObjectsButIsOkay,
-      expectedElementValue: JSON.stringify(malformedObjectData),
+      testName: "Missing",
+      sovAppData: sovAppDataNullButIsOkay,
+      expectedElementValue: null,
       expectedStatusCode: StatusCodes.Error,
-      expectedStatusMessageKey: expectedMalformedStatusMessageKey,
-    },
-    {
-      testName: "MalformedArray",
-      sovAppData: sovAppDataMalformedArrayButIsOkay,
-      expectedElementValue: JSON.stringify(malformedArrayData),
-      expectedStatusCode: StatusCodes.Error,
-      expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+      expectedStatusMessageKey: expectedMissingStatusMessageKey,
     },
     {
       testName: "MalformedNull",
@@ -201,7 +297,46 @@ export function generateMalformedDataTests({
   );
   return generateTests({
     elementKey,
-    testsInfo: [...testCasesWhenScriptRuns, ...testCasesWhenScriptDoesNotRun],
+    testsInfo: [
+      ...testCasesWhenScriptRuns,
+      ...testCasesWhenScriptDoesNotRun,
+      {
+        testName: "MalformedObject",
+        sovAppData: sovAppDataMalformedObjectsButIsOkay,
+        expectedElementValue:
+          objectElementValueType === "stringified"
+            ? JSON.stringify(malformedObjectData)
+            : "[object Object]",
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+      },
+      {
+        testName: "MalformedArray",
+        sovAppData: sovAppDataMalformedArrayButIsOkay,
+        expectedElementValue:
+          objectElementValueType === "stringified"
+            ? JSON.stringify(malformedArrayData)
+            : "[object Object]",
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+      },
+      {
+        testName: "MalformedObject_WhenScriptDoesNotRun",
+        sovAppData: sovAppDataMalformedObjectsButIsOkay,
+        expectedElementValue: JSON.stringify(malformedObjectData),
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+        disableFlexibleIframeJs: true,
+      },
+      {
+        testName: "MalformedArray_WhenScriptDoesNotRun",
+        sovAppData: sovAppDataMalformedArrayButIsOkay,
+        expectedElementValue: JSON.stringify(malformedArrayData),
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: expectedMalformedStatusMessageKey,
+        disableFlexibleIframeJs: true,
+      },
+    ],
   });
 }
 
@@ -210,36 +345,37 @@ export type TestsInfoType = {
   sovAppData: SovDataType;
   expectedElementValue: any;
   expectedStatusCode: StatusCodes;
-  expectedStatusMessageKey: StatusMessageKeyTypes;
+  expectedStatusMessageKey: StatusMessageKeyTypes | null;
   disableFlexibleIframeJs?: boolean;
   disableSovendusDiv?: boolean;
 }[];
 
 export type TestsType = {
   testName: string;
-  sovAppData: SovDataType;
+  sovAppData: SovDataType | (() => SovDataType);
   testFunction: ({
     driver,
     sovSelfTester,
+    sovAppData,
   }: {
     driver: WebDriver;
     sovSelfTester: SelfTester;
+    sovAppData: SovDataType;
   }) => Promise<void>;
   disableFlexibleIframeJs?: boolean | undefined;
   disableSovendusDiv?: boolean | undefined;
 }[];
 
-async function prepareTestPageAndRetryForever(
+async function prepareTestPageAndRetry(
   sovAppData: SovFinalDataType,
   driver: WebDriver,
   fileUrl: string,
   retryCounter: number = 1,
   disableFlexibleIframeJs: boolean | undefined,
   disableSovendusDiv: boolean | undefined,
-) {
+): Promise<WebDriver> {
   try {
     await driver.get(fileUrl);
-    await new Promise((r) => setTimeout(r, 2000));
     const integrationScript = `
       const consumer = ${JSON.stringify(sovAppData.sovConsumer)};
       if (consumer){
@@ -273,11 +409,14 @@ async function prepareTestPageAndRetryForever(
     await driver.executeScript(integrationScript);
     await waitForTestOverlay(driver);
   } catch (e) {
+    if (retryCounter === 3) {
+      throw new Error("Failed to wait for the overlay, aborting now");
+    }
     console.log(
       `Banner didn't load, trying again - tried already ${retryCounter} times - error: ${e}`,
     );
-    retryCounter += 1;
-    await prepareTestPageAndRetryForever(
+    retryCounter++;
+    await prepareTestPageAndRetry(
       sovAppData,
       driver,
       fileUrl,
@@ -286,12 +425,13 @@ async function prepareTestPageAndRetryForever(
       disableSovendusDiv,
     );
   }
+  return driver;
 }
 
 async function waitForTestOverlay(driver: WebDriver) {
   await driver.wait(
     until.elementLocated(By.css("#outerSovendusOverlay")),
-    10000,
+    15000,
   );
 }
 
