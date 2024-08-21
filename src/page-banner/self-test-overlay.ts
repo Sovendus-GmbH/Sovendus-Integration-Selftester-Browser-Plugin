@@ -430,9 +430,8 @@ class SelfTesterOverlay {
             max-width: 250px;
             color: #fff;
             display: none;
-            right: -250px;
-            top: -5px;
             left: -5px;
+            top: -5px;
           }
           .${sovendusInfoClass}.${TooltipPositionType.top} {
             position: absolute;
@@ -444,7 +443,6 @@ class SelfTesterOverlay {
             color: #fff;
             display: none;
             right: -250px;
-            top: -65px;
             left: 1px;
           }
         </style>
@@ -587,15 +585,34 @@ function toggleOverlay(): void {
 
 function showInfoText(event: MouseEvent): void {
   const label = (event.currentTarget as HTMLElement)?.firstElementChild;
+  const iframeDiv = (event.currentTarget as HTMLElement)?.parentElement
+    ?.parentElement?.parentElement?.parentElement;
   // ?.lastElementChild
   //   ?.firstElementChild;
   if (label) {
-    // const rect = label.getBoundingClientRect();
-    // (label as HTMLElement).style.left =
-    //   `${rect.left + window.pageXOffset - 5}px`;
-    // (label as HTMLElement).style.top =
-    //   `${rect.top + window.pageYOffset - (label as HTMLElement).offsetHeight - 5}px`;
+    (label as HTMLElement).style.right = `${-250}px`;
+
     (label as HTMLElement).style.display = "block";
+
+    console.log("LabelWidth: ", (label as HTMLElement).clientWidth);
+    console.log("IFrameWidth: ", (iframeDiv as HTMLElement).clientWidth);
+    const labelDivRect = (label as HTMLElement).getBoundingClientRect();
+    const iframeRect = (iframeDiv as HTMLElement).getBoundingClientRect();
+
+    const distanceLeft = labelDivRect.left - iframeRect.left;
+    console.log("DistanceLeft: ", distanceLeft);
+
+    if (
+      labelDivRect.left + (label as HTMLElement).clientWidth >
+      (iframeDiv as HTMLElement).clientWidth
+    ) {
+      (label as HTMLElement).style.left = `${-distanceLeft}px`;
+    }
+
+    if (label.className.includes("top")) {
+      (label as HTMLElement).style.top =
+        `${-(label as HTMLElement).clientHeight + 15}px`;
+    }
   }
 }
 
