@@ -1,18 +1,18 @@
 class TestResult {
   elementValue: ElementValue;
-  statusCode: StatusCode;
-  statusText: StatusMessage;
   statusMessage: StatusMessage;
-  constructor(
-    elementValue: ElementValue = undefined,
-    statusMessage: StatusMessage = undefined,
-    statusText: StatusMessage = undefined,
+  statusMessageKey: MessageKeyTypes;
+  statusCode: StatusCode;
+  constructor({elementValue = undefined, statusMessage = undefined, statusMessageKey = undefined, statusCode}: {
+    elementValue: ElementValue,
+    statusMessage: StatusMessage,
+    statusMessageKey: MessageKeyTypes,
     statusCode: StatusCode
-  ) {
+  }) {
     this.elementValue = elementValue;
-    this.statusText = statusText;
-    this.statusCode = statusCode;
     this.statusMessage = statusMessage || "";
+    this.statusMessageKey = statusMessageKey;
+    this.statusCode = statusCode;
   }
 }
 
@@ -157,7 +157,7 @@ export default class SelfTester {
 
     const statusCode: StatusCode = StatusCodes.Error;
 
-    let statusText: StatusMessage;
+    let statusMessageKey: MessageKeyTypes;
 
     let statusMessage: StatusMessage = undefined;
     if (this.awinSaleTracked()) {
@@ -169,8 +169,7 @@ export default class SelfTester {
               How to set up sales tracking with Awin?
             </a>  
           </h3>`;
-      statusText =
-        "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.";
+      statusMessageKey = MessageKeyTypes.awinSaleTrackedAfterScript;
     } else {
       statusMessage = `
           <h3 class='sovendus-overlay-h3 sovendus-overlay-error'>
@@ -183,33 +182,37 @@ export default class SelfTester {
               How to set up sales tracking with Awin?
             </a>  
           </h3>`;
-      statusText = "ERROR: No Sale tracked yet";
+      statusMessageKey = MessageKeyTypes.awinNoSalesTracked;
     }
 
     const elementValue: ElementValue = false;
 
-    this.trafficSourceNumber = new TestResult(
-      window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber,
-      window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber +
-        this.getInfoMarkWithLabel(trafficSourceInfoMessage),
-      undefined,
-      StatusCodes.Success
-    );
-    this.trafficMediumNumber = new TestResult(
-      window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber,
-      window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber +
-        this.getInfoMarkWithLabel(trafficMediumInfoMessage),
-      undefined,
-      StatusCodes.Success
-    );
+    this.trafficSourceNumber = new TestResult({
+      elementValue: window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber,
+      statusMessage: window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber +
+        this.getInfoMarkWithLabel(errorsMessages.trafficSourceNumberSuccess.infoText),
+        statusMessageKey: undefined,
+        statusCode: StatusCodes.Success
+    });
+    this.trafficMediumNumber = new TestResult({
+      elementValue: window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber,
+      statusMessage: window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber +
+        this.getInfoMarkWithLabel(errorsMessages.trafficMediumNumberSuccess.infoText),
+      statusMessageKey: undefined,
+      statusCode: StatusCodes.Success
+    });
 
-    return new TestResult(elementValue, statusMessage, statusText, statusCode);
+    return new TestResult({
+      elementValue,
+      statusMessage,
+      statusMessageKey,
+      statusCode
+    });
   }
   getConsumerSalutationTestResult(
     consumer: SovApplicationConsumer
   ): TestResult {
-    const missingSalutationError =
-      "Make sure to pass the salutation of the customer, valid are Mrs. and Mr.";
+    const missingSalutationError = errorsMessages.salutationNotValid.infoText;
     const valueTestResult: TestResult = this.validValueTestResult(
       consumer.salutation || window.sovConsumer?.consumerSalutation,
       missingSalutationError
@@ -219,7 +222,7 @@ export default class SelfTester {
       let statusCode: StatusCode = StatusCodes.Success;
       let statusMessage: StatusMessage =
         String(valueTestResult.elementValue) + this.getCheckMarkWithLabel();
-      let statusText: StatusMessage = undefined;
+      let statusMessageKey: MessageKeyTypes = undefined;
       if (!validSalutations.includes(String(valueTestResult.elementValue))) {
         statusCode = StatusCodes.Error;
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -227,14 +230,14 @@ export default class SelfTester {
         } ISN'T A VALID SALUTATION${this.getInfoMarkWithLabel(
           missingSalutationError
         )}</span>`;
-        statusText = "NOT A VALID SALUTATION";
+        statusMessageKey = MessageKeyTypes.salutationNotValid;
       }
-      return new TestResult(
-        valueTestResult.elementValue,
+      return new TestResult({
+        elementValue: valueTestResult.elementValue,
         statusMessage,
-        statusText,
+        statusMessageKey,
         statusCode
-      );
+      });
     }
     return valueTestResult;
   }
@@ -242,24 +245,23 @@ export default class SelfTester {
   getConsumerFirstNameTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.firstName,
-      "Make sure to pass the customers first name.",
-      "Make sure this value aligns with the customers first name"
+      MessageKeyTypes.missingConsumerFirstName,
+      MessageKeyTypes.consumerFirstNameSuccess,
     );
   }
 
   getConsumerLastNameTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.lastName,
-      "Make sure to pass the customers last name.",
-      "Make sure this value aligns with the customers last name"
+      MessageKeyTypes.missingConsumerLastName,
+      MessageKeyTypes.consumerLastNameSuccess,
     );
   }
 
   getConsumerYearOfBirthTestResult(
     consumer: SovApplicationConsumer
   ): TestResult {
-    const missingMailError: string =
-      "Make sure to pass the year of birth of the customer, e.g. 1991";
+    const missingMailError: string = errorsMessages.yearOfBirthNotValid.infoText;
     const yearOfBirthTestResult: TestResult = this.validValueTestResult(
       consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
       missingMailError
@@ -274,7 +276,7 @@ export default class SelfTester {
       const yearOfBirthNumber: number = Number(
         yearOfBirthTestResult.elementValue
       );
-      let statusText: StatusMessage = undefined;
+      let statusMessageKey: MessageKeyTypes = undefined;
       if (
         !(yearOfBirthNumber < validToYear && yearOfBirthNumber > validFromYear)
       ) {
@@ -284,21 +286,20 @@ export default class SelfTester {
         } ISN'T A VALID BIRTH YEAR${this.getInfoMarkWithLabel(
           missingMailError
         )}</span>`;
-        statusText = "NOT A VALID BIRTH YEAR";
+        statusMessageKey = MessageKeyTypes.yearOfBirthNotValid;
       }
-      return new TestResult(
-        yearOfBirthTestResult.elementValue,
+      return new TestResult({
+        elementValue: yearOfBirthTestResult.elementValue,
         statusMessage,
-        statusText,
+        statusMessageKey,
         statusCode
-      );
+      });
     }
     return yearOfBirthTestResult;
   }
 
   getConsumerEmailTestResult(consumer: SovApplicationConsumer): TestResult {
-    const missingEmailError =
-      "Make sure to pass the email address of the customer.";
+    const missingEmailError = errorsMessages.emailNotValid.infoText;
     const emailTestResult: TestResult = this.validValueTestResult(
       consumer.email,
       missingEmailError
@@ -313,7 +314,7 @@ export default class SelfTester {
       let elementValue: ElementValue = emailTestResult.elementValue;
       let statusMessage: StatusMessage =
         String(emailTestResult.elementValue) + this.getCheckMarkWithLabel();
-      let statusText: StatusMessage = undefined;
+      let statusMessageKey: MessageKeyTypes = MessageKeyTypes.emailSuccess;
       if (!mailIsValid) {
         statusCode = StatusCodes.Error;
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -321,14 +322,14 @@ export default class SelfTester {
         } ISN'T A VALID EMAIL${this.getInfoMarkWithLabel(
           missingEmailError
         )}</span>`;
-        statusText = "NOT A VALID EMAIL";
+        statusMessageKey = MessageKeyTypes.emailNotValid;
       }
-      return new TestResult(
+      return new TestResult({
         elementValue,
         statusMessage,
-        statusText,
+        statusMessageKey,
         statusCode
-      );
+      });
     }
     return emailTestResult;
   }
@@ -340,11 +341,11 @@ export default class SelfTester {
     let statusCode: StatusCode = StatusCodes.Success;
     let elementValue: ElementValue = undefined;
     let statusMessage: StatusMessage = undefined;
-    let statusText: StatusMessage = undefined;
+    let statusMessageKey: MessageKeyTypes = undefined;
     if (!consumerEmail.elementValue) {
       const testResult = this.validValueTestResult(
         consumer.emailHash,
-        "Make sure either a valid email or a md5 hashed email is provided. Note that hashed email support must be enabled by Sovendus."
+        errorsMessages.emailHashSuccess.infoText
       );
       statusCode = testResult.statusCode;
       elementValue = testResult.elementValue;
@@ -358,27 +359,35 @@ export default class SelfTester {
             testResult.elementValue +
             this.getCheckMarkWithLabel() +
             "</li>";
+            statusMessageKey = MessageKeyTypes.emailHashSuccess;
         } else {
           statusCode = StatusCodes.Error;
           statusMessage =
             "<li class='sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
             testResult.elementValue +
-            "<span class='sovendus-overlay-error' >NOT A MD5 HASH" +
+            `<span class='sovendus-overlay-error' >${errorsMessages.emailNotMD5Hash.errorText}` +
             this.getInfoMarkWithLabel(
-              "The value is not a valid MD5 hash, make sure the email is properly encoded."
+              errorsMessages.emailNotMD5Hash.infoText
             ) +
             "</span>";
           ("</li>");
-          statusText = "EMAIL HASH IS NOT A MD5 HASH";
+          statusMessageKey = MessageKeyTypes.emailNotMD5Hash;
         }
       } else if (testResult.statusCode === 2) {
         statusMessage =
           "<li class='sovendus-overlay-font sovendus-overlay-text'>consumerEmailHash: " +
           testResult.statusMessage +
           "</li>";
+        statusMessageKey = testResult.statusMessageKey;
       }
     }
-    return new TestResult(elementValue, statusMessage, statusText, statusCode);
+    return new TestResult({
+      elementValue, 
+      statusMessage, 
+      statusMessageKey, 
+      statusCode
+    });
+
   }
 
   checkIfValidMd5Hash(emailHash: string): boolean {
@@ -389,8 +398,8 @@ export default class SelfTester {
   getConsumerStreetTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.street,
-      "Make sure to pass the street name of the delivery address.",
-      "Make sure this value aligns with the delivery address street name."
+      MessageKeyTypes.missingConsumerStreet,
+      MessageKeyTypes.consumerStreetSuccess,
     );
   }
 
@@ -399,62 +408,64 @@ export default class SelfTester {
   ): TestResult {
     return this.validValueTestResult(
       consumer.streetNumber,
-      "Make sure to pass the street number from the delivery address.",
-      "Make sure this value aligns with the delivery address street number."
+      MessageKeyTypes.missingConsumerStreetNumber,
+      MessageKeyTypes.consumerStreetNumberSuccess,
     );
   }
 
   getConsumerZipCodeTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.zipCode,
-      "Make sure to pass the zip code of the delivery address.",
-      "Make sure this value aligns with the delivery address zip code."
+      MessageKeyTypes.missingConsumerZipCode,
+      MessageKeyTypes.consumerZipCodeSuccess,
     );
   }
 
   getConsumerPhoneTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.phone,
-      "Make sure to pass the phone number of the customer.",
-      "Make sure this value aligns with the customers phone number."
+      MessageKeyTypes.missingConsumerPhone,
+      MessageKeyTypes.consumerPhoneSuccess,
     );
   }
 
   getConsumerCityTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.city,
-      "Make sure to pass the city of the delivery address.",
-      "Make sure this value aligns with the delivery address city."
+      MessageKeyTypes.missingConsumerCity,
+      MessageKeyTypes.consumerCitySuccess,
     );
   }
 
   getConsumerCountryTestResult(consumer: SovApplicationConsumer): TestResult {
     return this.validValueTestResult(
       consumer.country,
-      "Make sure to pass the country id of the delivery address."
+      MessageKeyTypes.missingConsumerCountry,
+      MessageKeyTypes.consumerCountrySuccess,
     );
   }
 
   getTrafficSourceNumberTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.trafficSourceNumber,
-      "Make sure to pass the traffic source number you've received in your integration docs.",
-      trafficSourceInfoMessage
+      MessageKeyTypes.missingTrafficSourceNumber,
+      MessageKeyTypes.trafficSourceNumberSuccess,
     );
   }
 
   getTrafficMediumNumberTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.trafficMediumNumber,
-      "Make sure to pass the traffic medium number you've received in your integration docs.",
-      trafficMediumInfoMessage
+      MessageKeyTypes.missingTrafficMediumNumber,
+      MessageKeyTypes.trafficMediumNumberSuccess,
     );
   }
 
   getIframeContainerIdTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.iframeContainerId,
-      "Make sure to pass a iframe container id, this id corresponds to a div with this id on the DOM."
+      MessageKeyTypes.missingIframeContainerId,
+      MessageKeyTypes.iframeContainerIdSuccess,
     );
   }
 
@@ -469,7 +480,7 @@ export default class SelfTester {
     let errorMessage: StatusMessage = "";
     let statusCode: StatusCode = StatusCodes.Success;
     let isSuccess: boolean = true;
-    let statusText: StatusMessage = undefined;
+    let statusMessageKey: MessageKeyTypes = undefined;
     if (
       wasExecuted.statusCode === StatusCodes.Error &&
       trafficSourceNumber.statusCode === StatusCodes.Success &&
@@ -480,41 +491,53 @@ export default class SelfTester {
       isSuccess = false;
       const isOnDom = !!flexibleIframeJs;
       if (isOnDom) {
-        innerErrorMessage =
-          this.getFlexileIframeDidNotExecuteErrorMessage(flexibleIframeJs);
+        const {innerErrorMessage, statusMessageKey} = this.getFlexileIframeDidNotExecuteErrorMessage(flexibleIframeJs);
+
       } else {
-        innerErrorMessage =
-          "Sovendus was detected but flexibleiframe.js was not found on the DOM. Make sure to place the flexibleiframe.js on the DOM after the Sovendus Integration Script.";
-        statusText = innerErrorMessage;
+        innerErrorMessage = errorsMessages.iFrameNotOnDOM.errorText;
+        statusMessageKey = MessageKeyTypes.iFrameNotOnDOM;
       }
       errorMessage = `<h2 class="sovendus-overlay-font sovendus-overlay-h2" style="color:red !important;">Error: ${innerErrorMessage}</h2>`;
     }
-    return new TestResult(isSuccess, errorMessage, statusText, statusCode);
+    return new TestResult({
+      elementValue: isSuccess, 
+      statusMessage: errorMessage, 
+      statusMessageKey,
+      statusCode
+    });
   }
 
   getFlexileIframeDidNotExecuteErrorMessage(
     flexibleIframeJs: HTMLScriptElement
-  ): string {
+  ):
+  {
+    innerErrorMessage: string,
+    statusMessageKey: MessageKeyTypes
+  } 
+  {
     let innerErrorMessage: string = "";
+    let statusMessageKey: MessageKeyTypes = undefined;
     if (this.checkIfFlexibleIframeIsExecutable(flexibleIframeJs)) {
       const sovendusJs: HTMLScriptElement = document.getElementById(
         "sovloader-script"
       ) as HTMLScriptElement;
       if (sovendusJs) {
         if (sovendusJs.type === "text/javascript" || sovendusJs.type === null) {
-          innerErrorMessage =
-            "Sovendus was detected and flexibleiframe.js was executed. For an unknown reason the integration script didn't run successfully tho.";
-        } else {
-          innerErrorMessage = `Sovendus was detected and flexibleiframe.js was executed. But the sovendus.js script, which gets placed by the flexibleiframe.js script, got blocked most likely because of your cookie consent tool. The type of the sovendus.js script should not be set, but is "${sovendusJs.type}" instead.`;
+          innerErrorMessage = errorsMessages.unknownErrorIntegrationScriptFailed.errorText;
+            statusMessageKey = MessageKeyTypes.unknownErrorIntegrationScriptFailed
+          } else {
+          innerErrorMessage = (errorsMessages.sovendusJsBlockedByCookieConsent.errorText).replace("${elementValue}", sovendusJs.type);
+          statusMessageKey = MessageKeyTypes.sovendusJsBlockedByCookieConsent
         }
       } else {
-        innerErrorMessage =
-          "Sovendus was detected but flexibleiframe.js was not executed. This is probably because the flexibleiframe.js script got placed on the DOM / executed before the Sovendus integration script. Make sure the flexibleiframe.js gets placed on the DOM / executed after the the Sovendus integration script.";
-      }
+          innerErrorMessage = errorsMessages.flexibleIframeJsExecutedTooEarly.errorText
+          statusMessageKey = MessageKeyTypes.flexibleIframeJsExecutedTooEarly
+        }
     } else {
-      innerErrorMessage = `Sovendus was detected but flexibleiframe.js was not executed because the script type is "${flexibleIframeJs.type}" instead of "text/javascript". This probably happened because your cookie consent tool blocked the script.`;
+      innerErrorMessage = (errorsMessages.flexibleIframeJsBlockedByCookieConsent.errorText).replace("${elementValue}", flexibleIframeJs.type);
+      statusMessageKey = MessageKeyTypes.flexibleIframeJsBlockedByCookieConsent
     }
-    return innerErrorMessage;
+    return {innerErrorMessage, statusMessageKey};
   }
 
   checkIfFlexibleIframeIsExecutable(
@@ -532,19 +555,19 @@ export default class SelfTester {
       trafficMediumNumber.elementValue &&
       window.hasOwnProperty("sovApplication") &&
       window.sovApplication?.instances?.length;
-    return new TestResult(
-      wasExecuted,
-      undefined,
-      undefined,
-      wasExecuted ? StatusCodes.Success : StatusCodes.Error
-    );
+    return new TestResult({
+      elementValue: wasExecuted,
+      statusMessage: undefined,
+      statusMessageKey: undefined,
+      statusCode: wasExecuted ? StatusCodes.Success : StatusCodes.Error
+    });
   }
 
   getIsEnabledInBackendTestResult(wasExecuted: TestResult): TestResult {
     let statusCode: StatusCode = StatusCodes.TestDidNotRun;
     let isEnabled: boolean | undefined = undefined;
     let statusMessage: StatusMessage = undefined;
-    let statusText: StatusMessage = undefined;
+    let statusMessageKey: MessageKeyTypes = undefined;
     if (wasExecuted.statusCode === StatusCodes.Success) {
       isEnabled = window.sovApplication?.instances?.some(
         (instance) =>
@@ -557,12 +580,17 @@ export default class SelfTester {
       } else {
         statusCode = StatusCodes.Error;
         statusMessage =
-          "<h3 class='sovendus-overlay-error'>ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.</h3>";
-        statusText =
-          "ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.";
+          `<h3 class='sovendus-overlay-error'>${errorsMessages.sovendusBannerDisabled.errorText}</h3>`;
+        statusMessageKey = MessageKeyTypes.sovendusBannerDisabled;
       }
     }
-    return new TestResult(isEnabled, statusMessage, statusText, statusCode);
+    return new TestResult({
+      elementValue: isEnabled, 
+      statusMessage, 
+      statusMessageKey, 
+      statusCode
+    });
+
   }
 
   getSovDivIdInIFramesTestResult(sovIFramesAmount: TestResult): TestResult {
@@ -571,15 +599,18 @@ export default class SelfTester {
     );
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Success;
-    let statusText: StatusMessage = undefined;
+    let statusMessageKey: MessageKeyTypes = undefined;
     if ((elementValue && sovIFramesAmount.elementValue) || 0 > 0) {
       statusCode = StatusCodes.Error;
       statusMessage =
-        "<h3 class='sovendus-overlay-error'>ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.</h3>";
-      statusText =
-        "ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.";
+        `<h3 class='sovendus-overlay-error'>${errorsMessages.noiframeContainerId.errorText}</h3>`;
+        statusMessageKey = MessageKeyTypes.noiframeContainerId;
     }
-    return new TestResult(elementValue, statusMessage, statusText, statusCode);
+    return new TestResult({
+      elementValue, 
+      statusMessage, 
+      statusMessageKey, 
+      statusCode});
   }
 
   getSovendusDivFoundTestResult(
@@ -589,7 +620,7 @@ export default class SelfTester {
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Success;
     let sovendusDivFound: boolean = false;
-    let statusText: StatusMessage = undefined;
+    let statusMessageKey: MessageKeyTypes = undefined;
     if (sovDivIdInIframes.elementValue) {
       sovendusDivFound =
         sovDivIdInIframes &&
@@ -599,18 +630,16 @@ export default class SelfTester {
         );
       if (!sovendusDivFound) {
         statusMessage =
-          '<li><h3 class="sovendus-overlay-error">ERROR: The sovendus container div with the id "' +
-          iframeContainerId.elementValue +
-          '" was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.</h2></li>';
-        statusText = `ERROR: The sovendus container div with the id ${iframeContainerId.elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.`;
+          `<li><h3 class="sovendus-overlay-error">${(errorsMessages.containerDivNotFoundOnDOM.errorText).replace("${elementValue}", String(iframeContainerId.elementValue) || "")}</h2></li>`;
+          statusMessageKey = MessageKeyTypes.containerDivNotFoundOnDOM;
       }
     }
-    return new TestResult(
-      sovendusDivFound,
+    return new TestResult({
+      elementValue: sovendusDivFound,
       statusMessage,
-      statusText,
+      statusMessageKey,
       statusCode
-    );
+    });
   }
 
   getMultipleSovIFramesDetectedTestResult(
@@ -618,22 +647,22 @@ export default class SelfTester {
   ): TestResult {
     const multipleSovIframesDetected =
       Number(sovIframesAmount.elementValue) > 1;
-    return new TestResult(
-      multipleSovIframesDetected,
-      undefined,
-      undefined,
-      multipleSovIframesDetected ? StatusCodes.Error : StatusCodes.Success
-    );
+    return new TestResult({
+      elementValue: multipleSovIframesDetected,
+      statusMessage: undefined,
+      statusMessageKey: undefined,
+      statusCode: multipleSovIframesDetected ? StatusCodes.Error : StatusCodes.Success
+    });
   }
 
   getSovIFramesAmountTestResult(): TestResult {
     const sovIframesAmount = window.sovIframes?.length;
-    return new TestResult(
-      sovIframesAmount,
-      undefined,
-      undefined,
-      sovIframesAmount === 1 ? StatusCodes.Success : StatusCodes.Error
-    );
+    return new TestResult({
+      elementValue: sovIframesAmount,
+      statusMessage: undefined,
+      statusMessageKey: undefined,
+      statusCode: sovIframesAmount === 1 ? StatusCodes.Success : StatusCodes.Error
+    });
   }
 
   getMultipleIFramesAreSameTestResult(
@@ -667,36 +696,26 @@ export default class SelfTester {
     }
 
     const statusMessage = multipleSovIframesDetected.elementValue
-      ? "<li><h3 class='sovendus-overlay-error'>ERROR: sovIframes was found " +
-        sovIframesAmount.elementValue +
-        " times " +
+      ? "<li><h3 class='sovendus-overlay-error'>" +
         (multipleIframesAreSame
-          ? "with the same content. This is probably due to Sovendus being executed multiple times or"
-          : "with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to ") +
-        " Sovendus being integrated multiple times.</h3></li>"
+          ? errorsMessages.multipleSovIframesDetectedAndAreSame.errorText.replace("${elementValue}", String(sovIframesAmount.elementValue))
+          : errorsMessages.multipleSovIframesDetected.errorText.replace("${elementValue}", String(sovIframesAmount.elementValue))) +
+        "</h3></li>"
       : "";
-    const statusText: StatusMessage = multipleSovIframesDetected.elementValue
-      ? `ERROR: sovIframes was found ${sovIframesAmount.elementValue} times ${
-          multipleIframesAreSame
-            ? "with the same content. This is probably due to Sovendus being executed multiple times or"
-            : "with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to "
-        } Sovendus being integrated multiple times.`
-      : undefined;
 
-    return new TestResult(
-      multipleIframesAreSame,
+    const statusMessageKey: MessageKeyTypes = multipleSovIframesDetected.elementValue ? (multipleIframesAreSame ? MessageKeyTypes.multipleSovIframesDetectedAndAreSame : MessageKeyTypes.multipleSovIframesDetected) : undefined;
+
+    return new TestResult({
+      elementValue: multipleIframesAreSame,
       statusMessage,
-      statusText,
-      multipleSovIframesDetected.elementValue && multipleIframesAreSame
+      statusMessageKey,
+      statusCode: multipleSovIframesDetected.elementValue && multipleIframesAreSame
         ? StatusCodes.Error
         : StatusCodes.Success
-    );
+    });
   }
   getOrderCurrencyTestResult(): TestResult {
-    const validCurrencies = ["EUR", "GBP", "CHF", "PLN", "SEK", "DKK", "NOK"];
-    const missingCurrencyError =
-      "Make sure a valid order currency gets passed, valid currencies are: " +
-      validCurrencies;
+    const missingCurrencyError = errorsMessages.currencyNotValid.infoText;
     const valueTestResult: TestResult = this.validValueTestResult(
       window.sovIframes?.[0]?.orderCurrency,
       missingCurrencyError
@@ -707,7 +726,7 @@ export default class SelfTester {
       );
       let statusMessage: StatusMessage =
         String(valueTestResult.elementValue) + this.getCheckMarkWithLabel();
-      let statusText: StatusMessage = undefined;
+      let statusMessageKey: MessageKeyTypes = undefined;
       let statusCode: StatusCode = StatusCodes.Success;
       if (!isValidCurrency) {
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -715,15 +734,15 @@ export default class SelfTester {
         } ISN'T A VALID CURRENCY${this.getInfoMarkWithLabel(
           missingCurrencyError
         )}</span>`;
-        statusText = "NOT A VALID CURRENCY";
+        statusMessageKey = MessageKeyTypes.currencyNotValid;
         statusCode = StatusCodes.Error;
       }
-      return new TestResult(
-        valueTestResult.elementValue,
+      return new TestResult({
+        elementValue: valueTestResult.elementValue,
         statusMessage,
-        statusText,
+        statusMessageKey,
         statusCode
-      );
+      });
     }
     return valueTestResult;
   }
@@ -731,8 +750,8 @@ export default class SelfTester {
   getOrderIdTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.orderId,
-      "Make sure to pass the order id",
-      "Make sure the value aligns with the actual order id."
+      MessageKeyTypes.missingOrderId,
+      MessageKeyTypes.orderIdSuccess,
     );
   }
 
@@ -743,8 +762,8 @@ export default class SelfTester {
   getSessionIdTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.sessionId,
-      "Make sure a session id gets passed",
-      "Make sure the session id doesn't change after a refresh, but changes with a new session."
+      MessageKeyTypes.missingSessionId,
+      MessageKeyTypes.sessionIdSuccess,
     );
   }
 
@@ -755,8 +774,8 @@ export default class SelfTester {
   getUsedCouponCodeTestResult(): TestResult {
     return this.validValueTestResult(
       window.sovIframes?.[0]?.usedCouponCode,
-      "Make sure the used coupon code from the order gets passed",
-      "Make sure the used coupon code from the order aligns with this value."
+      MessageKeyTypes.missingCouponCode,
+      MessageKeyTypes.couponCodeSuccess,
     );
   }
 
@@ -768,7 +787,7 @@ export default class SelfTester {
     let elementValue: ElementValue = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
     let statusMessage: StatusMessage = undefined;
-    let statusText: StatusMessage = undefined;
+    let statusMessageKey: MessageKeyTypes = undefined;
     if (value && value !== "undefined") {
       statusCode = StatusCodes.Success;
       elementValue = decodeURIComponent(decodeURI(String(value)));
@@ -779,21 +798,25 @@ export default class SelfTester {
           : this.getCheckMarkWithLabel());
     } else {
       statusMessage = this.getDataIsMissingWarning(missingErrorMessage);
-      statusText = "ERROR: Data is missing!";
+      //statusMessageKey = MessageKeyTypes.;
     }
-    return new TestResult(elementValue, statusMessage, statusText, statusCode);
+    return new TestResult({
+      elementValue,
+      statusMessage,
+      statusMessageKey,
+      statusCode
+    });
   }
 
   validNumberTestResult(value: ElementValue): TestResult {
-    const missingNumberError =
-      "Make sure to pass the order value, it needs to be a number e.g. 20.5 and NOT 20,5";
+    const missingNumberError = errorsMessages.orderValueMissing.infoText;
     const decodedValue: TestResult = this.validValueTestResult(
       value,
       missingNumberError
     );
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
-    let statusText: StatusMessage = undefined;
+    let statusMessageKey: MessageKeyTypes = undefined;
     if (decodedValue.statusCode === StatusCodes.Success) {
       if (isNaN(Number(decodedValue.elementValue))) {
         statusMessage = `<span class='sovendus-overlay-error' >${
@@ -801,7 +824,7 @@ export default class SelfTester {
         } IS NOT A NUMBER${this.getInfoMarkWithLabel(
           missingNumberError
         )}</span>`;
-        statusText = `${decodedValue.elementValue} IS NOT A NUMBER`;
+        statusMessageKey = MessageKeyTypes.orderValueWrongFormat;
         statusCode = StatusCodes.Error;
       } else {
         statusCode = StatusCodes.Success;
@@ -810,27 +833,25 @@ export default class SelfTester {
           this.getInfoMarkWithLabel(
             "Make sure the order value is net without shipping cost."
           );
-        statusText = "Make sure the order value is net without shipping cost.";
+        statusMessageKey = MessageKeyTypes.orderValueSuccess;
       }
     } else {
       statusMessage = this.getDataIsMissingWarning(
         "This value needs to be a number e.g. 20.5 and NOT 20,5"
       );
-      statusText =
-        "This order value needs to be a number e.g. 20.5 and NOT 20,5";
+      statusMessageKey = MessageKeyTypes.orderValueWrongFormat;
       statusCode = StatusCodes.Error;
     }
-    return new TestResult(
-      decodedValue.elementValue,
+    return new TestResult({
+      elementValue: decodedValue.elementValue,
       statusMessage,
-      statusText,
+      statusMessageKey,
       statusCode
-    );
+    });
   }
 
   validUnixTimeTestResult(value: ElementValue): TestResult {
-    const missingUnixTimeError =
-      "Make sure to pass a unix timestamp in seconds.";
+    const missingUnixTimeError = errorsMessages.notAUnixTimestamp.infoText;
     const decodedValue: TestResult = this.validValueTestResult(
       value,
       missingUnixTimeError
@@ -838,7 +859,7 @@ export default class SelfTester {
     let statusMessage: StatusMessage = undefined;
     let statusCode: StatusCode = StatusCodes.Error;
     let isUnixTime = false;
-    let statusText: StatusMessage = undefined;
+    let statusMessageKey: MessageKeyTypes = undefined;
     if (decodedValue.statusCode === StatusCodes.Success) {
       const truncatedTime = Math.floor(Number(decodedValue.elementValue));
       isUnixTime =
@@ -850,26 +871,26 @@ export default class SelfTester {
           String(decodedValue.elementValue) + this.getCheckMarkWithLabel();
       } else {
         statusMessage = `<span class='sovendus-overlay-error' >${
-          decodedValue.elementValue
-        } IS NOT A UNIX TIME${this.getInfoMarkWithLabel(
+          errorsMessages.notAUnixTimestamp.errorText.replace("${elementValue}", String(decodedValue.elementValue))
+        }${this.getInfoMarkWithLabel(
           missingUnixTimeError
         )}</span>`;
-        statusText = `${decodedValue.elementValue} IS NOT A UNIX TIME`;
+        statusMessageKey = MessageKeyTypes.notAUnixTimestamp;
         statusCode = StatusCodes.Error;
       }
     } else {
       statusMessage = this.getDataIsMissingWarning(
-        "A unix timestamp in seconds should be provided"
+        errorsMessages.notValidUnixTimestamp.errorText
       );
-      statusText = "A unix timestamp in seconds should be provided";
+      statusMessageKey = MessageKeyTypes.notValidUnixTimestamp;
       statusCode = StatusCodes.Error;
     }
-    return new TestResult(
-      decodedValue.elementValue,
+    return new TestResult({
+      elementValue: decodedValue.elementValue,
       statusMessage,
-      statusText,
+      statusMessageKey,
       statusCode
-    );
+    });
   }
 
   getCheckMarkWithLabel(): string {
@@ -1010,11 +1031,6 @@ export default class SelfTester {
   }
 }
 
-const trafficSourceInfoMessage =
-  "Make sure the value aligns with the traffic source number you have received for this country.";
-const trafficMediumInfoMessage =
-  "Make sure the value aligns with the traffic medium number you have received for this country.";
-
 type ElementValue = undefined | null | string | number | boolean;
 export enum StatusCodes {
   Success = 0,
@@ -1125,3 +1141,331 @@ interface SovWindow extends Window {
 }
 
 declare let window: SovWindow;
+
+enum MessageKeyTypes {
+  awinNoSalesTracked = "awinNoSalesTracked",
+  awinSaleTrackedAfterScript = "awinSaleTrackedAfterScript",
+  salutationNotValid = "salutationNotValid",
+  yearOfBirthNotValid = "yearOfBirthNotValid",
+  emailNotValid = "emailNotValid",
+  emailSuccess = "emailSuccess",
+  emailNotMD5Hash = "emailNotMD5Hash",
+  emailHashSuccess = "emailHashSuccess",
+  iFrameNotOnDOM = "iFrameNotOnDOM",
+  unknownErrorIntegrationScriptFailed = "unknownErrorIntegrationScriptFailed",
+  sovendusJsBlockedByCookieConsent = "sovendusJsBlockedByCookieConsent",
+  flexibleIframeJsExecutedTooEarly = "flexibleIframeJsExecutedTooEarly",
+  flexibleIframeJsBlockedByCookieConsent = "flexibleIframeJsBlockedByCookieConsent",
+  sovendusBannerDisabled = "sovendusBannerDisabled",
+  noiframeContainerId = "noiframeContainerId",
+  containerDivNotFoundOnDOM = "containerDivNotFoundOnDOM",
+  multipleSovIframesDetected = "multipleSovIframesDetected",
+  multipleSovIframesDetectedAndAreSame = "multipleSovIframesDetectedAndAreSame",
+  currencyNotValid = "currencyNotValid",
+  notValidUnixTimestamp = "notValidUnixTimestamp",
+  notAUnixTimestamp = "notAUnixTimestamp",
+  orderValueMissing = "orderValueMissing",
+  orderValueWrongFormat = "orderValueWrongFormat",
+  orderValueSuccess = "orderValueSuccess",
+  orderIdSuccess = "orderIdSuccess",
+  missingOrderId = "missingOrderId",
+  missingSessionId = "missingSessionId",
+  sessionIdSuccess = "sessionIdSuccess",
+  missingCouponCode = "missingCouponCode",
+  couponCodeSuccess = "couponCodeSuccess",
+  missingConsumerStreet = "missingConsumerStreet",
+  consumerStreetSuccess = "consumerStreetSuccess",
+  missingConsumerStreetNumber = "missingConsumerStreetNumber",
+  consumerStreetNumberSuccess = "consumerStreetNumberSuccess",
+  missingConsumerZipCode = "missingConsumerZipCode",
+  consumerZipCodeSuccess = "consumerZipCodeSuccess",
+  missingConsumerPhone = "missingConsumerPhone",
+  consumerPhoneSuccess = "consumerPhoneSuccess",
+  missingConsumerCity = "missingConsumerCity",
+  consumerCitySuccess = "consumerCitySuccess",
+  missingConsumerCountry = "missingConsumerCountry",
+  consumerCountrySuccess = "consumerCountrySuccess",
+  missingTrafficSourceNumber = "missingTrafficSourceNumber",
+  trafficSourceNumberSuccess = "trafficSourceNumberSuccess",
+  missingTrafficMediumNumber = "missingTrafficMediumNumber",
+  trafficMediumNumberSuccess = "trafficMediumNumberSuccess",
+  missingIframeContainerId = "missingIframeContainerId",
+  iframeContainerIdSuccess = "iframeContainerIdSuccess",
+  missingConsumerFirstName = "missingConsumerFirstName",
+  consumerFirstNameSuccess = "consumerFirstNameSuccess",
+  missingConsumerLastName = "missingConsumerLastName",
+  consumerLastNameSuccess = "consumerLastNameSuccess",
+}
+
+const validCurrencies = ["EUR", "GBP", "CHF", "PLN", "SEK", "DKK", "NOK"]; 
+
+const errorsMessages: {
+  [errorKey in MessageKeyTypes]: {
+    errorText: string | undefined;
+    infoText: string | undefined;
+  };
+} = {
+  awinNoSalesTracked: {
+    errorText: "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed.",
+    infoText: "ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed. \
+              A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed. \
+              How to set up sales tracking with Awin? https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag"
+  },
+
+  awinSaleTrackedAfterScript: {
+    errorText: "ERROR: No Sale tracked yet",
+    infoText: "If this happens on the order success page, make sure you've implemented Awin sales tracking properly, as no sale was tracked. \
+    How to set up sales tracking with Awin? https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag"
+  },
+
+  salutationNotValid: {
+    errorText: "NOT A VALID SALUTATION",
+    infoText: "Make sure to pass the salutation of the customer, valid are Mrs. and Mr."
+  },
+
+  yearOfBirthNotValid: {
+    errorText: "NOT A VALID BIRTH YEAR",
+    infoText: "Make sure to pass the year of birth of the customer, e.g. 1991",
+  },
+
+  emailNotValid: {
+    errorText: "NOT A VALID EMAIL",
+    infoText: "Make sure to pass the email address of the customer.",
+  },
+
+  emailSuccess: {
+    errorText: undefined,
+    infoText: "Make sure to pass the email address of the customer.",
+  },
+
+  emailNotMD5Hash: {
+    errorText: "EMAIL HASH IS NOT A MD5 HASH",
+    infoText: "The value is not a valid MD5 hash, make sure the email is properly encoded.",
+  },
+
+  emailHashSuccess: {
+    errorText: undefined,
+    infoText: "Make sure either a valid email or a md5 hashed email is provided. Note that hashed email support must be enabled by Sovendus.",
+  },
+
+  iFrameNotOnDOM: {
+    errorText: "Sovendus was detected but flexibleiframe.js was not found on the DOM. Make sure to place the flexibleiframe.js on the DOM after the Sovendus Integration Script.",
+    infoText: undefined,
+  },
+
+  sovendusBannerDisabled: {
+    errorText: "ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.",
+    infoText: undefined,
+  },
+
+  noiframeContainerId: {
+    errorText: "ERROR: There was no iframeContainerId specified in sovIframes. Make sure to define it and also make sure the div with this id exists on the DOM.",
+    infoText: undefined,
+  },
+
+  unknownErrorIntegrationScriptFailed: {
+    errorText: "Sovendus was detected and flexibleiframe.js was executed. For an unknown reason the integration script didn't run successfully tho.",
+    infoText: undefined,
+  },
+
+  sovendusJsBlockedByCookieConsent: {
+    errorText: "Sovendus was detected and flexibleiframe.js was executed. But the sovendus.js script, which gets placed by the flexibleiframe.js script, got blocked most likely because of your cookie consent tool. The type of the sovendus.js script should not be set, but is ${elementValue} instead.",
+    infoText: undefined,
+  },
+
+  flexibleIframeJsExecutedTooEarly: {
+    errorText: "Sovendus was detected but flexibleiframe.js was not executed. This is probably because the flexibleiframe.js script got placed on the DOM / executed before the Sovendus integration script. Make sure the flexibleiframe.js gets placed on the DOM / executed after the the Sovendus integration script.",
+    infoText: undefined,
+  },
+
+  flexibleIframeJsBlockedByCookieConsent: {
+    errorText: "Sovendus was detected but flexibleiframe.js was not executed because the script type is ${elementValue} instead of text/javascript. This probably happened because your cookie consent tool blocked the script.",
+    infoText: undefined,
+  },
+
+  containerDivNotFoundOnDOM: {
+    errorText: "ERROR: The sovendus container div with the id ${elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.",
+    infoText: undefined,
+  },
+
+  multipleSovIframesDetected: {
+    errorText: "ERROR: sovIframes was found ${elementValue} times with different content. Make sure to check the window.sovIframes variable in the browser console. This is probably due to Sovendus being integrated multiple times.",
+    infoText: undefined,
+  },
+
+  multipleSovIframesDetectedAndAreSame: {
+    errorText: "ERROR: sovIframes was found ${elementValue} times with the same content. This is probably due to Sovendus being executed multiple times or Sovendus being integrated multiple times.",
+    infoText: undefined,
+  },
+
+  currencyNotValid: {
+    errorText: "NOT A VALID CURRENCY",
+    infoText: "Make sure a valid order currency gets passed, valid currencies are: " + validCurrencies,
+  },
+
+  notValidUnixTimestamp: {
+    errorText: "A unix timestamp in seconds should be provided",
+    infoText: "Make sure to pass a unix timestamp in seconds.",
+  },
+
+  notAUnixTimestamp: {
+    errorText: "${elementValue} IS NOT A UNIX TIME",
+    infoText: "Make sure to pass a unix timestamp in seconds.",
+  },
+
+  missingOrderId: {
+    errorText: "ERROR: Data is missing!",
+    infoText: "Make sure to pass the order id",
+  },
+
+  orderIdSuccess: {
+    errorText: undefined,
+    infoText: "Make sure the value aligns with the actual order id.",
+  },
+
+  orderValueMissing: {
+    errorText: "DATA IS MISSING",
+    infoText:
+      "Make sure to pass the order value, it needs to be a number e.g. 20.5 and NOT 20,5",
+  },
+
+  orderValueWrongFormat: {
+    errorText: "VALUE IS NOT A NUMBER",
+    infoText: "Make sure to pass the order value, it needs to be a number e.g. 20.5 and NOT 20,5",
+  },
+
+  orderValueSuccess: {
+    errorText: undefined,
+    infoText: "Make sure the order value is net without shipping cost.",
+  },
+
+  missingSessionId: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure a session id gets passed",
+  },
+      
+  sessionIdSuccess: {
+    errorText: undefined,
+    infoText: "Make sure the session id doesn't change after a refresh, but changes with a new session."
+  },
+
+  missingCouponCode: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure the used coupon code from the order gets passed",
+  },
+
+  couponCodeSuccess: {
+    errorText: undefined,
+    infoText: "Make sure the used coupon code from the order aligns with this value."
+  },
+
+  missingConsumerStreet: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the street name of the delivery address.",
+  },
+    
+  consumerStreetSuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with the delivery address street name."
+  },
+
+  missingConsumerStreetNumber: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the street number from the delivery address.",
+  },
+    
+  consumerStreetNumberSuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with the delivery address street number."
+  },
+
+  missingConsumerZipCode: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the zip code of the delivery address.",
+  },
+    
+  consumerZipCodeSuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with the delivery address zip code."
+  },
+
+  missingConsumerPhone: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the phone number of the customer.",
+  },
+    
+  consumerPhoneSuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with the customers phone number."
+  },
+
+  missingConsumerCity: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the city of the delivery address.",
+  },
+    
+  consumerCitySuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with the delivery address city."
+  },
+
+  missingConsumerCountry: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the country id of the delivery address."
+  },
+    
+  consumerCountrySuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with the country of the delivery address."
+  },
+
+  missingTrafficSourceNumber: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the traffic source number you've received in your integration docs.",
+  },
+    
+  trafficSourceNumberSuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with the traffic source number you've received in your integration docs."
+  },
+
+  missingTrafficMediumNumber: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the traffic medium number you've received in your integration docs.",
+  },
+    
+  trafficMediumNumberSuccess: {
+    errorText: undefined,
+    infoText: "Make sure the value aligns with the traffic medium number you have received for this country."
+  },
+
+  missingIframeContainerId: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass a iframe container id, this id corresponds to a div with this id on the DOM."
+  },
+    
+  iframeContainerIdSuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with a iframe container id, this id corresponds to a div with this id on the DOM."
+  },
+
+  missingConsumerFirstName: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the customers first name.",
+  },
+    
+  consumerFirstNameSuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with the customers first name"
+  },
+
+  missingConsumerLastName: {
+    errorText: "DATA IS MISSING",
+    infoText: "Make sure to pass the customers last name.",
+  },
+    
+  consumerLastNameSuccess: {
+    errorText: undefined,
+    infoText: "Make sure this value aligns with the customers last name"
+  },
+};
