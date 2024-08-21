@@ -1,4 +1,5 @@
-import SelfTester, { StatusCodes } from "./self-tester.js";
+import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
+import SelfTester from "./self-tester.js";
 
 (async () => {
   repeatTestsOnSPA(async () => {

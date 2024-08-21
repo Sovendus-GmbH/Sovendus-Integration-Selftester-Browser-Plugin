@@ -20,7 +20,8 @@
     {
       "resources": [
         "/page-banner/self-test-overlay.js",
-        "/page-banner/self-tester.js"
+        "/page-banner/self-tester.js",
+        "/page-banner/self-tester-data-to-sync-with-dev-hub.js"
       ],
       "matches": [
         "<all_urls>"

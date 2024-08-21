@@ -5,6 +5,7 @@ import {
   sovAppDataNoParameterButIsOkay,
 } from "../../sovAppData";
 
+// TODO fix firefox
 // executeOverlayTests({
 //   testName: "browserNameFirefox",
 //   sovAppData: sovAppDataNoParameterButIsOkay,
