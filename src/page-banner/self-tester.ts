@@ -1695,7 +1695,7 @@ class WarningOrFailTestResult<
       <img style="height:20px;width:auto;margin-bottom: -4px;" class="${tooltipButtonClass}"
       src=${infoIcon} />
       <div class="${tooltipClass}" role="tooltip">
-        <img style="height:20px;width:auto;padding-right:5px"
+        <img style="height:20px;width:auto;margin-bottom: -4px;"
           src="${whiteInfoIcon}"
           />
         ${labelText}
