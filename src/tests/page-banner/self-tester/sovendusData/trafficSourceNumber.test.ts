@@ -2,11 +2,7 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import {
-  executeOverlayTests,
-  generateTests,
-  TestsInfoType,
-} from "../../../testUtils";
+import { executeOverlayTests } from "../../../testUtils/testUtils";
 import {
   malformedArrayData,
   malformedObjectData,
@@ -20,7 +16,11 @@ import {
   sovAppDataTrue,
   sovAppDataUndefined,
   sovAppIframesAllValidData,
-} from "../../sovAppData";
+} from "../../../testUtils/sovAppData";
+import {
+  generateTests,
+  TestsInfoType,
+} from "@src/tests/testUtils/testCaseGenerator";
 
 const testCasesWhenScriptRuns: TestsInfoType = [
   {

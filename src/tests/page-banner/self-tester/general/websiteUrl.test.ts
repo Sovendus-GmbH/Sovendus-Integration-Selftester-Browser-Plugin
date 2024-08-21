@@ -1,6 +1,6 @@
 import { resolve } from "path";
-import { executeOverlayTests } from "../../../testUtils";
-import { sovAppDataEverythingIsOkay } from "../../sovAppData";
+import { executeOverlayTests } from "../../../testUtils/testUtils";
+import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
 import { pathToFileURL } from "url";
 
 executeOverlayTests({
@@ -12,7 +12,7 @@ executeOverlayTests({
       testFunction: async ({ sovSelfTester }) => {
         const localFilePath = resolve(
           __dirname,
-          "../../testHtmlFiles/empty.html",
+          "../../../testUtils/testHtmlFiles/empty.html",
         );
         const fileUrl = pathToFileURL(localFilePath).toString();
         expect(sovSelfTester.websiteURL.elementValue).toBe(fileUrl);

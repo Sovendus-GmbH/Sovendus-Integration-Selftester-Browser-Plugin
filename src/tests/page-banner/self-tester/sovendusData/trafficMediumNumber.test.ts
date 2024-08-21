@@ -2,11 +2,7 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import {
-  executeOverlayTests,
-  generateTests,
-  TestsInfoType,
-} from "../../../testUtils";
+import { executeOverlayTests } from "../../../testUtils/testUtils";
 import {
   malformedArrayData,
   malformedObjectData,
@@ -20,15 +16,19 @@ import {
   sovAppDataTrue,
   sovAppDataUndefined,
   sovAppIframesAllValidData,
-  sovTestTrafficMediumNumber,
-} from "../../sovAppData";
+  sovTestTrafficMediumNumbers,
+} from "../../../testUtils/sovAppData";
+import {
+  generateTests,
+  TestsInfoType,
+} from "@src/tests/testUtils/testCaseGenerator";
 
 const testCasesWhenScriptRuns: TestsInfoType = [
   {
     testName: "SuccessAsString",
     sovAppData: sovAppDataEverythingIsOkay,
     expectedElementValue:
-      sovTestTrafficMediumNumber.CBVNOverlayDisabled.trafficMediumNumber,
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     expectedStatusCode: StatusCodes.SuccessButNeedsReview,
     expectedStatusMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
   },
@@ -39,11 +39,11 @@ const testCasesWhenScriptRuns: TestsInfoType = [
       sovIframes1: {
         ...sovAppIframesAllValidData,
         trafficMediumNumber:
-          sovTestTrafficMediumNumber.CBVNOverlayDisabled.trafficMediumNumber,
+          sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
       },
     },
     expectedElementValue:
-      sovTestTrafficMediumNumber.CBVNOverlayDisabled.trafficMediumNumber,
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     expectedStatusCode: StatusCodes.SuccessButNeedsReview,
     expectedStatusMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
   },

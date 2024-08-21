@@ -2,16 +2,16 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import { executeOverlayTests } from "../../../testUtils/testUtils";
 import {
-  executeOverlayTests,
   generateMalformedDataTests,
   generateTests,
-} from "../../../testUtils";
+} from "@src/tests/testUtils/testCaseGenerator";
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
   sovAppIframesAllValidData,
-} from "../../sovAppData";
+} from "../../../testUtils/sovAppData";
 
 executeOverlayTests({
   testName: "orderCurrency",

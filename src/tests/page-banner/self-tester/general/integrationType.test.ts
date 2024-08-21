@@ -2,10 +2,7 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import {
-  executeOverlayTests,
-  generateTests,
-} from "../../../testUtils";
+import { executeOverlayTests } from "../../../testUtils/testUtils";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataMalformedArrayButIsOkay,
@@ -18,7 +15,8 @@ import {
   sovAppDataNumberButIsOkay,
   malformedArrayData,
   malformedObjectData,
-} from "../../sovAppData";
+} from "../../../testUtils/sovAppData";
+import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 executeOverlayTests({
   testName: "integrationType",

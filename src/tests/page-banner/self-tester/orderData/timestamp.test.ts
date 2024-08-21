@@ -2,16 +2,14 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import {
-  executeOverlayTests,
-  generateMalformedDataTests,
-} from "../../../testUtils";
+import { executeOverlayTests } from "../../../testUtils/testUtils";
 import {
   sovAppConsumerAllValidData,
   sovAppDataMalformedButIsOkay,
   sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
   sovAppIframesAllValidData,
-} from "../../sovAppData";
+} from "../../../testUtils/sovAppData";
+import { generateMalformedDataTests } from "@src/tests/testUtils/testCaseGenerator";
 
 executeOverlayTests({
   testName: "timestamp",

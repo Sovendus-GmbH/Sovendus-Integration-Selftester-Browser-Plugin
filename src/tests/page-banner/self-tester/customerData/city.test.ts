@@ -4,12 +4,9 @@ import {
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import {
   executeOverlayTests,
-  generateMalformedDataTests,
-  generateTests,
-} from "../../../testUtils";
-import {
-  sovAppDataEverythingIsOkay,
-} from "../../sovAppData";
+} from "../../../testUtils/testUtils";
+import { sovAppDataEverythingIsOkay } from "../../../testUtils/sovAppData";
+import { generateMalformedDataTests, generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 executeOverlayTests({
   testName: "city",
