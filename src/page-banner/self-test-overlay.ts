@@ -11,12 +11,26 @@ async function executeTests() {
   const selfTester = new SelfTester();
   await selfTester.waitForSovendusIntegrationDetected();
   await selfTester.selfTestIntegration();
+  transmitTestResult(selfTester);
   const overlay = new SelfTesterOverlay();
   await overlay.createOverlay(selfTester);
 }
 
 interface testsFn {
   (): Promise<void>;
+}
+
+async function transmitTestResult(testResult: SelfTester) {
+    const response = await fetch('http://localhost:3000/api/tests', {
+        method: 'POST',
+        mode: "no-cors",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(testResult),
+    });
+    const result = response.ok;
+    console.log(result);
 }
 
 async function repeatTestsOnSPA(tests: testsFn) {
@@ -54,7 +68,7 @@ class SelfTesterOverlay {
             Integration Type: ${selfTester.integrationType}
           </p>
           <p class="sovendus-overlay-font" style="margin:0 !important">
-            Browser: ${selfTester.getBrowserName()}
+            Browser: ${selfTester.browserName}
           </p>
           ${this.createInnerOverlay(selfTester)}
         </div>
