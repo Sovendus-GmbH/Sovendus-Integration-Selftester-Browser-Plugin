@@ -2,11 +2,8 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import type {
-  TestsInfoType} from "@src/tests/testUtils/testCaseGenerator";
-import {
-  generateTests
-} from "@src/tests/testUtils/testCaseGenerator";
+import type { TestsInfoType } from "@src/tests/testUtils/testCaseGenerator";
+import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 import {
   malformedArrayData,
@@ -117,7 +114,7 @@ executeOverlayTests({
         {
           testName: "MalformedObject",
           sovAppData: sovAppDataMalformedObjects,
-          expectedElementValue: "[object Object]",
+          expectedElementValue: "[object-Object]",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -125,7 +122,7 @@ executeOverlayTests({
         {
           testName: "MalformedArray",
           sovAppData: sovAppDataMalformedArray,
-          expectedElementValue: "[object Object]",
+          expectedElementValue: "[object-Object]",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.trafficMediumNumberMalformed,

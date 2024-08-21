@@ -1,4 +1,7 @@
-import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import {
+  StatusCodes,
+  StatusMessageKeyTypes,
+} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 
 import {
@@ -19,8 +22,8 @@ executeOverlayTests({
         {
           testName: "multipleIFramesAreSameOneIFrame",
           sovAppData: sovAppDataEverythingIsOkay,
-          expectedElementValue: false,
-          expectedStatusCode: StatusCodes.Success,
+          expectedElementValue: null,
+          expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
         },
         {
@@ -28,8 +31,8 @@ executeOverlayTests({
           sovAppData: {
             ...sovAppDataEverythingIsOkay,
           },
-          expectedElementValue: false,
-          expectedStatusCode: StatusCodes.Error,
+          expectedElementValue: null,
+          expectedStatusCode: StatusCodes.TestDidNotRun,
           expectedStatusMessageKey: null,
           removeSovIFrame: true,
         },
@@ -44,9 +47,10 @@ executeOverlayTests({
               ...sovAppIFramesAllValidData,
             },
           },
-          expectedElementValue: true,
+          expectedElementValue: 2,
           expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey: null,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.multipleSovIframesDetectedAndAreSame,
         },
         {
           testName: "multipleIFramesAreSameThreeIFramesSame",
@@ -62,9 +66,10 @@ executeOverlayTests({
               ...sovAppIFramesAllValidData,
             },
           },
-          expectedElementValue: true,
+          expectedElementValue: 3,
           expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey: null,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.multipleSovIframesDetectedAndAreSame,
         },
         {
           testName: "multipleIFramesAreSameTwoIFramesDifferent",
@@ -77,9 +82,10 @@ executeOverlayTests({
               ...sovAppIFramesAllValidDataDifferent,
             },
           },
-          expectedElementValue: false,
+          expectedElementValue: 2,
           expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey: null,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.multipleSovIframesDetected,
         },
         {
           testName: "multipleIFramesAreSameThreeIFramesDifferent",
@@ -95,9 +101,10 @@ executeOverlayTests({
               ...sovAppIFramesAllValidData,
             },
           },
-          expectedElementValue: false,
+          expectedElementValue: 3,
           expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey: null,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.multipleSovIframesDetected,
         },
       ],
     }),

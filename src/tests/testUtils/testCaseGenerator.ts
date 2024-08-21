@@ -43,7 +43,9 @@ export function generateTests({
     disableFlexibleIframeJs: testInfo.disableFlexibleIframeJs,
     disableAwinMasterTag: testInfo.disableAwinMasterTag,
     disableAwinSalesTracking: testInfo.disableAwinSalesTracking,
-    deleteSovIFrame: testInfo.removeSovIFrame,
+    disableSovendusDiv: testInfo.disableSovendusDiv,
+    removeSovIFrame: testInfo.removeSovIFrame,
+    flexibleIFrameJsScriptType: testInfo.flexibleIFrameJsScriptType,
   }));
 }
 
@@ -149,7 +151,7 @@ export function generateMalformedDataTests({
         expectedElementValue:
           objectElementValueType === "stringified"
             ? JSON.stringify(malformedObjectData)
-            : "[object Object]",
+            : "[object-Object]",
         expectedStatusCode: StatusCodes.Error,
         expectedStatusMessageKey: expectedMalformedStatusMessageKey,
       },
@@ -159,7 +161,7 @@ export function generateMalformedDataTests({
         expectedElementValue:
           objectElementValueType === "stringified"
             ? JSON.stringify(malformedArrayData)
-            : "[object Object]",
+            : "[object-Object]",
         expectedStatusCode: StatusCodes.Error,
         expectedStatusMessageKey: expectedMalformedStatusMessageKey,
       },
@@ -199,6 +201,7 @@ export type TestsInfoType = {
   disableAwinMasterTag?: boolean;
   disableAwinSalesTracking?: boolean;
   removeSovIFrame?: boolean;
+  flexibleIFrameJsScriptType?: string;
 }[];
 
 export type TestsType = {
@@ -217,5 +220,6 @@ export type TestsType = {
   disableSovendusDiv?: boolean | undefined;
   disableAwinMasterTag?: boolean | undefined;
   disableAwinSalesTracking?: boolean | undefined;
-  deleteSovIFrame?: boolean | undefined;
+  removeSovIFrame?: boolean | undefined;
+  flexibleIFrameJsScriptType?: string | undefined | null;
 }[];

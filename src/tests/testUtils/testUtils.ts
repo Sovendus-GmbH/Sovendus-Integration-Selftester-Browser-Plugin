@@ -76,19 +76,20 @@ export async function executeOverlayTests({
               ? testData.sovAppData()
               : testData.sovAppData;
           const _sovAppData = getSovAppData(sovAppData);
-          driver = await prepareTestPageAndRetry(
-            _sovAppData,
+          driver = await prepareTestPageAndRetry({
+            sovAppData: _sovAppData,
             driver,
             fileUrl,
-            _browser,
-            1,
-            testData.disableFlexibleIframeJs,
-            testData.disableSovendusDiv,
+            browser: _browser,
+            retryCounter: 1,
             isAwinTest,
-            testData.disableAwinMasterTag,
-            testData.disableAwinSalesTracking,
-            testData.deleteSovIFrame
-          );
+            disableFlexibleIframeJs: testData.disableFlexibleIframeJs,
+            disableSovendusDiv: testData.disableSovendusDiv,
+            disableAwinMasterTag: testData.disableAwinMasterTag,
+            disableAwinSalesTracking: testData.disableAwinSalesTracking,
+            removeSovIFrame: testData.removeSovIFrame,
+            flexibleIFrameJsScriptType: testData.flexibleIFrameJsScriptType,
+          });
           const sovSelfTester = await getIntegrationTesterData(driver);
           await testData.testFunction({ driver, sovSelfTester, sovAppData });
         }, 300_000);
@@ -190,19 +191,33 @@ function initializeWebDriver(browser: Browsers) {
   };
 }
 
-async function prepareTestPageAndRetry(
-  sovAppData: SovFinalDataType,
-  driver: WebDriver,
-  fileUrl: string,
-  browser: Browsers,
-  retryCounter: number = 1,
-  disableFlexibleIframeJs: boolean | undefined,
-  disableSovendusDiv: boolean | undefined,
-  isAwinTest: boolean | undefined,
-  disableAwinMasterTag: boolean | undefined,
-  disableAwinSalesTracking: boolean | undefined,
-  removeSovIFrame: boolean | undefined
-): Promise<WebDriver> {
+async function prepareTestPageAndRetry({
+  sovAppData,
+  driver,
+  fileUrl,
+  browser,
+  retryCounter,
+  disableFlexibleIframeJs,
+  disableSovendusDiv,
+  isAwinTest,
+  disableAwinMasterTag,
+  disableAwinSalesTracking,
+  removeSovIFrame,
+  flexibleIFrameJsScriptType = "text/javascript",
+}: {
+  sovAppData: SovFinalDataType;
+  driver: WebDriver;
+  fileUrl: string;
+  browser: Browsers;
+  retryCounter: number;
+  disableFlexibleIframeJs: boolean | undefined;
+  disableSovendusDiv: boolean | undefined;
+  isAwinTest: boolean | undefined;
+  disableAwinMasterTag: boolean | undefined;
+  disableAwinSalesTracking: boolean | undefined;
+  removeSovIFrame: boolean | undefined;
+  flexibleIFrameJsScriptType: string | undefined | null;
+}): Promise<WebDriver> {
   let _driver = driver;
   try {
     await executeWithTimeout(async () => {
@@ -237,7 +252,7 @@ async function prepareTestPageAndRetry(
             ? ""
             : `
               var script = document.createElement("script");
-              script.type = "text/javascript";
+              script.type = ${flexibleIFrameJsScriptType === "undefined" ? undefined : typeof flexibleIFrameJsScriptType === "string" ? `"${flexibleIFrameJsScriptType}"` : flexibleIFrameJsScriptType};
               script.async = true;
               script.src =
                 "https://testing4.sovendus.com/sovabo/common/js/flexibleIframe.js";
@@ -317,7 +332,7 @@ async function prepareTestPageAndRetry(
     // }
     // const { driver: newDriver } = initializeWebDriver(browser);
     // _driver = newDriver;
-    _driver = await prepareTestPageAndRetry(
+    _driver = await prepareTestPageAndRetry({
       sovAppData,
       driver,
       fileUrl,
@@ -328,13 +343,14 @@ async function prepareTestPageAndRetry(
       isAwinTest,
       disableAwinMasterTag,
       disableAwinSalesTracking,
-      removeSovIFrame
-    );
+      removeSovIFrame,
+      flexibleIFrameJsScriptType,
+    });
   }
   return _driver;
 }
 
-const testTimout = 30000;
+const testTimout = 40000;
 
 async function waitForTestOverlay(driver: WebDriver) {
   await driver.wait(

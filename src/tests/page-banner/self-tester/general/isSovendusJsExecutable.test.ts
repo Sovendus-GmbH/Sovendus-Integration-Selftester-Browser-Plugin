@@ -7,7 +7,7 @@ import {
 } from "../../../testUtils/sovAppData";
 import { executeOverlayTests } from "../../../testUtils/testUtils";
 
-// Was ist der Unterschied zwischen SovendusJs und FlexibleIFrameJS
+// Cookie tool abgelehnt
 
 executeOverlayTests({
   testName: "isSovendusJsExecutable",

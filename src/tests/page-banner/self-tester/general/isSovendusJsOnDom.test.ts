@@ -12,6 +12,8 @@ import { executeOverlayTests } from "../../../testUtils/testUtils";
 
 // Mit Marcus schauen wie man eine andere Fehlermeldung einbauen könnte die besser passt, wenn das sovendusJs gar nicht ausgeführt wird
 
+// Timeout hinzufügen, damit SovendusJs eine Sekunde nach FlexibleIFrameJS ausgeführt wird
+
 executeOverlayTests({
   testName: "isSovendusJsOnDom",
   tests: [

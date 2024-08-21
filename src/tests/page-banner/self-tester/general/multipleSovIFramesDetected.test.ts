@@ -26,7 +26,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
           },
           expectedElementValue: false,
-          expectedStatusCode: StatusCodes.Error,
+          expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
           removeSovIFrame: true,
         },

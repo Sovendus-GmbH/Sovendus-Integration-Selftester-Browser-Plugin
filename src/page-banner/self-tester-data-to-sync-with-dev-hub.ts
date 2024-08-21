@@ -30,7 +30,7 @@ export interface TestResultResponseDataType {
   sovIFramesAmount?: TestResultType<number | undefined>;
   multipleIFramesAreSame?: TestResultType<number | undefined>;
   flexibleIFrameOnDOM?: TestResultType<boolean | undefined>;
-  isFlexibleIframeExecutable?: TestResultType<boolean | undefined>;
+  isFlexibleIframeExecutable?: TestResultType<boolean | string | undefined>;
   isSovendusJsOnDom?: TestResultType<boolean | undefined>;
   isSovendusJsExecutable?: TestResultType<boolean | string | undefined>;
 }

@@ -2,7 +2,10 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
+import {
+  generateMalformedDataTests,
+  generateTests,
+} from "@src/tests/testUtils/testCaseGenerator";
 
 import {
   sovAppDataEverythingIsOkay,
@@ -30,9 +33,31 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.missingIframeContainerId,
-          disableFlexibleIframeJs: true,
+        },
+        {
+          testName: "iframeContainerIdWithSpaces",
+          sovAppData: {
+            ...sovAppDataUndefinedButIsOkay,
+            sovIframes1: {
+              ...sovAppDataEverythingIsOkay,
+              iframeContainerId: "sovendus integration container",
+            },
+          },
+          expectedElementValue: "sovendus integration container",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.iframeContainerIdHasSpaces,
         },
       ],
+    }),
+    ...generateMalformedDataTests({
+      elementKey: "iframeContainerId",
+      expectedMalformedStatusMessageKey:
+        StatusMessageKeyTypes.iframeContainerIdMalformed,
+      expectedMissingStatusMessageKey:
+        StatusMessageKeyTypes.missingIframeContainerId,
+      objectElementValueType: "objectObject",
+      undefinedValue: null,
     }),
   ],
 });
