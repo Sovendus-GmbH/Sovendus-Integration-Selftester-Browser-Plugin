@@ -11,7 +11,7 @@ import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
   sovAppDataMalformedButIsOkay,
-  sovAppIframesAllValidData,
+  sovAppIFramesAllValidData,
 } from "../../../testUtils/sovAppData";
 
 executeOverlayTests({
@@ -35,7 +35,7 @@ executeOverlayTests({
               ...sovAppConsumerAllValidData,
               consumerYearOfBirth: 1969,
             },
-            sovIframes1: sovAppIframesAllValidData,
+            sovIframes1: sovAppIFramesAllValidData,
           },
           expectedElementValue: "1969",
           expectedStatusCode: StatusCodes.SuccessButNeedsReview,
@@ -49,7 +49,7 @@ executeOverlayTests({
               ...sovAppConsumerAllValidData,
               consumerYearOfBirth: 1969.13,
             },
-            sovIframes1: sovAppIframesAllValidData,
+            sovIframes1: sovAppIFramesAllValidData,
           },
           expectedElementValue: "1969.13",
           expectedStatusCode: StatusCodes.Error,

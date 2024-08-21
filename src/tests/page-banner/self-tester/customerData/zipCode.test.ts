@@ -10,7 +10,7 @@ import {
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
-  sovAppIframesAllValidData as sovAppIFramesAllValidData,
+  sovAppIFramesAllValidData as sovAppIFramesAllValidData,
 } from "../../../testUtils/sovAppData";
 
 executeOverlayTests({

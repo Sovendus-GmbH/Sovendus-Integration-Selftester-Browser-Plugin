@@ -63,10 +63,9 @@ export const sovTestTrafficMediumNumbers = {
   CBOverlayVNSticky: { trafficMediumNumber: "23" },
 };
 
-export const sovAppIframesAllValidData: SovIframes = {
+export const sovAppIFramesAllValidData: SovIframes = {
   trafficSourceNumber: sovTestTrafficSourceNumber,
-  trafficMediumNumber:
-    sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+  trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
   sessionId: "session-1234",
   timestamp: "1715872691",
   orderId: "order-1234",
@@ -79,13 +78,14 @@ export const sovAppIframesAllValidData: SovIframes = {
 
 export const sovAppDataEverythingIsOkay: SovDataType = {
   sovConsumer: sovAppConsumerAllValidData,
-  sovIframes1: sovAppIframesAllValidData,
+  sovIframes1: sovAppIFramesAllValidData,
 };
 
 export const sovAppDataNoParameterButIsOkay: SovDataType = {
   sovIframes1: {
     trafficSourceNumber: sovTestTrafficSourceNumber,
-    trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
   },
 };
 
@@ -109,7 +109,8 @@ export const sovAppDataMalformedButIsOkay: SovDataType = {
   },
   sovIframes1: {
     trafficSourceNumber: sovTestTrafficSourceNumber,
-    trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     sessionId: true,
     timestamp: "dubidub",
     orderId: false,
@@ -138,7 +139,8 @@ export const sovAppDataMalformedObjectsButIsOkay: SovDataType = {
   },
   sovIframes1: {
     trafficSourceNumber: sovTestTrafficSourceNumber,
-    trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     sessionId: malformedObjectData,
     timestamp: malformedObjectData,
     orderId: malformedObjectData,
@@ -194,7 +196,8 @@ export const sovAppDataNumberButIsOkay: SovDataType = {
   },
   sovIframes1: {
     trafficSourceNumber: sovTestTrafficSourceNumber,
-    trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     sessionId: 1234,
     timestamp: 1234,
     orderId: 1234,
@@ -250,7 +253,8 @@ export const sovAppDataFloatNumberButIsOkay: SovDataType = {
   },
   sovIframes1: {
     trafficSourceNumber: sovTestTrafficSourceNumber,
-    trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     sessionId: 1234.56,
     timestamp: 1234.56,
     orderId: 1234.56,
@@ -278,7 +282,8 @@ export const sovAppDataTrueButIsOkay: SovDataType = {
   },
   sovIframes1: {
     trafficSourceNumber: sovTestTrafficSourceNumber,
-    trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     sessionId: true,
     timestamp: true,
     orderId: true,
@@ -334,7 +339,8 @@ export const sovAppDataFalseButIsOkay: SovDataType = {
   },
   sovIframes1: {
     trafficSourceNumber: sovTestTrafficSourceNumber,
-    trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     sessionId: false,
     timestamp: false,
     orderId: false,
@@ -390,7 +396,8 @@ export const sovAppDataNullButIsOkay: SovDataType = {
   },
   sovIframes1: {
     trafficSourceNumber: sovTestTrafficSourceNumber,
-    trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     sessionId: null,
     timestamp: null,
     orderId: null,
@@ -446,7 +453,8 @@ export const sovAppDataUndefinedButIsOkay: SovDataType = {
   },
   sovIframes1: {
     trafficSourceNumber: sovTestTrafficSourceNumber,
-    trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     sessionId: undefined,
     timestamp: undefined,
     orderId: undefined,
@@ -503,7 +511,8 @@ export const sovAppDataMalformedArrayButIsOkay: SovDataType = {
   },
   sovIframes1: {
     trafficSourceNumber: sovTestTrafficSourceNumber,
-    trafficMediumNumber: sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
+    trafficMediumNumber:
+      sovTestTrafficMediumNumbers.VNSticky.trafficMediumNumber,
     sessionId: malformedArrayData,
     timestamp: malformedArrayData,
     orderId: malformedArrayData,

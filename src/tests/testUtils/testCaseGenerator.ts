@@ -51,6 +51,7 @@ export function generateMalformedDataTests({
   canBeANumber,
   skipNumberCheck,
   objectElementValueType = "stringified",
+  undefinedValue = null,
 }: {
   elementKey: string;
   expectedMalformedStatusMessageKey: StatusMessageKeyTypes;
@@ -58,6 +59,7 @@ export function generateMalformedDataTests({
   canBeANumber?: boolean;
   skipNumberCheck?: boolean;
   objectElementValueType?: "stringified" | "objectObject";
+  undefinedValue?: string | null;
 }): TestsType {
   const testCasesWhenScriptRuns = [
     {
@@ -105,21 +107,21 @@ export function generateMalformedDataTests({
     {
       testName: "Missing",
       sovAppData: sovAppDataNullButIsOkay,
-      expectedElementValue: null,
+      expectedElementValue: undefinedValue,
       expectedStatusCode: StatusCodes.Error,
       expectedStatusMessageKey: expectedMissingStatusMessageKey,
     },
     {
       testName: "MalformedNull",
       sovAppData: sovAppDataNullButIsOkay,
-      expectedElementValue: null,
+      expectedElementValue: undefinedValue,
       expectedStatusCode: StatusCodes.Error,
       expectedStatusMessageKey: expectedMissingStatusMessageKey,
     },
     {
       testName: "MalformedUndefined",
       sovAppData: sovAppDataUndefinedButIsOkay,
-      expectedElementValue: null,
+      expectedElementValue: undefinedValue,
       expectedStatusCode: StatusCodes.Error,
       expectedStatusMessageKey: expectedMissingStatusMessageKey,
     },

@@ -10,7 +10,7 @@ import {
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
-  sovAppIframesAllValidData,
+  sovAppIFramesAllValidData,
 } from "../../../testUtils/sovAppData";
 
 executeOverlayTests({
@@ -31,7 +31,7 @@ executeOverlayTests({
           sovAppData: {
             sovConsumer: sovAppConsumerAllValidData,
             sovIframes1: {
-              ...sovAppIframesAllValidData,
+              ...sovAppIFramesAllValidData,
               orderCurrency: "EURO",
             },
           },
@@ -44,7 +44,7 @@ executeOverlayTests({
           sovAppData: {
             sovConsumer: sovAppConsumerAllValidData,
             sovIframes1: {
-              ...sovAppIframesAllValidData,
+              ...sovAppIFramesAllValidData,
               orderCurrency: "EURO",
             },
           },

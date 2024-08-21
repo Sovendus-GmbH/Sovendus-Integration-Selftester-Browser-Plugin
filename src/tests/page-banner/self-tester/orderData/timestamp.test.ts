@@ -7,7 +7,7 @@ import {
   sovAppConsumerAllValidData,
   sovAppDataMalformedButIsOkay,
   sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
-  sovAppIframesAllValidData,
+  sovAppIFramesAllValidData,
 } from "../../../testUtils/sovAppData";
 import { generateMalformedDataTests } from "@src/tests/testUtils/testCaseGenerator";
 
@@ -23,7 +23,7 @@ executeOverlayTests({
           payload: testValidTimestamp,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: String(Math.floor(testValidTimestamp)),
           },
         };
@@ -44,7 +44,7 @@ executeOverlayTests({
           payload: testValidTimestamp,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: testValidTimestamp,
           },
         };
@@ -65,7 +65,7 @@ executeOverlayTests({
           payload: testValidTimestamp,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: Math.floor(testValidTimestamp),
           },
         };
@@ -86,7 +86,7 @@ executeOverlayTests({
           payload: testValidTimestamp,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: testValidTimestamp,
           },
         };
@@ -109,7 +109,7 @@ executeOverlayTests({
           payload: testTimestamp1MinuteOld,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: String(Math.floor(testTimestamp1MinuteOld)),
           },
         };
@@ -132,7 +132,7 @@ executeOverlayTests({
           payload: testTimestamp1MinuteOld,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: testTimestamp1MinuteOld,
           },
         };
@@ -155,7 +155,7 @@ executeOverlayTests({
           payload: testTimestamp1MinuteOld,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: Math.floor(testTimestamp1MinuteOld),
           },
         };
@@ -178,7 +178,7 @@ executeOverlayTests({
           payload: testTimestamp1MinuteOld,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: testTimestamp1MinuteOld,
           },
         };
@@ -203,7 +203,7 @@ executeOverlayTests({
           payload: testValidTimestampInMilliSeconds,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: String(Math.floor(testValidTimestampInMilliSeconds)),
           },
         };
@@ -224,7 +224,7 @@ executeOverlayTests({
           payload: testValidTimestampInMilliSeconds,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: testValidTimestampInMilliSeconds,
           },
         };
@@ -245,7 +245,7 @@ executeOverlayTests({
           payload: testValidTimestampInMilliSeconds,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: Math.floor(testValidTimestampInMilliSeconds),
           },
         };
@@ -266,7 +266,7 @@ executeOverlayTests({
           payload: testValidTimestampInMilliSeconds,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: testValidTimestampInMilliSeconds,
           },
         };
@@ -290,7 +290,7 @@ executeOverlayTests({
           payload: testTimestamp1MinuteOldInMilliSeconds,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: String(
               Math.floor(testTimestamp1MinuteOldInMilliSeconds),
             ),
@@ -316,7 +316,7 @@ executeOverlayTests({
           payload: testTimestamp1MinuteOldInMilliSeconds,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: testTimestamp1MinuteOldInMilliSeconds,
           },
         };
@@ -340,7 +340,7 @@ executeOverlayTests({
           payload: testTimestamp1MinuteOldInMilliSeconds,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: Math.floor(testTimestamp1MinuteOldInMilliSeconds),
           },
         };
@@ -364,7 +364,7 @@ executeOverlayTests({
           payload: testTimestamp1MinuteOldInMilliSeconds,
           sovConsumer: sovAppConsumerAllValidData,
           sovIframes1: {
-            ...sovAppIframesAllValidData,
+            ...sovAppIFramesAllValidData,
             timestamp: testTimestamp1MinuteOldInMilliSeconds,
           },
         };

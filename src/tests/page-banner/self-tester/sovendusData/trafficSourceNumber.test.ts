@@ -15,7 +15,8 @@ import {
   sovAppDataNull,
   sovAppDataTrue,
   sovAppDataUndefined,
-  sovAppIframesAllValidData,
+  sovAppIFramesAllValidData,
+  sovTestTrafficSourceNumber,
 } from "../../../testUtils/sovAppData";
 import {
   generateTests,
@@ -26,7 +27,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
   {
     testName: "SuccessAsString",
     sovAppData: sovAppDataEverythingIsOkay,
-    expectedElementValue: "7849",
+    expectedElementValue: sovTestTrafficSourceNumber,
     expectedStatusCode: StatusCodes.SuccessButNeedsReview,
     expectedStatusMessageKey: StatusMessageKeyTypes.trafficSourceNumberSuccess,
   },
@@ -34,9 +35,12 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     testName: "SuccessAsNumber",
     sovAppData: {
       sovConsumer: sovAppConsumerAllValidData,
-      sovIframes1: { ...sovAppIframesAllValidData, trafficSourceNumber: 7849 },
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficSourceNumber: Number(sovTestTrafficSourceNumber),
+      },
     },
-    expectedElementValue: "7849",
+    expectedElementValue: sovTestTrafficSourceNumber,
     expectedStatusCode: StatusCodes.SuccessButNeedsReview,
     expectedStatusMessageKey: StatusMessageKeyTypes.trafficSourceNumberSuccess,
   },
@@ -44,7 +48,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     testName: "FailAsFloat",
     sovAppData: {
       sovConsumer: sovAppConsumerAllValidData,
-      sovIframes1: { ...sovAppIframesAllValidData, trafficSourceNumber: 5.5 },
+      sovIframes1: { ...sovAppIFramesAllValidData, trafficSourceNumber: 5.5 },
     },
     expectedElementValue: "5.5",
     expectedStatusCode: StatusCodes.Error,
