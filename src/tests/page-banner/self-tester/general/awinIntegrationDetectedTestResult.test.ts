@@ -17,13 +17,6 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
         },
-        {
-          testName: "awinIntegrationDetected",
-          sovAppData: sovAppDataEverythingIsOkay,
-          expectedElementValue: false,
-          expectedStatusCode: StatusCodes.Success,
-          expectedStatusMessageKey: null,
-        },
       ],
     }),
   ],

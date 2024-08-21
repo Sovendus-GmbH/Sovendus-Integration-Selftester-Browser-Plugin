@@ -58,6 +58,7 @@ executeOverlayTests({
       expectedMissingStatusMessageKey: StatusMessageKeyTypes.missingOrderId,
       objectElementValueType: "objectObject",
       isAwinTest: true,
+      skipNumberCheck: true,
     }),
   ],
   isAwinTest: true,

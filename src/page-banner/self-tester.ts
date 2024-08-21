@@ -61,11 +61,7 @@ export default class SelfTester {
 
   selfTestIntegration(): void {
     const awinIntegrationDetectedTestResult =
-      (this.awinIntegrationDetectedTestResult =
-        this.getAwinIntegrationDetectedTestResult());
-    this.integrationType = this.getIntegrationType(
-      awinIntegrationDetectedTestResult,
-    );
+      this.executeIntegrationTypeTestResults();
     this.browserName = this.getBrowserName();
     this.websiteURL = this.getWebsiteURL();
 
@@ -96,9 +92,9 @@ export default class SelfTester {
         trafficMediumNumber,
       );
     }
-    if (window.transmitTestResult !== false) {
-      void this.transmitTestResult();
-    }
+    // if (window.transmitTestResult !== false) {
+    //   void this.transmitTestResult();
+    // }
   }
 
   getSovConsumerData(): MergedSovConsumer {
@@ -207,30 +203,34 @@ export default class SelfTester {
     );
   }
 
-  getIntegrationType(
-    awinIntegrationDetectedTestResult: TestResultType<boolean>,
-  ): TestResultType<string> {
+  executeIntegrationTypeTestResults(): TestResultType<boolean> {
     const valueTestResult = this.validValueTestResult({
       value: window.sovIframes?.[0]?.integrationType,
       malformedMessageKey: StatusMessageKeyTypes.integrationTypeMalformed,
       missingErrorMessageKey: StatusMessageKeyTypes.integrationTypeMissing,
       successMessageKey: StatusMessageKeyTypes.empty,
     });
-    if (awinIntegrationDetectedTestResult.elementValue) {
-      return new SuccessTestResult<string>({
+
+    this.awinIntegrationDetectedTestResult =
+      this.getAwinIntegrationDetectedTestResult(valueTestResult);
+    if (this.awinIntegrationDetected() && !valueTestResult.elementValue) {
+      this.integrationType = new SuccessTestResult<string>({
         elementValue: `Awin (Merchant ID: ${this.getAwinMerchantId()})`,
       });
+      return this.awinIntegrationDetectedTestResult;
     }
     if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-      return new SuccessTestResult<string>({
+      this.integrationType = new SuccessTestResult<string>({
         elementValue: valueTestResult.elementValue as string,
       });
+      return this.awinIntegrationDetectedTestResult;
     }
-    return new WarningOrFailTestResult<string>({
+    this.integrationType = new WarningOrFailTestResult<string>({
       elementValue: valueTestResult.elementValue || "unknown",
       statusCode: valueTestResult.statusCode,
       statusMessageKey: valueTestResult.statusMessageKey,
     });
+    return this.awinIntegrationDetectedTestResult;
   }
 
   executeAwinTests(
@@ -255,9 +255,13 @@ export default class SelfTester {
     }
   }
 
-  getAwinIntegrationDetectedTestResult(): TestResultType<boolean> {
+  getAwinIntegrationDetectedTestResult(
+    integrationTypeTestResult: TestResultType<string | undefined>,
+  ): TestResultType<boolean> {
     return new SuccessTestResult({
-      elementValue: this.awinIntegrationDetected(),
+      elementValue:
+        this.awinIntegrationDetected() &&
+        !integrationTypeTestResult.elementValue,
     });
   }
 
@@ -1285,21 +1289,21 @@ export default class SelfTester {
     });
   }
 
-  async transmitTestResult(): Promise<void> {
-    try {
-      await fetch("http://localhost:3000/api/testing-plugin", {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(this.getTestResultResponseData()),
-      });
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to transmit sovendus test result - error:", e);
-    }
-  }
+  // async transmitTestResult(): Promise<void> {
+  //   try {
+  //     await fetch("http://localhost:3000/api/testing-plugin", {
+  //       method: "POST",
+  //       mode: "no-cors",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(this.getTestResultResponseData()),
+  //     });
+  //   } catch (e) {
+  //     // eslint-disable-next-line no-console
+  //     console.error("Failed to transmit sovendus test result - error:", e);
+  //   }
+  // }
 
   getTestResultResponseData(): TestResultResponseDataType {
     return {

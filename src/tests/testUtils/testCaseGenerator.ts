@@ -243,6 +243,7 @@ export interface TestOptionsType {
     sovendusJsScriptType?: string | undefined | null;
     removeSovendusJs?: boolean | undefined;
     addConsumerIFrameOneSecTimeout?: boolean | undefined;
+    useAwinMasterTagInRegularIntegration?: boolean | undefined;
   };
 }
 

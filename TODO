@@ -7,6 +7,8 @@
 - handle overlay scrollable screenshot - add tests to check if overlay detection works
 - disable transmit result
 - add tests for usedCouponCode and orderId numbers in strings 
+- rewrite awin flexibleiframe js to testing4
+- use different resize observer - causes recursion errors on ici
 
 ### Todo later
 

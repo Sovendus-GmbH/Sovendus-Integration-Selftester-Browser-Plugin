@@ -218,12 +218,7 @@ function getAwinIntegrationScript({
   }
   const integrationScript = `
         ${salesTrackingScript}
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.defer = "defer";
-        script.src =
-          "https://www.dwin1.com/${sovAwinID}.js";
-        document.body.appendChild(script);
+        ${awinMasterTagScript}
         ${getChangeSovendusJsScriptTypeScript(
           testOptions?.awin?.sovendusJsScriptType,
           testOptions?.awin?.removeSovendusJs,
@@ -232,6 +227,15 @@ function getAwinIntegrationScript({
     `;
   return integrationScript;
 }
+
+const awinMasterTagScript = `
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.defer = "defer";
+        script.src =
+          "https://www.dwin1.com/${sovAwinID}.js";
+        document.body.appendChild(script);
+        `;
 
 function getConsumerAndIframeDataAndAddTimeoutIfEnabled({
   sovAppData,
@@ -296,6 +300,11 @@ function getSovendusIntegrationScript({
             "https://testing4.sovendus.com/sovabo/common/js/flexibleIframe.js";
           document.body.appendChild(script);
         `
+    }
+    ${
+      testOptions?.regular?.useAwinMasterTagInRegularIntegration
+        ? awinMasterTagScript
+        : ""
     }
   `;
   return integrationScript;

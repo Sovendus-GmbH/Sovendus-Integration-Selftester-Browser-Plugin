@@ -25,6 +25,18 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Success,
           expectedStatusMessageKey: null,
         },
+        {
+          testName: "SetWithAwinMasterTag",
+          sovAppData: sovAppDataEverythingIsOkay,
+          expectedElementValue: "test-1.0.0",
+          expectedStatusCode: StatusCodes.Success,
+          expectedStatusMessageKey: null,
+          testOptions: {
+            regular: {
+              useAwinMasterTagInRegularIntegration: true,
+            },
+          },
+        },
       ],
     }),
     ...generateMalformedDataTests({
