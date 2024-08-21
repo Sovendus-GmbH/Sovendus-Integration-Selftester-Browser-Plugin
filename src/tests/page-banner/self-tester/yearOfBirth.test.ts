@@ -12,7 +12,7 @@ executeOverlayTests({
   testName: "yearOfBirthSuccess",
   sovAppData: sovAppDataEverythingIsOkay,
   testFunction: async (driver, sovSelfTester) => {
-    expect(sovSelfTester.consumerYearOfBirth.elementValue).toBe("Smith");
+    expect(sovSelfTester.consumerYearOfBirth.elementValue).toBe(1991);
     expect(sovSelfTester.consumerYearOfBirth.statusCode).toBe(
       StatusCodes.Warning
     );

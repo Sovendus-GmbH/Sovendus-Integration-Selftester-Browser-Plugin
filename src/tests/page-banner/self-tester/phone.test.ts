@@ -1,0 +1,32 @@
+import {
+  StatusCodes,
+  StatusMessageKeyTypes,
+} from "@src/page-banner/self-tester";
+import { executeOverlayTests } from "../../testUtils";
+import { sovAppDataEverythingIsOkay, sovAppDataNoParameterButIsOkay } from "../sovAppData";
+
+executeOverlayTests({
+  testName: "phoneSuccess",
+  sovAppData: sovAppDataEverythingIsOkay,
+  testFunction: async (driver, sovSelfTester) => {
+    expect(sovSelfTester.consumerPhone.elementValue).toBe("+4915512005211");
+    expect(sovSelfTester.consumerPhone.statusCode).toBe(
+      StatusCodes.Warning
+    );
+    expect(sovSelfTester.consumerPhone.statusMessageKey).toBe(
+      StatusMessageKeyTypes.consumerPhoneSuccess
+    );
+  },
+});
+
+executeOverlayTests({
+  testName: "phoneMissing",
+  sovAppData: sovAppDataNoParameterButIsOkay,
+  testFunction: async (driver, sovSelfTester) => {
+    expect(sovSelfTester.consumerPhone.elementValue).toBe(undefined);
+    expect(sovSelfTester.consumerPhone.statusCode).toBe(StatusCodes.Error);
+    expect(sovSelfTester.consumerPhone.statusMessageKey).toBe(
+      StatusMessageKeyTypes.missingConsumerPhone
+    );
+  },
+});

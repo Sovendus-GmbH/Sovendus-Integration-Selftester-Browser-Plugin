@@ -339,9 +339,9 @@ export default class SelfTester {
     consumer: SovApplicationConsumer,
     consumerEmail: TestResult
   ): TestResult {
-    let statusCode: StatusCode = StatusCodes.Success;
+    let statusCode: StatusCode = StatusCodes.TestDidNotRun;
     let elementValue: ElementValue = undefined;
-    let statusMessageKey: StatusMessageKeyTypes;
+    let statusMessageKey: StatusMessageKeyTypes | undefined = undefined;
     if (!consumerEmail.elementValue) {
       const testResult = this.validValueTestResult(
         consumer.emailHash,
@@ -350,17 +350,19 @@ export default class SelfTester {
       );
       statusCode = testResult.statusCode;
       elementValue = testResult.elementValue;
-      if (testResult.statusCode === 0) {
+      if (testResult.statusCode === StatusCodes.Warning) {
         const hashIsValid = this.checkIfValidMd5Hash(
           String(testResult.elementValue)
         );
         if (hashIsValid) {
+          statusCode = StatusCodes.Warning;
           statusMessageKey = StatusMessageKeyTypes.consumerEmailHashSuccess;
         } else {
           statusCode = StatusCodes.Error;
           statusMessageKey = StatusMessageKeyTypes.consumerEmailNotMD5Hash;
         }
-      } else if (testResult.statusCode === 2) {
+      } else if (testResult.statusCode === StatusCodes.Error) {
+        statusCode = StatusCodes.Error;
         statusMessageKey = testResult.statusMessageKey;
       }
     }
@@ -1009,6 +1011,7 @@ class TestResult {
   }
 
   getFormattedStatusMessage(): string {
+    try{
     if (this.statusCode === StatusCodes.Success) {
       return (
         String(this.elementValue ? this.elementValue : "") +
@@ -1036,6 +1039,9 @@ class TestResult {
       )}`;
     }
     return "";
+  }catch(error){
+    throw new Error("getFormattedStatusMessage() crashed: " + error + "\n\nElementValue: " + this.elementValue + "\nStatusCode: " + this.statusCode + "\nStatusMessageKey: " + this.statusMessageKey)
+  }
   }
 
   getFormattedGeneralStatusMessage(): string {
