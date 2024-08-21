@@ -1,11 +1,15 @@
-var overlay = document.getElementById("outerSovedusIntegrationMethodCheckerOverlay");
+var overlay = document.getElementById(
+  "outerSovedusIntegrationMethodCheckerOverlay"
+);
 if (!overlay) {
   class availableMethodsChecker {
     apiKeys: string[] = [
       "whz2mjdra9s0s0s683zodmidj6mo5d1v3gas3hbglcp73j6e16ufvo8k5i7lofnengl94u",
       "wr9wyithqrnw9nnxuja2yjw2gpcr83cytckmjzcjbxzobm57wjcs0c82aazqm9aufog6v2",
     ];
-    supportedSystems: { [key: string]: supportedSystem } = {
+    supportedSystems: {
+      [key in SupportedSystemsKeyType]: SupportedSystemType;
+    } = {
       WooCommerce: {
         name: "WooCommerce",
         docsLink:
@@ -82,7 +86,7 @@ if (!overlay) {
           "https://github.com/Sovendus-GmbH/Sovendus-generic-documentation-for-Voucher-Network-and-Checkout-Benefits?tab=readme-ov-file",
       },
     };
-    statusCodes: statusCodes = {
+    statusCodes: StatusCodesType = {
       success: "success",
       fail: "fail",
     };
@@ -112,7 +116,7 @@ if (!overlay) {
         );
       } else if (cmsName && this.supportedSystems[cmsName]) {
         availableMethods = this.formatIntegrationOption(
-          this.supportedSystems[webFrameworkName]
+          this.supportedSystems[cmsName]
         );
       } else if (webFrameworkName && this.supportedSystems[webFrameworkName]) {
         availableMethods = this.formatIntegrationOption(
@@ -154,7 +158,7 @@ if (!overlay) {
       return availableMethodsText;
     }
     formatIntegrationOption(
-      supportedSystem: supportedSystem,
+      supportedSystem: SupportedSystemType,
       titlePrefix: string | null = "Integration via ",
       titleSuffix: string | null = null
     ): string {
@@ -179,13 +183,13 @@ if (!overlay) {
     }
 
     async getAvailableMethodsResponse(): Promise<{
-      data: availableMethodsResponse;
-      responseStatusCode: statusCode;
-      responseErrorMessage: string | undefined;
+      data: AvailableMethodsResponseType;
+      responseStatusCode: StatusCodeType;
+      responseErrorMessage: string;
     }> {
       const randomIndex = Math.floor(Math.random() * this.apiKeys.length);
-      let responseStatusCode: statusCode;
-      let responseErrorMessage: string;
+      let responseStatusCode: StatusCodeType;
+      let responseErrorMessage: string = "";
       try {
         const response = await fetch(
           `https://whatcms.org/API/Tech?key=${this.apiKeys[randomIndex]}&url=${window.location.origin}`
@@ -195,11 +199,11 @@ if (!overlay) {
         console.log("CMS detection result:", data);
         return { data, responseStatusCode, responseErrorMessage };
       } catch (error) {
-        console.error("Error fetching data:", error.message);
+        console.error("Error fetching data:", (error as any)?.message || error);
         responseStatusCode = this.statusCodes.fail;
         responseErrorMessage = this.formatErrorMessage(
           "Error fetching data:",
-          error.message
+          (error as any)?.message || error
         );
         return { data: {}, responseStatusCode, responseErrorMessage };
       }
@@ -211,45 +215,50 @@ if (!overlay) {
       `;
     }
 
-    getAvailableMethodsFromResponse(responseJson: availableMethodsResponse) {
-      let statusCode: statusCode = this.statusCodes.fail;
+    getAvailableMethodsFromResponse(
+      responseJson: AvailableMethodsResponseType
+    ) {
+      let statusCode: StatusCodeType = this.statusCodes.fail;
       let shopSystemName = "";
       let cmsName = "";
       let errorMessage = "";
       let webFrameworkName = "";
-
-      for (const technology of responseJson.results) {
-        if (technology.categories.includes("E-commerce")) {
-          statusCode = this.statusCodes.success;
-          shopSystemName += shopSystemName
-            ? `, ${technology.name}`
-            : technology.name;
-        }
-        if (technology.categories.includes("CMS")) {
-          cmsName += cmsName ? `, ${technology.name}` : technology.name;
-        }
-        if (technology.categories.includes("Web Framework")) {
-          webFrameworkName += webFrameworkName
-            ? `, ${technology.name}`
-            : technology.name;
-        }
-      }
-
-      if (statusCode === this.statusCodes.fail && cmsName === "") {
-        errorMessage = responseJson.result.msg;
-        if (![201, 202].includes(responseJson.result.code)) {
-          if (responseJson.result.code === 200) {
-            errorMessage = "Error, no CMS or Shopsystem detected";
-          } else {
-            console.error("Error");
+      if (responseJson.results && responseJson.result) {
+        for (const technology of responseJson.results) {
+          if (technology.categories.includes("E-commerce")) {
+            statusCode = this.statusCodes.success;
+            shopSystemName += shopSystemName
+              ? `, ${technology.name}`
+              : technology.name;
+          }
+          if (technology.categories.includes("CMS")) {
+            cmsName += cmsName ? `, ${technology.name}` : technology.name;
+          }
+          if (technology.categories.includes("Web Framework")) {
+            webFrameworkName += webFrameworkName
+              ? `, ${technology.name}`
+              : technology.name;
           }
         }
+
+        if (statusCode === this.statusCodes.fail && cmsName === "") {
+          errorMessage = responseJson.result.msg;
+          if (![201, 202].includes(responseJson.result.code)) {
+            if (responseJson.result.code === 200) {
+              errorMessage = "Error, no CMS or Shopsystem detected";
+            } else {
+              console.error("Error");
+            }
+          }
+        }
+      } else {
+        errorMessage = "Failed to get detection result - unknown error";
       }
 
       return {
-        shopSystemName,
-        cmsName,
-        webFrameworkName,
+        shopSystemName: shopSystemName as SupportedSystemsKeyType,
+        cmsName: cmsName as SupportedSystemsKeyType,
+        webFrameworkName: webFrameworkName as SupportedSystemsKeyType,
         statusCode,
         errorMessage,
       };
@@ -271,12 +280,14 @@ if (!overlay) {
         </div>
       </div>
       `;
-      document.getElementsByTagName("body")[0].appendChild(overlay);
+      document.body.appendChild(overlay);
       const availableMethodsMessage = await this.getAvailableMethodsMessage();
       const sovendusDetectionResultDiv = document.getElementById(
         "sovendusDetectionResult"
       );
-      sovendusDetectionResultDiv.innerHTML = availableMethodsMessage;
+      if (sovendusDetectionResultDiv) {
+        sovendusDetectionResultDiv.innerHTML = availableMethodsMessage;
+      }
     }
 
     getCheckerOverlayStyle(): string {
@@ -338,24 +349,41 @@ if (!overlay) {
   new availableMethodsChecker();
 }
 
-type statusCode = "fail" | "success";
+type StatusCodeType = "fail" | "success";
 
-interface statusCodes {
-  success: statusCode;
-  fail: statusCode;
+interface StatusCodesType {
+  success: StatusCodeType;
+  fail: StatusCodeType;
 }
 
-interface availableMethodsResponse {
-  results?: availableMethodsResponseResults[];
+interface AvailableMethodsResponseType {
+  results?: AvailableMethodsResponseResultsType[];
   result?: { msg: string; code: 200 };
 }
 
-interface availableMethodsResponseResults {
+interface AvailableMethodsResponseResultsType {
   categories: string[];
   name: string;
 }
 
-interface supportedSystem {
+interface SupportedSystemType {
   name: string;
   docsLink: string;
 }
+
+type SupportedSystemsKeyType =
+  | "WooCommerce"
+  | "Shopware"
+  | "Nuxt.js"
+  | "Magento"
+  | "Next.js"
+  | "Shopify"
+  | "OXID eSales"
+  | "OXID eShop Enterprise Edition"
+  | "OXID eShop Community Edition"
+  | "OXID eShop Professional Edition"
+  | "PrestaShop"
+  | "JTL-Shop"
+  | "BigCommerce"
+  | "gtm"
+  | "generic";
