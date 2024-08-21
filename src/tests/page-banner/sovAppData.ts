@@ -1,7 +1,7 @@
 import { SovConsumer, SovIframes } from "@src/page-banner/self-tester";
 
 export function getSovAppData(sovAppData: SovDataType) {
-  const sovData: _SovDataType = {
+  const sovData: SovFinalDataType = {
     sovIframes: [sovAppData.sovIframes1],
   };
   if (sovAppData.sovConsumer) {
@@ -13,7 +13,7 @@ export function getSovAppData(sovAppData: SovDataType) {
   return sovData;
 }
 
-interface _SovDataType {
+export interface SovFinalDataType {
   sovConsumer?: SovConsumer;
   sovIframes: SovIframes[];
 }
@@ -40,7 +40,7 @@ export const sovAppConsumerAllValidData: SovConsumer = {
 
 export const sovAppIframesAllValidData: SovIframes = {
   trafficSourceNumber: "4704",
-  trafficMediumNumber: "2",
+  trafficMediumNumber: "5",
   sessionId: "session-1234",
   timestamp: "1715872691",
   orderId: "order-1234",
@@ -59,7 +59,7 @@ export const sovAppDataEverythingIsOkay: SovDataType = {
 export const sovAppDataNoParameterButIsOkay: SovDataType = {
   sovIframes1: {
     trafficSourceNumber: "4704",
-    trafficMediumNumber: "2",
+    trafficMediumNumber: "5",
   },
 };
 
@@ -79,7 +79,7 @@ export const sovAppDataMalformedButIsOkay: SovDataType = {
   } as unknown,
   sovIframes1: {
     trafficSourceNumber: "4704",
-    trafficMediumNumber: "2",
+    trafficMediumNumber: "5",
     sessionId: true,
     timestamp: "dubidub",
     orderId: false,

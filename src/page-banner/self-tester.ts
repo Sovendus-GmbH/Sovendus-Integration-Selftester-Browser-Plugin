@@ -245,7 +245,8 @@ export default class SelfTester {
     if (valueTestResult.statusCode === StatusCodes.Warning) {
       const validSalutations = ["Mr.", "Mrs."];
       let statusCode: StatusCode = StatusCodes.Warning;
-      let statusMessageKey: StatusMessageKeyTypes = StatusMessageKeyTypes.consumerSalutationSuccess;
+      let statusMessageKey: StatusMessageKeyTypes =
+        StatusMessageKeyTypes.consumerSalutationSuccess;
       if (!validSalutations.includes(String(valueTestResult.elementValue))) {
         statusCode = StatusCodes.Error;
         statusMessageKey = StatusMessageKeyTypes.consumerSalutationNotValid;
@@ -298,7 +299,9 @@ export default class SelfTester {
         statusMessageKey = StatusMessageKeyTypes.consumerYearOfBirthNotValid;
       }
       return new TestResult({
-        elementValue: yearOfBirthTestResult.elementValue,
+        elementValue: isNaN(yearOfBirthNumber)
+          ? yearOfBirthTestResult.elementValue
+          : yearOfBirthNumber,
         statusMessageKey,
         statusCode,
       });
@@ -1011,37 +1014,46 @@ class TestResult {
   }
 
   getFormattedStatusMessage(): string {
-    try{
-    if (this.statusCode === StatusCodes.Success) {
-      return (
-        String(this.elementValue ? this.elementValue : "") +
-        this.getCheckMarkWithLabel()
+    try {
+      if (this.statusCode === StatusCodes.Success) {
+        return (
+          String(this.elementValue ? this.elementValue : "") +
+          this.getCheckMarkWithLabel()
+        );
+      }
+      if (this.statusCode === StatusCodes.Warning) {
+        return `${String(
+          this.elementValue ? this.elementValue : ""
+        )}${this.getInfoMarkWithLabel(
+          this.replaceElementValueInMessage(
+            statusMessages[this.statusMessageKey].infoText
+          )
+        )}`;
+      }
+      if (this.statusCode === StatusCodes.Error) {
+        return `${String(
+          this.elementValue ? this.elementValue : ""
+        )}<span class='sovendus-overlay-error' >${
+          statusMessages[this.statusMessageKey].errorText
+        }</span>${this.getInfoMarkWithLabel(
+          this.replaceElementValueInMessage(
+            statusMessages[this.statusMessageKey].infoText
+          )
+        )}`;
+      }
+      return "";
+    } catch (error) {
+      throw new Error(
+        "getFormattedStatusMessage() crashed: " +
+          error +
+          "\n\nElementValue: " +
+          this.elementValue +
+          "\nStatusCode: " +
+          this.statusCode +
+          "\nStatusMessageKey: " +
+          this.statusMessageKey
       );
     }
-    if (this.statusCode === StatusCodes.Warning) {
-      return `${String(
-        this.elementValue ? this.elementValue : ""
-      )}${this.getInfoMarkWithLabel(
-        this.replaceElementValueInMessage(
-          statusMessages[this.statusMessageKey].infoText
-        )
-      )}`;
-    }
-    if (this.statusCode === StatusCodes.Error) {
-      return `${String(
-        this.elementValue ? this.elementValue : ""
-      )}<span class='sovendus-overlay-error' >${
-        statusMessages[this.statusMessageKey].errorText
-      }</span>${this.getInfoMarkWithLabel(
-        this.replaceElementValueInMessage(
-          statusMessages[this.statusMessageKey].infoText
-        )
-      )}`;
-    }
-    return "";
-  }catch(error){
-    throw new Error("getFormattedStatusMessage() crashed: " + error + "\n\nElementValue: " + this.elementValue + "\nStatusCode: " + this.statusCode + "\nStatusMessageKey: " + this.statusMessageKey)
-  }
   }
 
   getFormattedGeneralStatusMessage(): string {
