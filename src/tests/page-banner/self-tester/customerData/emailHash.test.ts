@@ -10,7 +10,7 @@ import {
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
-// TODO add more tests
+// TODO add more tests (EmptyString Test)
 
 executeOverlayTests({
   testName: "emailHash",

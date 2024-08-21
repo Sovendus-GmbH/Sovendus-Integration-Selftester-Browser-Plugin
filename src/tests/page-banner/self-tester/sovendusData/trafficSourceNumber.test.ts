@@ -21,6 +21,8 @@ import type { TestsInfoType } from "@src/tests/testUtils/testCaseGenerator";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
+// TODO Add more malformed tests and the EmptyString Test
+
 const testCasesWhenScriptRuns: TestsInfoType = [
   {
     testName: "SuccessAsString",

@@ -1109,7 +1109,8 @@ export default class SelfTester {
       value !== undefined &&
       value !== "undefined" &&
       value !== null &&
-      value !== "null"
+      value !== "null" &&
+      value !== ""
     ) {
       if (typeof value === "object") {
         statusCode = StatusCodes.Error;

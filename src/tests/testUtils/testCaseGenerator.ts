@@ -7,6 +7,7 @@ import type { SovDataType } from "./sovAppData";
 import {
   malformedArrayData,
   malformedObjectData,
+  sovAppDataEmptyStringButIsOkay,
   sovAppDataFalseButIsOkay,
   sovAppDataFloatNumberButIsOkay,
   sovAppDataMalformedArrayButIsOkay,
@@ -109,6 +110,13 @@ export function generateMalformedDataTests({
               expectedStatusMessageKey: expectedMalformedStatusMessageKey,
             },
           ]),
+    {
+      testName: "EmptyString",
+      sovAppData: sovAppDataEmptyStringButIsOkay,
+      expectedElementValue: undefinedValue,
+      expectedStatusCode: StatusCodes.Error,
+      expectedStatusMessageKey: expectedMissingStatusMessageKey,
+    },
     {
       testName: "Missing",
       sovAppData: sovAppDataNullButIsOkay,
