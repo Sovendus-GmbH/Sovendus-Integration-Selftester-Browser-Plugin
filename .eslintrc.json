@@ -14,15 +14,14 @@
   "parserOptions": {
     "ecmaVersion": 12,
     "sourceType": "module",
-    "project": "./tsconfig.json" // Required for type-checking rules
+    "project": "./tsconfig.json"
   },
   "plugins": [
     "simple-import-sort",
     "eslint-plugin-unused-imports",
     "@typescript-eslint",
     "prettier",
-    "import",
-    "eslint-plugin-no-relative-import-paths"
+    "import"
   ],
   "rules": {
     // Import sorting and unused import rules
@@ -31,6 +30,7 @@
     "unused-imports/no-unused-imports": "error",
     // TypeScript-specific rules
     "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/consistent-type-imports": "error", // Enforce consistent usage of type imports
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -47,10 +47,7 @@
     "no-console": "warn", // Warn when console statements are used
     "no-debugger": "error", // Disallow the use of debugger
     "curly": "error", // Require consistent use of curly braces for blocks
-    "eqeqeq": [
-      "error",
-      "always"
-    ], // Enforce strict equality checks (=== and !==)
+    "eqeqeq": ["error", "always"], // Enforce strict equality checks (=== and !==)
     "no-else-return": "error", // Disallow return before else
     "no-empty-function": "error", // Disallow empty functions
     "no-implied-eval": "error", // Disallow implied eval() through setTimeout, setInterval, etc.
@@ -63,28 +60,13 @@
         "avoidEscape": true
       }
     ], // Enforce double quotes, allow single quotes if escaping
-    "jsx-quotes": [
-      "error",
-      "prefer-double"
-    ], // Enforce double quotes in JSX attributes
+    "jsx-quotes": ["error", "prefer-double"], // Enforce double quotes in JSX attributes
     // Import rules
     "import/order": [
       "error",
       {
-        "groups": [
-          [
-            "builtin",
-            "external",
-            "internal"
-          ]
-        ]
+        "groups": [["builtin", "external", "internal"]]
       }
-    ], // Enforce consistent import order
-    "no-relative-import-paths/no-relative-import-paths": [
-      "error",
-      {
-        "allowSameFolder": true
-      }
-    ] // Disallow relative imports to enforce using absolute imports
+    ] // Enforce consistent import order
   }
 }

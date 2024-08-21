@@ -1,4 +1,5 @@
 import type SelfTester from "@src/page-banner/self-tester";
+import type { ExplicitAnyType } from "@src/page-banner/self-tester";
 import { platform } from "os";
 import { resolve } from "path";
 import type { WebDriver } from "selenium-webdriver";
@@ -322,7 +323,7 @@ async function prepareTestPageAndRetry({
     }
     // eslint-disable-next-line no-console
     console.log(
-      `Banner didn't load, trying again - tried already ${retryCounter} times - error: ${error}`,
+      `Banner didn't load, trying again - tried already ${retryCounter} times - error: ${error as ExplicitAnyType}`,
     );
     retryCounter++;
     // try {

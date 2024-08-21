@@ -3,14 +3,14 @@ import {
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import {
+  sovAppDataEverythingIsOkay,
+  sovAppDataMalformedButIsOkay,
+} from "@src/tests/testUtils/sovAppData";
+import {
   generateMalformedDataTests,
   generateTests,
 } from "@src/tests/testUtils/testCaseGenerator";
-import {
-  sovAppDataEverythingIsOkay,
-  sovAppDataMalformedButIsOkay,
-} from "src/tests/testUtils/sovAppData";
-import { executeOverlayTests } from "src/tests/testUtils/testUtils";
+import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
 executeOverlayTests({
   testName: "country",

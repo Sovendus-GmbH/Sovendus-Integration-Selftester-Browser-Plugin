@@ -2,8 +2,8 @@ import { BrowserTypes } from "@src/page-banner/self-tester-data-to-sync-with-dev
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "src/tests/testUtils/sovAppData";
-import { Browsers, executeOverlayTests } from "src/tests/testUtils/testUtils";
+} from "@src/tests/testUtils/sovAppData";
+import { Browsers, executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
 executeOverlayTests({
   testName: "browserName",

@@ -2,12 +2,12 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataUndefinedButIsOkay,
-} from "src/tests/testUtils/sovAppData";
-import { executeOverlayTests } from "src/tests/testUtils/testUtils";
+} from "@src/tests/testUtils/sovAppData";
+import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
+import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
 executeOverlayTests({
   testName: "sovendusDivFound",

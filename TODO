@@ -8,7 +8,7 @@
 - handle if a test fails - still continue and show error in overlay - also use new status code testFailed
 - dont compile tests with build
 - transmit multiple iframes content when they are different
-- handle overlay scrollable screenshot
+- handle overlay scrollable screenshot - add tests to check if overlay detection works
 - Remove Timestamp when integrated using Awin
 - show overlay not detected when show hide button is clicked
 

@@ -3,17 +3,17 @@ import {
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import {
-  generateMalformedDataTests,
-  generateTests,
-} from "@src/tests/testUtils/testCaseGenerator";
-import {
   sovAppDataEverythingIsOkay,
   sovAppDataFloatNumberButIsOkay,
   sovAppDataMalformedButIsOkay,
   sovAppDataNumberButIsOkay,
   sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
-} from "src/tests/testUtils/sovAppData";
-import { executeOverlayTests } from "src/tests/testUtils/testUtils";
+} from "@src/tests/testUtils/sovAppData";
+import {
+  generateMalformedDataTests,
+  generateTests,
+} from "@src/tests/testUtils/testCaseGenerator";
+import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
 const tests = [
   ...generateTests({

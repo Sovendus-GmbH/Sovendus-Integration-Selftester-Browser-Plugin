@@ -3,16 +3,16 @@ import {
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import {
-  generateMalformedDataTests,
-  generateTests,
-} from "@src/tests/testUtils/testCaseGenerator";
-import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
   sovAppDataMalformedButIsOkay,
   sovAppIFramesAllValidData,
-} from "src/tests/testUtils/sovAppData";
-import { executeOverlayTests } from "src/tests/testUtils/testUtils";
+} from "@src/tests/testUtils/sovAppData";
+import {
+  generateMalformedDataTests,
+  generateTests,
+} from "@src/tests/testUtils/testCaseGenerator";
+import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
 executeOverlayTests({
   testName: "yearOfBirth",

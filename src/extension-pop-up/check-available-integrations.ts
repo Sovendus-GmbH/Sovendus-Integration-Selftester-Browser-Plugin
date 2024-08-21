@@ -1,5 +1,3 @@
-import type { ExplicitAnyType } from "@src/page-banner/self-tester";
-
 function _checkAvailableIntegrations(): void {
   const overlay = document.getElementById(
     "outerSovedusIntegrationMethodCheckerOverlay",
@@ -202,17 +200,16 @@ function _checkAvailableIntegrations(): void {
           );
           const data = await response.json();
           responseStatusCode = this.statusCodes.success;
-          console.log("CMS detection result:", data);
           return { data, responseStatusCode, responseErrorMessage };
-        } catch (error) {
-          console.error(
-            "Error fetching data:",
-            (error as ExplicitAnyType)?.message || error,
-          );
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, no-console
+          console.error("Error fetching data:", error?.message || error);
           responseStatusCode = this.statusCodes.fail;
           responseErrorMessage = this.formatErrorMessage(
             "Error fetching data:",
-            (error as ExplicitAnyType)?.message || error,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+            error?.message || error,
           );
           return { data: {}, responseStatusCode, responseErrorMessage };
         }
