@@ -129,9 +129,7 @@ export default class SelfTester {
       );
       this.consumerPhone = this.getConsumerPhoneTestResult(this.sovConsumer);
       this.consumerCity = this.getConsumerCityTestResult(this.sovConsumer);
-      this.consumerCountry = this.getConsumerCountryTestResult(
-        this.sovConsumer
-      );
+      this.consumerCountry = this.getConsumerCountryTestResult();
       this.iframeContainerId = this.getIframeContainerIdTestResult();
       this.isEnabledInBackend = this.getIsEnabledInBackendTestResult(
         this.wasExecuted
@@ -242,9 +240,9 @@ export default class SelfTester {
       StatusMessageKeyTypes.missingConsumerSalutation,
       StatusMessageKeyTypes.consumerSalutationSuccess
     );
-    if (valueTestResult.statusCode === StatusCodes.Warning) {
+    if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
       const validSalutations = ["Mr.", "Mrs."];
-      let statusCode: StatusCode = StatusCodes.Warning;
+      let statusCode: StatusCode = StatusCodes.SuccessButNeedsReview;
       let statusMessageKey: StatusMessageKeyTypes =
         StatusMessageKeyTypes.consumerSalutationSuccess;
       if (!validSalutations.includes(String(valueTestResult.elementValue))) {
@@ -284,10 +282,12 @@ export default class SelfTester {
       StatusMessageKeyTypes.missingConsumerYearOfBirth,
       StatusMessageKeyTypes.consumerYearOfBirthSuccess
     );
-    if (yearOfBirthTestResult.statusCode === StatusCodes.Warning) {
+    if (
+      yearOfBirthTestResult.statusCode === StatusCodes.SuccessButNeedsReview
+    ) {
       const validFromYear: number = 1890;
       const validToYear: number = 2024;
-      let statusCode: StatusCode = StatusCodes.Warning;
+      let statusCode: StatusCode = StatusCodes.SuccessButNeedsReview;
       const yearOfBirthNumber: number = Number(
         yearOfBirthTestResult.elementValue
       );
@@ -316,13 +316,13 @@ export default class SelfTester {
       StatusMessageKeyTypes.missingConsumerEmail,
       StatusMessageKeyTypes.consumerEmailSuccess
     );
-    if (emailTestResult.statusCode === StatusCodes.Success) {
+    if (emailTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
       function validateEmail(email: string) {
         const re = /\S+@\S+\.\S+/;
         return re.test(email);
       }
       const mailIsValid = validateEmail(String(emailTestResult.elementValue));
-      let statusCode: StatusCode = StatusCodes.Success;
+      let statusCode: StatusCode = StatusCodes.SuccessButNeedsReview;
       let elementValue: ElementValue = emailTestResult.elementValue;
       let statusMessageKey: StatusMessageKeyTypes =
         StatusMessageKeyTypes.consumerEmailSuccess;
@@ -354,12 +354,12 @@ export default class SelfTester {
       );
       statusCode = testResult.statusCode;
       elementValue = testResult.elementValue;
-      if (testResult.statusCode === StatusCodes.Warning) {
+      if (testResult.statusCode === StatusCodes.SuccessButNeedsReview) {
         const hashIsValid = this.checkIfValidMd5Hash(
           String(testResult.elementValue)
         );
         if (hashIsValid) {
-          statusCode = StatusCodes.Warning;
+          statusCode = StatusCodes.SuccessButNeedsReview;
           statusMessageKey = StatusMessageKeyTypes.consumerEmailHashSuccess;
         } else {
           statusCode = StatusCodes.Error;
@@ -424,12 +424,29 @@ export default class SelfTester {
     );
   }
 
-  getConsumerCountryTestResult(consumer: SovApplicationConsumer): TestResult {
-    return this.validValueTestResult(
-      consumer.country,
+  getConsumerCountryTestResult(): TestResult {
+    const valueResult = this.validValueTestResult(
+      window.sovConsumer?.consumerCountry ||
+        window.sovApplication?.consumer?.country,
       StatusMessageKeyTypes.missingConsumerCountry,
       StatusMessageKeyTypes.consumerCountrySuccess
     );
+    let statusCode = valueResult.statusCode;
+    let statusMessageKey = valueResult.statusMessageKey;
+    if (valueResult.elementValue) {
+      const isValidCountry = validCountries.includes(
+        String(valueResult.elementValue)
+      );
+      if (!isValidCountry) {
+        statusCode = StatusCodes.Error;
+        statusMessageKey = StatusMessageKeyTypes.consumerCountryInvalid;
+      }
+    }
+    return new TestResult({
+      elementValue: valueResult.elementValue,
+      statusCode,
+      statusMessageKey,
+    });
   }
 
   getTrafficSourceNumberTestResult(): TestResult {
@@ -616,7 +633,9 @@ export default class SelfTester {
     return new TestResult({
       elementValue: wasExecuted,
       statusMessageKey: undefined,
-      statusCode: wasExecuted ? StatusCodes.Warning : StatusCodes.Error,
+      statusCode: wasExecuted
+        ? StatusCodes.SuccessButNeedsReview
+        : StatusCodes.Error,
     });
   }
 
@@ -832,7 +851,7 @@ export default class SelfTester {
     let statusCode: StatusCode = StatusCodes.Error;
     let statusMessageKey: StatusMessageKeyTypes;
     if (value && value !== "undefined") {
-      statusCode = StatusCodes.Warning;
+      statusCode = StatusCodes.SuccessButNeedsReview;
       elementValue = decodeURIComponent(decodeURI(String(value)));
       statusMessageKey = successMessageKey;
     } else {
@@ -1022,7 +1041,7 @@ class TestResult {
           this.getCheckMarkWithLabel()
         );
       }
-      if (this.statusCode === StatusCodes.Warning) {
+      if (this.statusCode === StatusCodes.SuccessButNeedsReview) {
         return `${String(
           this.elementValue ? this.elementValue : ""
         )}${this.getInfoMarkWithLabel(
@@ -1116,10 +1135,10 @@ class TestResult {
 
 type ElementValue = undefined | null | string | number | boolean;
 export enum StatusCodes {
-  Success = 0,
-  Warning,
-  Error,
-  TestDidNotRun,
+  Success = "Success", // test is 100% success
+  SuccessButNeedsReview = "SuccessButNeedsReview", // is success but needs to be reviewed
+  Error = "Error",
+  TestDidNotRun = "TestDidNotRun",
 }
 type StatusCode = StatusCodes;
 
@@ -1224,6 +1243,24 @@ interface SovWindow extends Window {
 
 declare let window: SovWindow;
 
+const validCountries = [
+  "AT",
+  "CH",
+  "NL",
+  "GB",
+  "IE",
+  "FR",
+  "ES",
+  "BE",
+  "PL",
+  "SE",
+  "DK",
+  "IT",
+  "NO",
+  "PT",
+  "DE",
+];
+
 export enum StatusMessageKeyTypes {
   awinNoSalesTracked = "awinNoSalesTracked",
   awinSaleTrackedAfterScript = "awinSaleTrackedAfterScript",
@@ -1269,6 +1306,7 @@ export enum StatusMessageKeyTypes {
   consumerCitySuccess = "consumerCitySuccess",
   missingConsumerCountry = "missingConsumerCountry",
   consumerCountrySuccess = "consumerCountrySuccess",
+  consumerCountryInvalid = "consumerCountryInvalid",
   missingTrafficSourceNumber = "missingTrafficSourceNumber",
   trafficSourceNumberSuccess = "trafficSourceNumberSuccess",
   missingTrafficMediumNumber = "missingTrafficMediumNumber",
@@ -1562,13 +1600,23 @@ export const statusMessages: {
 
   missingConsumerCountry: {
     errorText: "DATA IS MISSING",
-    infoText: "Make sure to pass the country id of the delivery address.",
+    infoText:
+      "Make sure to pass the country id of the delivery address. Valid are: " +
+      validCountries,
   },
 
   consumerCountrySuccess: {
     errorText: "",
     infoText:
-      "Make sure this value aligns with the country of the delivery address.",
+      "Make sure this value aligns with the country of the delivery address. Valid are: " +
+      validCountries,
+  },
+
+  consumerCountryInvalid: {
+    errorText: "INVALID COUNTRY",
+    infoText:
+      "Make sure this value aligns with the country of the delivery address. Valid are: " +
+      validCountries,
   },
 
   missingTrafficSourceNumber: {

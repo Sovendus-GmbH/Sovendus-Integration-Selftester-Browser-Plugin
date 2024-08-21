@@ -2,12 +2,12 @@ import {
   StatusCodes,
   StatusMessageKeyTypes,
 } from "@src/page-banner/self-tester";
-import { executeOverlayTests } from "../../testUtils";
+import { executeOverlayTests } from "../../../testUtils";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataMalformedButIsOkay,
   sovAppDataNoParameterButIsOkay,
-} from "../sovAppData";
+} from "../../sovAppData";
 
 executeOverlayTests({
   testName: "yearOfBirthSuccess",
@@ -15,7 +15,7 @@ executeOverlayTests({
   testFunction: async ({ sovSelfTester }) => {
     expect(sovSelfTester.consumerYearOfBirth.elementValue).toBe(1991);
     expect(sovSelfTester.consumerYearOfBirth.statusCode).toBe(
-      StatusCodes.Warning
+      StatusCodes.SuccessButNeedsReview
     );
     expect(sovSelfTester.consumerYearOfBirth.statusMessageKey).toBe(
       StatusMessageKeyTypes.consumerYearOfBirthSuccess

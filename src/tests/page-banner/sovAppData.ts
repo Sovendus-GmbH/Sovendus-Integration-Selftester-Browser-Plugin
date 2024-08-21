@@ -69,7 +69,7 @@ export const sovAppDataMalformedButIsOkay: SovDataType = {
     consumerFirstName: 21,
     consumerLastName: 500,
     consumerEmail: "test.002",
-    consumerCountry: "Deutschland",
+    consumerCountry: "Space",
     consumerZipcode: "City",
     consumerPhone: "test@test.de",
     consumerYearOfBirth: "12.06.1991",
