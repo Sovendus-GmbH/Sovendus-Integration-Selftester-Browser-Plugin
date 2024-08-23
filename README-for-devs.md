@@ -44,7 +44,7 @@ npm run build
 
 1. Run the following command to build a test package
    ```bash
-   npm run zip-builds-for-tests
+   npm run build-test-zips
    ```
 2. In Firefox got to the extensions page, click on the settings gear -> debug extensions -> Load Temporary Add-on
 3. Select the Firefox build in the test_zips directory
