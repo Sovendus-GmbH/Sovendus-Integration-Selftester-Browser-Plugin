@@ -2,6 +2,7 @@
 
 ## Selftester Plugin
 
+- check data-cmp-src for flexibleiframejs and sovendusjs
 - prevent firefox and google translates
 - add warning when number is in streetname
 - add button to manually add master tag again, to verify if its due to master tag before sales tracking
