@@ -462,7 +462,10 @@ export default class SelfTester {
       value: consumer.street,
       missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerStreet,
       successMessageKey: StatusMessageKeyTypes.consumerStreetSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerStreetMalformed,
+      malformedMessageKey: StatusMessageKeyTypes.numberInConsumerStreet,
+      numberCheckType: {
+        numbersInStringsAllowed: false,
+      },
     });
   }
 
@@ -997,6 +1000,9 @@ export default class SelfTester {
       missingErrorMessageKey: StatusMessageKeyTypes.missingSessionId,
       successMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
       malformedMessageKey: StatusMessageKeyTypes.sessionIdMalformed,
+      numberCheckType: {
+        numbersInStringsAllowed: true,
+      },
     });
   }
 
@@ -1165,6 +1171,10 @@ export default class SelfTester {
           statusCode = StatusCodes.Error;
           statusMessageKey = malformedMessageKey;
           elementValue = decodeURIComponent(decodeURI(value));
+        } else if (numberCheckType?.numbersInStringsAllowed === false) {
+          statusCode = StatusCodes.Error;
+          statusMessageKey = malformedMessageKey;
+          elementValue = value;
         } else {
           statusCode = StatusCodes.SuccessButNeedsReview;
           elementValue = value;
