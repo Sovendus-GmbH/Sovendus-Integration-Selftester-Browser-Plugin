@@ -52,6 +52,7 @@ export default class SelfTester {
   isSovendusJsOnDom: TestResultType<boolean | undefined>;
   isSovendusJsExecutable: TestResultType<boolean | string | undefined>;
   isUnknownSovendusJsError: TestResultType<boolean | undefined>;
+  isOverlayOrStickyBanner: TestResultType<boolean | undefined>;
 
   awinIntegrationDetectedTestResult: TestResultType<boolean>;
   awinSaleTrackedTestResult: TestResultType<boolean>;
@@ -184,6 +185,8 @@ export default class SelfTester {
     trafficMediumNumber: TestResultType<string | undefined>,
   ): void {
     this.isEnabledInBackend = this.getIsEnabledInBackendTestResult(wasExecuted);
+    this.isOverlayOrStickyBanner = this.checkOverlayOrStickyBannerIntegration();
+    this.isEnabledInBackend = this.getIsEnabledInBackendTestResult(wasExecuted);
     const sovIFramesAmount = (this.sovIFramesAmount =
       this.getSovIFramesAmountTestResult());
     const iFrameContainerId = (this.iFrameContainerId =
@@ -201,6 +204,20 @@ export default class SelfTester {
       trafficSourceNumber,
       trafficMediumNumber,
     );
+  }
+
+  checkOverlayOrStickyBannerIntegration(): TestResultType<boolean> {
+    const isOverlayOrStickyBanner = !!window.sovApplication?.instances?.some(
+      (instance) => {
+        return !!(
+          instance.config?.overlay?.showInOverlay ||
+          instance.stickyBanner?.bannerExists
+        );
+      },
+    );
+    return new SuccessTestResult({
+      elementValue: isOverlayOrStickyBanner,
+    });
   }
 
   executeIntegrationTypeTestResults(): TestResultType<boolean> {
@@ -1469,6 +1486,7 @@ export default class SelfTester {
     this.isSovendusJsOnDom = emptyBooleanUndefinedTestResult;
     this.isSovendusJsExecutable = emptyBooleanStringUndefinedTestResult;
     this.isUnknownSovendusJsError = emptyBooleanUndefinedTestResult;
+    this.isOverlayOrStickyBanner = emptyBooleanUndefinedTestResult;
 
     this.awinIntegrationDetectedTestResult = emptyBooleanTestResult;
     this.awinSaleTrackedTestResult = emptyBooleanTestResult;
@@ -1773,8 +1791,12 @@ interface Banner {
 }
 
 interface Config {
-  overlay?: object;
-  stickyBanner?: object;
+  overlay?: {
+    showInOverlay?: boolean;
+  };
+  stickyBanner?: {
+    bannerExists?: boolean;
+  };
 }
 
 interface Instance {
