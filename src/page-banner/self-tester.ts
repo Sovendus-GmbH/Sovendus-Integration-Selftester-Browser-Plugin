@@ -220,6 +220,47 @@ export default class SelfTester {
     });
   }
 
+  async hideOverlayBanners(hide: boolean): Promise<{
+    foundStickyBanner: boolean;
+    hideStickyBannerSuccess: boolean;
+    foundOverlayBanner: boolean;
+    hideOverlayBannerSuccess: boolean;
+  }> {
+    let hideOverlayBannerSuccess = false;
+    let hideStickyBannerSuccess = false;
+    const sovOverlay = document.getElementsByClassName(
+      "sov-overlay",
+    )?.[0] as HTMLElement | null;
+    if (sovOverlay) {
+      sovOverlay.style.display = hide ? "none" : "block";
+      hideOverlayBannerSuccess = true;
+    }
+    const stickyBanner = document.querySelector(
+      '[id^="sov_"][id$="Toggle"]',
+    ) as HTMLElement;
+    const parentElement = stickyBanner?.parentElement;
+    if (stickyBanner && parentElement) {
+      parentElement.style.display = hide ? "none" : "block";
+      hideStickyBannerSuccess = true;
+      if ([...parentElement.classList].some((cls) => cls.includes("-folded"))) {
+        if (!hide) {
+          stickyBanner.click();
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+    }
+    if (!sovOverlay && (!stickyBanner || !parentElement)) {
+      // eslint-disable-next-line no-console
+      console.error("Error: sovOverlay or sticky banner not found");
+    }
+    return {
+      foundStickyBanner: !!(stickyBanner || parentElement),
+      hideStickyBannerSuccess: hideStickyBannerSuccess,
+      foundOverlayBanner: !!sovOverlay,
+      hideOverlayBannerSuccess: hideOverlayBannerSuccess,
+    };
+  }
+
   executeIntegrationTypeTestResults(): TestResultType<boolean> {
     const valueTestResult = this.validValueTestResult({
       value: window.sovIframes?.[0]?.integrationType,
