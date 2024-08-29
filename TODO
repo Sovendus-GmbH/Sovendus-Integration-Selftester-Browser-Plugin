@@ -2,6 +2,7 @@
 
 ## Selftester Plugin
 
+- add timestamp datetime to older than error message
 - make screenshots from bottom to top (so the last screenshot doesnt cut off as much)
 - allow float numbers for session and order id
 - fix consumerStreet (tests)
