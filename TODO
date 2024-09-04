@@ -26,6 +26,7 @@
 ## Currently working on
 
 - add more malformed tests for number values e.g. no error for trafficSourceNumber: "'5951" and "d5951"
+- Add that LeadingZeros are not allowed in number values
 
 ## Marcus Check
 
