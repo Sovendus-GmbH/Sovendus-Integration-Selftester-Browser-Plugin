@@ -52,7 +52,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficSourceNumber: "123#456",
       },
     },
-    expectedElementValue: encodeURI(encodeURIComponent("123#456")),
+    expectedElementValue: encodeURI("123#456"),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficSourceNumberMalformed,
@@ -122,7 +122,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficSourceNumber: "12  345",
       },
     },
-    expectedElementValue: encodeURI(encodeURIComponent("12  345")),
+    expectedElementValue: encodeURI("12  345"),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficSourceNumberMalformed,
@@ -136,7 +136,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficSourceNumber: "123\t456",
       },
     },
-    expectedElementValue: encodeURI(encodeURIComponent("123\t456")),
+    expectedElementValue: encodeURI("123\t456"),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficSourceNumberMalformed,
@@ -175,7 +175,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficSourceNumber: "1234✓",
       },
     },
-    expectedElementValue: encodeURI(encodeURIComponent("1234✓")),
+    expectedElementValue: encodeURI("1234✓"),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficSourceNumberMalformed,
@@ -211,7 +211,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficSourceNumber: "55 66",
       },
     },
-    expectedElementValue: "55 66",
+    expectedElementValue: encodeURI("55 66"),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficSourceNumberMalformed,
@@ -225,7 +225,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficSourceNumber: "55@66",
       },
     },
-    expectedElementValue: encodeURI(encodeURIComponent("55@66")),
+    expectedElementValue: encodeURIComponent("55@66"),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficSourceNumberMalformed,
@@ -264,7 +264,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficSourceNumber: "55\n66",
       },
     },
-    expectedElementValue: encodeURI(encodeURIComponent("55\n66")),
+    expectedElementValue: encodeURI("55\n66"),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficSourceNumberMalformed,
