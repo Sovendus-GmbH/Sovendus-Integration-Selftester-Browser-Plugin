@@ -12,7 +12,7 @@
     "clean": "rimraf build",
     "lint": "eslint src/**/*.ts --no-ignore --fix",
     "test": "jest --silent=false",
-    "test-it": "jest --silent=false -t=trafficMediumNumber",
+    "test-it": "jest --silent=false -t=consumerStreetNumber_Success",
     "build-and-test": "npm run build-test-zips && npm run test",
     "build-and-test-it": "npm run build-test-zips && npm run test-it",
     "build-test-zips": "npm run lint && npm run build && npm run zip-builds-for-tests",
