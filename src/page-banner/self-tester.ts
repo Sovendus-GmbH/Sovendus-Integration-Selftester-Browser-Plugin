@@ -551,7 +551,7 @@ export default class SelfTester {
   getConsumerStreetNumberTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    return this.validValueTestResult({
+    const valueTestResult = this.validValueTestResult({
       value: consumer.streetNumber,
       missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerStreetNumber,
       successMessageKey: StatusMessageKeyTypes.consumerStreetNumberSuccess,
@@ -561,6 +561,18 @@ export default class SelfTester {
         numbersInStringsAllowed: true,
       },
     });
+    if (
+      valueTestResult.statusCode === StatusCodes.Error &&
+      valueTestResult.elementValue &&
+      /^\d+([A-Za-z]?|\s?\d*[-/]\d*)?$/.test(valueTestResult.elementValue)
+    ) {
+      return new WarningOrFailTestResult({
+        elementValue: valueTestResult.elementValue,
+        statusCode: StatusCodes.SuccessButNeedsReview,
+        statusMessageKey: StatusMessageKeyTypes.consumerStreetNumberSuccess,
+      });
+    }
+    return valueTestResult;
   }
 
   getConsumerZipCodeTestResult(
@@ -1232,7 +1244,7 @@ export default class SelfTester {
         elementValue = value ? "true" : "false";
       } else if (typeof value === "number") {
         if (numberCheckType?.numberTypeAllowed) {
-          if (/^\d+$/.test(String(value))) {
+          if (/^[1-9]\d*$/.test(String(value))) {
             statusCode = StatusCodes.SuccessButNeedsReview;
             statusMessageKey = successMessageKey;
           } else if (numberCheckType?.floatNumbersAllowed) {
@@ -1252,8 +1264,11 @@ export default class SelfTester {
           statusCode = StatusCodes.SuccessButNeedsReview;
           statusMessageKey = successMessageKey;
         } else if (numberCheckType?.stringNumbersAllowed) {
-          if (/^\d+$/.test(String(value))) {
-            // (/^[1-9]\d*$/.test(String(value)))
+          if (
+            numberCheckType?.numberTypeAllowed
+              ? /^[1-9]\d*$/.test(String(value))
+              : /^\+?[0-9]\d*$/.test(String(value))
+          ) {
             statusCode = StatusCodes.SuccessButNeedsReview;
             statusMessageKey = successMessageKey;
           } else if (numberCheckType?.floatNumbersAllowed) {
@@ -1300,9 +1315,14 @@ export default class SelfTester {
           statusMessageKey = malformedMessageKey;
           elementValue = decodeURIComponent(decodeURI(value));
         } else if (
-          !numberCheckType?.numbersInStringsAllowed &&
-          /\d/.test(value)
+          numberCheckType?.numbersInStringsAllowed
+            ? !/^\d+$/.test(value)
+            : /\d/.test(value)
         ) {
+          statusCode = StatusCodes.Error;
+          statusMessageKey = malformedMessageKey;
+          elementValue = value;
+        } else if (/^\s|\s$|\s{2,}/.test(value)) {
           statusCode = StatusCodes.Error;
           statusMessageKey = malformedMessageKey;
           elementValue = value;

@@ -5,7 +5,6 @@ import {
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
-  sovAppDataMalformedButIsOkay,
 } from "@src/tests/testUtils/sovAppData";
 import {
   generateMalformedDataTests,
@@ -41,10 +40,44 @@ executeOverlayTests({
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerSalutationSuccess,
         },
+        // {
+        //   testName: "MalformedInvalidSalutation",
+        //   sovAppData: {
+        //     ...sovAppDataEverythingIsOkay,
+        //     sovConsumer: {
+        //       ...sovAppConsumerAllValidData,
+        //       consumerSalutation: "Dr.",
+        //     },
+        //   },
+        //   expectedElementValue: "Dr.",
+        //   expectedStatusCode: StatusCodes.Error,
+        //   expectedStatusMessageKey:
+        //     StatusMessageKeyTypes.consumerSalutationNotValid,
+        // },
         {
-          testName: "Malformed",
-          sovAppData: sovAppDataMalformedButIsOkay,
-          expectedElementValue: "Mensch.",
+          testName: "MalformedWithNumbers",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerSalutation: "Mr.123",
+            },
+          },
+          expectedElementValue: "Mr.123",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerSalutationNotValid,
+        },
+        {
+          testName: "MalformedWithSpecialChars",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerSalutation: "Mr.#$%",
+            },
+          },
+          expectedElementValue: "Mr.#$%",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerSalutationNotValid,

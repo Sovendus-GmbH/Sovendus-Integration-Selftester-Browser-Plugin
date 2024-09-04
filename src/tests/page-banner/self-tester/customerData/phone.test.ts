@@ -22,7 +22,6 @@ executeOverlayTests({
         {
           testName: "SuccessAsStringLeadingPlus",
           sovAppData: sovAppDataEverythingIsOkay,
-
           expectedElementValue: "+4915512005211",
           expectedStatusCode: StatusCodes.SuccessButNeedsReview,
           expectedStatusMessageKey: StatusMessageKeyTypes.consumerPhoneSuccess,
@@ -64,6 +63,48 @@ executeOverlayTests({
             sovIframes1: sovAppIFramesAllValidData,
           },
           expectedElementValue: "123456.78",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerPhoneMalformed,
+        },
+        {
+          testName: "MalformedWithLetters",
+          sovAppData: {
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerPhone: "49155ABC123",
+            },
+            sovIframes1: sovAppIFramesAllValidData,
+          },
+          expectedElementValue: "49155ABC123",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerPhoneMalformed,
+        },
+        {
+          testName: "MalformedWithSpecialChars",
+          sovAppData: {
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerPhone: "+49-155-1200/5211",
+            },
+            sovIframes1: sovAppIFramesAllValidData,
+          },
+          expectedElementValue: "+49-155-1200/5211",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerPhoneMalformed,
+        },
+        {
+          testName: "MalformedWithSpaces",
+          sovAppData: {
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerPhone: "  +4915512005211 ",
+            },
+            sovIframes1: sovAppIFramesAllValidData,
+          },
+          expectedElementValue: "  +4915512005211 ",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerPhoneMalformed,

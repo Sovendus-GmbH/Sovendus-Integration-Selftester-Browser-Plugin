@@ -23,6 +23,149 @@ executeOverlayTests({
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerLastNameSuccess,
         },
+        {
+          testName: "SuccessWithHyphen",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: "Jean-Luc",
+            },
+          },
+          expectedElementValue: "Jean-Luc",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameSuccess,
+        },
+        {
+          testName: "SuccessWithApostrophe",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: "O'Connor",
+            },
+          },
+          expectedElementValue: "O'Connor",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameSuccess,
+        },
+        {
+          testName: "SuccessWithSpace",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: "Mary Jane",
+            },
+          },
+          expectedElementValue: "Mary Jane",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameSuccess,
+        },
+        {
+          testName: "MalformedWithNumbers",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: "John123",
+            },
+          },
+          expectedElementValue: "John123",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameMalformed,
+        },
+        {
+          testName: "MalformedWithSpecialChars",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: "John!@#",
+            },
+          },
+          expectedElementValue: "John!@#",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameMalformed,
+        },
+        {
+          testName: "WhitespaceOnly",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: "   ",
+            },
+          },
+          expectedElementValue: "   ",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameMalformed,
+        },
+        {
+          testName: "MalformedWithLeadingSpace",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: " John",
+            },
+          },
+          expectedElementValue: " John",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameMalformed,
+        },
+        {
+          testName: "MalformedWithTrailingSpace",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: "John ",
+            },
+          },
+          expectedElementValue: "John ",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameMalformed,
+        },
+        {
+          testName: "TooLongName",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: "ANameThatIsWayTooLongForALastNameToBeAccepted",
+            },
+          },
+          expectedElementValue: "ANameThatIsWayTooLongForALastNameToBeAccepted",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameMalformed,
+        },
+        {
+          testName: "SuccessWithAccentedCharacters",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: "Élodie",
+            },
+          },
+          expectedElementValue: "Élodie",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameSuccess,
+        },
+        {
+          testName: "MalformedWithMultipleSpaces",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerLastName: "John  Doe",
+            },
+          },
+          expectedElementValue: "John  Doe",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerLastNameMalformed,
+        },
       ],
     }),
     ...generateMalformedDataTests({

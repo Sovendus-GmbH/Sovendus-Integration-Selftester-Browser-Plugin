@@ -41,6 +41,62 @@ executeOverlayTests({
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerStreetNumberSuccess,
         },
+        {
+          testName: "MalformedWithLeadingSpaces",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerStreetNumber: "  12  ",
+            },
+          },
+          expectedElementValue: "  12  ",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerStreetNumberMalformed,
+        },
+        {
+          testName: "MalformedWithTrailingSpaces",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerStreetNumber: "12  ",
+            },
+          },
+          expectedElementValue: "12  ",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerStreetNumberMalformed,
+        },
+        {
+          testName: "MalformedWithOnlyLetters",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerStreetNumber: "abc",
+            },
+          },
+          expectedElementValue: "abc",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerStreetNumberMalformed,
+        },
+        {
+          testName: "MalformedWithOnlySpecialChars",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerStreetNumber: "#$%",
+            },
+          },
+          expectedElementValue: "#$%",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerStreetNumberMalformed,
+        },
       ],
     }),
     ...generateMalformedDataTests({
@@ -49,6 +105,7 @@ executeOverlayTests({
         StatusMessageKeyTypes.consumerStreetNumberMalformed,
       expectedMissingStatusMessageKey:
         StatusMessageKeyTypes.missingConsumerStreetNumber,
+      skipNumberCheck: true,
     }),
   ],
 });
