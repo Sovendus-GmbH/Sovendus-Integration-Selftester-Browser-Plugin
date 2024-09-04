@@ -2,6 +2,7 @@
 
 ## Selftester Plugin
 
+- allow number in string in session id + add/adjust tests
 - check data-cmp-src for flexibleiframejs and sovendusjs
 - prevent firefox and google translates
 - add warning when number is in streetname
