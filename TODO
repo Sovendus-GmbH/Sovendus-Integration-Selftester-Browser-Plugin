@@ -3,6 +3,7 @@
 ## Selftester Plugin
 
 - make screenshots from bottom to top (so the last screenshot doesnt cut off as much)
+- allow float numbers for session and order id
 - fix consumerStreet (tests)
 - add more malformed tests for number values e.g. no error for trafficSourceNumber: "'5951" and "d5951"
 - add docs urls to e.g. no div found
