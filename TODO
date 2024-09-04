@@ -2,6 +2,8 @@
 
 ## Selftester Plugin
 
+- fix consumerStreet (tests)
+- add more malformed tests for number values e.g. no error for trafficSourceNumber: "'d5951"
 - add docs urls to e.g. no div found
 - add url to screenshot
 - add button to manually add master tag again, to verify if its due to master tag before sales tracking
