@@ -16,7 +16,7 @@
 - check cors api call to dev hub
 - add error when invalid email hash is used - banner will not load
 - log thrown errors to dev hub api with sovSelfTester, sovIframes and sovConsumer
-- check data-cmp-src for flexibleiframejs and sovendusjs
+- check data-cmp-src for flexibleiframejs and sovendusjs (search all elements for flexibleiframe.js)
 
 ## Tests
 

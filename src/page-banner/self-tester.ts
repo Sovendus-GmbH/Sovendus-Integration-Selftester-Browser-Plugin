@@ -636,37 +636,69 @@ export default class SelfTester {
   }
 
   getTrafficSourceNumberTestResult(): TestResultType<string | undefined> {
-    return this.validValueTestResult({
-      value:
+    return this._getTrafficMediumOrSourceNumberTestResult({
+      trafficSourceOrMediumNumber:
         window.sovIframes?.[0]?.trafficSourceNumber !== undefined
           ? window.sovIframes[0].trafficSourceNumber
           : window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber,
       missingErrorMessageKey: StatusMessageKeyTypes.missingTrafficSourceNumber,
       successMessageKey: StatusMessageKeyTypes.trafficSourceNumberSuccess,
       malformedMessageKey: StatusMessageKeyTypes.trafficSourceNumberMalformed,
-      numberCheckType: {
-        floatNumbersAllowed: false,
-        stringNumbersAllowed: true,
-        numberTypeAllowed: true,
-      },
     });
   }
 
   getTrafficMediumNumberTestResult(): TestResultType<string | undefined> {
-    return this.validValueTestResult({
-      value:
+    return this._getTrafficMediumOrSourceNumberTestResult({
+      trafficSourceOrMediumNumber:
         window.sovIframes?.[0]?.trafficMediumNumber !== undefined
           ? window.sovIframes[0].trafficMediumNumber
           : window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber,
       missingErrorMessageKey: StatusMessageKeyTypes.missingTrafficMediumNumber,
       successMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
       malformedMessageKey: StatusMessageKeyTypes.trafficMediumNumberMalformed,
+    });
+  }
+
+  _getTrafficMediumOrSourceNumberTestResult({
+    trafficSourceOrMediumNumber,
+    missingErrorMessageKey,
+    successMessageKey,
+    malformedMessageKey,
+  }: {
+    trafficSourceOrMediumNumber: ExplicitAnyType;
+    missingErrorMessageKey: StatusMessageKeyTypes;
+    successMessageKey: StatusMessageKeyTypes;
+    malformedMessageKey: StatusMessageKeyTypes;
+  }): TestResultType<string | undefined> {
+    const valueTestResult = this.validValueTestResult({
+      value:
+        typeof trafficSourceOrMediumNumber === "string"
+          ? decodeURIComponent(decodeURI(trafficSourceOrMediumNumber))
+          : trafficSourceOrMediumNumber,
+      missingErrorMessageKey,
+      successMessageKey,
+      malformedMessageKey,
       numberCheckType: {
         floatNumbersAllowed: false,
         stringNumbersAllowed: true,
         numberTypeAllowed: true,
       },
     });
+    if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
+      if (/^[1-9]\d*$/.test(String(valueTestResult.elementValue))) {
+        return new WarningOrFailTestResult({
+          elementValue: valueTestResult.elementValue,
+          statusCode: StatusCodes.SuccessButNeedsReview,
+          statusMessageKey: successMessageKey,
+        });
+      }
+      return new WarningOrFailTestResult({
+        elementValue: valueTestResult.elementValue,
+        statusCode: StatusCodes.Error,
+        statusMessageKey: malformedMessageKey,
+      });
+    }
+    return valueTestResult;
   }
 
   getIframeContainerIdTestResult(
@@ -1239,7 +1271,8 @@ export default class SelfTester {
       } else if (typeof value === "string") {
         if (
           encodeURI(encodeURIComponent("[object Object]")) === value ||
-          encodeURI("[object Object]") === value
+          encodeURI("[object Object]") === value ||
+          "[object Object]" === value
         ) {
           statusCode = StatusCodes.Error;
           statusMessageKey = malformedMessageKey;
@@ -1341,7 +1374,7 @@ export default class SelfTester {
 
   async waitForSovApplicationObject(): Promise<void> {
     let waitedSeconds = 0;
-    while (!this.sovApplicationExists() && waitedSeconds < 10) {
+    while (!this.sovApplicationExists() && waitedSeconds < 5) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       waitedSeconds += 0.5;
     }
