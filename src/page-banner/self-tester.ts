@@ -1018,6 +1018,7 @@ export default class SelfTester {
       malformedMessageKey: StatusMessageKeyTypes.orderIdMalformed,
       numberCheckType: {
         numbersInStringsAllowed: true,
+        floatNumbersAllowed: true,
       },
     });
   }
@@ -1060,6 +1061,7 @@ export default class SelfTester {
       malformedMessageKey: StatusMessageKeyTypes.sessionIdMalformed,
       numberCheckType: {
         numbersInStringsAllowed: true,
+        floatNumbersAllowed: true,
       },
     });
   }
@@ -1229,7 +1231,10 @@ export default class SelfTester {
           statusCode = StatusCodes.Error;
           statusMessageKey = malformedMessageKey;
           elementValue = decodeURIComponent(decodeURI(value));
-        } else if (numberCheckType?.numbersInStringsAllowed === false) {
+        } else if (
+          numberCheckType?.numbersInStringsAllowed === false &&
+          /\d/.test(value)
+        ) {
           statusCode = StatusCodes.Error;
           statusMessageKey = malformedMessageKey;
           elementValue = value;
