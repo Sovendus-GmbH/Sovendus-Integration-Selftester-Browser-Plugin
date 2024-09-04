@@ -1,6 +1,7 @@
 import type SelfTester from "@src/page-banner/self-tester";
 import type { StatusMessageKeyTypes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
 import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import type { WebDriver } from "selenium-webdriver";
 
 import type { SovDataType } from "./sovAppData";
 import {
@@ -220,9 +221,11 @@ export type TestDataType = {
   testFunction: ({
     sovSelfTester,
     sovAppData,
+    driver,
   }: {
     sovSelfTester: SelfTester;
     sovAppData: SovDataType;
+    driver: WebDriver;
   }) => void;
   testOptions?: TestOptionsType | undefined;
 };

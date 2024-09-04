@@ -54,7 +54,7 @@ export function executeOverlayTests({
             isAwinTest,
             testOptions: testData.testOptions,
           });
-          testData.testFunction({ sovSelfTester, sovAppData });
+          testData.testFunction({ sovSelfTester, sovAppData, driver });
         }, 300_000);
       }
 

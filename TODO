@@ -19,12 +19,13 @@
 
 ## Currently working on
 
-- add tests to check if OverlayBanner and StickyBanner detection works
 - log thrown errors to dev hub api with sovSelfTester, sovIframes and sovConsumer
 - check data-cmp-src for flexibleiframejs and sovendusjs
 
 ## Marcus Check
 
+- add tests to check if OverlayBanner and StickyBanner detection works
+- add tests to check if OverlayBanner or StickyBanner was hidden
 - prevent firefox and google translates
 - allow number in string in session id + add/adjust tests
 - add warning when number is in consumerStreet

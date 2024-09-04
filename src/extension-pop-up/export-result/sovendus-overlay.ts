@@ -1,4 +1,4 @@
-import type { TestResultType } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub.js";
+import type SelfTester from "@src/page-banner/self-tester.js";
 
 import { browserAPI } from "../extension-pop-up.js";
 
@@ -9,10 +9,7 @@ export async function checkStickyBannerAndOverlayIntegration(
     target: { tabId },
     world: "MAIN",
     func: (): boolean => {
-      return !!(
-        window.sovSelfTester?.isOverlayBanner.elementValue ||
-        window.sovSelfTester?.isStickyBanner.elementValue
-      );
+      return !!window.sovSelfTester?.isOverlayOrStickyBanner.elementValue;
     },
   });
   if (result?.[0]?.result === undefined) {
@@ -32,41 +29,13 @@ export async function hideOrShowStickyBannerAndOverlay(
     world: "MAIN",
     args: [hide],
     func: async (hide) => {
-      const sovOverlay = document.getElementsByClassName(
-        "sov-overlay",
-      )?.[0] as HTMLElement | null;
-      if (sovOverlay) {
-        sovOverlay.style.display = hide ? "none" : "block";
-      }
-      const stickyBanner = document.querySelector(
-        '[id^="sov_"][id$="Toggle"]',
-      ) as HTMLElement;
-      const parentElement = stickyBanner?.parentElement;
-      if (stickyBanner && parentElement) {
-        parentElement.style.display = hide ? "none" : "block";
-        if (
-          [...parentElement.classList].some((cls) => cls.includes("-folded"))
-        ) {
-          if (!hide) {
-            stickyBanner.click();
-            await new Promise((r) => setTimeout(r, 500));
-          }
-        }
-      }
-      if (!sovOverlay && (!stickyBanner || !parentElement)) {
-        console.error("Error: sovOverlay or sticky banner not found");
-      }
+      await window.sovSelfTester?.hideOverlayBanners(hide);
     },
   });
 }
 
-export interface sovSelfTester {
-  isOverlayBanner: TestResultType<boolean | undefined>;
-  isStickyBanner: TestResultType<boolean | undefined>;
-}
-
 export interface SovWindow extends Window {
-  sovSelfTester?: sovSelfTester;
+  sovSelfTester?: SelfTester;
 }
 
 declare let window: SovWindow;
