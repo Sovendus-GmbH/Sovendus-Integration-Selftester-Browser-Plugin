@@ -2,11 +2,11 @@ import {
   sovendusOverlayErrorClass,
   tooltipButtonClass,
   tooltipClass,
-} from "./self-test-overlay-css-vars.js";
+} from "./integration-test-overlay-css-vars.js";
 import type {
   ElementValue,
   TestResultResponseDataType,
-} from "./self-tester-data-to-sync-with-dev-hub.js";
+} from "./integration-tester-data-to-sync-with-dev-hub.js";
 import {
   BrowserTypes,
   StatusCodes,
@@ -14,7 +14,8 @@ import {
   statusMessages,
   validCountries,
   validCurrencies,
-} from "./self-tester-data-to-sync-with-dev-hub.js";
+} from "./integration-tester-data-to-sync-with-dev-hub.js";
+import { validValueTestResult } from "./value-tester.js";
 
 export default class SelfTester {
   integrationType: TestResultType<string>;
@@ -262,7 +263,7 @@ export default class SelfTester {
   }
 
   executeIntegrationTypeTestResults(): TestResultType<boolean> {
-    const valueTestResult = this.validValueTestResult({
+    const valueTestResult = validValueTestResult({
       value: window.sovIframes?.[0]?.integrationType,
       malformedMessageKey: StatusMessageKeyTypes.integrationTypeMalformed,
       missingErrorMessageKey: StatusMessageKeyTypes.integrationTypeMissing,
@@ -366,7 +367,7 @@ export default class SelfTester {
       testName: "salutation",
       rawElementValue: consumer.salutation,
       testFunction: () => {
-        const valueTestResult = this.validValueTestResult({
+        const valueTestResult = validValueTestResult({
           value: consumer.salutation,
           missingErrorMessageKey:
             StatusMessageKeyTypes.missingConsumerSalutation,
@@ -402,7 +403,7 @@ export default class SelfTester {
       testName: "firstName",
       rawElementValue: consumer.firstName,
       testFunction: () => {
-        return this.validValueTestResult({
+        return validValueTestResult({
           value: consumer.firstName,
           missingErrorMessageKey:
             StatusMessageKeyTypes.missingConsumerFirstName,
@@ -420,7 +421,7 @@ export default class SelfTester {
       testName: "lastName",
       rawElementValue: consumer.lastName,
       testFunction: () => {
-        return this.validValueTestResult({
+        return validValueTestResult({
           value: consumer.lastName,
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerLastName,
           successMessageKey: StatusMessageKeyTypes.consumerLastNameSuccess,
@@ -438,7 +439,7 @@ export default class SelfTester {
       rawElementValue:
         consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
       testFunction: () => {
-        const valueTestResult = this.validValueTestResult({
+        const valueTestResult = validValueTestResult({
           value:
             consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
           missingErrorMessageKey:
@@ -489,7 +490,7 @@ export default class SelfTester {
       testName: "email",
       rawElementValue: consumer.email,
       testFunction: () => {
-        const emailTestResult = this.validValueTestResult({
+        const emailTestResult = validValueTestResult({
           value: consumer.email,
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerEmail,
           successMessageKey: StatusMessageKeyTypes.consumerEmailSuccess,
@@ -533,7 +534,7 @@ export default class SelfTester {
         if (consumerEmail.elementValue) {
           return new DidNotRunTestResult<string | undefined>();
         }
-        const testResult = this.validValueTestResult({
+        const testResult = validValueTestResult({
           value: consumer.emailHash,
           missingErrorMessageKey:
             StatusMessageKeyTypes.missingConsumerEmailHash,
@@ -582,7 +583,7 @@ export default class SelfTester {
       testName: "street",
       rawElementValue: consumer.street,
       testFunction: () => {
-        const valueTestResult = this.validValueTestResult({
+        const valueTestResult = validValueTestResult({
           value: consumer.street,
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerStreet,
           successMessageKey: StatusMessageKeyTypes.consumerStreetSuccess,
@@ -614,7 +615,7 @@ export default class SelfTester {
       testName: "streetNumber",
       rawElementValue: consumer.streetNumber,
       testFunction: () => {
-        const valueTestResult = this.validValueTestResult({
+        const valueTestResult = validValueTestResult({
           value: consumer.streetNumber,
           missingErrorMessageKey:
             StatusMessageKeyTypes.missingConsumerStreetNumber,
@@ -650,7 +651,7 @@ export default class SelfTester {
       testName: "zipCode",
       rawElementValue: consumer.zipCode,
       testFunction: () => {
-        return this.validValueTestResult({
+        return validValueTestResult({
           value: consumer.zipCode,
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerZipCode,
           successMessageKey: StatusMessageKeyTypes.consumerZipCodeSuccess,
@@ -673,7 +674,7 @@ export default class SelfTester {
       testName: "phone",
       rawElementValue: consumer.phone,
       testFunction: () => {
-        return this.validValueTestResult({
+        return validValueTestResult({
           value: consumer.phone,
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerPhone,
           successMessageKey: StatusMessageKeyTypes.consumerPhoneSuccess,
@@ -696,7 +697,7 @@ export default class SelfTester {
       testName: "city",
       rawElementValue: consumer.city,
       testFunction: () => {
-        return this.validValueTestResult({
+        return validValueTestResult({
           value: consumer.city,
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerCity,
           successMessageKey: StatusMessageKeyTypes.consumerCitySuccess,
@@ -713,7 +714,7 @@ export default class SelfTester {
       testName: "country",
       rawElementValue: consumer.country,
       testFunction: () => {
-        const valueResult = this.validValueTestResult({
+        const valueResult = validValueTestResult({
           value: consumer.country,
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerCountry,
           successMessageKey: StatusMessageKeyTypes.consumerCountrySuccess,
@@ -792,7 +793,7 @@ export default class SelfTester {
     successMessageKey: StatusMessageKeyTypes;
     malformedMessageKey: StatusMessageKeyTypes;
   }): TestResultType<string | undefined> {
-    const valueTestResult = this.validValueTestResult({
+    const valueTestResult = validValueTestResult({
       value:
         typeof trafficSourceOrMediumNumber === "string"
           ? decodeURIComponent(decodeURI(trafficSourceOrMediumNumber))
@@ -830,7 +831,7 @@ export default class SelfTester {
     if (sovIFramesAmount.statusCode === StatusCodes.TestDidNotRun) {
       return new DidNotRunTestResult<string | undefined>();
     }
-    const valueTestResult = this.validValueTestResult({
+    const valueTestResult = validValueTestResult({
       value: window.sovIframes?.[0]?.iframeContainerId,
       missingErrorMessageKey: StatusMessageKeyTypes.missingIframeContainerId,
       malformedMessageKey: StatusMessageKeyTypes.iFrameContainerIdMalformed,
@@ -1169,7 +1170,7 @@ export default class SelfTester {
       testName: "orderCurrency",
       rawElementValue: window.sovIframes?.[0]?.orderCurrency,
       testFunction: () => {
-        const valueTestResult = this.validValueTestResult({
+        const valueTestResult = validValueTestResult({
           value: window.sovIframes?.[0]?.orderCurrency,
           missingErrorMessageKey: StatusMessageKeyTypes.currencyMissing,
           successMessageKey: StatusMessageKeyTypes.currencySuccess,
@@ -1204,7 +1205,7 @@ export default class SelfTester {
       testName: "orderId",
       rawElementValue: window.sovIframes?.[0]?.orderId,
       testFunction: () => {
-        return this.validValueTestResult({
+        return validValueTestResult({
           value: window.sovIframes?.[0]?.orderId,
           missingErrorMessageKey: StatusMessageKeyTypes.missingOrderId,
           successMessageKey: StatusMessageKeyTypes.orderIdSuccess,
@@ -1222,7 +1223,7 @@ export default class SelfTester {
       testName: "orderValue",
       rawElementValue: window.sovIframes?.[0]?.orderValue,
       testFunction: () => {
-        const decodedValue = this.validValueTestResult({
+        return validValueTestResult({
           value: window.sovIframes?.[0]?.orderValue,
           missingErrorMessageKey: StatusMessageKeyTypes.orderValueMissing,
           successMessageKey: StatusMessageKeyTypes.orderValueSuccess,
@@ -1233,23 +1234,6 @@ export default class SelfTester {
             numberTypeAllowed: true,
           },
         });
-        let statusCode: StatusCodes = decodedValue.statusCode;
-        let statusMessageKey: StatusMessageKeyTypes =
-          decodedValue.statusMessageKey;
-        if (decodedValue.statusCode === StatusCodes.SuccessButNeedsReview) {
-          if (isNaN(Number(decodedValue.elementValue))) {
-            statusMessageKey = StatusMessageKeyTypes.orderValueWrongFormat;
-            statusCode = StatusCodes.Error;
-          } else {
-            statusCode = StatusCodes.SuccessButNeedsReview;
-            statusMessageKey = StatusMessageKeyTypes.orderValueSuccess;
-          }
-        }
-        return new WarningOrFailTestResult({
-          elementValue: decodedValue.elementValue,
-          statusMessageKey,
-          statusCode,
-        });
       },
     });
   }
@@ -1259,7 +1243,7 @@ export default class SelfTester {
       testName: "sessionId",
       rawElementValue: window.sovIframes?.[0]?.sessionId,
       testFunction: () => {
-        return this.validValueTestResult({
+        return validValueTestResult({
           value: window.sovIframes?.[0]?.sessionId,
           missingErrorMessageKey: StatusMessageKeyTypes.missingSessionId,
           successMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
@@ -1277,7 +1261,7 @@ export default class SelfTester {
       testName: "timestamp",
       rawElementValue: window.sovIframes?.[0]?.timestamp,
       testFunction: () => {
-        const valueTestResult = this.validValueTestResult({
+        const valueTestResult = validValueTestResult({
           value: window.sovIframes?.[0]?.timestamp,
           missingErrorMessageKey: StatusMessageKeyTypes.unixTimestampMissing,
           malformedMessageKey: StatusMessageKeyTypes.notAUnixTimestamp,
@@ -1343,7 +1327,7 @@ export default class SelfTester {
       testName: "usedCouponCode",
       rawElementValue: window.sovIframes?.[0]?.usedCouponCode,
       testFunction: () => {
-        return this.validValueTestResult({
+        return validValueTestResult({
           value: window.sovIframes?.[0]?.usedCouponCode,
           missingErrorMessageKey: StatusMessageKeyTypes.missingCouponCode,
           successMessageKey: StatusMessageKeyTypes.couponCodeSuccess,
@@ -1376,149 +1360,6 @@ export default class SelfTester {
         statusMessageKey: StatusMessageKeyTypes.testFailed,
       });
     }
-  }
-
-  validValueTestResult({
-    value,
-    missingErrorMessageKey,
-    successMessageKey,
-    malformedMessageKey,
-    numberCheckType,
-  }: {
-    value: ExplicitAnyType;
-    missingErrorMessageKey: StatusMessageKeyTypes;
-    successMessageKey: StatusMessageKeyTypes;
-    malformedMessageKey: StatusMessageKeyTypes;
-    numberCheckType?: {
-      numberTypeAllowed?: boolean;
-      stringNumbersAllowed?: boolean;
-      floatNumbersAllowed?: boolean;
-      numbersInStringsAllowed?: boolean;
-      anyStringAllowed?: boolean;
-    };
-  }): WarningOrFailTestResult<string | undefined> {
-    let elementValue: string | undefined;
-    let statusCode: StatusCodes;
-    let statusMessageKey: StatusMessageKeyTypes | undefined;
-    if (
-      value !== undefined &&
-      value !== "undefined" &&
-      value !== null &&
-      value !== "null" &&
-      value !== ""
-    ) {
-      if (typeof value === "object") {
-        statusCode = StatusCodes.Error;
-        statusMessageKey = malformedMessageKey;
-        elementValue = JSON.stringify(value);
-      } else if (typeof value === "boolean") {
-        statusCode = StatusCodes.Error;
-        statusMessageKey = malformedMessageKey;
-        elementValue = value ? "true" : "false";
-      } else if (typeof value === "number") {
-        if (numberCheckType?.numberTypeAllowed) {
-          if (/^[1-9]\d*$/.test(String(value))) {
-            statusCode = StatusCodes.SuccessButNeedsReview;
-            statusMessageKey = successMessageKey;
-          } else if (numberCheckType?.floatNumbersAllowed) {
-            statusCode = StatusCodes.SuccessButNeedsReview;
-            statusMessageKey = successMessageKey;
-          } else {
-            statusCode = StatusCodes.Error;
-            statusMessageKey = malformedMessageKey;
-          }
-        } else {
-          statusCode = StatusCodes.Error;
-          statusMessageKey = malformedMessageKey;
-        }
-        elementValue = `${value}`;
-      } else if (typeof value === "string" && !isNaN(Number(value))) {
-        if (numberCheckType?.anyStringAllowed) {
-          statusCode = StatusCodes.SuccessButNeedsReview;
-          statusMessageKey = successMessageKey;
-        } else if (numberCheckType?.stringNumbersAllowed) {
-          if (
-            numberCheckType?.numberTypeAllowed
-              ? /^[1-9]\d*$/.test(String(value))
-              : /^\+?[0-9]\d*$/.test(String(value))
-          ) {
-            statusCode = StatusCodes.SuccessButNeedsReview;
-            statusMessageKey = successMessageKey;
-          } else if (numberCheckType?.floatNumbersAllowed) {
-            statusCode = StatusCodes.SuccessButNeedsReview;
-            statusMessageKey = successMessageKey;
-          } else {
-            statusCode = StatusCodes.Error;
-            statusMessageKey = malformedMessageKey;
-          }
-        } else {
-          statusCode = StatusCodes.Error;
-          statusMessageKey = malformedMessageKey;
-        }
-        elementValue = `${value}`;
-      } else if (typeof value === "string") {
-        if (
-          encodeURI(encodeURIComponent("[object Object]")) === value ||
-          encodeURI("[object Object]") === value ||
-          "[object Object]" === value
-        ) {
-          statusCode = StatusCodes.Error;
-          statusMessageKey = malformedMessageKey;
-          elementValue = "[object-Object]";
-        } else if (value === "true" || value === "false") {
-          statusCode = StatusCodes.Error;
-          statusMessageKey = malformedMessageKey;
-          elementValue = value === "true" ? "true" : "false";
-        } else if (numberCheckType?.anyStringAllowed) {
-          statusCode = StatusCodes.SuccessButNeedsReview;
-          statusMessageKey = successMessageKey;
-          elementValue = value;
-        } else if (
-          numberCheckType?.stringNumbersAllowed &&
-          !isNaN(Number(value.replace(",", ".")))
-        ) {
-          statusCode = StatusCodes.Error;
-          statusMessageKey = malformedMessageKey;
-          elementValue = value;
-        } else if (
-          numberCheckType?.stringNumbersAllowed &&
-          !isNaN(Number(decodeURIComponent(decodeURI(value)).replace(",", ".")))
-        ) {
-          statusCode = StatusCodes.Error;
-          statusMessageKey = malformedMessageKey;
-          elementValue = decodeURIComponent(decodeURI(value));
-        } else if (
-          numberCheckType?.numbersInStringsAllowed
-            ? !/^\d+$/.test(value)
-            : /\d/.test(value)
-        ) {
-          statusCode = StatusCodes.Error;
-          statusMessageKey = malformedMessageKey;
-          elementValue = value;
-        } else if (/^\s|\s$|\s{2,}/.test(value)) {
-          statusCode = StatusCodes.Error;
-          statusMessageKey = malformedMessageKey;
-          elementValue = value;
-        } else {
-          statusCode = StatusCodes.SuccessButNeedsReview;
-          elementValue = value;
-          statusMessageKey = successMessageKey;
-        }
-      } else {
-        statusCode = StatusCodes.Error;
-        statusMessageKey = malformedMessageKey;
-        elementValue = `${value}`;
-      }
-    } else {
-      statusMessageKey = missingErrorMessageKey;
-      elementValue = undefined;
-      statusCode = StatusCodes.Error;
-    }
-    return new WarningOrFailTestResult<string | undefined>({
-      elementValue,
-      statusMessageKey,
-      statusCode,
-    });
   }
 
   sovIframesOrConsumerExists(): boolean {
@@ -1908,7 +1749,7 @@ class WarningOrFailTestResultWithoutStatusMessageKey<
   }
 }
 
-class WarningOrFailTestResult<
+export class WarningOrFailTestResult<
   TElementValueType,
 > extends TestResultType<TElementValueType> {
   declare elementValue: TElementValueType;

@@ -1,4 +1,4 @@
-import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import { StatusCodes } from "@src/page-banner/integration-tester-data-to-sync-with-dev-hub";
 import {
   sovAppConsumerAllValidData,
   sovAppIFramesAllValidData,

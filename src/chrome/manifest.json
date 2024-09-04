@@ -19,10 +19,11 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "/page-banner/self-test-overlay.js",
-        "/page-banner/self-tester.js",
-        "/page-banner/self-tester-data-to-sync-with-dev-hub.js",
-        "/page-banner/self-test-overlay-css-vars.js",
+        "/page-banner/integration-test-overlay.js",
+        "/page-banner/integration-tester.js",
+        "/page-banner/value-tester.js",
+        "/page-banner/integration-tester-data-to-sync-with-dev-hub.js",
+        "/page-banner/integration-test-overlay-css-vars.js",
         "/npm/@floating-ui/core@1.6.7/+esm.js",
         "/npm/@floating-ui/dom@1.6.10/+esm.js",
         "/npm/@floating-ui/utils@0.2.7/+esm.js",

@@ -1,4 +1,4 @@
-import type SelfTester from "@src/page-banner/self-tester.js";
+import type SelfTester from "@src/page-banner/integration-tester.js";
 
 import { browserAPI } from "../extension-pop-up.js";
 

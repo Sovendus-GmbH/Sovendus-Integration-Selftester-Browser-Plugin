@@ -27,9 +27,9 @@ import {
   toggleSovendusOverlayId,
   tooltipButtonClass,
   tooltipClass,
-} from "./self-test-overlay-css-vars.js";
-import SelfTester from "./self-tester.js";
-import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
+} from "./integration-test-overlay-css-vars.js";
+import SelfTester from "./integration-tester.js";
+import { StatusCodes } from "./integration-tester-data-to-sync-with-dev-hub.js";
 
 void (async (): Promise<void> => {
   await repeatTestsOnSPA(async () => {
@@ -164,6 +164,7 @@ class SelfTesterOverlay {
 
       const iFrameStyle = document.createElement("style");
       iFrameStyle.id = IFrameStyleId;
+      iFrameStyle.innerHTML = `#${testLoadedIFrameId} { height: 1200px !important; }`;
       overlay.insertAdjacentElement("afterbegin", iFrameStyle);
 
       if (!loadingDone) {

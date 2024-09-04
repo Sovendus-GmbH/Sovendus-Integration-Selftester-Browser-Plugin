@@ -1,10 +1,10 @@
 import { browserAPI } from "../extension-pop-up.js";
-import { scrollDownToNextSection, scrollToTop } from "./scrolling.js";
 import {
   hideSelfTesterOverlay,
   restoreSelfTesterOverlay,
   showSelfTesterOverlay,
-} from "./self-test-overlay.js";
+} from "./integration-test-overlay.js";
+import { scrollDownToNextSection, scrollToTop } from "./scrolling.js";
 import {
   checkStickyBannerAndOverlayIntegration,
   hideOrShowStickyBannerAndOverlay,

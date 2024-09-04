@@ -1,6 +1,6 @@
-import { testLoadedIFrameId } from "@src/page-banner/self-test-overlay-css-vars";
-import type SelfTester from "@src/page-banner/self-tester";
-import type { ExplicitAnyType } from "@src/page-banner/self-tester";
+import { testLoadedIFrameId } from "@src/page-banner/integration-test-overlay-css-vars";
+import type SelfTester from "@src/page-banner/integration-tester";
+import type { ExplicitAnyType } from "@src/page-banner/integration-tester";
 import { platform } from "os";
 import { resolve } from "path";
 import type { WebDriver } from "selenium-webdriver";

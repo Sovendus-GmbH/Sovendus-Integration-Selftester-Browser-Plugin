@@ -1,7 +1,7 @@
 import {
   StatusCodes,
   StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+} from "@src/page-banner/integration-tester-data-to-sync-with-dev-hub";
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,

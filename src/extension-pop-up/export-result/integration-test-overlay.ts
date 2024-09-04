@@ -7,7 +7,7 @@ import {
   sovendusOverlayRepeatTestsId,
   testLoadedIFrameId,
   toggleSovendusOverlayId,
-} from "../../page-banner/self-test-overlay-css-vars.js";
+} from "../../page-banner/integration-test-overlay-css-vars.js";
 import { browserAPI } from "../extension-pop-up.js";
 
 export async function hideSelfTesterOverlay(tabId: number): Promise<void> {

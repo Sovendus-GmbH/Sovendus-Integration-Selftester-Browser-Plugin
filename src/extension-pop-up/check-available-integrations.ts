@@ -4,7 +4,7 @@ import {
   sovendusOverlayH1Class,
   sovendusOverlayH2Class,
   sovendusOverlayH3Class,
-} from "../page-banner/self-test-overlay-css-vars.js";
+} from "../page-banner/integration-test-overlay-css-vars.js";
 import { browserAPI } from "./extension-pop-up.js";
 
 export async function checkAvailableIntegrations(tabId: number): Promise<void> {

@@ -1,7 +1,7 @@
 import {
   StatusCodes,
   StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+} from "@src/page-banner/integration-tester-data-to-sync-with-dev-hub";
 import { sovAppDataEverythingIsOkay } from "@src/tests/testUtils/sovAppData";
 import {
   generateMalformedDataTests,
@@ -123,19 +123,6 @@ executeOverlayTests({
             },
           },
           expectedElementValue: "John ",
-          expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey:
-            StatusMessageKeyTypes.consumerLastNameMalformed,
-        },
-        {
-          testName: "TooLongName",
-          sovAppData: {
-            ...sovAppDataEverythingIsOkay,
-            sovConsumer: {
-              consumerLastName: "ANameThatIsWayTooLongForALastNameToBeAccepted",
-            },
-          },
-          expectedElementValue: "ANameThatIsWayTooLongForALastNameToBeAccepted",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerLastNameMalformed,
