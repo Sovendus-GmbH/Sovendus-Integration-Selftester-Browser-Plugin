@@ -109,7 +109,7 @@ export const sovAppIFramesAllValidDataDifferent: SovIframes = {
   integrationType: "test-2.0.0",
 };
 
-export const sovAwinID = 18738;
+export const sovAwinID = 8771;
 
 export const sovAppDataEverythingIsOkay: SovDataType = {
   sovConsumer: sovAppConsumerAllValidData,
