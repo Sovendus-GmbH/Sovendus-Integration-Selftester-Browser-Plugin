@@ -52,7 +52,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficSourceNumber: "123#456",
       },
     },
-    expectedElementValue: encodeURI("123#456"),
+    expectedElementValue: encodeURIComponent("123#456"),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficSourceNumberMalformed,

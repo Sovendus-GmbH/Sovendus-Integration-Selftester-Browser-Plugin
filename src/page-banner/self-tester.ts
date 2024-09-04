@@ -1296,7 +1296,7 @@ export default class SelfTester {
   }
 
   sovIframesOrConsumerExists(): boolean {
-    return Boolean(window.sovIframes || window.sovConsumer);
+    return !!(window.sovIframes || window.sovConsumer);
   }
 
   sovApplicationExists(): boolean {
@@ -1317,7 +1317,7 @@ export default class SelfTester {
   }
 
   awinIntegrationDetected(): boolean {
-    return Boolean(window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber);
+    return !!window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber;
   }
 
   async waitForSovendusIntegrationDetected(): Promise<void> {
@@ -1333,31 +1333,23 @@ export default class SelfTester {
   }
 
   async waitForSovendusIntegrationToBeLoaded(): Promise<void> {
-    // let waitedSeconds = 0;
-    // while (!this.sovIframesOrConsumerExists()) {
-    //   if (waitedSeconds > 5 && this.awinIntegrationDetected()) {
-    //     return; // continue with awin diagnostics
-    //   }
-    //   waitedSeconds += 0.5;
-    //   await new Promise((resolve) => setTimeout(resolve, 500));
-    // }
     await this.waitForSovApplicationObject();
-  }
-
-  async waitForSovApplicationObject(): Promise<void> {
-    let waitedSeconds = 0;
-    while (!this.sovApplicationExists() && waitedSeconds < 5) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      waitedSeconds += 0.5;
-    }
     if (this.sovApplicationExists()) {
       await this.waitForBannerToBeLoaded();
     }
   }
 
+  async waitForSovApplicationObject(): Promise<void> {
+    let waitedSeconds = 0;
+    while (!this.sovApplicationExists() && waitedSeconds < 10) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      waitedSeconds += 0.5;
+    }
+  }
+
   async waitForBannerToBeLoaded(): Promise<void> {
     let waitedSeconds = 0;
-    while (!this.sovInstancesLoaded() && waitedSeconds < 4) {
+    while (!this.sovInstancesLoaded() && waitedSeconds < 2) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       waitedSeconds += 0.5;
     }
