@@ -362,158 +362,211 @@ export default class SelfTester {
   getConsumerSalutationTestResult(
     consumer: MergedSovConsumer,
   ): TestResultType<string | undefined> {
-    const valueTestResult = this.validValueTestResult({
-      value: consumer.salutation,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerSalutation,
-      successMessageKey: StatusMessageKeyTypes.consumerSalutationSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerSalutationNotValid,
+    return this.safelyRunTests({
+      testName: "salutation",
+      rawElementValue: consumer.salutation,
+      testFunction: () => {
+        const valueTestResult = this.validValueTestResult({
+          value: consumer.salutation,
+          missingErrorMessageKey:
+            StatusMessageKeyTypes.missingConsumerSalutation,
+          successMessageKey: StatusMessageKeyTypes.consumerSalutationSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.consumerSalutationNotValid,
+        });
+        if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
+          const validSalutations = ["Mr.", "Mrs."];
+          let statusCode: StatusCodes = StatusCodes.SuccessButNeedsReview;
+          let statusMessageKey: StatusMessageKeyTypes =
+            StatusMessageKeyTypes.consumerSalutationSuccess;
+          if (
+            !validSalutations.includes(String(valueTestResult.elementValue))
+          ) {
+            statusCode = StatusCodes.Error;
+            statusMessageKey = StatusMessageKeyTypes.consumerSalutationNotValid;
+          }
+          return new WarningOrFailTestResult<string | undefined>({
+            elementValue: valueTestResult.elementValue,
+            statusMessageKey,
+            statusCode,
+          });
+        }
+        return valueTestResult;
+      },
     });
-    if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-      const validSalutations = ["Mr.", "Mrs."];
-      let statusCode: StatusCodes = StatusCodes.SuccessButNeedsReview;
-      let statusMessageKey: StatusMessageKeyTypes =
-        StatusMessageKeyTypes.consumerSalutationSuccess;
-      if (!validSalutations.includes(String(valueTestResult.elementValue))) {
-        statusCode = StatusCodes.Error;
-        statusMessageKey = StatusMessageKeyTypes.consumerSalutationNotValid;
-      }
-      return new WarningOrFailTestResult<string | undefined>({
-        elementValue: valueTestResult.elementValue,
-        statusMessageKey,
-        statusCode,
-      });
-    }
-    return valueTestResult;
   }
 
   getConsumerFirstNameTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    return this.validValueTestResult({
-      value: consumer.firstName,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerFirstName,
-      successMessageKey: StatusMessageKeyTypes.consumerFirstNameSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerFirstNameMalformed,
+    return this.safelyRunTests({
+      testName: "firstName",
+      rawElementValue: consumer.firstName,
+      testFunction: () => {
+        return this.validValueTestResult({
+          value: consumer.firstName,
+          missingErrorMessageKey:
+            StatusMessageKeyTypes.missingConsumerFirstName,
+          successMessageKey: StatusMessageKeyTypes.consumerFirstNameSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.consumerFirstNameMalformed,
+        });
+      },
     });
   }
 
   getConsumerLastNameTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    return this.validValueTestResult({
-      value: consumer.lastName,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerLastName,
-      successMessageKey: StatusMessageKeyTypes.consumerLastNameSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerLastNameMalformed,
+    return this.safelyRunTests({
+      testName: "lastName",
+      rawElementValue: consumer.lastName,
+      testFunction: () => {
+        return this.validValueTestResult({
+          value: consumer.lastName,
+          missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerLastName,
+          successMessageKey: StatusMessageKeyTypes.consumerLastNameSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.consumerLastNameMalformed,
+        });
+      },
     });
   }
 
   getConsumerYearOfBirthTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    const valueTestResult = this.validValueTestResult({
-      value: consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerYearOfBirth,
-      successMessageKey: StatusMessageKeyTypes.consumerYearOfBirthSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerYearOfBirthNotValid,
-      numberCheckType: {
-        floatNumbersAllowed: false,
-        stringNumbersAllowed: true,
-        numberTypeAllowed: true,
+    return this.safelyRunTests({
+      testName: "yearOfBirth",
+      rawElementValue:
+        consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
+      testFunction: () => {
+        const valueTestResult = this.validValueTestResult({
+          value:
+            consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
+          missingErrorMessageKey:
+            StatusMessageKeyTypes.missingConsumerYearOfBirth,
+          successMessageKey: StatusMessageKeyTypes.consumerYearOfBirthSuccess,
+          malformedMessageKey:
+            StatusMessageKeyTypes.consumerYearOfBirthNotValid,
+          numberCheckType: {
+            floatNumbersAllowed: false,
+            stringNumbersAllowed: true,
+            numberTypeAllowed: true,
+          },
+        });
+        if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
+          const validFromYear: number = 1890;
+          const validToYear: number = 2024;
+          let statusCode: StatusCodes = StatusCodes.SuccessButNeedsReview;
+          const yearOfBirthNumber: number = Number(
+            valueTestResult.elementValue,
+          );
+          let statusMessageKey: StatusMessageKeyTypes =
+            valueTestResult.statusMessageKey;
+          if (
+            !(
+              yearOfBirthNumber < validToYear &&
+              yearOfBirthNumber > validFromYear
+            )
+          ) {
+            statusCode = StatusCodes.Error;
+            statusMessageKey =
+              StatusMessageKeyTypes.consumerYearOfBirthNotValid;
+          }
+          return new WarningOrFailTestResult<string | undefined>({
+            elementValue: valueTestResult.elementValue,
+            statusMessageKey,
+            statusCode,
+          });
+        }
+        return valueTestResult;
       },
     });
-    if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-      const validFromYear: number = 1890;
-      const validToYear: number = 2024;
-      let statusCode: StatusCodes = StatusCodes.SuccessButNeedsReview;
-      const yearOfBirthNumber: number = Number(valueTestResult.elementValue);
-      let statusMessageKey: StatusMessageKeyTypes =
-        valueTestResult.statusMessageKey;
-      if (
-        !(yearOfBirthNumber < validToYear && yearOfBirthNumber > validFromYear)
-      ) {
-        statusCode = StatusCodes.Error;
-        statusMessageKey = StatusMessageKeyTypes.consumerYearOfBirthNotValid;
-      }
-      return new WarningOrFailTestResult<string | undefined>({
-        elementValue: valueTestResult.elementValue,
-        statusMessageKey,
-        statusCode,
-      });
-    }
-    return valueTestResult;
   }
 
   getConsumerEmailTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    const emailTestResult = this.validValueTestResult({
-      value: consumer.email,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerEmail,
-      successMessageKey: StatusMessageKeyTypes.consumerEmailSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerEmailNotValid,
-      numberCheckType: {
-        numbersInStringsAllowed: true,
+    return this.safelyRunTests({
+      testName: "email",
+      rawElementValue: consumer.email,
+      testFunction: () => {
+        const emailTestResult = this.validValueTestResult({
+          value: consumer.email,
+          missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerEmail,
+          successMessageKey: StatusMessageKeyTypes.consumerEmailSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.consumerEmailNotValid,
+          numberCheckType: {
+            numbersInStringsAllowed: true,
+          },
+        });
+        if (emailTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
+          const mailIsValid = validateEmail(
+            String(emailTestResult.elementValue),
+          );
+          let statusCode: StatusCodes = StatusCodes.SuccessButNeedsReview;
+          const elementValue: ElementValue = emailTestResult.elementValue;
+          let statusMessageKey: StatusMessageKeyTypes =
+            StatusMessageKeyTypes.consumerEmailSuccess;
+          if (!mailIsValid) {
+            statusCode = StatusCodes.Error;
+            statusMessageKey = StatusMessageKeyTypes.consumerEmailNotValid;
+          }
+          return new WarningOrFailTestResult<string | undefined>({
+            elementValue,
+            statusMessageKey,
+            statusCode,
+          });
+        }
+        return emailTestResult;
       },
     });
-    if (emailTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-      const mailIsValid = validateEmail(String(emailTestResult.elementValue));
-      let statusCode: StatusCodes = StatusCodes.SuccessButNeedsReview;
-      const elementValue: ElementValue = emailTestResult.elementValue;
-      let statusMessageKey: StatusMessageKeyTypes =
-        StatusMessageKeyTypes.consumerEmailSuccess;
-      if (!mailIsValid) {
-        statusCode = StatusCodes.Error;
-        statusMessageKey = StatusMessageKeyTypes.consumerEmailNotValid;
-      }
-      return new WarningOrFailTestResult<string | undefined>({
-        elementValue,
-        statusMessageKey,
-        statusCode,
-      });
-    }
-    return emailTestResult;
   }
 
   getConsumerEmailHashTestResult(
     consumer: SovApplicationConsumer,
     consumerEmail: TestResultType<string | undefined>,
   ): TestResultType<string | undefined> {
-    let statusMessageKey: StatusMessageKeyTypes;
-    if (consumerEmail.elementValue) {
-      return new DidNotRunTestResult<string | undefined>();
-    }
-    const testResult = this.validValueTestResult({
-      value: consumer.emailHash,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerEmailHash,
-      successMessageKey: StatusMessageKeyTypes.consumerEmailHashSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerEmailNotMD5Hash,
-      numberCheckType: {
-        anyStringAllowed: true,
+    return this.safelyRunTests({
+      testName: "emailHash",
+      rawElementValue: consumer.emailHash,
+      testFunction: () => {
+        let statusMessageKey: StatusMessageKeyTypes;
+        if (consumerEmail.elementValue) {
+          return new DidNotRunTestResult<string | undefined>();
+        }
+        const testResult = this.validValueTestResult({
+          value: consumer.emailHash,
+          missingErrorMessageKey:
+            StatusMessageKeyTypes.missingConsumerEmailHash,
+          successMessageKey: StatusMessageKeyTypes.consumerEmailHashSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.consumerEmailNotMD5Hash,
+          numberCheckType: {
+            anyStringAllowed: true,
+          },
+        });
+        let statusCode = testResult.statusCode;
+        const elementValue = testResult.elementValue;
+        statusMessageKey = testResult.statusMessageKey;
+        if (testResult.statusCode === StatusCodes.SuccessButNeedsReview) {
+          const hashIsValid = this.checkIfValidMd5Hash(
+            String(testResult.elementValue),
+          );
+          if (hashIsValid) {
+            statusCode = StatusCodes.SuccessButNeedsReview;
+            statusMessageKey = StatusMessageKeyTypes.consumerEmailHashSuccess;
+          } else {
+            statusCode = StatusCodes.Error;
+            statusMessageKey = StatusMessageKeyTypes.consumerEmailNotMD5Hash;
+          }
+        } else if (testResult.statusCode === StatusCodes.Error) {
+          statusCode = StatusCodes.Error;
+          statusMessageKey = testResult.statusMessageKey;
+        }
+        return new WarningOrFailTestResult<string | undefined>({
+          elementValue,
+          statusMessageKey,
+          statusCode,
+        });
       },
-    });
-    let statusCode = testResult.statusCode;
-    const elementValue = testResult.elementValue;
-    statusMessageKey = testResult.statusMessageKey;
-    if (testResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-      const hashIsValid = this.checkIfValidMd5Hash(
-        String(testResult.elementValue),
-      );
-      if (hashIsValid) {
-        statusCode = StatusCodes.SuccessButNeedsReview;
-        statusMessageKey = StatusMessageKeyTypes.consumerEmailHashSuccess;
-      } else {
-        statusCode = StatusCodes.Error;
-        statusMessageKey = StatusMessageKeyTypes.consumerEmailNotMD5Hash;
-      }
-    } else if (testResult.statusCode === StatusCodes.Error) {
-      statusCode = StatusCodes.Error;
-      statusMessageKey = testResult.statusMessageKey;
-    }
-    return new WarningOrFailTestResult<string | undefined>({
-      elementValue,
-      statusMessageKey,
-      statusCode,
     });
   }
 
@@ -525,69 +578,90 @@ export default class SelfTester {
   getConsumerStreetTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    const valueTestResult = this.validValueTestResult({
-      value: consumer.street,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerStreet,
-      successMessageKey: StatusMessageKeyTypes.consumerStreetSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerStreetMalformed,
-      numberCheckType: {
-        numbersInStringsAllowed: true,
+    return this.safelyRunTests({
+      testName: "street",
+      rawElementValue: consumer.street,
+      testFunction: () => {
+        const valueTestResult = this.validValueTestResult({
+          value: consumer.street,
+          missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerStreet,
+          successMessageKey: StatusMessageKeyTypes.consumerStreetSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.consumerStreetMalformed,
+          numberCheckType: {
+            numbersInStringsAllowed: true,
+          },
+        });
+        if (
+          valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview &&
+          valueTestResult.elementValue &&
+          /\d/.test(valueTestResult.elementValue)
+        ) {
+          return new WarningOrFailTestResult({
+            elementValue: valueTestResult.elementValue,
+            statusCode: StatusCodes.Error,
+            statusMessageKey: StatusMessageKeyTypes.numberInConsumerStreet,
+          });
+        }
+        return valueTestResult;
       },
     });
-    if (
-      valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview &&
-      valueTestResult.elementValue &&
-      /\d/.test(valueTestResult.elementValue)
-    ) {
-      return new WarningOrFailTestResult({
-        elementValue: valueTestResult.elementValue,
-        statusCode: StatusCodes.Error,
-        statusMessageKey: StatusMessageKeyTypes.numberInConsumerStreet,
-      });
-    }
-    return valueTestResult;
   }
 
   getConsumerStreetNumberTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    const valueTestResult = this.validValueTestResult({
-      value: consumer.streetNumber,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerStreetNumber,
-      successMessageKey: StatusMessageKeyTypes.consumerStreetNumberSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerStreetNumberMalformed,
-      numberCheckType: {
-        stringNumbersAllowed: true,
-        numbersInStringsAllowed: true,
+    return this.safelyRunTests({
+      testName: "streetNumber",
+      rawElementValue: consumer.streetNumber,
+      testFunction: () => {
+        const valueTestResult = this.validValueTestResult({
+          value: consumer.streetNumber,
+          missingErrorMessageKey:
+            StatusMessageKeyTypes.missingConsumerStreetNumber,
+          successMessageKey: StatusMessageKeyTypes.consumerStreetNumberSuccess,
+          malformedMessageKey:
+            StatusMessageKeyTypes.consumerStreetNumberMalformed,
+          numberCheckType: {
+            stringNumbersAllowed: true,
+            numbersInStringsAllowed: true,
+          },
+        });
+
+        if (
+          valueTestResult.statusCode === StatusCodes.Error &&
+          valueTestResult.elementValue &&
+          /^\d+([A-Za-z]?|\s?\d*[-/]\d*)?$/.test(valueTestResult.elementValue)
+        ) {
+          return new WarningOrFailTestResult({
+            elementValue: valueTestResult.elementValue,
+            statusCode: StatusCodes.SuccessButNeedsReview,
+            statusMessageKey: StatusMessageKeyTypes.consumerStreetNumberSuccess,
+          });
+        }
+        return valueTestResult;
       },
     });
-    if (
-      valueTestResult.statusCode === StatusCodes.Error &&
-      valueTestResult.elementValue &&
-      /^\d+([A-Za-z]?|\s?\d*[-/]\d*)?$/.test(valueTestResult.elementValue)
-    ) {
-      return new WarningOrFailTestResult({
-        elementValue: valueTestResult.elementValue,
-        statusCode: StatusCodes.SuccessButNeedsReview,
-        statusMessageKey: StatusMessageKeyTypes.consumerStreetNumberSuccess,
-      });
-    }
-    return valueTestResult;
   }
 
   getConsumerZipCodeTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    return this.validValueTestResult({
-      value: consumer.zipCode,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerZipCode,
-      successMessageKey: StatusMessageKeyTypes.consumerZipCodeSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerZipCodeMalformed,
-      numberCheckType: {
-        floatNumbersAllowed: false,
-        stringNumbersAllowed: true,
-        numberTypeAllowed: true,
-        numbersInStringsAllowed: true,
+    return this.safelyRunTests({
+      testName: "zipCode",
+      rawElementValue: consumer.zipCode,
+      testFunction: () => {
+        return this.validValueTestResult({
+          value: consumer.zipCode,
+          missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerZipCode,
+          successMessageKey: StatusMessageKeyTypes.consumerZipCodeSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.consumerZipCodeMalformed,
+          numberCheckType: {
+            floatNumbersAllowed: false,
+            stringNumbersAllowed: true,
+            numberTypeAllowed: true,
+            numbersInStringsAllowed: true,
+          },
+        });
       },
     });
   }
@@ -595,16 +669,22 @@ export default class SelfTester {
   getConsumerPhoneTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    return this.validValueTestResult({
-      value: consumer.phone,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerPhone,
-      successMessageKey: StatusMessageKeyTypes.consumerPhoneSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerPhoneMalformed,
-      numberCheckType: {
-        floatNumbersAllowed: false,
-        stringNumbersAllowed: true,
-        numberTypeAllowed: false,
-        numbersInStringsAllowed: true,
+    return this.safelyRunTests({
+      testName: "phone",
+      rawElementValue: consumer.phone,
+      testFunction: () => {
+        return this.validValueTestResult({
+          value: consumer.phone,
+          missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerPhone,
+          successMessageKey: StatusMessageKeyTypes.consumerPhoneSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.consumerPhoneMalformed,
+          numberCheckType: {
+            floatNumbersAllowed: false,
+            stringNumbersAllowed: true,
+            numberTypeAllowed: false,
+            numbersInStringsAllowed: true,
+          },
+        });
       },
     });
   }
@@ -612,62 +692,92 @@ export default class SelfTester {
   getConsumerCityTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    return this.validValueTestResult({
-      value: consumer.city,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerCity,
-      successMessageKey: StatusMessageKeyTypes.consumerCitySuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerCityMalformed,
+    return this.safelyRunTests({
+      testName: "city",
+      rawElementValue: consumer.city,
+      testFunction: () => {
+        return this.validValueTestResult({
+          value: consumer.city,
+          missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerCity,
+          successMessageKey: StatusMessageKeyTypes.consumerCitySuccess,
+          malformedMessageKey: StatusMessageKeyTypes.consumerCityMalformed,
+        });
+      },
     });
   }
 
   getConsumerCountryTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
-    const valueResult = this.validValueTestResult({
-      value: consumer.country,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerCountry,
-      successMessageKey: StatusMessageKeyTypes.consumerCountrySuccess,
-      malformedMessageKey: StatusMessageKeyTypes.consumerCountryInvalid,
-    });
-    let statusCode = valueResult.statusCode;
-    let statusMessageKey = valueResult.statusMessageKey;
-    if (valueResult.elementValue) {
-      const isValidCountry = validCountries.includes(
-        String(valueResult.elementValue),
-      );
-      if (!isValidCountry) {
-        statusCode = StatusCodes.Error;
-        statusMessageKey = StatusMessageKeyTypes.consumerCountryInvalid;
-      }
-    }
-    return new WarningOrFailTestResult({
-      elementValue: valueResult.elementValue,
-      statusCode,
-      statusMessageKey,
+    return this.safelyRunTests({
+      testName: "country",
+      rawElementValue: consumer.country,
+      testFunction: () => {
+        const valueResult = this.validValueTestResult({
+          value: consumer.country,
+          missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerCountry,
+          successMessageKey: StatusMessageKeyTypes.consumerCountrySuccess,
+          malformedMessageKey: StatusMessageKeyTypes.consumerCountryInvalid,
+        });
+        let statusCode = valueResult.statusCode;
+        let statusMessageKey = valueResult.statusMessageKey;
+        if (valueResult.elementValue) {
+          const isValidCountry = validCountries.includes(
+            String(valueResult.elementValue),
+          );
+          if (!isValidCountry) {
+            statusCode = StatusCodes.Error;
+            statusMessageKey = StatusMessageKeyTypes.consumerCountryInvalid;
+          }
+        }
+        return new WarningOrFailTestResult({
+          elementValue: valueResult.elementValue,
+          statusCode,
+          statusMessageKey,
+        });
+      },
     });
   }
 
   getTrafficSourceNumberTestResult(): TestResultType<string | undefined> {
-    return this._getTrafficMediumOrSourceNumberTestResult({
-      trafficSourceOrMediumNumber:
-        window.sovIframes?.[0]?.trafficSourceNumber !== undefined
-          ? window.sovIframes[0].trafficSourceNumber
-          : window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingTrafficSourceNumber,
-      successMessageKey: StatusMessageKeyTypes.trafficSourceNumberSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.trafficSourceNumberMalformed,
+    const rawTrafficSourceNumber =
+      window.sovIframes?.[0]?.trafficSourceNumber !== undefined
+        ? window.sovIframes[0].trafficSourceNumber
+        : window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber;
+    return this.safelyRunTests({
+      testName: "trafficSourceNumber",
+      rawElementValue: rawTrafficSourceNumber,
+      testFunction: () => {
+        return this._getTrafficMediumOrSourceNumberTestResult({
+          trafficSourceOrMediumNumber: rawTrafficSourceNumber,
+          missingErrorMessageKey:
+            StatusMessageKeyTypes.missingTrafficSourceNumber,
+          successMessageKey: StatusMessageKeyTypes.trafficSourceNumberSuccess,
+          malformedMessageKey:
+            StatusMessageKeyTypes.trafficSourceNumberMalformed,
+        });
+      },
     });
   }
 
   getTrafficMediumNumberTestResult(): TestResultType<string | undefined> {
-    return this._getTrafficMediumOrSourceNumberTestResult({
-      trafficSourceOrMediumNumber:
-        window.sovIframes?.[0]?.trafficMediumNumber !== undefined
-          ? window.sovIframes[0].trafficMediumNumber
-          : window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingTrafficMediumNumber,
-      successMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.trafficMediumNumberMalformed,
+    const rawTrafficMediumNumber =
+      window.sovIframes?.[0]?.trafficMediumNumber !== undefined
+        ? window.sovIframes[0].trafficMediumNumber
+        : window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber;
+    return this.safelyRunTests({
+      testName: "trafficMediumNumber",
+      rawElementValue: rawTrafficMediumNumber,
+      testFunction: () => {
+        return this._getTrafficMediumOrSourceNumberTestResult({
+          trafficSourceOrMediumNumber: rawTrafficMediumNumber,
+          missingErrorMessageKey:
+            StatusMessageKeyTypes.missingTrafficMediumNumber,
+          successMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
+          malformedMessageKey:
+            StatusMessageKeyTypes.trafficMediumNumberMalformed,
+        });
+      },
     });
   }
 
@@ -697,6 +807,7 @@ export default class SelfTester {
       },
     });
     if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
+      // check if it starts with a 0
       if (/^[1-9]\d*$/.test(String(valueTestResult.elementValue))) {
         return new WarningOrFailTestResult({
           elementValue: valueTestResult.elementValue,
@@ -1052,157 +1163,219 @@ export default class SelfTester {
     }
     return new DidNotRunTestResult<number | undefined>();
   }
+
   getOrderCurrencyTestResult(): TestResultType<string | undefined> {
-    const valueTestResult = this.validValueTestResult({
-      value: window.sovIframes?.[0]?.orderCurrency,
-      missingErrorMessageKey: StatusMessageKeyTypes.currencyMissing,
-      successMessageKey: StatusMessageKeyTypes.currencySuccess,
-      malformedMessageKey: StatusMessageKeyTypes.currencyNotValid,
+    return this.safelyRunTests({
+      testName: "orderCurrency",
+      rawElementValue: window.sovIframes?.[0]?.orderCurrency,
+      testFunction: () => {
+        const valueTestResult = this.validValueTestResult({
+          value: window.sovIframes?.[0]?.orderCurrency,
+          missingErrorMessageKey: StatusMessageKeyTypes.currencyMissing,
+          successMessageKey: StatusMessageKeyTypes.currencySuccess,
+          malformedMessageKey: StatusMessageKeyTypes.currencyNotValid,
+        });
+        if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
+          const isValidCurrency = validCurrencies.includes(
+            String(valueTestResult.elementValue),
+          );
+          let statusMessageKey: StatusMessageKeyTypes;
+          let statusCode: StatusCodes;
+          if (isValidCurrency) {
+            statusMessageKey = StatusMessageKeyTypes.currencySuccess;
+            statusCode = StatusCodes.SuccessButNeedsReview;
+          } else {
+            statusMessageKey = StatusMessageKeyTypes.currencyNotValid;
+            statusCode = StatusCodes.Error;
+          }
+          return new WarningOrFailTestResult<string | undefined>({
+            elementValue: valueTestResult.elementValue,
+            statusMessageKey,
+            statusCode,
+          });
+        }
+        return valueTestResult;
+      },
     });
-    if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-      const isValidCurrency = validCurrencies.includes(
-        String(valueTestResult.elementValue),
-      );
-      let statusMessageKey: StatusMessageKeyTypes;
-      let statusCode: StatusCodes;
-      if (isValidCurrency) {
-        statusMessageKey = StatusMessageKeyTypes.currencySuccess;
-        statusCode = StatusCodes.SuccessButNeedsReview;
-      } else {
-        statusMessageKey = StatusMessageKeyTypes.currencyNotValid;
-        statusCode = StatusCodes.Error;
-      }
-      return new WarningOrFailTestResult<string | undefined>({
-        elementValue: valueTestResult.elementValue,
-        statusMessageKey,
-        statusCode,
-      });
-    }
-    return valueTestResult;
   }
 
   getOrderIdTestResult(): TestResultType<string | undefined> {
-    return this.validValueTestResult({
-      value: window.sovIframes?.[0]?.orderId,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingOrderId,
-      successMessageKey: StatusMessageKeyTypes.orderIdSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.orderIdMalformed,
-      numberCheckType: {
-        anyStringAllowed: true,
+    return this.safelyRunTests({
+      testName: "orderId",
+      rawElementValue: window.sovIframes?.[0]?.orderId,
+      testFunction: () => {
+        return this.validValueTestResult({
+          value: window.sovIframes?.[0]?.orderId,
+          missingErrorMessageKey: StatusMessageKeyTypes.missingOrderId,
+          successMessageKey: StatusMessageKeyTypes.orderIdSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.orderIdMalformed,
+          numberCheckType: {
+            anyStringAllowed: true,
+          },
+        });
       },
     });
   }
 
   getOrderValueTestResult(): TestResultType<string | undefined> {
-    const decodedValue = this.validValueTestResult({
-      value: window.sovIframes?.[0]?.orderValue,
-      missingErrorMessageKey: StatusMessageKeyTypes.orderValueMissing,
-      successMessageKey: StatusMessageKeyTypes.orderValueSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
-      numberCheckType: {
-        floatNumbersAllowed: true,
-        stringNumbersAllowed: true,
-        numberTypeAllowed: true,
+    return this.safelyRunTests({
+      testName: "orderValue",
+      rawElementValue: window.sovIframes?.[0]?.orderValue,
+      testFunction: () => {
+        const decodedValue = this.validValueTestResult({
+          value: window.sovIframes?.[0]?.orderValue,
+          missingErrorMessageKey: StatusMessageKeyTypes.orderValueMissing,
+          successMessageKey: StatusMessageKeyTypes.orderValueSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
+          numberCheckType: {
+            floatNumbersAllowed: true,
+            stringNumbersAllowed: true,
+            numberTypeAllowed: true,
+          },
+        });
+        let statusCode: StatusCodes = decodedValue.statusCode;
+        let statusMessageKey: StatusMessageKeyTypes =
+          decodedValue.statusMessageKey;
+        if (decodedValue.statusCode === StatusCodes.SuccessButNeedsReview) {
+          if (isNaN(Number(decodedValue.elementValue))) {
+            statusMessageKey = StatusMessageKeyTypes.orderValueWrongFormat;
+            statusCode = StatusCodes.Error;
+          } else {
+            statusCode = StatusCodes.SuccessButNeedsReview;
+            statusMessageKey = StatusMessageKeyTypes.orderValueSuccess;
+          }
+        }
+        return new WarningOrFailTestResult({
+          elementValue: decodedValue.elementValue,
+          statusMessageKey,
+          statusCode,
+        });
       },
-    });
-    let statusCode: StatusCodes = decodedValue.statusCode;
-    let statusMessageKey: StatusMessageKeyTypes = decodedValue.statusMessageKey;
-    if (decodedValue.statusCode === StatusCodes.SuccessButNeedsReview) {
-      if (isNaN(Number(decodedValue.elementValue))) {
-        statusMessageKey = StatusMessageKeyTypes.orderValueWrongFormat;
-        statusCode = StatusCodes.Error;
-      } else {
-        statusCode = StatusCodes.SuccessButNeedsReview;
-        statusMessageKey = StatusMessageKeyTypes.orderValueSuccess;
-      }
-    }
-    return new WarningOrFailTestResult({
-      elementValue: decodedValue.elementValue,
-      statusMessageKey,
-      statusCode,
     });
   }
 
   getSessionIdTestResult(): TestResultType<string | undefined> {
-    return this.validValueTestResult({
-      value: window.sovIframes?.[0]?.sessionId,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingSessionId,
-      successMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.sessionIdMalformed,
-      numberCheckType: {
-        anyStringAllowed: true,
+    return this.safelyRunTests({
+      testName: "sessionId",
+      rawElementValue: window.sovIframes?.[0]?.sessionId,
+      testFunction: () => {
+        return this.validValueTestResult({
+          value: window.sovIframes?.[0]?.sessionId,
+          missingErrorMessageKey: StatusMessageKeyTypes.missingSessionId,
+          successMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.sessionIdMalformed,
+          numberCheckType: {
+            anyStringAllowed: true,
+          },
+        });
       },
     });
   }
 
   getTimestampTestResult(): TestResultType<string | undefined> {
-    const valueTestResult = this.validValueTestResult({
-      value: window.sovIframes?.[0]?.timestamp,
-      missingErrorMessageKey: StatusMessageKeyTypes.unixTimestampMissing,
-      malformedMessageKey: StatusMessageKeyTypes.notAUnixTimestamp,
-      successMessageKey: StatusMessageKeyTypes.empty,
-      numberCheckType: {
-        floatNumbersAllowed: true,
-        stringNumbersAllowed: true,
-        numberTypeAllowed: true,
-      },
-    });
-    let statusMessageKey: StatusMessageKeyTypes =
-      valueTestResult.statusMessageKey;
-    let statusCode: StatusCodes = valueTestResult.statusCode;
-    if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-      const truncatedTime = Math.floor(Number(valueTestResult.elementValue));
-      let isUnixTime = false;
-      let timestampInMilliSeconds = truncatedTime;
-
-      // Check if the timestamp is in seconds (10 digits) or milliseconds (13 digits)
-      if (!isNaN(truncatedTime)) {
-        if (truncatedTime.toString().length === 10) {
-          timestampInMilliSeconds = truncatedTime * 1000;
-          isUnixTime = true;
-        } else if (truncatedTime.toString().length === 13) {
-          isUnixTime = true;
-        }
-      }
-      if (isUnixTime) {
-        // Check if the timestamp is older than 1 minute
-        const currentTime = Date.now();
-        const timeDifference = currentTime - timestampInMilliSeconds;
-        const oneMinutesInMilliSeconds = 2 * 60 * 1000;
-
-        if (timeDifference > oneMinutesInMilliSeconds) {
-          statusMessageKey =
-            StatusMessageKeyTypes.unixTimestampOlderThan2Minutes;
-          return new WarningOrFailTestResult({
-            elementValue: valueTestResult.elementValue,
-            statusMessageKey,
-            statusCode: StatusCodes.Error,
-          });
-        }
-        return new SuccessTestResult({
-          elementValue: valueTestResult.elementValue,
+    return this.safelyRunTests({
+      testName: "timestamp",
+      rawElementValue: window.sovIframes?.[0]?.timestamp,
+      testFunction: () => {
+        const valueTestResult = this.validValueTestResult({
+          value: window.sovIframes?.[0]?.timestamp,
+          missingErrorMessageKey: StatusMessageKeyTypes.unixTimestampMissing,
+          malformedMessageKey: StatusMessageKeyTypes.notAUnixTimestamp,
+          successMessageKey: StatusMessageKeyTypes.empty,
+          numberCheckType: {
+            floatNumbersAllowed: true,
+            stringNumbersAllowed: true,
+            numberTypeAllowed: true,
+          },
         });
-      }
-      statusCode = StatusCodes.Error;
-      statusMessageKey = StatusMessageKeyTypes.notAUnixTimestamp;
-    }
-    return new WarningOrFailTestResult({
-      elementValue: valueTestResult.elementValue,
-      statusMessageKey,
-      statusCode: statusCode,
+        let statusMessageKey: StatusMessageKeyTypes =
+          valueTestResult.statusMessageKey;
+        let statusCode: StatusCodes = valueTestResult.statusCode;
+        if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
+          const truncatedTime = Math.floor(
+            Number(valueTestResult.elementValue),
+          );
+          let isUnixTime = false;
+          let timestampInMilliSeconds = truncatedTime;
+
+          // Check if the timestamp is in seconds (10 digits) or milliseconds (13 digits)
+          if (!isNaN(truncatedTime)) {
+            if (truncatedTime.toString().length === 10) {
+              timestampInMilliSeconds = truncatedTime * 1000;
+              isUnixTime = true;
+            } else if (truncatedTime.toString().length === 13) {
+              isUnixTime = true;
+            }
+          }
+          if (isUnixTime) {
+            // Check if the timestamp is older than 1 minute
+            const currentTime = Date.now();
+            const timeDifference = currentTime - timestampInMilliSeconds;
+            const oneMinutesInMilliSeconds = 2 * 60 * 1000;
+
+            if (timeDifference > oneMinutesInMilliSeconds) {
+              statusMessageKey =
+                StatusMessageKeyTypes.unixTimestampOlderThan2Minutes;
+              return new WarningOrFailTestResult({
+                elementValue: valueTestResult.elementValue,
+                statusMessageKey,
+                statusCode: StatusCodes.Error,
+              });
+            }
+            return new SuccessTestResult({
+              elementValue: valueTestResult.elementValue,
+            });
+          }
+          statusCode = StatusCodes.Error;
+          statusMessageKey = StatusMessageKeyTypes.notAUnixTimestamp;
+        }
+        return new WarningOrFailTestResult({
+          elementValue: valueTestResult.elementValue,
+          statusMessageKey,
+          statusCode: statusCode,
+        });
+      },
     });
   }
 
   getUsedCouponCodeTestResult(): TestResultType<string | undefined> {
-    return this.validValueTestResult({
-      value: window.sovIframes?.[0]?.usedCouponCode,
-      missingErrorMessageKey: StatusMessageKeyTypes.missingCouponCode,
-      successMessageKey: StatusMessageKeyTypes.couponCodeSuccess,
-      malformedMessageKey: StatusMessageKeyTypes.couponCodeMalformed,
-      numberCheckType: {
-        anyStringAllowed: true,
+    return this.safelyRunTests({
+      testName: "usedCouponCode",
+      rawElementValue: window.sovIframes?.[0]?.usedCouponCode,
+      testFunction: () => {
+        return this.validValueTestResult({
+          value: window.sovIframes?.[0]?.usedCouponCode,
+          missingErrorMessageKey: StatusMessageKeyTypes.missingCouponCode,
+          successMessageKey: StatusMessageKeyTypes.couponCodeSuccess,
+          malformedMessageKey: StatusMessageKeyTypes.couponCodeMalformed,
+          numberCheckType: {
+            anyStringAllowed: true,
+          },
+        });
       },
     });
+  }
+
+  safelyRunTests<TElementValueType>({
+    testName,
+    rawElementValue,
+    testFunction,
+  }: {
+    testName: string;
+    rawElementValue: ExplicitAnyType;
+    testFunction: () => TestResultType<TElementValueType>;
+  }): TestResultType<TElementValueType> {
+    try {
+      return testFunction();
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(`Failed to run test ${testName} - error:`, e);
+      return new WarningOrFailTestResult<TElementValueType>({
+        elementValue: rawElementValue,
+        statusCode: StatusCodes.TestFailed,
+        statusMessageKey: StatusMessageKeyTypes.testFailed,
+      });
+    }
   }
 
   validValueTestResult({
@@ -1740,7 +1913,10 @@ class WarningOrFailTestResult<
 > extends TestResultType<TElementValueType> {
   declare elementValue: TElementValueType;
   declare statusMessageKey: StatusMessageKeyTypes;
-  declare statusCode: StatusCodes.Error | StatusCodes.SuccessButNeedsReview;
+  declare statusCode:
+    | StatusCodes.Error
+    | StatusCodes.SuccessButNeedsReview
+    | StatusCodes.TestFailed;
 
   constructor({
     elementValue,
@@ -1749,7 +1925,10 @@ class WarningOrFailTestResult<
   }: {
     elementValue: TElementValueType;
     statusMessageKey: StatusMessageKeyTypes;
-    statusCode: StatusCodes.Error | StatusCodes.SuccessButNeedsReview;
+    statusCode:
+      | StatusCodes.Error
+      | StatusCodes.SuccessButNeedsReview
+      | StatusCodes.TestFailed;
   }) {
     super({
       elementValue,

@@ -10,7 +10,7 @@
 - add url to screenshot
 - add button to manually add master tag again, to verify if its due to master tag before sales tracking
 - improve overlay loading speed
-- handle if a test fails - still continue and show error in overlay - also use new status code testFailed
+- handle if a general test fails - still continue and show error in overlay - also use new status code testFailed
 - dont compile tests with build
 - transmit multiple iframes content when they are different
 - check cors api call to dev hub
@@ -21,7 +21,6 @@
 
 ## Tests
 
-- get a AWIN ID for Tests
 - add spa tests
 - consider adding more awin not executed tests
 
@@ -32,9 +31,6 @@
 
 ## Marcus Check
 
-- add tests to check if OverlayBanner and StickyBanner detection works
-- add tests to check if OverlayBanner or StickyBanner was hidden
-- prevent firefox and google translates
 - allow number in string in session id + add/adjust tests
 - add warning when number is in consumerStreet
 - allow float numbers for session and order id

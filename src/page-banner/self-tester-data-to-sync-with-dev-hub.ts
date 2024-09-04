@@ -55,6 +55,7 @@ export enum StatusCodes {
   SuccessButNeedsReview = "SuccessButNeedsReview",
   Error = "Error",
   TestDidNotRun = "TestDidNotRun",
+  TestFailed = "TestFailed",
 }
 
 export enum BrowserTypes {
@@ -67,6 +68,7 @@ export enum BrowserTypes {
 }
 
 export enum StatusMessageKeyTypes {
+  testFailed = "testFailed",
   awinNoSalesTracked = "awinNoSalesTracked",
   awinSaleTrackedAfterScript = "awinSaleTrackedAfterScript",
   integrationTypeMalformed = "integrationTypeMalformed",
@@ -183,6 +185,11 @@ export const statusMessages: {
     infoText: string;
   };
 } = {
+  testFailed: {
+    errorText: "TEST FAILED TO RUN",
+    infoText:
+      "For an unknown reason the test failed to run, this is most likely because the value format is not supported.",
+  },
   integrationTypeMalformed: {
     errorText: "VALUE TYPE NOT ALLOWED",
     infoText: "Error: you can only pass a string as the integrationType",
