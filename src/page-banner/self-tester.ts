@@ -235,26 +235,26 @@ export default class SelfTester {
       sovOverlay.style.display = hide ? "none" : "block";
       hideOverlayBannerSuccess = true;
     }
-    const stickyBanner = document.querySelector(
-      '[id^="sov_"][id$="Toggle"]',
-    ) as HTMLElement;
-    const parentElement = stickyBanner?.parentElement;
-    if (stickyBanner && parentElement) {
+    const stickyBannerCloseButton: HTMLElement | null =
+      document.querySelector('[id^="sov_"][id$="Toggle"]') ||
+      document.querySelector('[id^="sov_"][id$="Close"]');
+    const parentElement = stickyBannerCloseButton?.parentElement;
+    if (stickyBannerCloseButton && parentElement) {
       parentElement.style.display = hide ? "none" : "block";
       hideStickyBannerSuccess = true;
       if ([...parentElement.classList].some((cls) => cls.includes("-folded"))) {
         if (!hide) {
-          stickyBanner.click();
+          stickyBannerCloseButton.click();
           await new Promise((r) => setTimeout(r, 500));
         }
       }
     }
-    if (!sovOverlay && (!stickyBanner || !parentElement)) {
+    if (!sovOverlay && (!stickyBannerCloseButton || !parentElement)) {
       // eslint-disable-next-line no-console
       console.error("Error: sovOverlay or sticky banner not found");
     }
     return {
-      foundStickyBanner: !!(stickyBanner || parentElement),
+      foundStickyBanner: !!(stickyBannerCloseButton && parentElement),
       hideStickyBannerSuccess: hideStickyBannerSuccess,
       foundOverlayBanner: !!sovOverlay,
       hideOverlayBannerSuccess: hideOverlayBannerSuccess,

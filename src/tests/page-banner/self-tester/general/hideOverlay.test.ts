@@ -5,6 +5,11 @@ import {
 } from "@src/tests/testUtils/sovAppData";
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
 
+const executeHideOverlayBannersScript = `
+    return (async () =>{
+      return await window.sovSelfTester.hideOverlayBanners(true)
+    })();`;
+
 executeOverlayTests({
   testName: "hideOverlay",
   tests: [
@@ -21,7 +26,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: false,
@@ -44,7 +49,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: true,
@@ -67,7 +72,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: false,
@@ -90,7 +95,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: false,
@@ -113,7 +118,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: false,
@@ -136,7 +141,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: false,
@@ -159,7 +164,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: true,
@@ -182,7 +187,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: false,
@@ -205,7 +210,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: true,
@@ -229,7 +234,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: false,
@@ -253,7 +258,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: false,
@@ -276,7 +281,7 @@ executeOverlayTests({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       testFunction: async ({ driver }): Promise<void> => {
         const hideOverlayBanners = await driver.executeScript(
-          "return window.sovSelfTester.hideOverlayBanners(true);",
+          executeHideOverlayBannersScript,
         );
         expect(hideOverlayBanners).toStrictEqual({
           foundStickyBanner: true,
