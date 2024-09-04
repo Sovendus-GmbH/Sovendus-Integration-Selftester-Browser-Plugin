@@ -93,9 +93,9 @@ export default class SelfTester {
         trafficMediumNumber,
       );
     }
-    // if (window.transmitTestResult !== false) {
-    //   void this.transmitTestResult();
-    // }
+    if (window.transmitTestResult !== false) {
+      void this.transmitTestResult();
+    }
   }
 
   getSovConsumerData(): MergedSovConsumer {
