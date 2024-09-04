@@ -1,3 +1,5 @@
+import type { TestResultType } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub.js";
+
 import { browserAPI } from "../extension-pop-up.js";
 
 export async function checkStickyBannerAndOverlayIntegration(
@@ -7,12 +9,10 @@ export async function checkStickyBannerAndOverlayIntegration(
     target: { tabId },
     world: "MAIN",
     func: (): boolean => {
-      return !!window.sovApplication?.instances?.some((instance) => {
-        return (
-          instance.config?.overlay?.showInOverlay ||
-          instance.stickyBanner?.bannerExists
-        );
-      });
+      return !!(
+        window.sovSelfTester?.isOverlayBanner.elementValue ||
+        window.sovSelfTester?.isStickyBanner.elementValue
+      );
     },
   });
   if (result?.[0]?.result === undefined) {
@@ -60,19 +60,13 @@ export async function hideOrShowStickyBannerAndOverlay(
   });
 }
 
+export interface sovSelfTester {
+  isOverlayBanner: TestResultType<boolean | undefined>;
+  isStickyBanner: TestResultType<boolean | undefined>;
+}
+
 export interface SovWindow extends Window {
-  sovApplication?: {
-    instances?: {
-      config?: {
-        overlay?: {
-          showInOverlay?: boolean;
-        };
-      };
-      stickyBanner?: {
-        bannerExists?: boolean;
-      };
-    }[];
-  };
+  sovSelfTester?: sovSelfTester;
 }
 
 declare let window: SovWindow;

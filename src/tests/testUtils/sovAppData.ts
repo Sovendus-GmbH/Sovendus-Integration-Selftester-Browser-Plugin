@@ -80,6 +80,7 @@ export const sovTestTrafficMediumNumbers = {
   CBOverlayVNSticky: { trafficMediumNumber: "23" },
   CBInOverlayCollapsed: { trafficMediumNumber: "25" },
   CBInOverlayCloseable: { trafficMediumNumber: "26" },
+  VNStickyCloseable: { trafficMediumNumber: "27" },
 };
 
 export const sovAppIFramesAllValidData: SovIframes = {

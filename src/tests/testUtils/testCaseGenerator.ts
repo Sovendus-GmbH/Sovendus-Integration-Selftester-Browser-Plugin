@@ -285,4 +285,5 @@ export type SovSelfTesterKeys =
   | "isUnknownSovendusJsError"
   | "awinIntegrationDetectedTestResult"
   | "awinSaleTrackedTestResult"
-  | "awinExecutedTestResult";
+  | "awinExecutedTestResult"
+  | "isOverlayOrStickyBanner";

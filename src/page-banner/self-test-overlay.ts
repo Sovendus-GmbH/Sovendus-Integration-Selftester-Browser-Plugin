@@ -111,6 +111,7 @@ class SelfTesterOverlay {
   createOuterOverlay(): void {
     const overlay = document.createElement("div");
     overlay.id = outerOverlayId;
+    overlay.translate = false;
     overlay.innerHTML = `
       ${this.getOuterOverlayStyle()}
       <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${toggleSovendusOverlayId}">
