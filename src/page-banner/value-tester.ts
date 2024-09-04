@@ -1,5 +1,5 @@
 import type { ExplicitAnyType } from "./integration-tester.js";
-import { WarningOrFailTestResult } from "./integration-tester.js";
+import { safeURI, WarningOrFailTestResult } from "./integration-tester.js";
 import type { StatusMessageKeyTypes } from "./integration-tester-data-to-sync-with-dev-hub.js";
 import { StatusCodes } from "./integration-tester-data-to-sync-with-dev-hub.js";
 
@@ -147,7 +147,7 @@ function handleString(
 
   if (isNumberStringWithComma(value, numberCheckType)) {
     return createTestResult(
-      decodeURIComponent(decodeURI(value)),
+      safeURI("decodeURIComponent", safeURI("decodeURI", value)),
       malformedMessageKey,
       StatusCodes.Error,
     );
@@ -208,14 +208,26 @@ function isNumberStringWithComma(
     (numberCheckType?.stringNumbersAllowed &&
       !isNaN(Number(value.replace(",", ".")))) ||
     (numberCheckType?.stringNumbersAllowed &&
-      !isNaN(Number(decodeURIComponent(decodeURI(value)).replace(",", "."))))
+      !isNaN(
+        Number(
+          safeURI("decodeURIComponent", safeURI("decodeURI", value)).replace(
+            ",",
+            ".",
+          ),
+        ),
+      ))
   );
+}
+
+function hasSpecialCharacter(value: string): boolean {
+  return /[@#$%^&*()+=[\]]/.test(value);
 }
 
 function isObjectString(value: string): boolean {
   return (
-    encodeURI(encodeURIComponent("[object Object]")) === value ||
-    encodeURI("[object Object]") === value ||
+    safeURI("encodeURI", safeURI("encodeURIComponent", "[object Object]")) ===
+      value ||
+    safeURI("encodeURI", "[object Object]") === value ||
     "[object Object]" === value
   );
 }
@@ -225,10 +237,21 @@ function isInvalidString(
   numberCheckType: NumberCheckType | undefined,
 ): boolean {
   return (
-    (numberCheckType?.numbersInStringsAllowed
-      ? !/^\d+$/.test(value)
-      : /\d/.test(value)) || /^\s|\s$|\s{2,}/.test(value)
+    hasWhitespaceIssues(value) ||
+    hasNumberInStringCheck(value, numberCheckType) ||
+    hasSpecialCharacter(value)
   );
+}
+
+function hasWhitespaceIssues(value: string): boolean {
+  return /^\s|\s$|\s{2,}/.test(value);
+}
+
+function hasNumberInStringCheck(
+  value: string,
+  numberCheckType: NumberCheckType | undefined,
+): boolean {
+  return numberCheckType?.numbersInStringsAllowed ? false : /\d/.test(value);
 }
 
 interface NumberCheckType {

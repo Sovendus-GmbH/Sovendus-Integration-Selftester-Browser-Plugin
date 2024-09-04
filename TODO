@@ -27,10 +27,12 @@
 ## Currently working on
 
 - add more malformed tests for number values e.g. no error for trafficSourceNumber: "'5951" and "d5951"
-- Add that LeadingZeros are not allowed in number values
 
 ## Marcus Check
 
+- Add that LeadingZeros are not allowed in number values
+- add tests to check if OverlayBanner and StickyBanner detection works
+- add tests to check if OverlayBanner or StickyBanner was hidden
 - allow number in string in session id + add/adjust tests
 - add warning when number is in consumerStreet
 - allow float numbers for session and order id

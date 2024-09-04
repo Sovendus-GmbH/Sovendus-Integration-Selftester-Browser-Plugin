@@ -373,6 +373,9 @@ export default class SelfTester {
             StatusMessageKeyTypes.missingConsumerSalutation,
           successMessageKey: StatusMessageKeyTypes.consumerSalutationSuccess,
           malformedMessageKey: StatusMessageKeyTypes.consumerSalutationNotValid,
+          numberCheckType: {
+            anyStringAllowed: true,
+          },
         });
         if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
           const validSalutations = ["Mr.", "Mrs."];
@@ -496,7 +499,7 @@ export default class SelfTester {
           successMessageKey: StatusMessageKeyTypes.consumerEmailSuccess,
           malformedMessageKey: StatusMessageKeyTypes.consumerEmailNotValid,
           numberCheckType: {
-            numbersInStringsAllowed: true,
+            anyStringAllowed: true,
           },
         });
         if (emailTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
@@ -589,7 +592,7 @@ export default class SelfTester {
           successMessageKey: StatusMessageKeyTypes.consumerStreetSuccess,
           malformedMessageKey: StatusMessageKeyTypes.consumerStreetMalformed,
           numberCheckType: {
-            numbersInStringsAllowed: true,
+            numbersInStringsAllowed: false,
           },
         });
         if (
@@ -674,7 +677,7 @@ export default class SelfTester {
       testName: "phone",
       rawElementValue: consumer.phone,
       testFunction: () => {
-        return validValueTestResult({
+        const valueTestResult = validValueTestResult({
           value: consumer.phone,
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerPhone,
           successMessageKey: StatusMessageKeyTypes.consumerPhoneSuccess,
@@ -686,6 +689,18 @@ export default class SelfTester {
             numbersInStringsAllowed: true,
           },
         });
+        if (
+          valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview &&
+          valueTestResult.elementValue &&
+          /[A-Za-z]/.test(valueTestResult.elementValue)
+        ) {
+          return new WarningOrFailTestResult({
+            elementValue: valueTestResult.elementValue,
+            statusCode: StatusCodes.Error,
+            statusMessageKey: StatusMessageKeyTypes.consumerPhoneMalformed,
+          });
+        }
+        return valueTestResult;
       },
     });
   }
@@ -796,7 +811,10 @@ export default class SelfTester {
     const valueTestResult = validValueTestResult({
       value:
         typeof trafficSourceOrMediumNumber === "string"
-          ? decodeURIComponent(decodeURI(trafficSourceOrMediumNumber))
+          ? safeURI(
+              "decodeURIComponent",
+              safeURI("decodeURI", trafficSourceOrMediumNumber),
+            )
           : trafficSourceOrMediumNumber,
       missingErrorMessageKey,
       successMessageKey,
@@ -842,7 +860,10 @@ export default class SelfTester {
     });
     const decodedValue =
       valueTestResult.elementValue &&
-      decodeURIComponent(decodeURI(valueTestResult.elementValue));
+      safeURI(
+        "decodeURIComponent",
+        safeURI("decodeURI", valueTestResult.elementValue),
+      );
     if (decodedValue?.includes(" ")) {
       return new WarningOrFailTestResult<string | undefined>({
         elementValue: decodedValue,
@@ -1635,7 +1656,7 @@ export default class SelfTester {
 }
 
 function validateEmail(email: string): boolean {
-  const re = /\S+@\S+\.\S+/;
+  const re = /^[\w.-]+@[a-zA-Z\d-]+\.[a-zA-Z]{2,}$/;
   return re.test(email);
 }
 
@@ -1866,6 +1887,39 @@ export class WarningOrFailTestResult<
         ${labelText}
       </div>
     `;
+  }
+}
+
+export function safeURI(
+  uriType:
+    | "encodeURI"
+    | "decodeURI"
+    | "decodeURIComponent"
+    | "encodeURIComponent",
+  value: string,
+): string {
+  try {
+    switch (uriType) {
+      case "encodeURI":
+        return encodeURI(value);
+      case "decodeURI":
+        return decodeURI(value);
+      case "decodeURIComponent":
+        return decodeURIComponent(value);
+      case "encodeURIComponent":
+        return encodeURIComponent(value);
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log(
+      "Error in safeURI(",
+      uriType,
+      ") - Value: (",
+      value,
+      ")- Error -> ",
+      e,
+    );
+    return value;
   }
 }
 

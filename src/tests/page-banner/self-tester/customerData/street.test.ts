@@ -26,7 +26,7 @@ executeOverlayTests({
           expectedStatusMessageKey: StatusMessageKeyTypes.consumerStreetSuccess,
         },
         {
-          testName: "SuccessWithSpecialCharacters",
+          testName: "ErrorWithStreetNumber",
           sovAppData: {
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {

@@ -79,8 +79,8 @@ executeOverlayTests({
             sovConsumer: { consumerCity: "Karlsruhe   Durlach" },
           },
           expectedElementValue: "Karlsruhe   Durlach",
-          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
-          expectedStatusMessageKey: StatusMessageKeyTypes.consumerCitySuccess,
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: StatusMessageKeyTypes.consumerCityMalformed,
         },
         {
           testName: "ValidCityWithAccents",
