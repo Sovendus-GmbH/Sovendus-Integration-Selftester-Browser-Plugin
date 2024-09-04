@@ -80,6 +80,18 @@ executeOverlayTests({
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: StatusMessageKeyTypes.consumerEmailNotValid,
         },
+        {
+          testName: "Malformed6",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerEmail: "test@.com",
+            },
+          },
+          expectedElementValue: "test@.com",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: StatusMessageKeyTypes.consumerEmailNotValid,
+        },
       ],
     }),
     ...generateMalformedDataTests({

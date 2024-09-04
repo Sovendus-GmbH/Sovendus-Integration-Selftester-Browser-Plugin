@@ -70,7 +70,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              // SHA hash instead of md5
+              // SHA-256 hash instead of MD5
               consumerEmailHash:
                 "18ee24150dcb1d96752a4d6dd0f20dfd8ba8c38527e40aa8509b7adecf78f9c6",
               consumerEmail: undefined,
@@ -93,6 +93,66 @@ executeOverlayTests({
             },
           },
           expectedElementValue: "banana",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerEmailNotMD5Hash,
+        },
+        {
+          testName: "Malformed3ShortHash",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerEmailHash: "46706b7505f54708", // too short to be an MD5 hash
+              consumerEmail: undefined,
+            },
+          },
+          expectedElementValue: "46706b7505f54708",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerEmailNotMD5Hash,
+        },
+        {
+          testName: "Malformed4LongHash",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerEmailHash: "46706b7505f547083f5c02a63419e79d12345678", // too long to be an MD5 hash
+              consumerEmail: undefined,
+            },
+          },
+          expectedElementValue: "46706b7505f547083f5c02a63419e79d12345678",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerEmailNotMD5Hash,
+        },
+        {
+          testName: "Malformed5NonHexHash",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerEmailHash: "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", // contains non-hexadecimal characters
+              consumerEmail: undefined,
+            },
+          },
+          expectedElementValue: "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerEmailNotMD5Hash,
+        },
+        {
+          testName: "Malformed6SpecialChars",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerEmailHash: "46706b7505f54708!@#$%^&*()_+", // contains special characters
+              consumerEmail: undefined,
+            },
+          },
+          expectedElementValue: "46706b7505f54708!@#$%^&*()_+",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerEmailNotMD5Hash,
