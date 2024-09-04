@@ -55,7 +55,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "123#456",
       },
     },
-    expectedElementValue: encodeURIComponent(encodeURIComponent("123#456")),
+    expectedElementValue: "123#456",
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -178,7 +178,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "1234✓",
       },
     },
-    expectedElementValue: encodeURIComponent("1234✓"),
+    expectedElementValue: "1234✓",
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -214,7 +214,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "55 66",
       },
     },
-    expectedElementValue: encodeURIComponent(encodeURIComponent("55 66")),
+    expectedElementValue: "55 66",
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -228,7 +228,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "55@66",
       },
     },
-    expectedElementValue: encodeURIComponent(encodeURIComponent("55@66")),
+    expectedElementValue: "55@66",
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -267,7 +267,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "55\n66",
       },
     },
-    expectedElementValue: encodeURIComponent(encodeURIComponent("55\n66")),
+    expectedElementValue: "55\n66",
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -328,14 +328,11 @@ const testCasesWhenScriptDoesNotRun: TestsInfoType =
   testCasesWhenScriptRuns.map((testInfo) => ({
     ...testInfo,
     testName: `${testInfo.testName}_WhenScriptDoesNotRun`,
-    expectedElementValue: decodeURI(
-      decodeURI(
-        encodeURIComponent(
-          encodeURIComponent(String(testInfo.expectedElementValue)),
-        ),
-      ),
-    ),
-    disableFlexibleIframeJs: true,
+    testOptions: {
+      regular: {
+        disableFlexibleIFrameJs: true,
+      },
+    },
   }));
 
 executeOverlayTests({

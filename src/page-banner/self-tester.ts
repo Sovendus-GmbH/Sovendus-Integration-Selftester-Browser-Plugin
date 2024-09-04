@@ -624,7 +624,7 @@ export default class SelfTester {
         floatNumbersAllowed: false,
         numbersInStringsAllowed: true,
         numberTypeAllowed: true,
-        onlyNumbersAllowed: true,
+        onlyIntAllowed: true,
       },
     });
   }
@@ -642,7 +642,7 @@ export default class SelfTester {
         floatNumbersAllowed: false,
         numbersInStringsAllowed: true,
         numberTypeAllowed: true,
-        onlyNumbersAllowed: true,
+        onlyIntAllowed: true,
       },
     });
   }
@@ -1153,7 +1153,6 @@ export default class SelfTester {
       numberTypeAllowed?: boolean;
       numbersInStringsAllowed?: boolean;
       floatNumbersAllowed?: boolean;
-      onlyNumbersAllowed?: boolean;
     };
   }): WarningOrFailTestResult<string | undefined> {
     let elementValue: string | undefined;
@@ -1176,7 +1175,7 @@ export default class SelfTester {
         elementValue = value ? "true" : "false";
       } else if (typeof value === "number") {
         if (numberCheckType?.numberTypeAllowed) {
-          if (Number.isInteger(value)) {
+          if (/^\d+$/.test(String(value))) {
             statusCode = StatusCodes.SuccessButNeedsReview;
             statusMessageKey = successMessageKey;
           } else if (numberCheckType?.floatNumbersAllowed) {
@@ -1193,7 +1192,7 @@ export default class SelfTester {
         elementValue = `${value}`;
       } else if (!isNaN(Number(value))) {
         if (numberCheckType?.numbersInStringsAllowed) {
-          if (Number.isInteger(Number(value))) {
+          if (/^\d+$/.test(String(value))) {
             statusCode = StatusCodes.SuccessButNeedsReview;
             statusMessageKey = successMessageKey;
           } else if (numberCheckType?.floatNumbersAllowed) {
@@ -1209,7 +1208,10 @@ export default class SelfTester {
         }
         elementValue = `${value}`;
       } else if (typeof value === "string") {
-        if (
+        if (/^\d+$/.test(String(value))) {
+          statusCode = StatusCodes.SuccessButNeedsReview;
+          statusMessageKey = successMessageKey;
+        } else if (
           encodeURI(encodeURIComponent("[object Object]")) === value ||
           encodeURI("[object Object]") === value
         ) {
@@ -1237,13 +1239,6 @@ export default class SelfTester {
         } else if (
           numberCheckType?.numbersInStringsAllowed === false &&
           /\d/.test(value)
-        ) {
-          statusCode = StatusCodes.Error;
-          statusMessageKey = malformedMessageKey;
-          elementValue = value;
-        } else if (
-          numberCheckType?.onlyNumbersAllowed === true &&
-          !/^\d+$/.test(value)
         ) {
           statusCode = StatusCodes.Error;
           statusMessageKey = malformedMessageKey;
