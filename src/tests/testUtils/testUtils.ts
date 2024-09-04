@@ -217,7 +217,7 @@ function getAwinIntegrationScript({
     }
   }
   const integrationScript = `
-        ${getChangeFlexibleiframeJsApiToTestingForAwinScript()}
+        ${getChangeFlexibleIFrameJsApiToTestingForAwinScript()}
         ${salesTrackingScript}
         ${awinMasterTagScript}
         ${getChangeSovendusJsScriptTypeScript(
@@ -238,7 +238,7 @@ const awinMasterTagScript = `
         document.body.appendChild(script);
         `;
 
-function getChangeFlexibleiframeJsApiToTestingForAwinScript(): string {
+function getChangeFlexibleIFrameJsApiToTestingForAwinScript(): string {
   return `    
       function interceptAndBlockScripts(originalMethod) {
         return function (node) {

@@ -1289,21 +1289,21 @@ export default class SelfTester {
     });
   }
 
-  // async transmitTestResult(): Promise<void> {
-  //   try {
-  //     await fetch("http://localhost:3000/api/testing-plugin", {
-  //       method: "POST",
-  //       mode: "no-cors",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(this.getTestResultResponseData()),
-  //     });
-  //   } catch (e) {
-  //     // eslint-disable-next-line no-console
-  //     console.error("Failed to transmit sovendus test result - error:", e);
-  //   }
-  // }
+  async transmitTestResult(): Promise<void> {
+    try {
+      await fetch("http://localhost:3000/api/testing-plugin", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.getTestResultResponseData()),
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to transmit sovendus test result - error:", e);
+    }
+  }
 
   getTestResultResponseData(): TestResultResponseDataType {
     return {
