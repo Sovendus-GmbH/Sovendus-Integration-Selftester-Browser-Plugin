@@ -2,10 +2,8 @@
 
 ## Selftester Plugin
 
-- allow number in string in session id + add/adjust tests
 - check data-cmp-src for flexibleiframejs and sovendusjs
 - prevent firefox and google translates
-- add warning when number is in streetname
 - add button to manually add master tag again, to verify if its due to master tag before sales tracking
 - handle overlay scrollable screenshot - add tests to check if overlay detection works
 - improve overlay loading speed
@@ -21,3 +19,9 @@
 - get a AWIN ID for Tests
 - add spa tests
 - consider adding more awin not executed tests
+
+
+## Marcus Check
+
+- allow number in string in session id + add/adjust tests
+- add warning when number is in consumerStreet

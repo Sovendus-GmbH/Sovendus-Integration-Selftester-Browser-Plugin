@@ -144,6 +144,7 @@ export enum StatusMessageKeyTypes {
   missingIframeContainerId = "missingIframeContainerId",
   iFrameContainerIdMalformed = "iFrameContainerIdMalformed",
   iFrameContainerIdHasSpaces = "iFrameContainerIdHasSpaces",
+  numberInConsumerStreet = "numberInStreetName",
   empty = "empty",
 }
 
@@ -185,6 +186,11 @@ export const statusMessages: {
   integrationTypeMalformed: {
     errorText: "VALUE TYPE NOT ALLOWED",
     infoText: "Error: you can only pass a string as the integrationType",
+  },
+  numberInStreetName: {
+    errorText: "NUMBER IN STREET NAME",
+    infoText:
+      "Warning: Make sure the street name doesn't include the street number",
   },
   failedToDetectBrowserType: {
     errorText: "", // error is in BrowserTypes.NotDetected
