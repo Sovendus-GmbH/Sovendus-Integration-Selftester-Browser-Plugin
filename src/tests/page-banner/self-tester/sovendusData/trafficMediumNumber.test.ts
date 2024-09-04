@@ -55,7 +55,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "123#456",
       },
     },
-    expectedElementValue: "123#456",
+    expectedElementValue: encodeURI(encodeURIComponent("123#456")),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -125,7 +125,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "12  345",
       },
     },
-    expectedElementValue: "12  345",
+    expectedElementValue: encodeURI(encodeURIComponent("12  345")),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -139,22 +139,22 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "123\t456",
       },
     },
-    expectedElementValue: "123\t456",
+    expectedElementValue: encodeURI(encodeURIComponent("123\t456")),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
   },
-  // {
-  //   testName: "FailNumberWithExponentialNotation",
-  //   sovAppData: {
-  //     sovConsumer: sovAppConsumerAllValidData,
-  //     sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: "1e5" },
-  //   },
-  //   expectedElementValue: "1e5",
-  //   expectedStatusCode: StatusCodes.Error,
-  //   expectedStatusMessageKey:
-  //     StatusMessageKeyTypes.trafficMediumNumberMalformed,
-  // },
+  {
+    testName: "FailNumberWithExponentialNotation",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: "1e5" },
+    },
+    expectedElementValue: "1e5",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
   {
     testName: "FailNumberWithDecimalPoint",
     sovAppData: {
@@ -178,7 +178,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "1234✓",
       },
     },
-    expectedElementValue: "1234✓",
+    expectedElementValue: encodeURI(encodeURIComponent("1234✓")),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -214,7 +214,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "55 66",
       },
     },
-    expectedElementValue: "55 66",
+    expectedElementValue: encodeURI(encodeURIComponent("55 66")),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -228,7 +228,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "55@66",
       },
     },
-    expectedElementValue: "55@66",
+    expectedElementValue: encodeURI(encodeURIComponent("55@66")),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -247,17 +247,17 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
   },
-  // {
-  //   testName: "FailNumberWithLeadingZeros",
-  //   sovAppData: {
-  //     sovConsumer: sovAppConsumerAllValidData,
-  //     sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: "007" },
-  //   },
-  //   expectedElementValue: "007",
-  //   expectedStatusCode: StatusCodes.Error,
-  //   expectedStatusMessageKey:
-  //     StatusMessageKeyTypes.trafficMediumNumberMalformed,
-  // },
+  {
+    testName: "FailNumberWithLeadingZeros",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: "007" },
+    },
+    expectedElementValue: "007",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
   {
     testName: "FailNumberWithNewLine",
     sovAppData: {
@@ -267,7 +267,7 @@ const testCasesWhenScriptRuns: TestsInfoType = [
         trafficMediumNumber: "55\n66",
       },
     },
-    expectedElementValue: "55\n66",
+    expectedElementValue: encodeURI(encodeURIComponent("55\n66")),
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -328,6 +328,10 @@ const testCasesWhenScriptDoesNotRun: TestsInfoType =
   testCasesWhenScriptRuns.map((testInfo) => ({
     ...testInfo,
     testName: `${testInfo.testName}_WhenScriptDoesNotRun`,
+    expectedElementValue:
+      typeof testInfo.expectedElementValue === "string"
+        ? decodeURIComponent(decodeURI(testInfo.expectedElementValue))
+        : testInfo.expectedElementValue,
     testOptions: {
       regular: {
         disableFlexibleIFrameJs: true,

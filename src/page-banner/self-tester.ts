@@ -1221,6 +1221,7 @@ export default class SelfTester {
           statusMessageKey = successMessageKey;
         } else if (numberCheckType?.stringNumbersAllowed) {
           if (/^\d+$/.test(String(value))) {
+            // (/^[1-9]\d*$/.test(String(value)))
             statusCode = StatusCodes.SuccessButNeedsReview;
             statusMessageKey = successMessageKey;
           } else if (numberCheckType?.floatNumbersAllowed) {
