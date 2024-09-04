@@ -46,7 +46,7 @@ executeOverlayTests({
         StatusMessageKeyTypes.sessionIdMalformed,
       expectedMissingStatusMessageKey: StatusMessageKeyTypes.missingSessionId,
       objectElementValueType: "objectObject",
-      canBeANumber: true,
+      skipNumberCheck: true,
     }),
   ],
 });

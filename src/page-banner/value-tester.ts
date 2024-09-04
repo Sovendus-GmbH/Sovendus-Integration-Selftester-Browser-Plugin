@@ -8,13 +8,13 @@ export function validValueTestResult({
   missingErrorMessageKey,
   successMessageKey,
   malformedMessageKey,
-  numberCheckType,
+  checkTypes,
 }: {
   value: ExplicitAnyType;
   missingErrorMessageKey: StatusMessageKeyTypes;
   successMessageKey: StatusMessageKeyTypes;
   malformedMessageKey: StatusMessageKeyTypes;
-  numberCheckType?: NumberCheckType;
+  checkTypes?: NumberCheckType;
 }): WarningOrFailTestResult<string | undefined> {
   if (isMissingValue(value)) {
     return createTestResult(
@@ -31,14 +31,14 @@ export function validValueTestResult({
   } else if (typeof value === "number") {
     return handleNumber(
       value,
-      numberCheckType,
+      checkTypes,
       successMessageKey,
       malformedMessageKey,
     );
   } else if (typeof value === "string") {
     return handleString(
       value,
-      numberCheckType,
+      checkTypes,
       successMessageKey,
       malformedMessageKey,
     );
@@ -95,15 +95,12 @@ function handleBoolean(
 
 function handleNumber(
   value: number,
-  numberCheckType: NumberCheckType | undefined,
+  checkTypes: NumberCheckType | undefined,
   successMessageKey: StatusMessageKeyTypes,
   malformedMessageKey: StatusMessageKeyTypes,
 ): WarningOrFailTestResult<string | undefined> {
-  if (numberCheckType?.numberTypeAllowed) {
-    if (
-      /^[1-9]\d*$/.test(String(value)) ||
-      numberCheckType?.floatNumbersAllowed
-    ) {
+  if (checkTypes?.numberTypeAllowed) {
+    if (/^[1-9]\d*$/.test(String(value)) || checkTypes?.floatNumbersAllowed) {
       return createTestResult(
         `${value}`,
         successMessageKey,
@@ -115,18 +112,10 @@ function handleNumber(
 }
 function handleString(
   value: string,
-  numberCheckType: NumberCheckType | undefined,
+  checkTypes: NumberCheckType | undefined,
   successMessageKey: StatusMessageKeyTypes,
   malformedMessageKey: StatusMessageKeyTypes,
 ): WarningOrFailTestResult<string | undefined> {
-  if (!isNaN(Number(value))) {
-    return handleNumericString(
-      value,
-      numberCheckType,
-      successMessageKey,
-      malformedMessageKey,
-    );
-  }
   if (isObjectString(value)) {
     return createTestResult(
       "[object-Object]",
@@ -137,23 +126,33 @@ function handleString(
   if (value === "true" || value === "false") {
     return createTestResult(value, malformedMessageKey, StatusCodes.Error);
   }
-  if (numberCheckType?.anyStringAllowed) {
+  if (checkTypes?.anyStringAllowed) {
     return createTestResult(
       value,
       successMessageKey,
       StatusCodes.SuccessButNeedsReview,
     );
   }
-
-  if (isNumberStringWithComma(value, numberCheckType)) {
+  if (!isNaN(Number(value))) {
+    return handleNumericString(
+      value,
+      checkTypes,
+      successMessageKey,
+      malformedMessageKey,
+    );
+  }
+  if (isNumberStringWithComma(value, checkTypes)) {
     return createTestResult(
       safeURI("decodeURIComponent", safeURI("decodeURI", value)),
       malformedMessageKey,
       StatusCodes.Error,
     );
   }
+  if (checkTypes?.mustBeANumberOrStringNumber) {
+    return createTestResult(value, malformedMessageKey, StatusCodes.Error);
+  }
 
-  if (isInvalidString(value, numberCheckType)) {
+  if (isInvalidString(value, checkTypes)) {
     return createTestResult(value, malformedMessageKey, StatusCodes.Error);
   }
 
@@ -166,20 +165,20 @@ function handleString(
 
 function handleNumericString(
   value: string,
-  numberCheckType: NumberCheckType | undefined,
+  checkTypes: NumberCheckType | undefined,
   successMessageKey: StatusMessageKeyTypes,
   malformedMessageKey: StatusMessageKeyTypes,
 ): WarningOrFailTestResult<string | undefined> {
-  if (numberCheckType?.anyStringAllowed) {
+  if (checkTypes?.anyStringAllowed) {
     return createTestResult(
       value,
       successMessageKey,
       StatusCodes.SuccessButNeedsReview,
     );
   }
-  if (numberCheckType?.stringNumbersAllowed) {
+  if (checkTypes?.stringNumbersAllowed) {
     if (
-      numberCheckType?.numberTypeAllowed
+      checkTypes?.numberTypeAllowed
         ? /^[1-9]\d*$/.test(value)
         : /^\+?[0-9]\d*$/.test(value)
     ) {
@@ -188,7 +187,7 @@ function handleNumericString(
         successMessageKey,
         StatusCodes.SuccessButNeedsReview,
       );
-    } else if (numberCheckType?.floatNumbersAllowed) {
+    } else if (checkTypes?.floatNumbersAllowed) {
       return createTestResult(
         value,
         successMessageKey,
@@ -202,12 +201,12 @@ function handleNumericString(
 
 function isNumberStringWithComma(
   value: string,
-  numberCheckType: NumberCheckType | undefined,
+  checkTypes: NumberCheckType | undefined,
 ): boolean {
   return !!(
-    (numberCheckType?.stringNumbersAllowed &&
+    (checkTypes?.stringNumbersAllowed &&
       !isNaN(Number(value.replace(",", ".")))) ||
-    (numberCheckType?.stringNumbersAllowed &&
+    (checkTypes?.stringNumbersAllowed &&
       !isNaN(
         Number(
           safeURI("decodeURIComponent", safeURI("decodeURI", value)).replace(
@@ -234,11 +233,11 @@ function isObjectString(value: string): boolean {
 
 function isInvalidString(
   value: string,
-  numberCheckType: NumberCheckType | undefined,
+  checkTypes: NumberCheckType | undefined,
 ): boolean {
   return (
     hasWhitespaceIssues(value) ||
-    hasNumberInStringCheck(value, numberCheckType) ||
+    hasNumberInStringCheck(value, checkTypes) ||
     hasSpecialCharacter(value)
   );
 }
@@ -249,9 +248,9 @@ function hasWhitespaceIssues(value: string): boolean {
 
 function hasNumberInStringCheck(
   value: string,
-  numberCheckType: NumberCheckType | undefined,
+  checkTypes: NumberCheckType | undefined,
 ): boolean {
-  return numberCheckType?.numbersInStringsAllowed ? false : /\d/.test(value);
+  return checkTypes?.numbersInStringsAllowed ? false : /\d/.test(value);
 }
 
 interface NumberCheckType {
@@ -260,4 +259,5 @@ interface NumberCheckType {
   floatNumbersAllowed?: boolean;
   numbersInStringsAllowed?: boolean;
   anyStringAllowed?: boolean;
+  mustBeANumberOrStringNumber?: boolean;
 }

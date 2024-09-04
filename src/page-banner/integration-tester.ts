@@ -268,7 +268,7 @@ export default class SelfTester {
       malformedMessageKey: StatusMessageKeyTypes.integrationTypeMalformed,
       missingErrorMessageKey: StatusMessageKeyTypes.integrationTypeMissing,
       successMessageKey: StatusMessageKeyTypes.empty,
-      numberCheckType: {
+      checkTypes: {
         numbersInStringsAllowed: true,
       },
     });
@@ -373,7 +373,7 @@ export default class SelfTester {
             StatusMessageKeyTypes.missingConsumerSalutation,
           successMessageKey: StatusMessageKeyTypes.consumerSalutationSuccess,
           malformedMessageKey: StatusMessageKeyTypes.consumerSalutationNotValid,
-          numberCheckType: {
+          checkTypes: {
             anyStringAllowed: true,
           },
         });
@@ -450,7 +450,7 @@ export default class SelfTester {
           successMessageKey: StatusMessageKeyTypes.consumerYearOfBirthSuccess,
           malformedMessageKey:
             StatusMessageKeyTypes.consumerYearOfBirthNotValid,
-          numberCheckType: {
+          checkTypes: {
             floatNumbersAllowed: false,
             stringNumbersAllowed: true,
             numberTypeAllowed: true,
@@ -498,7 +498,7 @@ export default class SelfTester {
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerEmail,
           successMessageKey: StatusMessageKeyTypes.consumerEmailSuccess,
           malformedMessageKey: StatusMessageKeyTypes.consumerEmailNotValid,
-          numberCheckType: {
+          checkTypes: {
             anyStringAllowed: true,
           },
         });
@@ -543,7 +543,7 @@ export default class SelfTester {
             StatusMessageKeyTypes.missingConsumerEmailHash,
           successMessageKey: StatusMessageKeyTypes.consumerEmailHashSuccess,
           malformedMessageKey: StatusMessageKeyTypes.consumerEmailNotMD5Hash,
-          numberCheckType: {
+          checkTypes: {
             anyStringAllowed: true,
           },
         });
@@ -591,7 +591,7 @@ export default class SelfTester {
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerStreet,
           successMessageKey: StatusMessageKeyTypes.consumerStreetSuccess,
           malformedMessageKey: StatusMessageKeyTypes.consumerStreetMalformed,
-          numberCheckType: {
+          checkTypes: {
             numbersInStringsAllowed: false,
           },
         });
@@ -625,7 +625,7 @@ export default class SelfTester {
           successMessageKey: StatusMessageKeyTypes.consumerStreetNumberSuccess,
           malformedMessageKey:
             StatusMessageKeyTypes.consumerStreetNumberMalformed,
-          numberCheckType: {
+          checkTypes: {
             stringNumbersAllowed: true,
             numbersInStringsAllowed: true,
           },
@@ -659,7 +659,7 @@ export default class SelfTester {
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerZipCode,
           successMessageKey: StatusMessageKeyTypes.consumerZipCodeSuccess,
           malformedMessageKey: StatusMessageKeyTypes.consumerZipCodeMalformed,
-          numberCheckType: {
+          checkTypes: {
             floatNumbersAllowed: false,
             stringNumbersAllowed: true,
             numberTypeAllowed: true,
@@ -682,7 +682,7 @@ export default class SelfTester {
           missingErrorMessageKey: StatusMessageKeyTypes.missingConsumerPhone,
           successMessageKey: StatusMessageKeyTypes.consumerPhoneSuccess,
           malformedMessageKey: StatusMessageKeyTypes.consumerPhoneMalformed,
-          numberCheckType: {
+          checkTypes: {
             floatNumbersAllowed: false,
             stringNumbersAllowed: true,
             numberTypeAllowed: false,
@@ -819,7 +819,7 @@ export default class SelfTester {
       missingErrorMessageKey,
       successMessageKey,
       malformedMessageKey,
-      numberCheckType: {
+      checkTypes: {
         floatNumbersAllowed: false,
         stringNumbersAllowed: true,
         numberTypeAllowed: true,
@@ -854,7 +854,7 @@ export default class SelfTester {
       missingErrorMessageKey: StatusMessageKeyTypes.missingIframeContainerId,
       malformedMessageKey: StatusMessageKeyTypes.iFrameContainerIdMalformed,
       successMessageKey: StatusMessageKeyTypes.empty,
-      numberCheckType: {
+      checkTypes: {
         numbersInStringsAllowed: true,
       },
     });
@@ -1231,7 +1231,7 @@ export default class SelfTester {
           missingErrorMessageKey: StatusMessageKeyTypes.missingOrderId,
           successMessageKey: StatusMessageKeyTypes.orderIdSuccess,
           malformedMessageKey: StatusMessageKeyTypes.orderIdMalformed,
-          numberCheckType: {
+          checkTypes: {
             anyStringAllowed: true,
           },
         });
@@ -1249,10 +1249,11 @@ export default class SelfTester {
           missingErrorMessageKey: StatusMessageKeyTypes.orderValueMissing,
           successMessageKey: StatusMessageKeyTypes.orderValueSuccess,
           malformedMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
-          numberCheckType: {
+          checkTypes: {
             floatNumbersAllowed: true,
             stringNumbersAllowed: true,
             numberTypeAllowed: true,
+            mustBeANumberOrStringNumber: true,
           },
         });
       },
@@ -1264,14 +1265,25 @@ export default class SelfTester {
       testName: "sessionId",
       rawElementValue: window.sovIframes?.[0]?.sessionId,
       testFunction: () => {
-        return validValueTestResult({
+        const valueTestResult = validValueTestResult({
           value: window.sovIframes?.[0]?.sessionId,
           missingErrorMessageKey: StatusMessageKeyTypes.missingSessionId,
           successMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
           malformedMessageKey: StatusMessageKeyTypes.sessionIdMalformed,
-          numberCheckType: {
+          checkTypes: {
             anyStringAllowed: true,
           },
+        });
+        return new WarningOrFailTestResult({
+          elementValue:
+            typeof valueTestResult.elementValue === "string"
+              ? safeURI(
+                  "decodeURIComponent",
+                  safeURI("decodeURI", valueTestResult.elementValue),
+                )
+              : valueTestResult.elementValue,
+          statusCode: valueTestResult.statusCode,
+          statusMessageKey: valueTestResult.statusMessageKey,
         });
       },
     });
@@ -1287,10 +1299,11 @@ export default class SelfTester {
           missingErrorMessageKey: StatusMessageKeyTypes.unixTimestampMissing,
           malformedMessageKey: StatusMessageKeyTypes.notAUnixTimestamp,
           successMessageKey: StatusMessageKeyTypes.empty,
-          numberCheckType: {
+          checkTypes: {
             floatNumbersAllowed: true,
             stringNumbersAllowed: true,
             numberTypeAllowed: true,
+            mustBeANumberOrStringNumber: true,
           },
         });
         let statusMessageKey: StatusMessageKeyTypes =
@@ -1353,7 +1366,7 @@ export default class SelfTester {
           missingErrorMessageKey: StatusMessageKeyTypes.missingCouponCode,
           successMessageKey: StatusMessageKeyTypes.couponCodeSuccess,
           malformedMessageKey: StatusMessageKeyTypes.couponCodeMalformed,
-          numberCheckType: {
+          checkTypes: {
             anyStringAllowed: true,
           },
         });

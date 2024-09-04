@@ -13,7 +13,7 @@ executeOverlayTests({
       elementKey: "isUnknownSovendusJsError",
       testsInfo: [
         {
-          testName: "SovendusJsExecutedWithOneSecondTimeout",
+          testName: "SovendusJsExecutedWithTimeout",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
