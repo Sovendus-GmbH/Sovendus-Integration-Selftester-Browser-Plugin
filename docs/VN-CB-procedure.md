@@ -5,7 +5,7 @@
 
 ## How to Perform a Test on Desktop Chrome
 
-1. Place an order on your store using the Chrome browser (on Linux, Mac, or Windows) with cookies rejected.
+1. Place an order on your store using the Chrome browser (on Linux, Mac, or Windows) with cookies rejected. Also make sure to use any voucher code for the order, as we need to check if it gets passed on properly.
 2. If there is a trace of our integration, the self-test overlay will open automatically on the page, displaying all order, consumer, and integration information.
 3. Make sure the Sovendus Checkout Benefits offer list and Voucher Network are visible on the page where they should be.
 4. Now check all values and potential error messages in the self-test overlay. Make sure to follow the steps you'll see when you hover over the info icons next to the values to verify them. In case there are any red error messages, follow the steps to fix them.
@@ -17,7 +17,7 @@
 1. Right-click on a random spot on the website and select "Inspect."
 2. A pop-up should appear. In the top left corner of this pop-up, there should be an icon that looks like a notebook with a phone in front of it. Click on this icon. ![Mobile symbol image](https://raw.githubusercontent.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/main/docs/Mobilesymbol-image.png)
 3. The size of your page should now change. After that, click on "Dimensions: ..." at the top of your page and choose "iPhone 14 Pro Max."
-4. After setting up the mobile mode, place another order on your store using the mobile platform.
+4. After setting up the mobile mode, place another order on your store using the mobile platform, with cookies accepted. Also make sure to use any voucher code for the order, as we need to check if it gets passed on properly.
 5. If there is a trace of our integration, the self-test overlay will open automatically on the page, displaying all order, consumer, and integration information.
 6. Make sure the Sovendus Checkout Benefits offer list and Voucher Network are visible on the page where they should be.
 7. Now check all values and potential error messages in the self-test overlay. Make sure to follow the steps you'll see when you hover over the info icons next to the values to verify them. In case there are any red error messages, follow the steps to fix them.
