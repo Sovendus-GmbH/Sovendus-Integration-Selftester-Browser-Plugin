@@ -624,6 +624,7 @@ export default class SelfTester {
         floatNumbersAllowed: false,
         numbersInStringsAllowed: true,
         numberTypeAllowed: true,
+        onlyNumbersAllowed: true,
       },
     });
   }
@@ -641,6 +642,7 @@ export default class SelfTester {
         floatNumbersAllowed: false,
         numbersInStringsAllowed: true,
         numberTypeAllowed: true,
+        onlyNumbersAllowed: true,
       },
     });
   }
@@ -1151,6 +1153,7 @@ export default class SelfTester {
       numberTypeAllowed?: boolean;
       numbersInStringsAllowed?: boolean;
       floatNumbersAllowed?: boolean;
+      onlyNumbersAllowed?: boolean;
     };
   }): WarningOrFailTestResult<string | undefined> {
     let elementValue: string | undefined;
@@ -1234,6 +1237,13 @@ export default class SelfTester {
         } else if (
           numberCheckType?.numbersInStringsAllowed === false &&
           /\d/.test(value)
+        ) {
+          statusCode = StatusCodes.Error;
+          statusMessageKey = malformedMessageKey;
+          elementValue = value;
+        } else if (
+          numberCheckType?.onlyNumbersAllowed === true &&
+          !/^\d+$/.test(value)
         ) {
           statusCode = StatusCodes.Error;
           statusMessageKey = malformedMessageKey;

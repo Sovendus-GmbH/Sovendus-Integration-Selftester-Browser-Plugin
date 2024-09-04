@@ -5,7 +5,6 @@
 - check lampenwelt (zip from emine) no AWIN.Tracking.Sale but banner visible
 - add timestamp datetime to older than error message
 - make screenshots from bottom to top (so the last screenshot doesnt cut off as much)
-- add more malformed tests for number values e.g. no error for trafficSourceNumber: "'5951" and "d5951"
 - add docs urls to e.g. no div found
 - add url to screenshot
 - add button to manually add master tag again, to verify if its due to master tag before sales tracking
@@ -26,6 +25,7 @@
 
 ## Currently working on
 
+- add more malformed tests for number values e.g. no error for trafficSourceNumber: "'5951" and "d5951"
 
 ## Marcus Check
 
