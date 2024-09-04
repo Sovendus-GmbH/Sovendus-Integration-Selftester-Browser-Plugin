@@ -4,8 +4,6 @@
 
 - add timestamp datetime to older than error message
 - make screenshots from bottom to top (so the last screenshot doesnt cut off as much)
-- allow float numbers for session and order id
-- fix consumerStreet (tests)
 - add more malformed tests for number values e.g. no error for trafficSourceNumber: "'5951" and "d5951"
 - add docs urls to e.g. no div found
 - add url to screenshot
@@ -16,6 +14,8 @@
 - transmit multiple iframes content when they are different
 - check cors api call to dev hub
 - add error when invalid email hash is used - banner will not load
+- log thrown errors to dev hub api with sovSelfTester, sovIframes and sovConsumer
+- check data-cmp-src for flexibleiframejs and sovendusjs
 
 ## Tests
 
@@ -25,8 +25,6 @@
 
 ## Currently working on
 
-- log thrown errors to dev hub api with sovSelfTester, sovIframes and sovConsumer
-- check data-cmp-src for flexibleiframejs and sovendusjs
 
 ## Marcus Check
 
@@ -35,3 +33,5 @@
 - prevent firefox and google translates
 - allow number in string in session id + add/adjust tests
 - add warning when number is in consumerStreet
+- allow float numbers for session and order id
+- fix consumerStreet (tests)
