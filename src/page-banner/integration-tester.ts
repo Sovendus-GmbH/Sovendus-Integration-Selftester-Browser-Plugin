@@ -15,7 +15,15 @@ import {
   validCountries,
   validCurrencies,
 } from "./integration-tester-data-to-sync-with-dev-hub.js";
-import { validValueTestResult } from "./value-tester.js";
+import {
+  checkIfValidMd5Hash,
+  hasNumberInStringCheck,
+  hasOnlyLetters,
+  isPositiveIntegerCheck,
+  isValidStreetNumberFormat,
+  validateEmail,
+  validValueTestResult,
+} from "./value-tester.js";
 
 export default class SelfTester {
   integrationType: TestResultType<string>;
@@ -551,7 +559,7 @@ export default class SelfTester {
         const elementValue = testResult.elementValue;
         statusMessageKey = testResult.statusMessageKey;
         if (testResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-          const hashIsValid = this.checkIfValidMd5Hash(
+          const hashIsValid = checkIfValidMd5Hash(
             String(testResult.elementValue),
           );
           if (hashIsValid) {
@@ -574,11 +582,6 @@ export default class SelfTester {
     });
   }
 
-  checkIfValidMd5Hash(emailHash: string): boolean {
-    const regexExp = /^[a-f0-9]{32}$/gi;
-    return regexExp.test(emailHash);
-  }
-
   getConsumerStreetTestResult(
     consumer: SovApplicationConsumer,
   ): TestResultType<string | undefined> {
@@ -598,7 +601,7 @@ export default class SelfTester {
         if (
           valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview &&
           valueTestResult.elementValue &&
-          /\d/.test(valueTestResult.elementValue)
+          hasNumberInStringCheck(valueTestResult.elementValue, undefined)
         ) {
           return new WarningOrFailTestResult({
             elementValue: valueTestResult.elementValue,
@@ -634,7 +637,7 @@ export default class SelfTester {
         if (
           valueTestResult.statusCode === StatusCodes.Error &&
           valueTestResult.elementValue &&
-          /^\d+([A-Za-z]?|\s?\d*[-/]\d*)?$/.test(valueTestResult.elementValue)
+          isValidStreetNumberFormat(valueTestResult.elementValue)
         ) {
           return new WarningOrFailTestResult({
             elementValue: valueTestResult.elementValue,
@@ -692,7 +695,7 @@ export default class SelfTester {
         if (
           valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview &&
           valueTestResult.elementValue &&
-          /[A-Za-z]/.test(valueTestResult.elementValue)
+          hasOnlyLetters(valueTestResult.elementValue)
         ) {
           return new WarningOrFailTestResult({
             elementValue: valueTestResult.elementValue,
@@ -826,8 +829,7 @@ export default class SelfTester {
       },
     });
     if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-      // check if it starts with a 0
-      if (/^[1-9]\d*$/.test(String(valueTestResult.elementValue))) {
+      if (isPositiveIntegerCheck(String(valueTestResult.elementValue))) {
         return new WarningOrFailTestResult({
           elementValue: valueTestResult.elementValue,
           statusCode: StatusCodes.SuccessButNeedsReview,
@@ -1666,11 +1668,6 @@ export default class SelfTester {
     this.awinSaleTrackedTestResult = emptyBooleanTestResult;
     this.awinExecutedTestResult = emptyBooleanTestResult;
   }
-}
-
-function validateEmail(email: string): boolean {
-  const re = /^[\w.-]+@[a-zA-Z\d-]+\.[a-zA-Z]{2,}$/;
-  return re.test(email);
 }
 
 class TestResultType<TElementValueType> {

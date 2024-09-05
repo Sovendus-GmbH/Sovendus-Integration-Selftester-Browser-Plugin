@@ -8,6 +8,7 @@ import {
   sovAppDataMalformedButIsOkay,
   sovAppDataNumberButIsOkay,
   sovAppDataNumberWithCommaInsteadOfDotButIsOkay,
+  sovAppIFramesAllValidData,
 } from "@src/tests/testUtils/sovAppData";
 import {
   generateMalformedDataTests,
@@ -65,6 +66,97 @@ const tests = [
             disableFlexibleIFrameJs: true,
           },
         },
+      },
+      {
+        testName: "SuccessAsLargeNumber",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderValue: 1000000000, // Large valid number
+          },
+        },
+        expectedElementValue: "1000000000",
+        expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderValueSuccess,
+      },
+      {
+        testName: "SuccessAsSmallDecimal",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderValue: 0.01, // Small valid decimal
+          },
+        },
+        expectedElementValue: "0.01",
+        expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderValueSuccess,
+      },
+      {
+        testName: "MalformedNumberWithMultipleDots",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderValue: "12.34.56", // Invalid format with multiple dots
+          },
+        },
+        expectedElementValue: "12.34.56",
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
+      },
+      {
+        testName: "MalformedNegativeNumber",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderValue: "-1234.56", // Invalid negative number
+          },
+        },
+        expectedElementValue: "-1234.56",
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
+      },
+      {
+        testName: "MalformedOrderValueWithSpaces",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderValue: " 1234.56 ", // Invalid format with spaces
+          },
+        },
+        expectedElementValue: " 1234.56 ",
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
+      },
+      {
+        testName: "MalformedOrderValueWithLetters",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderValue: "1234abc", // Invalid format with letters
+          },
+        },
+        expectedElementValue: "1234abc",
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
+      },
+      {
+        testName: "MalformedOrderValueWithSpecialCharacters",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderValue: "$1234.56", // Invalid format with special characters
+          },
+        },
+        expectedElementValue: "$1234.56",
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
       },
     ],
   }),

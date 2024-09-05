@@ -19,14 +19,14 @@ executeOverlayTests({
       elementKey: "sessionId",
       testsInfo: [
         {
-          testName: "Success",
+          testName: "Success_WithHyphenAndNumbers",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: "session-1234",
           expectedStatusCode: StatusCodes.SuccessButNeedsReview,
           expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
         },
         {
-          testName: "SuccessNumbersInString",
+          testName: "Success_NumbersOnly",
           sovAppData: {
             ...sovAppDataEverythingIsOkay,
             sovIframes1: {
@@ -37,6 +37,110 @@ executeOverlayTests({
           expectedElementValue: "123456",
           expectedStatusCode: StatusCodes.SuccessButNeedsReview,
           expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
+        },
+        {
+          testName: "Success_Alphanumeric",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+              sessionId: "sess1234abc",
+            },
+          },
+          expectedElementValue: "sess1234abc",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
+        },
+        {
+          testName: "Success_UnderscoreInID",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+              sessionId: "session_1234",
+            },
+          },
+          expectedElementValue: "session_1234",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
+        },
+        {
+          testName: "Success_CapitalLetters",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+              sessionId: "SESSIONID123",
+            },
+          },
+          expectedElementValue: "SESSIONID123",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
+        },
+        {
+          testName: "Success_MixedCase",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+              sessionId: "SessionId-2024",
+            },
+          },
+          expectedElementValue: "SessionId-2024",
+          expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+          expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
+        },
+        {
+          testName: "Malformed_SpecialCharacters",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+              sessionId: "session@123",
+            },
+          },
+          expectedElementValue: "session@123",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdMalformed,
+        },
+        {
+          testName: "Malformed_Whitespace",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+              sessionId: "   ",
+            },
+          },
+          expectedElementValue: "   ",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdMalformed,
+        },
+        {
+          testName: "Malformed_OnlySpecialCharacters",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+              sessionId: "$%^&*",
+            },
+          },
+          expectedElementValue: "$%^&*",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdMalformed,
+        },
+        {
+          testName: "Malformed_SessionIDWithSpace",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovIframes1: {
+              ...sovAppIFramesAllValidData,
+              sessionId: "session 1234",
+            },
+          },
+          expectedElementValue: "session 1234",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdMalformed,
         },
       ],
     }),

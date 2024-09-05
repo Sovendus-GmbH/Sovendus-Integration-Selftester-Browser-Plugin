@@ -100,7 +100,10 @@ function handleNumber(
   malformedMessageKey: StatusMessageKeyTypes,
 ): WarningOrFailTestResult<string | undefined> {
   if (checkTypes?.numberTypeAllowed) {
-    if (/^[1-9]\d*$/.test(String(value)) || checkTypes?.floatNumbersAllowed) {
+    if (
+      isPositiveIntegerCheck(String(value)) ||
+      checkTypes?.floatNumbersAllowed
+    ) {
       return createTestResult(
         `${value}`,
         successMessageKey,
@@ -177,11 +180,7 @@ function handleNumericString(
     );
   }
   if (checkTypes?.stringNumbersAllowed) {
-    if (
-      checkTypes?.numberTypeAllowed
-        ? /^[1-9]\d*$/.test(value)
-        : /^\+?[0-9]\d*$/.test(value)
-    ) {
+    if (hasOnlyNumbersInStringCheck(value, checkTypes)) {
       return createTestResult(
         value,
         successMessageKey,
@@ -218,10 +217,6 @@ function isNumberStringWithComma(
   );
 }
 
-function hasSpecialCharacter(value: string): boolean {
-  return /[@#$%^&*()+=[\]]/.test(value);
-}
-
 function isObjectString(value: string): boolean {
   return (
     safeURI("encodeURI", safeURI("encodeURIComponent", "[object Object]")) ===
@@ -242,17 +237,6 @@ function isInvalidString(
   );
 }
 
-function hasWhitespaceIssues(value: string): boolean {
-  return /^\s|\s$|\s{2,}/.test(value);
-}
-
-function hasNumberInStringCheck(
-  value: string,
-  checkTypes: NumberCheckType | undefined,
-): boolean {
-  return checkTypes?.numbersInStringsAllowed ? false : /\d/.test(value);
-}
-
 interface NumberCheckType {
   numberTypeAllowed?: boolean;
   stringNumbersAllowed?: boolean;
@@ -260,4 +244,60 @@ interface NumberCheckType {
   numbersInStringsAllowed?: boolean;
   anyStringAllowed?: boolean;
   mustBeANumberOrStringNumber?: boolean;
+}
+
+function hasSpecialCharacter(value: string): boolean {
+  // Checks for Symbols @, #, $, %, ^, &, *, (, ), +, =, [, \ and ] in value and returns true if found
+  return /[@#$%^&*()+=[\]]/.test(value);
+}
+
+function hasWhitespaceIssues(value: string): boolean {
+  // Checks for whitespaces at the beginning, at the end, or consecutive spaces within the string and returns true if found
+  return /^\s|\s$|\s{2,}/.test(value);
+}
+
+export function hasNumberInStringCheck(
+  value: string,
+  checkTypes: NumberCheckType | undefined,
+): boolean {
+  // /\d/ checks for decimals [1-9] in value and returns true if found
+  return checkTypes?.numbersInStringsAllowed ? false : /\d/.test(value);
+}
+
+function hasOnlyNumbersInStringCheck(
+  value: string,
+  checkTypes: NumberCheckType | undefined,
+): boolean {
+  return checkTypes?.numberTypeAllowed
+    ? isPositiveIntegerCheck(value)
+    : // Checks for positive integers or optional '+' sign followed by digits (0-9) and returns true if found
+      /^\+?[0-9]\d*$/.test(value);
+}
+
+export function isPositiveIntegerCheck(value: string): boolean {
+  // Checks for positive integers (1-9 followed by digits) and returns true if found
+  return /^[1-9]\d*$/.test(String(value));
+}
+
+export function validateEmail(email: string): boolean {
+  // Checks if the given email has a correct format, checking for alphanumeric characters,
+  // dots or hyphens before the @ symbol, and a valid domain with a top-level domain of at least two characters
+  return /^[\w.-]+@[a-zA-Z\d-]+\.[a-zA-Z]{2,}$/.test(email);
+}
+
+export function checkIfValidMd5Hash(emailHash: string): boolean {
+  // Checks if the given string is a valid MD5 hash, which is a 32-character hexadecimal string
+  return /^[a-f0-9]{32}$/gi.test(emailHash);
+}
+
+export function isValidStreetNumberFormat(value: string): boolean {
+  // Checks for a string starting with digits
+  // optionally followed by a single letter or a combination
+  // of digits with optional spaces, dashes, or slashes and returns true if found
+  return /^\d+([A-Za-z]?|\s?\d*[-/]\d*)?$/.test(value);
+}
+
+export function hasOnlyLetters(value: string): boolean {
+  // Checks if the given string contains only letters
+  return /[A-Za-z]/.test(value);
 }
