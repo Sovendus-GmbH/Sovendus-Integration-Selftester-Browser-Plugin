@@ -1194,7 +1194,13 @@ export default class SelfTester {
       rawElementValue: window.sovIframes?.[0]?.orderCurrency,
       testFunction: () => {
         const valueTestResult = validValueTestResult({
-          value: window.sovIframes?.[0]?.orderCurrency,
+          value:
+            typeof window.sovIframes?.[0]?.orderCurrency === "string"
+              ? safeURI(
+                  "decodeURIComponent",
+                  safeURI("decodeURI", window.sovIframes[0].orderCurrency),
+                )
+              : window.sovIframes?.[0]?.orderCurrency,
           missingErrorMessageKey: StatusMessageKeyTypes.currencyMissing,
           successMessageKey: StatusMessageKeyTypes.currencySuccess,
           malformedMessageKey: StatusMessageKeyTypes.currencyNotValid,
@@ -1229,7 +1235,13 @@ export default class SelfTester {
       rawElementValue: window.sovIframes?.[0]?.orderId,
       testFunction: () => {
         return validValueTestResult({
-          value: window.sovIframes?.[0]?.orderId,
+          value:
+            typeof window.sovIframes?.[0]?.orderId === "string"
+              ? safeURI(
+                  "decodeURIComponent",
+                  safeURI("decodeURI", window.sovIframes[0].orderId),
+                )
+              : window.sovIframes?.[0]?.orderId,
           missingErrorMessageKey: StatusMessageKeyTypes.missingOrderId,
           successMessageKey: StatusMessageKeyTypes.orderIdSuccess,
           malformedMessageKey: StatusMessageKeyTypes.orderIdMalformed,
@@ -1247,7 +1259,13 @@ export default class SelfTester {
       rawElementValue: window.sovIframes?.[0]?.orderValue,
       testFunction: () => {
         return validValueTestResult({
-          value: window.sovIframes?.[0]?.orderValue,
+          value:
+            typeof window.sovIframes?.[0]?.orderValue === "string"
+              ? safeURI(
+                  "decodeURIComponent",
+                  safeURI("decodeURI", window.sovIframes[0].orderValue),
+                )
+              : window.sovIframes?.[0]?.orderValue,
           missingErrorMessageKey: StatusMessageKeyTypes.orderValueMissing,
           successMessageKey: StatusMessageKeyTypes.orderValueSuccess,
           malformedMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
