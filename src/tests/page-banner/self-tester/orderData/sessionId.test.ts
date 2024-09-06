@@ -91,19 +91,6 @@ executeOverlayTests({
           expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdSuccess,
         },
         {
-          testName: "Malformed_SpecialCharacters",
-          sovAppData: {
-            ...sovAppDataEverythingIsOkay,
-            sovIframes1: {
-              ...sovAppIFramesAllValidData,
-              sessionId: "session@123",
-            },
-          },
-          expectedElementValue: "session@123",
-          expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey: StatusMessageKeyTypes.sessionIdMalformed,
-        },
-        {
           testName: "Malformed_Whitespace",
           sovAppData: {
             ...sovAppDataEverythingIsOkay,

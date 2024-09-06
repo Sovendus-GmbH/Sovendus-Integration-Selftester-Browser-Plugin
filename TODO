@@ -26,11 +26,10 @@
 
 ## Currently working on
 
-- add more malformed tests for number values e.g. no error for trafficSourceNumber: "'5951" and "d5951"
-- Create functions for all Regex and describe the function of it in a comment
 
 ## Marcus Check
 
+- add more malformed tests for number values e.g. no error for trafficSourceNumber: "'5951" and "d5951"
 - Add that LeadingZeros are not allowed in number values
 - add tests to check if OverlayBanner and StickyBanner detection works
 - add tests to check if OverlayBanner or StickyBanner was hidden
@@ -38,3 +37,4 @@
 - add warning when number is in consumerStreet
 - allow float numbers for session and order id
 - fix consumerStreet (tests)
+- Create functions for all Regex and describe the function of it in a comment

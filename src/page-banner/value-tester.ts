@@ -130,6 +130,9 @@ function handleString(
     return createTestResult(value, malformedMessageKey, StatusCodes.Error);
   }
   if (checkTypes?.anyStringAllowed) {
+    if (hasOnlySpecialCharacter(value) || hasWhitespaceIssues(value)) {
+      return createTestResult(value, malformedMessageKey, StatusCodes.Error);
+    }
     return createTestResult(
       value,
       successMessageKey,
@@ -173,6 +176,9 @@ function handleNumericString(
   malformedMessageKey: StatusMessageKeyTypes,
 ): WarningOrFailTestResult<string | undefined> {
   if (checkTypes?.anyStringAllowed) {
+    if (hasOnlySpecialCharacter(value) || hasWhitespaceIssues(value)) {
+      return createTestResult(value, malformedMessageKey, StatusCodes.Error);
+    }
     return createTestResult(
       value,
       successMessageKey,
@@ -249,6 +255,11 @@ interface NumberCheckType {
 function hasSpecialCharacter(value: string): boolean {
   // Checks for Symbols @, #, $, %, ^, &, *, (, ), +, =, [, \ and ] in value and returns true if found
   return /[@#$%^&*()+=[\]]/.test(value);
+}
+
+function hasOnlySpecialCharacter(value: string): boolean {
+  // Checks if only Symbols @, #, $, %, ^, &, *, (, ), +, =, [, \ and ] in value and returns true if found
+  return /^[@#$%^&*()+=[\]]$/.test(value);
 }
 
 function hasWhitespaceIssues(value: string): boolean {
