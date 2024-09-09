@@ -130,7 +130,14 @@ function handleString(
     return createTestResult(value, malformedMessageKey, StatusCodes.Error);
   }
   if (checkTypes?.anyStringAllowed) {
-    if (hasOnlySpecialCharacter(value) || hasWhitespaceIssues(value)) {
+    const checkValue = safeURI(
+      "decodeURIComponent",
+      safeURI("decodeURI", value),
+    );
+    if (
+      hasWhitespaceIssues(checkValue) ||
+      hasOnlySpecialCharacter(checkValue)
+    ) {
       return createTestResult(value, malformedMessageKey, StatusCodes.Error);
     }
     return createTestResult(
@@ -192,7 +199,10 @@ function handleNumericString(
         successMessageKey,
         StatusCodes.SuccessButNeedsReview,
       );
-    } else if (checkTypes?.floatNumbersAllowed) {
+    } else if (
+      checkTypes?.floatNumbersAllowed &&
+      isValidFloatNumberFormat(value)
+    ) {
       return createTestResult(
         value,
         successMessageKey,
@@ -259,7 +269,7 @@ function hasSpecialCharacter(value: string): boolean {
 
 function hasOnlySpecialCharacter(value: string): boolean {
   // Checks if only Symbols @, #, $, %, ^, &, *, (, ), +, =, [, \ and ] in value and returns true if found
-  return /^[@#$%^&*()+=[\]]$/.test(value);
+  return /^[@#$%^&*()+=[\]]+$/.test(value);
 }
 
 function hasWhitespaceIssues(value: string): boolean {
@@ -305,10 +315,16 @@ export function isValidStreetNumberFormat(value: string): boolean {
   // Checks for a string starting with digits
   // optionally followed by a single letter or a combination
   // of digits with optional spaces, dashes, or slashes and returns true if found
-  return /^\d+([A-Za-z]?|\s?\d*[-/]\d*)?$/.test(value);
+  return /^(?=.*\d)[A-Za-z\d\s-/]*$/.test(value) && !hasWhitespaceIssues(value);
 }
 
 export function hasOnlyLetters(value: string): boolean {
   // Checks if the given string contains only letters
   return /[A-Za-z]/.test(value);
+}
+
+export function isValidFloatNumberFormat(value: string): boolean {
+  // Checks for valid float Number, at least one digit before the decimal point,
+  // and optionally one or more digits after the decimal point
+  return /^\d+(\.\d+)?$/.test(value) && !hasWhitespaceIssues(value);
 }

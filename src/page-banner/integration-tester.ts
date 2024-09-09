@@ -665,7 +665,6 @@ export default class SelfTester {
           checkTypes: {
             floatNumbersAllowed: false,
             stringNumbersAllowed: true,
-            numberTypeAllowed: true,
             numbersInStringsAllowed: true,
           },
         });

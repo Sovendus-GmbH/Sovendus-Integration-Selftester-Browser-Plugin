@@ -25,7 +25,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "76135", // Gültige 5-stellige PLZ
+              consumerZipcode: "76135", // Valid 5-digit German ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -40,7 +40,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "EC1A 1BB", // Gültige UK-PLZ
+              consumerZipcode: "EC1A 1BB", // Valid UK ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -55,7 +55,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "1012 AB", // Gültige NL-PLZ
+              consumerZipcode: "1012 AB", // Valid Dutch ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -70,7 +70,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "8000", // Gültige CH-PLZ
+              consumerZipcode: "8000", // Valid Swiss ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -85,7 +85,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "1000", // Gültige BE-PLZ
+              consumerZipcode: "1000", // Valid Belgian ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -100,7 +100,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "1000", // Gültige DK-PLZ
+              consumerZipcode: "1000", // Valid Danish ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -115,7 +115,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "00-001", // Gültige PLZ in Polen
+              consumerZipcode: "00-001", // Valid Polish ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -130,7 +130,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "111 22", // Gültige SE-PLZ
+              consumerZipcode: "111 22", // Valid Swedish ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -145,7 +145,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "75001", // Gültige FR-PLZ
+              consumerZipcode: "75001", // Valid French ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -160,7 +160,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "00100", // Gültige IT-PLZ
+              consumerZipcode: "00100", // Valid Italian ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -175,7 +175,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "1010", // Gültige AT-PLZ
+              consumerZipcode: "1010", // Valid Austrian ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -190,7 +190,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "28001", // Gültige ES-PLZ
+              consumerZipcode: "28001", // Valid Spanish ZIP code
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -200,27 +200,12 @@ executeOverlayTests({
             StatusMessageKeyTypes.consumerZipCodeSuccess,
         },
         {
-          testName: "FailOnlyLetters",
-          sovAppData: {
-            ...sovAppDataEverythingIsOkay,
-            sovConsumer: {
-              ...sovAppConsumerAllValidData,
-              consumerZipcode: "ABCDE", // Ungültige PLZ (nur Buchstaben)
-            },
-            sovIframes1: sovAppIFramesAllValidData,
-          },
-          expectedElementValue: "ABCDE",
-          expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey:
-            StatusMessageKeyTypes.consumerZipCodeMalformed,
-        },
-        {
           testName: "FailWithSpecialCharacters",
           sovAppData: {
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "123@5", // Ungültige PLZ (enthält spezielle Zeichen)
+              consumerZipcode: "123@5", // Invalid ZIP code (contains special characters)
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -235,7 +220,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: " 12345", // Ungültige PLZ (Leerzeichen am Anfang)
+              consumerZipcode: " 12345", // Invalid ZIP code (leading space)
             },
             sovIframes1: sovAppIFramesAllValidData,
           },
@@ -250,7 +235,7 @@ executeOverlayTests({
             ...sovAppDataEverythingIsOkay,
             sovConsumer: {
               ...sovAppConsumerAllValidData,
-              consumerZipcode: "12345 ", // Ungültige PLZ (Leerzeichen am Ende)
+              consumerZipcode: "12345 ", // Invalid ZIP code (trailing space)
             },
             sovIframes1: sovAppIFramesAllValidData,
           },

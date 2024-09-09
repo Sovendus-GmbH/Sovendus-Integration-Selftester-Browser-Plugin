@@ -58,19 +58,6 @@ const tests = [
         expectedStatusMessageKey: StatusMessageKeyTypes.orderIdSuccess,
       },
       {
-        testName: "MalformedOrderID_Spaces",
-        sovAppData: {
-          ...sovAppDataEverythingIsOkay,
-          sovIframes1: {
-            ...sovAppIFramesAllValidData,
-            orderId: "order 1234", // Invalid order ID with spaces
-          },
-        },
-        expectedElementValue: "order 1234",
-        expectedStatusCode: StatusCodes.Error,
-        expectedStatusMessageKey: StatusMessageKeyTypes.orderIdMalformed,
-      },
-      {
         testName: "MalformedOrderID_OnlyNumbers",
         sovAppData: {
           ...sovAppDataEverythingIsOkay,

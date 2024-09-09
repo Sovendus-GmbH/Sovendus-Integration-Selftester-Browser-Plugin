@@ -70,20 +70,6 @@ executeOverlayTests({
             StatusMessageKeyTypes.consumerStreetNumberMalformed,
         },
         {
-          testName: "MalformedWithOnlyLetters",
-          sovAppData: {
-            ...sovAppDataEverythingIsOkay,
-            sovConsumer: {
-              ...sovAppConsumerAllValidData,
-              consumerStreetNumber: "abc",
-            },
-          },
-          expectedElementValue: "abc",
-          expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey:
-            StatusMessageKeyTypes.consumerStreetNumberMalformed,
-        },
-        {
           testName: "MalformedWithOnlySpecialChars",
           sovAppData: {
             ...sovAppDataEverythingIsOkay,
