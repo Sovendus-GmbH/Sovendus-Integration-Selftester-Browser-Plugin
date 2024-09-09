@@ -890,20 +890,49 @@ export default class SelfTester {
       trafficSourceNumber.statusCode === StatusCodes.SuccessButNeedsReview &&
       trafficMediumNumber.statusCode === StatusCodes.SuccessButNeedsReview
     ) {
-      const flexibleIFrameJs: HTMLScriptElement | null =
-        document.querySelector(
-          '[src$="api.sovendus.com/sovabo/common/js/flexibleIframe.js"]',
-        ) ||
-        document.querySelector(
-          '[src$="testing4.sovendus.com/sovabo/common/js/flexibleIframe.js"]',
-        );
+      const flexibleIFrameJs: HTMLScriptElement | null = document
+        .querySelectorAll(
+          '[src$=".sovendus.com/sovabo/common/js/flexibleIframe.js"]',
+        )
+        .item(0) as HTMLScriptElement | null;
+
       const flexibleIFrameOnDOM = (this.flexibleIFrameOnDOM =
         this.getIsFlexibleIFrameOnDOMTestResult(flexibleIFrameJs));
-      const isFlexibleIFrameExecutable = (this.isFlexibleIFrameExecutable =
-        this.getIsFlexibleIFrameExecutable(
-          flexibleIFrameJs,
-          flexibleIFrameOnDOM,
-        ));
+
+      const isFlexibleIFrameExecutable = flexibleIFrameJs
+        ? this.getIsFlexibleIFrameExecutable(
+            flexibleIFrameJs,
+            flexibleIFrameOnDOM,
+          )
+        : ((): TestResultType<string | boolean | undefined> => {
+            const otherSourceElement = [
+              ...document.querySelectorAll("*"),
+            ].flatMap((el) =>
+              [...el.attributes]
+                .filter((attr) =>
+                  attr.value.endsWith(
+                    ".sovendus.com/sovabo/common/js/flexibleIframe.js",
+                  ),
+                )
+                .map((attr) => ({ element: el, attributeName: attr.name })),
+            )[0];
+
+            if (otherSourceElement) {
+              return new WarningOrFailTestResult<boolean | string | undefined>({
+                elementValue: otherSourceElement.attributeName,
+                statusCode: StatusCodes.Error,
+                statusMessageKey:
+                  StatusMessageKeyTypes.flexibleIFrameJsBlockedByCookieConsentUsingOtherSource,
+              });
+            }
+
+            return this.getIsFlexibleIFrameExecutable(
+              flexibleIFrameJs,
+              flexibleIFrameOnDOM,
+            );
+          })();
+      this.isFlexibleIFrameExecutable = isFlexibleIFrameExecutable;
+
       const sovendusJs: HTMLScriptElement | null = document.getElementById(
         "sovloader-script",
       ) as HTMLScriptElement | null;

@@ -85,6 +85,7 @@ export enum StatusMessageKeyTypes {
   sovendusJsBlockedByCookieConsent = "sovendusJsBlockedByCookieConsent",
   sovendusJsMissing = "sovendusJsMissing",
   flexibleIFrameJsBlockedByCookieConsent = "flexibleIFrameJsBlockedByCookieConsent",
+  flexibleIFrameJsBlockedByCookieConsentUsingOtherSource = "flexibleIFrameJsBlockedByCookieConsentUsingOtherSource",
   sovendusBannerDisabled = "sovendusBannerDisabled",
   containerDivNotFoundOnDOM = "containerDivNotFoundOnDOM",
   multipleSovIframesDetected = "multipleSovIframesDetected",
@@ -324,6 +325,12 @@ export const statusMessages: {
   flexibleIFrameJsBlockedByCookieConsent: {
     errorText:
       "Sovendus was detected but flexibleiframe.js was not executed because the script type is {elementValue} instead of text/javascript. This probably happened because your cookie consent tool blocked the script.",
+    infoText: "",
+  },
+
+  flexibleIFrameJsBlockedByCookieConsentUsingOtherSource: {
+    errorText:
+      "Sovendus was detected but flexibleiframe.js was not executed because the script source is '{elementValue}' instead of 'src'. This probably happened because your cookie consent tool blocked the script.",
     infoText: "",
   },
 

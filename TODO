@@ -16,8 +16,6 @@
 - transmit multiple iframes content when they are different
 - check cors api call to dev hub
 - add error when invalid email hash is used - banner will not load
-- log thrown errors to dev hub api with sovSelfTester, sovIframes and sovConsumer
-- check data-cmp-src for flexibleiframejs and sovendusjs (search all elements for flexibleiframe.js)
 - report dr. to mr. as a bug
 
 ## Tests
@@ -27,8 +25,11 @@
 
 ## Currently working on
 
+- log thrown errors to dev hub api with sovSelfTester, sovIframes and sovConsumer
+
 ## Marcus Check
 
+- check data-cmp-src for flexibleiframejs and sovendusjs (search all elements for flexibleiframe.js)
 - add more malformed tests for number values e.g. no error for trafficSourceNumber: "'5951" and "d5951"
 - Add that LeadingZeros are not allowed in number values
 - add tests to check if OverlayBanner and StickyBanner detection works
