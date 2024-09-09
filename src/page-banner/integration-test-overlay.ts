@@ -344,6 +344,7 @@ class SelfTesterOverlay {
             padding: 12px;
             border: unset;
             border-radius: 8px;
+            z-index: 99999;
           }
           #${innerOverlayId} {
             padding: ${bannerPadding}px !important;
@@ -485,6 +486,7 @@ class SelfTesterOverlay {
           }
           #${toggleSovendusOverlayId} {
             width: 62px !important;
+            height: unset !important;
             position: fixed !important;
             left: calc(50% - 31px) !important;
             right: calc(50% - 31px) !important;
