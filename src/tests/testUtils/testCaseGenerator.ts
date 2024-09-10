@@ -240,6 +240,7 @@ export interface TestOptionsType {
   };
   regular?: {
     disableFlexibleIFrameJs?: boolean | undefined;
+    sourceFlexibleIFrameJs?: string | undefined;
     disableSovendusDiv?: boolean | undefined;
     removeSovIFrame?: boolean | undefined;
     flexibleIFrameJsScriptType?: string | undefined | null;

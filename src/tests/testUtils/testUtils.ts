@@ -320,10 +320,11 @@ function getSovendusIntegrationScript({
           var script = document.createElement("script");
           script.type = ${getFlexibleIFrameScriptType(testOptions)};
           script.async = true;
-          script.src =
-            "https://testing4.sovendus.com/sovabo/common/js/flexibleIframe.js";
+          script.setAttribute('${testOptions?.regular?.sourceFlexibleIFrameJs || "src"}', "https://api.sovendus.com/sovabo/common/js/flexibleIframe.js");
           document.body.appendChild(script);
         `
+      // script.src =
+      // "https://testing4.sovendus.com/sovabo/common/js/flexibleIframe.js";
     }
     ${
       testOptions?.regular?.useAwinMasterTagInRegularIntegration
