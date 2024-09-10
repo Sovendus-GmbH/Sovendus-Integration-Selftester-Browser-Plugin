@@ -896,77 +896,20 @@ export default class SelfTester {
         )
         .item(0) as HTMLScriptElement | null;
 
-      const flexibleIFrameOnDOM = (this.flexibleIFrameOnDOM =
-        this.getIsFlexibleIFrameOnDOMTestResult(flexibleIFrameJs));
-
-      // const isFlexibleIFrameExecutable = flexibleIFrameJs
-      //   ? this.getIsFlexibleIFrameExecutable(
-      //       flexibleIFrameJs,
-      //       flexibleIFrameOnDOM,
-      //     )
-      //   : ((): TestResultType<string | boolean | undefined> => {
-      //       const otherSourceElement = [
-      //         ...document.querySelectorAll("*"),
-      //       ].flatMap((el) =>
-      //         [...el.attributes]
-      //           .filter((attr) =>
-      //             attr.value.endsWith(
-      //               ".sovendus.com/sovabo/common/js/flexibleIframe.js",
-      //             ),
-      //           )
-      //           .map((attr) => ({ element: el, attributeName: attr.name })),
-      //       )[0];
-
-      //       if (otherSourceElement) {
-      //         return new WarningOrFailTestResult<boolean | string | undefined>({
-      //           elementValue: otherSourceElement.attributeName,
-      //           statusCode: StatusCodes.Error,
-      //           statusMessageKey:
-      //             StatusMessageKeyTypes.flexibleIFrameJsBlockedByCookieConsentUsingOtherSource,
-      //         });
-      //       }
-
-      //       return this.getIsFlexibleIFrameExecutable(
-      //         flexibleIFrameJs,
-      //         flexibleIFrameOnDOM,
-      //       );
-      //     })();
-      // this.isFlexibleIFrameExecutable = isFlexibleIFrameExecutable;
-
       let isFlexibleIFrameExecutable;
+      let flexibleIFrameOnDOM;
       if (flexibleIFrameJs) {
+        flexibleIFrameOnDOM = this.flexibleIFrameOnDOM =
+          this.getIsFlexibleIFrameOnDOMTestResult(flexibleIFrameJs);
+
         isFlexibleIFrameExecutable = this.isFlexibleIFrameExecutable =
           this.getIsFlexibleIFrameExecutable(
             flexibleIFrameJs,
             flexibleIFrameOnDOM,
           );
       } else {
-        const otherSourceElement = [...document.querySelectorAll("*")].flatMap(
-          (el) =>
-            [...el.attributes]
-              .filter((attr) =>
-                attr.value.endsWith(
-                  ".sovendus.com/sovabo/common/js/flexibleIframe.js",
-                ),
-              )
-              .map((attr) => ({ element: el, attributeName: attr.name })),
-        )[0];
-
-        if (otherSourceElement) {
-          isFlexibleIFrameExecutable = this.isFlexibleIFrameExecutable =
-            new WarningOrFailTestResult<boolean | string | undefined>({
-              elementValue: otherSourceElement.attributeName,
-              statusCode: StatusCodes.Error,
-              statusMessageKey:
-                StatusMessageKeyTypes.flexibleIFrameJsBlockedByCookieConsentUsingOtherSource,
-            });
-        } else {
-          isFlexibleIFrameExecutable = this.isFlexibleIFrameExecutable =
-            this.getIsFlexibleIFrameExecutable(
-              flexibleIFrameJs,
-              flexibleIFrameOnDOM,
-            );
-        }
+        ({ isFlexibleIFrameExecutable, flexibleIFrameOnDOM } =
+          this.executeOtherSourceFlexibleIFrameJSTest(flexibleIFrameJs));
       }
 
       const sovendusJs: HTMLScriptElement | null = document.getElementById(
@@ -989,6 +932,53 @@ export default class SelfTester {
           isSovendusJsExecutable,
         });
     }
+  }
+
+  executeOtherSourceFlexibleIFrameJSTest(
+    flexibleIFrameJs: HTMLScriptElement | null,
+  ): {
+    isFlexibleIFrameExecutable: TestResultType<boolean | string | undefined>;
+    flexibleIFrameOnDOM: TestResultType<boolean | undefined>;
+  } {
+    let isFlexibleIFrameExecutable;
+    let flexibleIFrameOnDOM;
+    const otherSourceElement = [...document.querySelectorAll("*")].flatMap(
+      (el) =>
+        [...el.attributes]
+          .filter((attr) =>
+            attr.value.endsWith(
+              ".sovendus.com/sovabo/common/js/flexibleIframe.js",
+            ),
+          )
+          .map((attr) => ({ element: el, attributeName: attr.name })),
+    )[0];
+
+    if (otherSourceElement) {
+      flexibleIFrameOnDOM = this.flexibleIFrameOnDOM = new SuccessTestResult<
+        boolean | undefined
+      >({
+        elementValue: true,
+      });
+
+      isFlexibleIFrameExecutable = this.isFlexibleIFrameExecutable =
+        new WarningOrFailTestResult<boolean | string | undefined>({
+          elementValue: otherSourceElement.attributeName,
+          statusCode: StatusCodes.Error,
+          statusMessageKey:
+            StatusMessageKeyTypes.flexibleIFrameJsBlockedByCookieConsentUsingOtherSource,
+        });
+    } else {
+      flexibleIFrameOnDOM = this.flexibleIFrameOnDOM =
+        this.getIsFlexibleIFrameOnDOMTestResult(flexibleIFrameJs);
+
+      isFlexibleIFrameExecutable = this.isFlexibleIFrameExecutable =
+        this.getIsFlexibleIFrameExecutable(
+          flexibleIFrameJs,
+          flexibleIFrameOnDOM,
+        );
+    }
+
+    return { isFlexibleIFrameExecutable, flexibleIFrameOnDOM };
   }
 
   getIsUnknownSovendusJsErrorTestResult({
