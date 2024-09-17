@@ -125,22 +125,30 @@ async function drawSegmentScreenshot({
       screenshotImage.onload = async (): Promise<void> => {
         let newScreenshotElementVerticalPosition =
           screenshotElementVerticalPosition;
+
         if (remainingScrollHeight < viewPortHeight) {
           // last screenshot is not full page height,
-          // shift a bit to the top to overwrite parts of the previous screenshot
-          newScreenshotElementVerticalPosition =
-            screenshotElementVerticalPosition +
-            remainingScrollHeight * zoomLevel -
-            zoomAdjustedHeight;
+          // trim the part of the last screenshot out to not overlap them
+          ctx.drawImage(
+            screenshotImage,
+            0,
+            screenshotImage.height - remainingScrollHeight * zoomLevel,
+            screenshotImage.width,
+            screenshotImage.height,
+            0,
+            newScreenshotElementVerticalPosition,
+            screenshotImage.width,
+            screenshotImage.height,
+          );
+        } else {
+          ctx.drawImage(
+            screenshotImage,
+            0,
+            newScreenshotElementVerticalPosition,
+            screenshotImage.width,
+            screenshotImage.height,
+          );
         }
-
-        ctx.drawImage(
-          screenshotImage,
-          0,
-          newScreenshotElementVerticalPosition,
-          screenshotImage.width,
-          screenshotImage.height,
-        );
 
         newScreenshotElementVerticalPosition += zoomAdjustedHeight;
         remainingScrollHeight -= viewPortHeight;
