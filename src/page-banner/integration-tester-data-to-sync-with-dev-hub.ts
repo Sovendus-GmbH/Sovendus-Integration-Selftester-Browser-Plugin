@@ -116,6 +116,7 @@ export enum StatusMessageKeyTypes {
   flexibleIFrameJsBlockedByCookieConsentUsingOtherSource = "flexibleIFrameJsBlockedByCookieConsentUsingOtherSource",
   sovendusBannerDisabled = "sovendusBannerDisabled",
   containerDivNotFoundOnDOM = "containerDivNotFoundOnDOM",
+  containerDivNotFoundOnDOMGTM = "containerDivNotFoundOnDOMGTM",
   multipleSovIframesDetected = "multipleSovIframesDetected",
   multipleSovIframesDetectedAndAreSame = "multipleSovIframesDetectedAndAreSame",
   currencyNotValid = "currencyNotValid",
@@ -364,7 +365,13 @@ export const statusMessages: {
 
   containerDivNotFoundOnDOM: {
     errorText:
-      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.",
+      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.<br/><a href='https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Generic-Web-Integration#1.-Place-the-HTML-Markup' target='_blank'>Click Here for the documentation</a>",
+    infoText: "",
+  },
+
+  containerDivNotFoundOnDOMGTM: {
+    errorText:
+      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.<br/><a href='https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Google-Tagmanager-Integration#Step-7' target='_blank'>Click Here for the documentation</a>",
     infoText: "",
   },
 

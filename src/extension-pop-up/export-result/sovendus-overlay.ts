@@ -1,5 +1,5 @@
-import type SelfTester from "@src/page-banner/integration-tester.js";
-
+import type SelfTester from "../../page-banner/integration-tester.js";
+import { transmitIntegrationError } from "../../page-banner/integration-tester.js";
 import { browserAPI } from "../extension-pop-up.js";
 
 export async function checkStickyBannerAndOverlayIntegration(
@@ -15,11 +15,10 @@ export async function checkStickyBannerAndOverlayIntegration(
   if (result?.[0]?.result === undefined) {
     // eslint-disable-next-line no-console
     console.error("Failed to check if an overlay is used");
-    if (window.sovSelfTester) {
-      window.sovSelfTester.integrationError =
-        "Failed to check if an overlay is used";
-      void window.sovSelfTester.transmitIntegrationError();
-    }
+    void transmitIntegrationError(
+      "Failed to check if an overlay is used",
+      window,
+    );
     return false;
   }
   return result[0].result;

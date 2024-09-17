@@ -1,9 +1,9 @@
-import type SelfTester from "@src/page-banner/integration-tester.js";
-
 import {
   outerOverlayId,
   toggleSovendusOverlayId,
 } from "../../page-banner/integration-test-overlay-css-vars.js";
+import type SelfTester from "../../page-banner/integration-tester.js";
+import { transmitIntegrationError } from "../../page-banner/integration-tester.js";
 import { browserAPI } from "../extension-pop-up.js";
 
 export async function copyScreenshotsToClipboard(
@@ -30,10 +30,10 @@ export async function copyScreenshotsToClipboard(
             .catch((error) => {
               // eslint-disable-next-line no-console
               console.error("Failed to copy to the clipboard, error:", error);
-              if (window.sovSelfTester) {
-                window.sovSelfTester.integrationError = `Failed to copy to the clipboard, error: ${error}`;
-                void window.sovSelfTester.transmitIntegrationError();
-              }
+              void transmitIntegrationError(
+                `Failed to copy to the clipboard, error: ${error}`,
+                window,
+              );
             });
         });
       }
@@ -74,11 +74,11 @@ export async function checkIfSovendusIsDetected(
     console.error(
       "Failed to check if Sovendus is integrated - script injection failed",
     );
-    if (window.sovSelfTester) {
-      window.sovSelfTester.integrationError =
-        "Failed to check if Sovendus is integrated - script injection failed";
-      void window.sovSelfTester.transmitIntegrationError();
-    }
+    void transmitIntegrationError(
+      "Failed to check if Sovendus is integrated - script injection failed",
+      window,
+    );
+
     return { sovendusIntegrated: false, overlayVisible: false };
   }
   return result[0].result;

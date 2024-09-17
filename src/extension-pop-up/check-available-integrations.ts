@@ -10,117 +10,86 @@ import {
 import { browserAPI } from "./extension-pop-up.js";
 
 export async function checkAvailableIntegrations(tabId: number): Promise<void> {
-  await browserAPI.scripting.executeScript({
-    target: { tabId },
-    args: [
-      sovendusOverlayErrorClass,
-      sovendusOverlayFontClass,
-      sovendusOverlayH1Class,
-      sovendusOverlayH2Class,
-      sovendusOverlayH3Class,
-    ],
-    func: (
-      sovendusOverlayErrorClass,
-      sovendusOverlayFontClass,
-      sovendusOverlayH1Class,
-      sovendusOverlayH2Class,
-      sovendusOverlayH3Class,
-    ) => {
-      const overlay = document.getElementById(
-        "outerSovendusIntegrationMethodCheckerOverlay",
-      );
-      if (!overlay) {
-        class availableMethodsChecker {
-          apiKeys: string[] = [
-            "whz2mjdra9s0s0s683zodmidj6mo5d1v3gas3hbglcp73j6e16ufvo8k5i7lofnengl94u",
-            "wr9wyithqrnw9nnxuja2yjw2gpcr83cytckmjzcjbxzobm57wjcs0c82aazqm9aufog6v2",
-          ];
-          supportedSystems: {
-            [key in SupportedSystemsKeyType]: SupportedSystemType;
-          } = {
-            "WooCommerce": {
-              name: "WooCommerce",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Wordpress-WooCommerce-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-plugin-for-wordpress-woocommerce",
-            },
-            "Shopware": {
-              name: "Shopware",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Shopware-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-plugin-for-shopware",
-            },
-            "Nuxt.js": {
-              name: "Nuxt.js / Vue",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Voucher-Network-and-Checkout-Benefits-Component-for-Vue?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-component-for-vue",
-            },
-            "Magento": {
-              name: "Magento",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Magento-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-magento",
-            },
-            "Next.js": {
-              name: "Next.js / React",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Voucher-Network-and-Checkout-Benefits-Component-for-React?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-component-for-react",
-            },
-            "Shopify": {
-              name: "Shopify",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Shopify-Voucher-Network-and-Checkout-Benefits-Documentation?tab=readme-ov-file#shopify-sovendus-voucher-network--checkout-benefits-integration-documentation",
-            },
-            "OXID eSales": {
-              name: "OXID eShop",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
-            },
-            "OXID eShop Enterprise Edition": {
-              name: "OXID eShop",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
-            },
-            "OXID eShop Community Edition": {
-              name: "OXID eShop",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
-            },
-            "OXID eShop Professional Edition": {
-              name: "OXID eShop",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Oxid-eShop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-oxid-eshop",
-            },
-            "PrestaShop": {
-              name: "PrestaShop",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-Prestashop-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-prestashop",
-            },
-            "JTL-Shop": {
-              name: "JTL-Shop",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-JTL-Voucher-Network-and-Checkout-Benefits-Plugin?tab=readme-ov-file#sovendus-voucher-network--checkout-benefits-module-for-jtl",
-            },
-            "BigCommerce": {
-              name: "BigCommerce",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-BigCommerce-Voucher-Network-and-Checkout-Benefits-Documentation?tab=readme-ov-file#sovendus-bigcommerce-voucher-network-and-checkout-benefits-documentation",
-            },
-            "gtm": {
-              name: "Google Tag Manager",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-GTM-v2?tab=readme-ov-file#sovendus-google-tag-manager-template-for-voucher-network-and-checkout-benefits-integration",
-            },
-            "generic": {
-              name: "Generic",
-              docsLink:
-                "https://github.com/Sovendus-GmbH/Sovendus-generic-documentation-for-Voucher-Network-and-Checkout-Benefits?tab=readme-ov-file",
-            },
-          };
-          statusCodes: StatusCodesType = {
-            success: "success",
-            fail: "fail",
-          };
-          constructor() {
-            void this.createCheckIntegrationMethodsOverlay();
-          }
+              "WooCommerce": {
+                name: "WooCommerce",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Wordpress-WooCommerce-Plugin",
+              },
+              "Shopware": {
+                name: "Shopware",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Shopware-Plugin",
+              },
+              "Nuxt.js": {
+                name: "Nuxt.js / Vue",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Vue-Component",
+              },
+              "Magento": {
+                name: "Magento",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Magento-Plugin",
+              },
+              "Next.js": {
+                name: "Next.js / React",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/React-Component",
+              },
+              "Old Shopify": {
+                name: "Old Shopify Checkout Page Version",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Shopify-Integration-(old-version)",
+              },
+              "New Shopify": {
+                name: "New Shopify Checkout Page Version",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Shopify-App-(new-Version)",
+              },
+              "OXID eSales": {
+                name: "OXID eShop",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Oxid-eShop-Plugin",
+              },
+              "OXID eShop Enterprise Edition": {
+                name: "OXID eShop",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Oxid-eShop-Plugin",
+              },
+              "OXID eShop Community Edition": {
+                name: "OXID eShop",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Oxid-eShop-Plugin",
+              },
+              "OXID eShop Professional Edition": {
+                name: "OXID eShop",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Oxid-eShop-Plugin",
+              },
+              "PrestaShop": {
+                name: "PrestaShop",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Prestashop-Plugin",
+              },
+              "JTL-Shop": {
+                name: "JTL-Shop",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/JTL-Plugin",
+              },
+              "BigCommerce": {
+                name: "BigCommerce",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/BigCommerce-Integration",
+              },
+              "gtm": {
+                name: "Google Tag Manager",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Google-Tagmanager-Integration",
+              },
+              "generic": {
+                name: "Generic",
+                docsLink:
+                  "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Generic-Web-Integration",
+              },
 
           async getAvailableMethodsMessage(): Promise<string> {
             let availableMethodsText: string;

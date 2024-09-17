@@ -28,7 +28,7 @@ import {
   tooltipButtonClass,
   tooltipClass,
 } from "./integration-test-overlay-css-vars.js";
-import SelfTester from "./integration-tester.js";
+import SelfTester, { transmitIntegrationError } from "./integration-tester.js";
 import { StatusCodes } from "./integration-tester-data-to-sync-with-dev-hub.js";
 
 void (async (): Promise<void> => {
@@ -130,11 +130,10 @@ class SelfTesterOverlay {
     } else {
       // eslint-disable-next-line no-console
       console.error("Failed to add click event to show / hide button");
-      if (window.sovSelfTester) {
-        window.sovSelfTester.integrationError =
-          "Failed to add click event to show / hide button";
-        void window.sovSelfTester.transmitIntegrationError();
-      }
+      void transmitIntegrationError(
+        "Failed to add click event to show / hide button",
+        window,
+      );
     }
   }
 
@@ -168,11 +167,10 @@ class SelfTesterOverlay {
       } else {
         // eslint-disable-next-line no-console
         console.error("Failed to get iframe.contentDocument to place content");
-        if (window.sovSelfTester) {
-          window.sovSelfTester.integrationError =
-            "Failed to get iframe.contentDocument to place content";
-          void window.sovSelfTester.transmitIntegrationError();
-        }
+        void transmitIntegrationError(
+          "Failed to get iframe.contentDocument to place content",
+          window,
+        );
       }
 
       const iFrameStyle = document.createElement("style");
@@ -589,29 +587,26 @@ function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
     if (!_iframe) {
       // eslint-disable-next-line no-console
       console.error("Failed to get iframe to update iframe height.");
-      if (window.sovSelfTester) {
-        window.sovSelfTester.integrationError =
-          "Failed to get iframe to update iframe height.";
-        void window.sovSelfTester.transmitIntegrationError();
-      }
+      void transmitIntegrationError(
+        "Failed to get iframe to update iframe height.",
+        window,
+      );
     }
     if (!innerOverlay) {
       // eslint-disable-next-line no-console
       console.error("Failed to get innerOverlay to update iframe height.");
-      if (window.sovSelfTester) {
-        window.sovSelfTester.integrationError =
-          "Failed to get innerOverlay to update iframe height.";
-        void window.sovSelfTester.transmitIntegrationError();
-      }
+      void transmitIntegrationError(
+        "Failed to get innerOverlay to update iframe height.",
+        window,
+      );
     }
     if (!iFrameStyle) {
       // eslint-disable-next-line no-console
       console.error("Failed to get iFrameStyle to update iframe height.");
-      if (window.sovSelfTester) {
-        window.sovSelfTester.integrationError =
-          "Failed to get iFrameStyle to update iframe height.";
-        void window.sovSelfTester.transmitIntegrationError();
-      }
+      void transmitIntegrationError(
+        "Failed to get iFrameStyle to update iframe height.",
+        window,
+      );
     }
   } else {
     iFrameStyle.innerHTML = `#${testLoadedIFrameId} { height: ${innerOverlay.scrollHeight}px !important; }`;

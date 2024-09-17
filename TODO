@@ -22,10 +22,6 @@
 
 ## Currently working on
 
-- make screenshots from bottom to top (so the last screenshot doesnt cut off as much)
-- add docs urls to e.g. no div found
-- add new shopify app docs to check integrations
-
 ## Marcus Check
 
 - log thrown errors to dev hub api with sovSelfTester, sovIframes and sovConsumer
@@ -40,3 +36,6 @@
 - fix consumerStreet (tests)
 - Create functions for all Regex and describe the function of it in a comment
 - add url to screenshot
+- make screenshots from bottom to top (so the last screenshot doesnt cut off as much)
+- add docs urls to e.g. no div found
+- add new shopify app docs to check integrations
