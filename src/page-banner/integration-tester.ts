@@ -1594,10 +1594,10 @@ export default class SelfTester {
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error("Failed to transmit sovendus test result - error:", e);
-      void transmitIntegrationError(
-        `Failed to transmit sovendus test result - error: ${e}`,
-        window,
-      );
+      // void transmitIntegrationError(
+      //   `Failed to transmit sovendus test result - error: ${e}`,
+      //   window,
+      // );
     }
   }
 
