@@ -36,6 +36,34 @@ export interface TestResultResponseDataType {
   isUnknownSovendusJsError?: TestResultType<boolean | undefined>;
 }
 
+export interface SovIframes {
+  trafficSourceNumber?: ExplicitAnyType;
+  trafficMediumNumber?: ExplicitAnyType;
+  sessionId?: ExplicitAnyType;
+  timestamp?: ExplicitAnyType;
+  orderId?: ExplicitAnyType;
+  orderValue?: ExplicitAnyType;
+  orderCurrency?: ExplicitAnyType;
+  usedCouponCode?: ExplicitAnyType;
+  iframeContainerId?: ExplicitAnyType;
+  integrationType?: ExplicitAnyType;
+}
+
+export interface SovConsumer {
+  consumerSalutation?: ExplicitAnyType;
+  consumerFirstName?: ExplicitAnyType;
+  consumerLastName?: ExplicitAnyType;
+  consumerYearOfBirth?: ExplicitAnyType;
+  consumerEmail?: ExplicitAnyType;
+  consumerEmailHash?: ExplicitAnyType;
+  consumerPhone?: ExplicitAnyType;
+  consumerStreet?: ExplicitAnyType;
+  consumerStreetNumber?: ExplicitAnyType;
+  consumerZipcode?: ExplicitAnyType;
+  consumerCity?: ExplicitAnyType;
+  consumerCountry?: ExplicitAnyType;
+}
+
 export interface TestResultType<TElementValueType> {
   elementValue: TElementValueType;
   statusMessageKey: StatusMessageKeyTypes | undefined;
@@ -662,3 +690,6 @@ export const statusMessages: {
     infoText: "",
   },
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ExplicitAnyType = any;

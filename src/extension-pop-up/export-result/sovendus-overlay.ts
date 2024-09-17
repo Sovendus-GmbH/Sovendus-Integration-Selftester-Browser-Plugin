@@ -15,6 +15,11 @@ export async function checkStickyBannerAndOverlayIntegration(
   if (result?.[0]?.result === undefined) {
     // eslint-disable-next-line no-console
     console.error("Failed to check if an overlay is used");
+    if (window.sovSelfTester) {
+      window.sovSelfTester.integrationError =
+        "Failed to check if an overlay is used";
+      void window.sovSelfTester.transmitIntegrationError();
+    }
     return false;
   }
   return result[0].result;

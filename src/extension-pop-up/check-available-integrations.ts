@@ -1,3 +1,5 @@
+import type SelfTester from "@src/page-banner/integration-tester.js";
+
 import {
   sovendusOverlayErrorClass,
   sovendusOverlayFontClass,
@@ -230,6 +232,11 @@ export async function checkAvailableIntegrations(tabId: number): Promise<void> {
             } catch (error: any) {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, no-console
               console.error("Error fetching data:", error?.message || error);
+              if (window.sovSelfTester) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                window.sovSelfTester.integrationError = `Error fetching data: ${error?.message || error}`;
+                void window.sovSelfTester.transmitIntegrationError();
+              }
               responseStatusCode = this.statusCodes.fail;
               responseErrorMessage = this.formatErrorMessage(
                 "Error fetching data:",
@@ -284,12 +291,26 @@ export async function checkAvailableIntegrations(tabId: number): Promise<void> {
                   if (responseJson.result.code === 200) {
                     errorMessage = "Error, no CMS or Shopsystem detected";
                   } else {
-                    console.error("Error");
+                    // eslint-disable-next-line no-console
+                    console.error(
+                      "Error in function checkAvailableIntegrations",
+                    );
+                    if (window.sovSelfTester) {
+                      window.sovSelfTester.integrationError =
+                        "Error in function checkAvailableIntegrations";
+                      void window.sovSelfTester.transmitIntegrationError();
+                    }
                   }
                 }
               }
             } else {
               errorMessage = "Failed to get detection result - unknown error";
+            }
+            if (errorMessage) {
+              if (window.sovSelfTester) {
+                window.sovSelfTester.integrationError = errorMessage;
+                void window.sovSelfTester.transmitIntegrationError();
+              }
             }
 
             return {
@@ -427,3 +448,9 @@ type SupportedSystemsKeyType =
   | "BigCommerce"
   | "gtm"
   | "generic";
+
+export interface SovWindow extends Window {
+  sovSelfTester?: SelfTester;
+}
+
+declare let window: SovWindow;

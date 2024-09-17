@@ -69,6 +69,8 @@ export default class SelfTester {
 
   sovConsumer?: SovApplicationConsumer;
 
+  integrationError: string;
+
   selfTestIntegration(): void {
     const awinIntegrationDetectedTestResult =
       this.executeIntegrationTypeTestResults();
@@ -258,10 +260,12 @@ export default class SelfTester {
         }
       }
     }
-    if (!sovOverlay && (!stickyBannerCloseButton || !parentElement)) {
-      // eslint-disable-next-line no-console
-      console.error("Error: sovOverlay or sticky banner not found");
-    }
+    // if (!sovOverlay && (!stickyBannerCloseButton || !parentElement)) {
+    // eslint-disable-next-line no-console
+    console.error("Error: sovOverlay or sticky banner not found");
+    this.integrationError = "Error: sovOverlay or sticky banner not found";
+    void this.transmitIntegrationError();
+    // }
     return {
       foundStickyBanner: !!(stickyBannerCloseButton && parentElement),
       hideStickyBannerSuccess: hideStickyBannerSuccess,
@@ -1119,6 +1123,8 @@ export default class SelfTester {
     }
     // eslint-disable-next-line no-console
     console.log("Sovendus was detected but not executed");
+    this.integrationError = "Sovendus was detected but not executed";
+    void this.transmitIntegrationError();
     return new WarningOrFailTestResultWithoutStatusMessageKey<boolean>({
       elementValue: wasExecuted,
       statusCode: StatusCodes.Error,
@@ -1462,6 +1468,8 @@ export default class SelfTester {
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(`Failed to run test ${testName} - error:`, e);
+      this.integrationError = `Failed to run test ${testName} - error: ${e}`;
+      void this.transmitIntegrationError();
       return new WarningOrFailTestResult<TElementValueType>({
         elementValue: rawElementValue,
         statusCode: StatusCodes.TestFailed,
@@ -1577,6 +1585,8 @@ export default class SelfTester {
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error("Failed to transmit sovendus test result - error:", e);
+      this.integrationError = `Failed to transmit sovendus test result - error: ${e}`;
+      void this.transmitIntegrationError();
     }
   }
 
@@ -1686,6 +1696,35 @@ export default class SelfTester {
     };
   }
 
+  async transmitIntegrationError(): Promise<void> {
+    try {
+      await fetch("http://localhost:3000/api/testing-plugin-error", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.getIntegrationErrorData()),
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(
+        "Failed to transmit sovendus Integration Error - error:",
+        e,
+      );
+    }
+  }
+
+  getIntegrationErrorData(): IntegrationErrorDataType {
+    return {
+      domain: this.websiteURL.elementValue,
+      integrationError: this.integrationError,
+      sovSelfTester: this.getTestResultResponseData(),
+      sovIframes: window.sovIframes,
+      sovConsumer: window.sovConsumer,
+    };
+  }
+
   constructor() {
     const emptyStringUndefinedTestResult = new DidNotRunTestResult<
       string | undefined
@@ -1739,6 +1778,8 @@ export default class SelfTester {
     this.awinIntegrationDetectedTestResult = emptyBooleanTestResult;
     this.awinSaleTrackedTestResult = emptyBooleanTestResult;
     this.awinExecutedTestResult = emptyBooleanTestResult;
+
+    this.integrationError = "";
   }
 }
 
@@ -1892,6 +1933,10 @@ export class WarningOrFailTestResult<
           console.error(
             `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
           );
+          if (window.sovSelfTester) {
+            window.sovSelfTester.integrationError = `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`;
+            void window.sovSelfTester.transmitIntegrationError();
+          }
           return "";
         }
         return `${String(
@@ -1908,6 +1953,10 @@ export class WarningOrFailTestResult<
           console.error(
             `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
           );
+          if (window.sovSelfTester) {
+            window.sovSelfTester.integrationError = `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`;
+            void window.sovSelfTester.transmitIntegrationError();
+          }
           return "";
         }
         return `${String(
@@ -1930,6 +1979,14 @@ export class WarningOrFailTestResult<
         StatusCode: ${this.statusCode}\n
         StatusMessageKey: ${this.statusMessageKey}`,
       );
+      if (window.sovSelfTester) {
+        window.sovSelfTester.integrationError = `getFormattedStatusMessage() crashed: ${error}\n
+        \n
+        ElementValue: ${this.elementValue}\n
+        StatusCode: ${this.statusCode}\n
+        StatusMessageKey: ${this.statusMessageKey}`;
+        void window.sovSelfTester.transmitIntegrationError();
+      }
       return "";
     }
   }
@@ -1941,6 +1998,10 @@ export class WarningOrFailTestResult<
         console.error(
           `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
         );
+        if (window.sovSelfTester) {
+          window.sovSelfTester.integrationError = `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`;
+          void window.sovSelfTester.transmitIntegrationError();
+        }
         return "";
       }
       return `<li><h3 class='${sovendusOverlayErrorClass}'>${this.replaceElementValueInMessage(
@@ -2001,6 +2062,15 @@ export function safeURI(
       ")- Error -> ",
       e,
     );
+    if (window.sovSelfTester) {
+      window.sovSelfTester.integrationError = `Error in safeURI(
+      ${uriType}
+      ) - Value: (
+        ${value}
+      )- Error -> 
+      ${e}`;
+      void window.sovSelfTester.transmitIntegrationError();
+    }
     return value;
   }
 }
@@ -2097,10 +2167,19 @@ interface Awin {
   };
 }
 
+export interface IntegrationErrorDataType {
+  domain: string;
+  integrationError: string;
+  sovSelfTester: TestResultResponseDataType;
+  sovIframes: SovIframes[] | undefined;
+  sovConsumer: SovConsumer | undefined;
+}
+
 export interface SovWindow extends Window {
   sovIframes?: SovIframes[];
   sovConsumer?: SovConsumer;
   sovApplication?: SovApplication;
+  sovSelfTester?: SelfTester;
   AWIN?: Awin;
   // only used by tests
   transmitTestResult?: false;
