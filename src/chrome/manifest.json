@@ -27,7 +27,8 @@
         "/npm/@floating-ui/core@1.6.7/+esm.js",
         "/npm/@floating-ui/dom@1.6.10/+esm.js",
         "/npm/@floating-ui/utils@0.2.7/+esm.js",
-        "/npm/@floating-ui/utils@0.2.7/dom/+esm.js"
+        "/npm/@floating-ui/utils@0.2.7/dom/+esm.js",
+        "/extension-pop-up/test-integration.js"
       ],
       "matches": [
         "<all_urls>"

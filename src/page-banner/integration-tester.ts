@@ -1594,10 +1594,10 @@ export default class SelfTester {
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error("Failed to transmit sovendus test result - error:", e);
-      // void transmitIntegrationError(
-      //   `Failed to transmit sovendus test result - error: ${e}`,
-      //   window,
-      // );
+      void transmitIntegrationError(
+        `Failed to transmit sovendus test result - error: ${e}`,
+        window,
+      );
     }
   }
 
@@ -2056,7 +2056,7 @@ export function safeURI(
 }
 
 export async function transmitIntegrationError(
-  integrationError: string,
+  errorMessage: string,
   windowParameter: SovWindow,
 ): Promise<void> {
   try {
@@ -2067,7 +2067,7 @@ export async function transmitIntegrationError(
         "Content-Type": "application/json",
       },
       body: JSON.stringify(
-        getIntegrationErrorData(integrationError, windowParameter),
+        getIntegrationErrorData(errorMessage, windowParameter),
       ),
     });
   } catch (e) {
@@ -2077,16 +2077,17 @@ export async function transmitIntegrationError(
 }
 
 function getIntegrationErrorData(
-  integrationError: string,
+  errorMessage: string,
   windowParameter: SovWindow,
 ): IntegrationErrorDataType {
   return {
     domain: windowParameter.location.href,
-    integrationError: integrationError,
-    ...(windowParameter?.sovSelfTester
+    errorMessage: errorMessage,
+    ...(windowParameter?.sovIframes || windowParameter?.sovConsumer
       ? {
-          sovSelfTester:
-            windowParameter.sovSelfTester.getTestResultResponseData(),
+          sovSelfTester: windowParameter.sovSelfTester
+            ? windowParameter.sovSelfTester.getTestResultResponseData()
+            : {},
           sovIframes: windowParameter.sovIframes,
           sovConsumer: windowParameter.sovConsumer,
         }
@@ -2188,7 +2189,7 @@ interface Awin {
 
 export interface IntegrationErrorDataType {
   domain: string;
-  integrationError: string;
+  errorMessage: string;
   sovSelfTester?: TestResultResponseDataType;
   sovIframes?: SovIframes[];
   sovConsumer?: SovConsumer;
