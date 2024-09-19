@@ -1123,10 +1123,6 @@ export default class SelfTester {
     }
     // eslint-disable-next-line no-console
     console.log("Sovendus was detected but not executed");
-    void transmitIntegrationError(
-      "Sovendus was detected but not executed",
-      window,
-    );
     return new WarningOrFailTestResultWithoutStatusMessageKey<boolean>({
       elementValue: wasExecuted,
       statusCode: StatusCodes.Error,
