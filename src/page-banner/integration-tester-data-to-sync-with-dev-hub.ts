@@ -36,6 +36,34 @@ export interface TestResultResponseDataType {
   isUnknownSovendusJsError?: TestResultType<boolean | undefined>;
 }
 
+export interface SovIframes {
+  trafficSourceNumber?: ExplicitAnyType;
+  trafficMediumNumber?: ExplicitAnyType;
+  sessionId?: ExplicitAnyType;
+  timestamp?: ExplicitAnyType;
+  orderId?: ExplicitAnyType;
+  orderValue?: ExplicitAnyType;
+  orderCurrency?: ExplicitAnyType;
+  usedCouponCode?: ExplicitAnyType;
+  iframeContainerId?: ExplicitAnyType;
+  integrationType?: ExplicitAnyType;
+}
+
+export interface SovConsumer {
+  consumerSalutation?: ExplicitAnyType;
+  consumerFirstName?: ExplicitAnyType;
+  consumerLastName?: ExplicitAnyType;
+  consumerYearOfBirth?: ExplicitAnyType;
+  consumerEmail?: ExplicitAnyType;
+  consumerEmailHash?: ExplicitAnyType;
+  consumerPhone?: ExplicitAnyType;
+  consumerStreet?: ExplicitAnyType;
+  consumerStreetNumber?: ExplicitAnyType;
+  consumerZipcode?: ExplicitAnyType;
+  consumerCity?: ExplicitAnyType;
+  consumerCountry?: ExplicitAnyType;
+}
+
 export interface TestResultType<TElementValueType> {
   elementValue: TElementValueType;
   statusMessageKey: StatusMessageKeyTypes | undefined;
@@ -55,6 +83,7 @@ export enum StatusCodes {
   SuccessButNeedsReview = "SuccessButNeedsReview",
   Error = "Error",
   TestDidNotRun = "TestDidNotRun",
+  TestFailed = "TestFailed",
 }
 
 export enum BrowserTypes {
@@ -67,6 +96,7 @@ export enum BrowserTypes {
 }
 
 export enum StatusMessageKeyTypes {
+  testFailed = "testFailed",
   awinNoSalesTracked = "awinNoSalesTracked",
   awinSaleTrackedAfterScript = "awinSaleTrackedAfterScript",
   integrationTypeMalformed = "integrationTypeMalformed",
@@ -83,8 +113,10 @@ export enum StatusMessageKeyTypes {
   sovendusJsBlockedByCookieConsent = "sovendusJsBlockedByCookieConsent",
   sovendusJsMissing = "sovendusJsMissing",
   flexibleIFrameJsBlockedByCookieConsent = "flexibleIFrameJsBlockedByCookieConsent",
+  flexibleIFrameJsBlockedByCookieConsentUsingOtherSource = "flexibleIFrameJsBlockedByCookieConsentUsingOtherSource",
   sovendusBannerDisabled = "sovendusBannerDisabled",
   containerDivNotFoundOnDOM = "containerDivNotFoundOnDOM",
+  containerDivNotFoundOnDOMGTM = "containerDivNotFoundOnDOMGTM",
   multipleSovIframesDetected = "multipleSovIframesDetected",
   multipleSovIframesDetectedAndAreSame = "multipleSovIframesDetectedAndAreSame",
   currencyNotValid = "currencyNotValid",
@@ -144,6 +176,7 @@ export enum StatusMessageKeyTypes {
   missingIframeContainerId = "missingIframeContainerId",
   iFrameContainerIdMalformed = "iFrameContainerIdMalformed",
   iFrameContainerIdHasSpaces = "iFrameContainerIdHasSpaces",
+  numberInConsumerStreet = "numberInStreetName",
   empty = "empty",
 }
 
@@ -182,9 +215,19 @@ export const statusMessages: {
     infoText: string;
   };
 } = {
+  testFailed: {
+    errorText: "TEST FAILED TO RUN",
+    infoText:
+      "For an unknown reason the test failed to run, this is most likely because the value format is not supported.",
+  },
   integrationTypeMalformed: {
     errorText: "VALUE TYPE NOT ALLOWED",
     infoText: "Error: you can only pass a string as the integrationType",
+  },
+  numberInStreetName: {
+    errorText: "NUMBER IN STREET NAME",
+    infoText:
+      "Warning: Make sure the street name doesn't include the street number",
   },
   failedToDetectBrowserType: {
     errorText: "", // error is in BrowserTypes.NotDetected
@@ -314,9 +357,21 @@ export const statusMessages: {
     infoText: "",
   },
 
+  flexibleIFrameJsBlockedByCookieConsentUsingOtherSource: {
+    errorText:
+      "Sovendus was detected but flexibleiframe.js was not executed because the script source is '{elementValue}' instead of 'src'. This probably happened because your cookie consent tool blocked the script.",
+    infoText: "",
+  },
+
   containerDivNotFoundOnDOM: {
     errorText:
-      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.",
+      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.<br/><a href='https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Generic-Web-Integration#1.-Place-the-HTML-Markup' target='_blank'>Click Here for the documentation</a>",
+    infoText: "",
+  },
+
+  containerDivNotFoundOnDOMGTM: {
+    errorText:
+      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.<br/><a href='https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Google-Tagmanager-Integration#Step-7' target='_blank'>Click Here for the documentation</a>",
     infoText: "",
   },
 
@@ -642,3 +697,6 @@ export const statusMessages: {
     infoText: "",
   },
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ExplicitAnyType = any;

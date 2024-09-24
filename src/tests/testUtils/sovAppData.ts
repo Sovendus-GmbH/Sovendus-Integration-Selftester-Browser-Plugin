@@ -2,7 +2,7 @@ import type {
   ExplicitAnyType,
   SovConsumer,
   SovIframes,
-} from "@src/page-banner/self-tester";
+} from "@src/page-banner/integration-tester";
 
 import type { TestDataType } from "./testCaseGenerator";
 
@@ -80,6 +80,7 @@ export const sovTestTrafficMediumNumbers = {
   CBOverlayVNSticky: { trafficMediumNumber: "23" },
   CBInOverlayCollapsed: { trafficMediumNumber: "25" },
   CBInOverlayCloseable: { trafficMediumNumber: "26" },
+  VNStickyCloseable: { trafficMediumNumber: "27" },
 };
 
 export const sovAppIFramesAllValidData: SovIframes = {
@@ -108,7 +109,7 @@ export const sovAppIFramesAllValidDataDifferent: SovIframes = {
   integrationType: "test-2.0.0",
 };
 
-export const sovAwinID = 18738;
+export const sovAwinID = 8771;
 
 export const sovAppDataEverythingIsOkay: SovDataType = {
   sovConsumer: sovAppConsumerAllValidData,

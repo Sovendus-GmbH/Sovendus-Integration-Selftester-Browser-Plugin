@@ -1,7 +1,7 @@
 import {
   StatusCodes,
   StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+} from "@src/page-banner/integration-tester-data-to-sync-with-dev-hub";
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
@@ -41,6 +41,48 @@ executeOverlayTests({
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerStreetNumberSuccess,
         },
+        {
+          testName: "MalformedWithLeadingSpaces",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerStreetNumber: "  12  ",
+            },
+          },
+          expectedElementValue: "  12  ",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerStreetNumberMalformed,
+        },
+        {
+          testName: "MalformedWithTrailingSpaces",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerStreetNumber: "12  ",
+            },
+          },
+          expectedElementValue: "12  ",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerStreetNumberMalformed,
+        },
+        {
+          testName: "MalformedWithOnlySpecialChars",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerStreetNumber: "#$%",
+            },
+          },
+          expectedElementValue: "#$%",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerStreetNumberMalformed,
+        },
       ],
     }),
     ...generateMalformedDataTests({
@@ -49,6 +91,7 @@ executeOverlayTests({
         StatusMessageKeyTypes.consumerStreetNumberMalformed,
       expectedMissingStatusMessageKey:
         StatusMessageKeyTypes.missingConsumerStreetNumber,
+      skipNumberCheck: true,
     }),
   ],
 });

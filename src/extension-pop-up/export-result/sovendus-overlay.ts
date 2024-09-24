@@ -1,3 +1,5 @@
+import type SelfTester from "../../page-banner/integration-tester.js";
+import { transmitIntegrationError } from "../../page-banner/integration-tester.js";
 import { browserAPI } from "../extension-pop-up.js";
 
 export async function checkStickyBannerAndOverlayIntegration(
@@ -7,17 +9,16 @@ export async function checkStickyBannerAndOverlayIntegration(
     target: { tabId },
     world: "MAIN",
     func: (): boolean => {
-      return !!window.sovApplication?.instances?.some((instance) => {
-        return (
-          instance.config?.overlay?.showInOverlay ||
-          instance.stickyBanner?.bannerExists
-        );
-      });
+      return !!window.sovSelfTester?.isOverlayOrStickyBanner.elementValue;
     },
   });
   if (result?.[0]?.result === undefined) {
     // eslint-disable-next-line no-console
     console.error("Failed to check if an overlay is used");
+    void transmitIntegrationError(
+      "Failed to check if an overlay is used",
+      window,
+    );
     return false;
   }
   return result[0].result;
@@ -32,47 +33,13 @@ export async function hideOrShowStickyBannerAndOverlay(
     world: "MAIN",
     args: [hide],
     func: async (hide) => {
-      const sovOverlay = document.getElementsByClassName(
-        "sov-overlay",
-      )?.[0] as HTMLElement | null;
-      if (sovOverlay) {
-        sovOverlay.style.display = hide ? "none" : "block";
-      }
-      const stickyBanner = document.querySelector(
-        '[id^="sov_"][id$="Toggle"]',
-      ) as HTMLElement;
-      const parentElement = stickyBanner?.parentElement;
-      if (stickyBanner && parentElement) {
-        parentElement.style.display = hide ? "none" : "block";
-        if (
-          [...parentElement.classList].some((cls) => cls.includes("-folded"))
-        ) {
-          if (!hide) {
-            stickyBanner.click();
-            await new Promise((r) => setTimeout(r, 500));
-          }
-        }
-      }
-      if (!sovOverlay && (!stickyBanner || !parentElement)) {
-        console.error("Error: sovOverlay or sticky banner not found");
-      }
+      await window.sovSelfTester?.hideOverlayBanners(hide);
     },
   });
 }
 
 export interface SovWindow extends Window {
-  sovApplication?: {
-    instances?: {
-      config?: {
-        overlay?: {
-          showInOverlay?: boolean;
-        };
-      };
-      stickyBanner?: {
-        bannerExists?: boolean;
-      };
-    }[];
-  };
+  sovSelfTester?: SelfTester;
 }
 
 declare let window: SovWindow;

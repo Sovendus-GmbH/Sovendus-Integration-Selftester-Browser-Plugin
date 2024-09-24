@@ -1,7 +1,7 @@
 import {
   StatusCodes,
   StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+} from "@src/page-banner/integration-tester-data-to-sync-with-dev-hub";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataMalformedButIsOkay,
@@ -77,6 +77,18 @@ executeOverlayTests({
             },
           },
           expectedElementValue: "test@bla",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey: StatusMessageKeyTypes.consumerEmailNotValid,
+        },
+        {
+          testName: "Malformed6",
+          sovAppData: {
+            ...sovAppDataEverythingIsOkay,
+            sovConsumer: {
+              consumerEmail: "test@.com",
+            },
+          },
+          expectedElementValue: "test@.com",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey: StatusMessageKeyTypes.consumerEmailNotValid,
         },

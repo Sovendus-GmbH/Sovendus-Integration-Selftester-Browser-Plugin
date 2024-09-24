@@ -1,7 +1,7 @@
 import {
   StatusCodes,
   StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+} from "@src/page-banner/integration-tester-data-to-sync-with-dev-hub";
 import {
   malformedArrayData,
   malformedObjectData,
@@ -47,12 +47,188 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     expectedStatusMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
   },
   {
-    testName: "FailAsFloat",
+    testName: "FailNumberWithSpecialCharacters",
     sovAppData: {
       sovConsumer: sovAppConsumerAllValidData,
-      sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: 5.5 },
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "123#456",
+      },
     },
-    expectedElementValue: "5.5",
+    expectedElementValue: "123#456",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithHyphen",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "123-456",
+      },
+    },
+    expectedElementValue: "123-456",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithPlusSign",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "+12345",
+      },
+    },
+    expectedElementValue: "+12345",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithParentheses",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "(12345)",
+      },
+    },
+    expectedElementValue: "(12345)",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithLeadingAndTrailingSpaces",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: " 12345 ",
+      },
+    },
+    expectedElementValue: " 12345 ",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithMultipleSpaces",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "12  345",
+      },
+    },
+    expectedElementValue: "12  345",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithTabCharacter",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "123\t456",
+      },
+    },
+    expectedElementValue: "123\t456",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithExponentialNotation",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: "1e5" },
+    },
+    expectedElementValue: "1e5",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithDecimalPoint",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "123.45",
+      },
+    },
+    expectedElementValue: "123.45",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithUnicodeCharacter",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "1234✓",
+      },
+    },
+    expectedElementValue: "1234✓",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithLetters",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: "d55" },
+    },
+    expectedElementValue: "d55",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithQuotation",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: "'55" },
+    },
+    expectedElementValue: "'55",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithSpace",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "55 66",
+      },
+    },
+    expectedElementValue: "55 66",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithSymbols",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "55@66",
+      },
+    },
+    expectedElementValue: "55@66",
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -61,9 +237,37 @@ const testCasesWhenScriptRuns: TestsInfoType = [
     testName: "FailNumberWithComma",
     sovAppData: {
       sovConsumer: sovAppConsumerAllValidData,
-      sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: "5,5" },
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "55,66",
+      },
     },
-    expectedElementValue: "5,5",
+    expectedElementValue: "55,66",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithLeadingZeros",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: { ...sovAppIFramesAllValidData, trafficMediumNumber: "007" },
+    },
+    expectedElementValue: "007",
+    expectedStatusCode: StatusCodes.Error,
+    expectedStatusMessageKey:
+      StatusMessageKeyTypes.trafficMediumNumberMalformed,
+  },
+  {
+    testName: "FailNumberWithNewLine",
+    sovAppData: {
+      sovConsumer: sovAppConsumerAllValidData,
+      sovIframes1: {
+        ...sovAppIFramesAllValidData,
+        trafficMediumNumber: "55\n66",
+      },
+    },
+    expectedElementValue: "55\n66",
     expectedStatusCode: StatusCodes.Error,
     expectedStatusMessageKey:
       StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -124,7 +328,12 @@ const testCasesWhenScriptDoesNotRun: TestsInfoType =
   testCasesWhenScriptRuns.map((testInfo) => ({
     ...testInfo,
     testName: `${testInfo.testName}_WhenScriptDoesNotRun`,
-    disableFlexibleIframeJs: true,
+    expectedElementValue: testInfo.expectedElementValue,
+    testOptions: {
+      regular: {
+        disableFlexibleIFrameJs: true,
+      },
+    },
   }));
 
 executeOverlayTests({

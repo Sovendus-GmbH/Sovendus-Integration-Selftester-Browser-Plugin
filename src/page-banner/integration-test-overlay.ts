@@ -27,9 +27,9 @@ import {
   toggleSovendusOverlayId,
   tooltipButtonClass,
   tooltipClass,
-} from "./self-test-overlay-css-vars.js";
-import SelfTester from "./self-tester.js";
-import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
+} from "./integration-test-overlay-css-vars.js";
+import SelfTester, { transmitIntegrationError } from "./integration-tester.js";
+import { StatusCodes } from "./integration-tester-data-to-sync-with-dev-hub.js";
 
 void (async (): Promise<void> => {
   await repeatTestsOnSPA(async () => {
@@ -82,6 +82,9 @@ class SelfTesterOverlay {
               <li class="${sovendusOverlayFontClass}">
                 Browser: ${selfTester.browserName.elementValue}
               </li>
+              <li class="${sovendusOverlayFontClass}" style="font-size: 9px !important">
+                URL: ${selfTester.websiteURL.elementValue}
+              </li>
               ${selfTester.multipleIFramesAreSame.getFormattedGeneralStatusMessage()}
               ${selfTester.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
               ${selfTester.isFlexibleIFrameExecutable.getFormattedGeneralStatusMessage()}
@@ -111,6 +114,7 @@ class SelfTesterOverlay {
   createOuterOverlay(): void {
     const overlay = document.createElement("div");
     overlay.id = outerOverlayId;
+    overlay.translate = false;
     overlay.innerHTML = `
       ${this.getOuterOverlayStyle()}
       <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${toggleSovendusOverlayId}">
@@ -126,6 +130,10 @@ class SelfTesterOverlay {
     } else {
       // eslint-disable-next-line no-console
       console.error("Failed to add click event to show / hide button");
+      void transmitIntegrationError(
+        "Failed to add click event to show / hide button",
+        window,
+      );
     }
   }
 
@@ -159,10 +167,15 @@ class SelfTesterOverlay {
       } else {
         // eslint-disable-next-line no-console
         console.error("Failed to get iframe.contentDocument to place content");
+        void transmitIntegrationError(
+          "Failed to get iframe.contentDocument to place content",
+          window,
+        );
       }
 
       const iFrameStyle = document.createElement("style");
       iFrameStyle.id = IFrameStyleId;
+      iFrameStyle.innerHTML = `#${testLoadedIFrameId} { height: 1200px !important; }`;
       overlay.insertAdjacentElement("afterbegin", iFrameStyle);
 
       if (!loadingDone) {
@@ -342,6 +355,7 @@ class SelfTesterOverlay {
             padding: 12px;
             border: unset;
             border-radius: 8px;
+            z-index: 99999;
           }
           #${innerOverlayId} {
             padding: ${bannerPadding}px !important;
@@ -483,6 +497,7 @@ class SelfTesterOverlay {
           }
           #${toggleSovendusOverlayId} {
             width: 62px !important;
+            height: unset !important;
             position: fixed !important;
             left: calc(50% - 31px) !important;
             right: calc(50% - 31px) !important;
@@ -560,7 +575,7 @@ class SelfTesterOverlay {
   }
 }
 
-function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
+export function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
   const _iframe =
     iframe ||
     (document.getElementById(testLoadedIFrameId) as HTMLIFrameElement | null);
@@ -572,14 +587,26 @@ function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
     if (!_iframe) {
       // eslint-disable-next-line no-console
       console.error("Failed to get iframe to update iframe height.");
+      void transmitIntegrationError(
+        "Failed to get iframe to update iframe height.",
+        window,
+      );
     }
     if (!innerOverlay) {
       // eslint-disable-next-line no-console
       console.error("Failed to get innerOverlay to update iframe height.");
+      void transmitIntegrationError(
+        "Failed to get innerOverlay to update iframe height.",
+        window,
+      );
     }
     if (!iFrameStyle) {
       // eslint-disable-next-line no-console
       console.error("Failed to get iFrameStyle to update iframe height.");
+      void transmitIntegrationError(
+        "Failed to get iFrameStyle to update iframe height.",
+        window,
+      );
     }
   } else {
     iFrameStyle.innerHTML = `#${testLoadedIFrameId} { height: ${innerOverlay.scrollHeight}px !important; }`;
@@ -593,6 +620,7 @@ function toggleOverlay(): void {
     if (overlay.style.display === "none") {
       overlay.style.display = "block";
       toggle.innerText = "Hide";
+      updateIFrameHeight();
     } else {
       overlay.style.display = "none";
       toggle.innerText = "Show";

@@ -42,13 +42,18 @@ npm run build
 
 #### Firefox
 
-1. Run the following command to build a test package
+1. Run the following command to clean the build folder and build the extension
    ```bash
-   npm run zip-builds-for-tests
+   npm run build
    ```
-2. In Firefox got to the extensions page, click on the settings gear -> debug extensions -> Load Temporary Add-on
-3. Select the Firefox build in the test_zips directory
-4. If you want to rebuild the extension, you must first remove the extension from firefox, as the zip file will be locked
+2. Run the following command to start firefox with the extension enabled
+   ```bash
+   npm run debug-on-ff
+   ```
+3. To apply changes run the following command
+   ```bash
+   npm run soft-build
+   ```
 
 ### Running Tests
 
@@ -61,7 +66,7 @@ You can run the test suite using the following commands:
 #### Run All Tests
 
 ```bash
-npm run test
+npm run build-and-test
 ```
 
 #### Run Specific Integration Test
@@ -69,7 +74,7 @@ npm run test
 Adjust the matching patter in the test-it script in package.json and then run:
 
 ```bash
-npm run test-it
+npm run build-and-test-it
 ```
 
 These commands will run the tests and provide feedback in the console. Note that those commands will only run the tests on chrome. If you run npm run build-release the tests will be executed on Chrome, Edge, Firefox, Chrome iPhone Simulation and Chrome Android Simulation.

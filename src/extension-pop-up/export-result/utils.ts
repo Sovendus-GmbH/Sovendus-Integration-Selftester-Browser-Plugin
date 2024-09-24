@@ -1,7 +1,9 @@
 import {
   outerOverlayId,
   toggleSovendusOverlayId,
-} from "../../page-banner/self-test-overlay-css-vars.js";
+} from "../../page-banner/integration-test-overlay-css-vars.js";
+import type SelfTester from "../../page-banner/integration-tester.js";
+import { transmitIntegrationError } from "../../page-banner/integration-tester.js";
 import { browserAPI } from "../extension-pop-up.js";
 
 export async function copyScreenshotsToClipboard(
@@ -28,6 +30,10 @@ export async function copyScreenshotsToClipboard(
             .catch((error) => {
               // eslint-disable-next-line no-console
               console.error("Failed to copy to the clipboard, error:", error);
+              void transmitIntegrationError(
+                `Failed to copy to the clipboard, error: ${error}`,
+                window,
+              );
             });
         });
       }
@@ -68,6 +74,11 @@ export async function checkIfSovendusIsDetected(
     console.error(
       "Failed to check if Sovendus is integrated - script injection failed",
     );
+    void transmitIntegrationError(
+      "Failed to check if Sovendus is integrated - script injection failed",
+      window,
+    );
+
     return { sovendusIntegrated: false, overlayVisible: false };
   }
   return result[0].result;
@@ -76,6 +87,7 @@ export async function checkIfSovendusIsDetected(
 export interface SovWindow extends Window {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ClipboardItem?: any;
+  sovSelfTester?: SelfTester;
 }
 
 declare let window: SovWindow;
