@@ -1406,17 +1406,16 @@ export default class SelfTester {
             }
           }
           if (isUnixTime) {
-            // Check if the timestamp is older than 1 minute
+            // Check if the timestamp is older than 2 minute
             const currentTime = Date.now();
             const timeDifference = currentTime - timestampInMilliSeconds;
-            const oneMinutesInMilliSeconds = 2 * 60 * 1000;
+            const twoMinutesInMilliSeconds = 2 * 60 * 1000;
 
-            if (timeDifference > oneMinutesInMilliSeconds) {
-              statusMessageKey =
-                StatusMessageKeyTypes.unixTimestampOlderThan2Minutes;
+            if (timeDifference > twoMinutesInMilliSeconds) {
               return new WarningOrFailTestResult({
                 elementValue: valueTestResult.elementValue,
-                statusMessageKey,
+                statusMessageKey:
+                  StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
                 statusCode: StatusCodes.Error,
               });
             }
