@@ -44,16 +44,19 @@ if (!overlay) {
         docsLink:
           "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/React-Component",
       },
-      "Old Shopify": {
-        name: "Old Shopify Checkout Page Version",
-        docsLink:
-          "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Shopify-Integration-(old-version)",
-      },
-      "New Shopify": {
+      "Shopify": {
         name: "New Shopify Checkout Page Version",
         docsLink:
           "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Shopify-App-(new-Version)",
+        nameAlternative: "Old Shopify Checkout Page Version",
+        docsLinkAlternative:
+          "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Shopify-Integration-(old-version)",
       },
+      // "New Shopify": {
+      //   name: "New Shopify Checkout Page Version",
+      //   docsLink:
+      //     "https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Shopify-App-(new-Version)",
+      // },
       "OXID eSales": {
         name: "OXID eShop",
         docsLink:
@@ -148,9 +151,9 @@ if (!overlay) {
   <h3 class='${sovendusOverlayFontClass} ${sovendusOverlayH3Class}'>
     Generic Integration
   </h3>
-  <p>
-    You can get the generic documentation from your account manager
-  </p>
+  <a href='${this.supportedSystems.generic.docsLink}' target='_blank'>
+  ${this.supportedSystems.generic.name} Integration Documentation
+  </a>
   ${availableMethods}
   ${gtmAvailable ? this.formatIntegrationOption(this.supportedSystems.gtm) : ""}
 `;
@@ -171,13 +174,22 @@ if (!overlay) {
     ): string {
       return `
 <h3 class='${sovendusOverlayFontClass} ${sovendusOverlayH3Class}'>
-  ${titlePrefix ? titlePrefix : ""}${supportedSystem.name}${
+  ${titlePrefix ? titlePrefix : ""}${supportedSystem.name.startsWith("New Shopify") ? "Shopify" : supportedSystem.name}${
     titleSuffix ? titleSuffix : ""
   }
 </h3>
 <a href='${supportedSystem.docsLink}' target='_blank'>
   ${supportedSystem.name} Integration Documentation
 </a>
+${
+  supportedSystem.nameAlternative
+    ? `<br />
+  <a href="${supportedSystem.docsLinkAlternative}" target="_blank">
+    ${supportedSystem.nameAlternative} Integration Documentation
+  </a>
+`
+    : ""
+}
 `;
     }
 
@@ -398,6 +410,8 @@ interface AvailableMethodsResponseResultsType {
 interface SupportedSystemType {
   name: string;
   docsLink: string;
+  nameAlternative?: string;
+  docsLinkAlternative?: string;
 }
 
 type SupportedSystemsKeyType =
@@ -406,8 +420,7 @@ type SupportedSystemsKeyType =
   | "Nuxt.js"
   | "Magento"
   | "Next.js"
-  | "Old Shopify"
-  | "New Shopify"
+  | "Shopify"
   | "OXID eSales"
   | "OXID eShop Enterprise Edition"
   | "OXID eShop Community Edition"

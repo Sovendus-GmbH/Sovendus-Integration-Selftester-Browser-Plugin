@@ -8,7 +8,9 @@ export async function checkAvailableIntegrations(tabId: number): Promise<void> {
       script.setAttribute("type", "text/javascript");
       script.setAttribute(
         "src",
-        chrome.runtime.getURL("/extension-pop-up/test-integration.js"),
+        chrome.runtime.getURL(
+          "/extension-pop-up/available-integration-script.js",
+        ),
       );
       script.type = "module";
       document.body.appendChild(script);
