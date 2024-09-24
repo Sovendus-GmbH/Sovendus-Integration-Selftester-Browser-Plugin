@@ -575,7 +575,7 @@ class SelfTesterOverlay {
   }
 }
 
-function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
+export function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
   const _iframe =
     iframe ||
     (document.getElementById(testLoadedIFrameId) as HTMLIFrameElement | null);
@@ -620,6 +620,7 @@ function toggleOverlay(): void {
     if (overlay.style.display === "none") {
       overlay.style.display = "block";
       toggle.innerText = "Hide";
+      updateIFrameHeight();
     } else {
       overlay.style.display = "none";
       toggle.innerText = "Show";
