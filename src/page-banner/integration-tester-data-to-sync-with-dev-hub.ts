@@ -6,6 +6,7 @@ export interface TestResultResponseDataType {
   consumerFirstName?: TestResultType<string | undefined>;
   consumerLastName?: TestResultType<string | undefined>;
   consumerYearOfBirth?: TestResultType<string | undefined>;
+  consumerDateOfBirth?: TestResultType<string | undefined>;
   consumerEmail?: TestResultType<string | undefined>;
   consumerEmailHash?: TestResultType<string | undefined>;
   consumerStreet?: TestResultType<string | undefined>;
@@ -54,6 +55,7 @@ export interface SovConsumer {
   consumerFirstName?: ExplicitAnyType;
   consumerLastName?: ExplicitAnyType;
   consumerYearOfBirth?: ExplicitAnyType;
+  consumerDateOfBirth?: ExplicitAnyType;
   consumerEmail?: ExplicitAnyType;
   consumerEmailHash?: ExplicitAnyType;
   consumerPhone?: ExplicitAnyType;
@@ -172,6 +174,9 @@ export enum StatusMessageKeyTypes {
   missingConsumerYearOfBirth = "missingConsumerYearOfBirth",
   consumerYearOfBirthSuccess = "consumerYearOfBirthSuccess",
   consumerYearOfBirthNotValid = "consumerYearOfBirthNotValid",
+  missingConsumerDateOfBirth = "missingConsumerDateOfBirth",
+  consumerDateOfBirthSuccess = "consumerDateOfBirthSuccess",
+  consumerDateOfBirthNotValid = "consumerDateOfBirthNotValid",
   missingConsumerEmail = "missingConsumerEmail",
   missingIframeContainerId = "missingIframeContainerId",
   iFrameContainerIdMalformed = "iFrameContainerIdMalformed",
@@ -284,6 +289,24 @@ export const statusMessages: {
   missingConsumerYearOfBirth: {
     errorText: "VALUE MISSING",
     infoText: "Make sure to pass the year of birth of the customer, e.g. 1991",
+  },
+
+  consumerDateOfBirthNotValid: {
+    errorText: "NOT A VALID BIRTH DATE",
+    infoText:
+      "Make sure to pass the date of birth of the customer as a string, e.g. 01.01.1991",
+  },
+
+  consumerDateOfBirthSuccess: {
+    errorText: "",
+    infoText:
+      "Make sure the date of birth aligns with the date of birth you used for the order.",
+  },
+
+  missingConsumerDateOfBirth: {
+    errorText: "VALUE MISSING",
+    infoText:
+      "Make sure to pass the date of birth of the customer, e.g. 01.01.1991",
   },
 
   consumerEmailNotValid: {
@@ -420,7 +443,7 @@ export const statusMessages: {
   unixTimestampOlderThan2Minutes: {
     errorText: "TIMESTAMP OLDER THAN 2 MINUTES",
     infoText:
-      "Make sure to pass the unix timestamp in seconds of the order time. If you just refreshed the success page after a while then this is normal and expected",
+      "Make sure to pass the unix timestamp in seconds of the order time (Received: {elementValue}). If you just refreshed the success page after a while then this is normal and expected",
   },
 
   missingOrderId: {

@@ -259,6 +259,7 @@ export type SovSelfTesterKeys =
   | "consumerFirstName"
   | "consumerLastName"
   | "consumerYearOfBirth"
+  | "consumerDateOfBirth"
   | "consumerEmail"
   | "consumerEmailHash"
   | "consumerStreet"

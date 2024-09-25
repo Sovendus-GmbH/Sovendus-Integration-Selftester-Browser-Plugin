@@ -228,6 +228,9 @@ class SelfTesterOverlay {
               consumerYearOfBirth: ${testResult.consumerYearOfBirth.getFormattedStatusMessage()}
             </li>
             <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              consumerDateOfBirth: ${testResult.consumerDateOfBirth.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerEmail: ${testResult.consumerEmail.getFormattedStatusMessage()}
             </li>
             ${

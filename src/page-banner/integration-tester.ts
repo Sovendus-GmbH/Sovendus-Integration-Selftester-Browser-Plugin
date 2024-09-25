@@ -33,6 +33,7 @@ export default class SelfTester {
   consumerFirstName: TestResultType<string | undefined>;
   consumerLastName: TestResultType<string | undefined>;
   consumerYearOfBirth: TestResultType<string | undefined>;
+  consumerDateOfBirth: TestResultType<string | undefined>;
   consumerEmail: TestResultType<string | undefined>;
   consumerEmailHash: TestResultType<string | undefined>;
   consumerStreet: TestResultType<string | undefined>;
@@ -124,6 +125,10 @@ export default class SelfTester {
         window.sovConsumer?.consumerYearOfBirth === undefined
           ? window.sovApplication?.consumer?.yearOfBirth || undefined
           : window.sovConsumer.consumerYearOfBirth,
+      dateOfBirth:
+        window.sovConsumer?.consumerDateOfBirth === undefined
+          ? window.sovApplication?.consumer?.dateOfBirth || undefined
+          : window.sovConsumer.consumerDateOfBirth,
       email:
         window.sovConsumer?.consumerEmail === undefined
           ? window.sovApplication?.consumer?.email || undefined
@@ -162,6 +167,8 @@ export default class SelfTester {
     this.consumerLastName = this.getConsumerLastNameTestResult(sovConsumer);
     this.consumerYearOfBirth =
       this.getConsumerYearOfBirthTestResult(sovConsumer);
+    this.consumerDateOfBirth =
+      this.getConsumerDateOfBirthTestResult(sovConsumer);
     const consumerEmail = (this.consumerEmail =
       this.getConsumerEmailTestResult(sovConsumer));
     this.consumerEmailHash = this.getConsumerEmailHashTestResult(
@@ -486,6 +493,48 @@ export default class SelfTester {
             statusCode = StatusCodes.Error;
             statusMessageKey =
               StatusMessageKeyTypes.consumerYearOfBirthNotValid;
+          }
+          return new WarningOrFailTestResult<string | undefined>({
+            elementValue: valueTestResult.elementValue,
+            statusMessageKey,
+            statusCode,
+          });
+        }
+        return valueTestResult;
+      },
+    });
+  }
+
+  // TODO Funktion noch machen
+  getConsumerDateOfBirthTestResult(
+    consumer: SovApplicationConsumer,
+  ): TestResultType<string | undefined> {
+    return this.safelyRunTests({
+      testName: "dateOfBirth",
+      rawElementValue:
+        consumer.dateOfBirth || window.sovConsumer?.consumerDateOfBirth,
+      testFunction: () => {
+        const valueTestResult = validValueTestResult({
+          value:
+            consumer.dateOfBirth || window.sovConsumer?.consumerDateOfBirth,
+          missingErrorMessageKey:
+            StatusMessageKeyTypes.missingConsumerDateOfBirth,
+          successMessageKey: StatusMessageKeyTypes.consumerDateOfBirthSuccess,
+          malformedMessageKey:
+            StatusMessageKeyTypes.consumerDateOfBirthNotValid,
+          checkTypes: {
+            numbersInStringsAllowed: true,
+          },
+        });
+        if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
+          let statusCode: StatusCodes = StatusCodes.SuccessButNeedsReview;
+          const dateOfBirth: string = String(valueTestResult.elementValue);
+          let statusMessageKey: StatusMessageKeyTypes =
+            valueTestResult.statusMessageKey;
+          if (!/^([0-2]\d|3[01])\.(0\d|1[0-2])\.(\d{4})$/.test(dateOfBirth)) {
+            statusCode = StatusCodes.Error;
+            statusMessageKey =
+              StatusMessageKeyTypes.consumerDateOfBirthNotValid;
           }
           return new WarningOrFailTestResult<string | undefined>({
             elementValue: valueTestResult.elementValue,
@@ -1410,21 +1459,22 @@ export default class SelfTester {
             }
           }
           if (isUnixTime) {
-            // Check if the timestamp is older than 2 minute
+            // Check if the timestamp is older than 2 minutes
             const currentTime = Date.now();
             const timeDifference = currentTime - timestampInMilliSeconds;
             const twoMinutesInMilliSeconds = 2 * 60 * 1000;
 
             if (timeDifference > twoMinutesInMilliSeconds) {
               return new WarningOrFailTestResult({
-                elementValue: valueTestResult.elementValue,
+
+                elementValue: String(timestampInMilliSeconds / 1000),
                 statusMessageKey:
                   StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
                 statusCode: StatusCodes.Error,
               });
             }
             return new SuccessTestResult({
-              elementValue: valueTestResult.elementValue,
+              elementValue: String(timestampInMilliSeconds / 1000),
             });
           }
           statusCode = StatusCodes.Error;
@@ -1614,6 +1664,9 @@ export default class SelfTester {
       ...(this.consumerYearOfBirth.statusCode !== StatusCodes.TestDidNotRun
         ? { consumerYearOfBirth: this.consumerYearOfBirth }
         : {}),
+      ...(this.consumerDateOfBirth.statusCode !== StatusCodes.TestDidNotRun
+        ? { consumerDateOfBirth: this.consumerDateOfBirth }
+        : {}),
       ...(this.consumerEmail.statusCode !== StatusCodes.TestDidNotRun
         ? { consumerEmail: this.consumerEmail }
         : {}),
@@ -1723,6 +1776,7 @@ export default class SelfTester {
     this.consumerFirstName = emptyStringUndefinedTestResult;
     this.consumerLastName = emptyStringUndefinedTestResult;
     this.consumerYearOfBirth = emptyStringUndefinedTestResult;
+    this.consumerDateOfBirth = emptyStringUndefinedTestResult;
     this.consumerEmail = emptyStringUndefinedTestResult;
     this.consumerEmailHash = emptyStringUndefinedTestResult;
     this.consumerStreet = emptyStringUndefinedTestResult;
@@ -1988,7 +2042,13 @@ export class WarningOrFailTestResult<
   }
 
   private replaceElementValueInMessage(message: string): string {
-    return message.replace(/{elementValue}/g, String(this.elementValue));
+    return message.replace(
+      /{elementValue}/g,
+      this.statusMessageKey ===
+        StatusMessageKeyTypes.unixTimestampOlderThan2Minutes
+        ? new Date(Number(this.elementValue) * 1000).toLocaleString()
+        : String(this.elementValue),
+    );
   }
 
   private getInfoMarkWithLabel(labelText: string): string {
@@ -2096,6 +2156,7 @@ interface MergedSovConsumer {
   firstName: ExplicitAnyType;
   lastName: ExplicitAnyType;
   yearOfBirth: ExplicitAnyType;
+  dateOfBirth: ExplicitAnyType;
   email: ExplicitAnyType;
   emailHash: ExplicitAnyType;
   phone: ExplicitAnyType;
@@ -2111,6 +2172,7 @@ export interface SovConsumer {
   consumerFirstName?: ExplicitAnyType;
   consumerLastName?: ExplicitAnyType;
   consumerYearOfBirth?: ExplicitAnyType;
+  consumerDateOfBirth?: ExplicitAnyType;
   consumerEmail?: ExplicitAnyType;
   consumerEmailHash?: ExplicitAnyType;
   consumerPhone?: ExplicitAnyType;
@@ -2126,6 +2188,7 @@ interface SovApplicationConsumer {
   firstName: string;
   lastName: string;
   yearOfBirth: number;
+  dateOfBirth: number;
   email?: string | undefined;
   emailHash: string;
   phone: string;

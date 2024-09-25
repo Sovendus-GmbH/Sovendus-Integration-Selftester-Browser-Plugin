@@ -2,16 +2,13 @@
 
 ## Selftester Plugin
 
-- add consumerDateOfBirth parameter
 - handle space in street name, number and zip code with gtm (gets encoded for some reason)
 - check lampenwelt (zip from emine) no AWIN.Tracking.Sale but banner visible
-- add timestamp datetime to older than error message
 - add button to manually add master tag again, to verify if its due to master tag before sales tracking
 - improve overlay loading speed
 - handle if a general test fails - still continue and show error in overlay - also use new status code testFailed
 - dont compile tests with build
 - transmit multiple iframes content when they are different
-- check cors api call to dev hub
 - add error when invalid email hash is used - banner will not load
 - report dr. to mr. as a bug
 
@@ -22,6 +19,8 @@
 
 ## Currently working on
 
+- check cors api call to dev hub
+- Make a Code Review
 
 ## Marcus Check
 
@@ -41,3 +40,5 @@
 - add docs urls to e.g. no div found
 - add new shopify app docs to check integrations
 - Fix problem with hide and show button that the height of the iframe is too small
+- add timestamp datetime to older than error message
+- add consumerDateOfBirth parameter
