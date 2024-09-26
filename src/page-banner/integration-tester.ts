@@ -531,7 +531,12 @@ export default class SelfTester {
           const dateOfBirth: string = String(valueTestResult.elementValue);
           let statusMessageKey: StatusMessageKeyTypes =
             valueTestResult.statusMessageKey;
-          if (!/^([0-2]\d|3[01])\.(0\d|1[0-2])\.(\d{4})$/.test(dateOfBirth)) {
+          if (
+            // Identify different Date formats (iso: YYYY-mm-dd, de_DE: dd.mm.YYYY and en_GB: dd/mm/YYYY)
+            !/^(\d{4}[-/](0[1-9]|1[0-2])[-/](0[1-9]|[12]\d|3[01])|([0-2]\d|3[01])[./](0[1-9]|1[0-2])[./]\d{4})$/.test(
+              dateOfBirth,
+            )
+          ) {
             statusCode = StatusCodes.Error;
             statusMessageKey =
               StatusMessageKeyTypes.consumerDateOfBirthNotValid;
@@ -1466,7 +1471,6 @@ export default class SelfTester {
 
             if (timeDifference > twoMinutesInMilliSeconds) {
               return new WarningOrFailTestResult({
-
                 elementValue: String(timestampInMilliSeconds / 1000),
                 statusMessageKey:
                   StatusMessageKeyTypes.unixTimestampOlderThan2Minutes,
