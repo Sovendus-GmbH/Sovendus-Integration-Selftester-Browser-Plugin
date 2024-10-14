@@ -14,15 +14,15 @@ export async function checkStickyBannerAndOverlayIntegration(
   });
   const sitesUrl = await getWindowFromPage(tabId);
 
-  if (sitesUrl) {
-    void transmitIntegrationError("Cors error test", {
-      url: sitesUrl,
-    });
-  } else {
-    void transmitIntegrationError("Cors error test no siteWindow", {
-      windowParameter: window,
-    });
-  }
+  // if (sitesUrl) {
+  //   void transmitIntegrationError("Cors error test", {
+  //     url: sitesUrl,
+  //   });
+  // } else {
+  //   void transmitIntegrationError("Cors error test no siteWindow", {
+  //     windowParameter: window,
+  //   });
+  // }
 
   if (result?.[0]?.result === undefined) {
     // eslint-disable-next-line no-console

@@ -1566,10 +1566,10 @@ export default class SelfTester {
     // eslint-disable-next-line no-console
     console.log("No Sovendus integration detected yet");
 
-    //TODO Remove
-    void transmitIntegrationError("Cors Error Test", {
-      windowParameter: window,
-    });
+    // //TODO Remove
+    // void transmitIntegrationError("Cors Error Test", {
+    //   windowParameter: window,
+    // });
 
     while (
       !(this.sovIframesOrConsumerExists() || this.awinIntegrationDetected())
