@@ -32,7 +32,7 @@ export async function copyScreenshotsToClipboard(
               console.error("Failed to copy to the clipboard, error:", error);
               void transmitIntegrationError(
                 `Failed to copy to the clipboard, error: ${error}`,
-                window,
+                { windowParameter: window },
               );
             });
         });
@@ -76,7 +76,7 @@ export async function checkIfSovendusIsDetected(
     );
     void transmitIntegrationError(
       "Failed to check if Sovendus is integrated - script injection failed",
-      window,
+      { windowParameter: window },
     );
 
     return { sovendusIntegrated: false, overlayVisible: false };

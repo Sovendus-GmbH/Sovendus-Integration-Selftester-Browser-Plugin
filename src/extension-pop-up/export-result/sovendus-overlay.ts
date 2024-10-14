@@ -12,13 +12,45 @@ export async function checkStickyBannerAndOverlayIntegration(
       return !!window.sovSelfTester?.isOverlayOrStickyBanner.elementValue;
     },
   });
+  const sitesUrl = await getWindowFromPage(tabId);
+
+  if (sitesUrl) {
+    void transmitIntegrationError("Cors error test", {
+      url: sitesUrl,
+    });
+  } else {
+    void transmitIntegrationError("Cors error test no siteWindow", {
+      windowParameter: window,
+    });
+  }
+
   if (result?.[0]?.result === undefined) {
     // eslint-disable-next-line no-console
     console.error("Failed to check if an overlay is used");
-    void transmitIntegrationError(
-      "Failed to check if an overlay is used",
-      window,
-    );
+    if (sitesUrl) {
+      void transmitIntegrationError("Failed to check if an overlay is used", {
+        url: sitesUrl,
+      });
+    } else {
+      void transmitIntegrationError(
+        "Failed to check if an overlay is used and also failed to get sites window",
+        { windowParameter: window },
+      );
+    }
+    return false;
+  }
+  return result[0].result;
+}
+
+async function getWindowFromPage(tabId: number): Promise<string | false> {
+  const result = await browserAPI.scripting.executeScript({
+    target: { tabId },
+    world: "MAIN",
+    func: (): string => {
+      return window.location.href;
+    },
+  });
+  if (result?.[0]?.result === undefined) {
     return false;
   }
   return result[0].result;

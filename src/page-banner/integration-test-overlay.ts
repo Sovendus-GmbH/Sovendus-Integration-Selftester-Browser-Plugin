@@ -132,7 +132,7 @@ class SelfTesterOverlay {
       console.error("Failed to add click event to show / hide button");
       void transmitIntegrationError(
         "Failed to add click event to show / hide button",
-        window,
+        { windowParameter: window },
       );
     }
   }
@@ -169,7 +169,7 @@ class SelfTesterOverlay {
         console.error("Failed to get iframe.contentDocument to place content");
         void transmitIntegrationError(
           "Failed to get iframe.contentDocument to place content",
-          window,
+          { windowParameter: window },
         );
       }
 
@@ -592,7 +592,7 @@ export function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
       console.error("Failed to get iframe to update iframe height.");
       void transmitIntegrationError(
         "Failed to get iframe to update iframe height.",
-        window,
+        { windowParameter: window },
       );
     }
     if (!innerOverlay) {
@@ -600,7 +600,7 @@ export function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
       console.error("Failed to get innerOverlay to update iframe height.");
       void transmitIntegrationError(
         "Failed to get innerOverlay to update iframe height.",
-        window,
+        { windowParameter: window },
       );
     }
     if (!iFrameStyle) {
@@ -608,7 +608,7 @@ export function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
       console.error("Failed to get iFrameStyle to update iframe height.");
       void transmitIntegrationError(
         "Failed to get iFrameStyle to update iframe height.",
-        window,
+        { windowParameter: window },
       );
     }
   } else {

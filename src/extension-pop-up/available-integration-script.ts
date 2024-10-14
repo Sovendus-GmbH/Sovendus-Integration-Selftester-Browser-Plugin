@@ -223,7 +223,7 @@ ${
         void transmitIntegrationError(
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           `Error fetching data: ${error?.message || error}`,
-          window,
+          { windowParameter: window },
         );
         responseStatusCode = this.statusCodes.fail;
         responseErrorMessage = this.formatErrorMessage(
@@ -283,7 +283,7 @@ ${
               console.error("Error in function checkAvailableIntegrations");
               void transmitIntegrationError(
                 "Error in function checkAvailableIntegrations",
-                window,
+                { windowParameter: window },
               );
             }
           }
@@ -292,7 +292,9 @@ ${
         errorMessage = "Failed to get detection result - unknown error";
       }
       if (errorMessage) {
-        void transmitIntegrationError(errorMessage, window);
+        void transmitIntegrationError(errorMessage, {
+          windowParameter: window,
+        });
       }
 
       return {

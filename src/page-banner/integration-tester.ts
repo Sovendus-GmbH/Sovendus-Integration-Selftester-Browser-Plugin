@@ -270,7 +270,7 @@ export default class SelfTester {
       console.error("Error: sovOverlay or sticky banner not found");
       void transmitIntegrationError(
         "Error: sovOverlay or sticky banner not found",
-        window,
+        { windowParameter: window },
       );
     }
     return {
@@ -1527,7 +1527,7 @@ export default class SelfTester {
       console.error(`Failed to run test ${testName} - error:`, e);
       void transmitIntegrationError(
         `Failed to run test ${testName} - error: ${e}`,
-        window,
+        { windowParameter: window },
       );
       return new WarningOrFailTestResult<TElementValueType>({
         elementValue: rawElementValue,
@@ -1565,6 +1565,12 @@ export default class SelfTester {
   async waitForSovendusIntegrationDetected(): Promise<void> {
     // eslint-disable-next-line no-console
     console.log("No Sovendus integration detected yet");
+
+    //TODO Remove
+    void transmitIntegrationError("Cors Error Test", {
+      windowParameter: window,
+    });
+
     while (
       !(this.sovIframesOrConsumerExists() || this.awinIntegrationDetected())
     ) {
@@ -1646,7 +1652,7 @@ export default class SelfTester {
       console.error("Failed to transmit sovendus test result - error:", e);
       // void transmitIntegrationError(
       //   `Failed to transmit sovendus test result - error: ${e}`,
-      //   window,
+      //   { windowParameter: window },
       // );
     }
   }
@@ -1969,7 +1975,7 @@ export class WarningOrFailTestResult<
           );
           void transmitIntegrationError(
             `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
-            window,
+            { windowParameter: window },
           );
           return "";
         }
@@ -1989,7 +1995,7 @@ export class WarningOrFailTestResult<
           );
           void transmitIntegrationError(
             `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
-            window,
+            { windowParameter: window },
           );
           return "";
         }
@@ -2019,7 +2025,7 @@ export class WarningOrFailTestResult<
         ElementValue: ${this.elementValue}\n
         StatusCode: ${this.statusCode}\n
         StatusMessageKey: ${this.statusMessageKey}`,
-        window,
+        { windowParameter: window },
       );
       return "";
     }
@@ -2034,7 +2040,7 @@ export class WarningOrFailTestResult<
         );
         void transmitIntegrationError(
           `No statusMessageKey set for the value: ${this.elementValue} - with the status ${this.statusCode}`,
-          window,
+          { windowParameter: window },
         );
         return "";
       }
@@ -2109,7 +2115,7 @@ export function safeURI(
         ${value}
       )- Error -> 
       ${e}`,
-      window,
+      { windowParameter: window },
     );
     return value;
   }
@@ -2117,8 +2123,18 @@ export function safeURI(
 
 export async function transmitIntegrationError(
   errorMessage: string,
-  windowParameter: SovWindow,
+  parameters:
+    | {
+        windowParameter: SovWindow;
+        url?: string;
+      }
+    | {
+        windowParameter?: SovWindow;
+        url: string;
+      },
 ): Promise<void> {
+  const { windowParameter, url } = parameters;
+  const domain = url || windowParameter?.location.href || "";
   try {
     await fetch("http://localhost:3000/api/testing-plugin-error", {
       method: "POST",
@@ -2127,7 +2143,7 @@ export async function transmitIntegrationError(
         "Content-Type": "application/json",
       },
       body: JSON.stringify(
-        getIntegrationErrorData(errorMessage, windowParameter),
+        getIntegrationErrorData(errorMessage, windowParameter, domain),
       ),
     });
   } catch (e) {
@@ -2138,10 +2154,11 @@ export async function transmitIntegrationError(
 
 function getIntegrationErrorData(
   errorMessage: string,
-  windowParameter: SovWindow,
+  windowParameter: SovWindow | undefined,
+  url: string,
 ): IntegrationErrorDataType {
   return {
-    domain: windowParameter.location.href,
+    domain: url,
     errorMessage: errorMessage,
     ...(windowParameter?.sovIframes || windowParameter?.sovConsumer
       ? {
