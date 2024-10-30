@@ -1,6 +1,6 @@
-import { testLoadedIFrameId } from "@src/page-banner/integration-test-overlay-css-vars";
-import type SelfTester from "@src/page-banner/integration-tester";
-import type { ExplicitAnyType } from "@src/page-banner/integration-tester";
+import type SelfTester from "@src/integration-tester/integration-tester";
+import type { ExplicitAnyType } from "@src/integration-tester/integration-tester";
+import { testLoadedIFrameId } from "@src/integration-tester-ui/integration-test-overlay-css-vars";
 import { platform } from "os";
 import { resolve } from "path";
 import type { WebDriver } from "selenium-webdriver";
@@ -351,7 +351,7 @@ function getFlexibleIFrameScriptType(
 function getChangeSovendusJsScriptTypeScript(
   sovendusJsScriptType: string | null | undefined,
   removeSovendusJs: boolean | undefined,
-  flexibleIFrameJsScriptType?: string | null | undefined,
+  flexibleIFrameJsScriptType?: string | null,
 ): string {
   return sovendusJsScriptType !== undefined ||
     flexibleIFrameJsScriptType !== undefined ||
@@ -432,7 +432,9 @@ async function executeWithTimeout(
         resolve(result); // Resolve with the result of the function
       })
       .catch((error) => {
-        reject(error); // Reject with the error from the function
+        reject(
+          new Error(`Failed to get test data from browser, error: ${error}`),
+        ); // Reject with the error from the function
       })
       .finally(() => {
         // Clear the timeout once the function completes

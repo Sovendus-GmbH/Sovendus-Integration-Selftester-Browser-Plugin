@@ -1,4 +1,4 @@
-import { BrowserTypes } from "@src/page-banner/integration-tester-data-to-sync-with-dev-hub";
+import { BrowserTypes } from "@src/integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataNoParameterButIsOkay,

@@ -2,7 +2,7 @@ import type {
   ExplicitAnyType,
   SovConsumer,
   SovIframes,
-} from "@src/page-banner/integration-tester";
+} from "@src/integration-tester/integration-tester";
 
 import type { TestDataType } from "./testCaseGenerator";
 

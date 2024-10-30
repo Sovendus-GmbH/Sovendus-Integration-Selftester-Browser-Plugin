@@ -1,8 +1,8 @@
 {
-  "name": "integration-tester-browser-extension",
+  "name": "sovendus-integration-tester",
   "version": "1.7.0",
   "description": "Sovendus integration tester chrome & firefox extensions",
-  "type": "commonjs",
+  "private": false,
   "scripts": {
     "build": "npm run build-ts && npm run copy-files",
     "build-release": "npm run build-and-test --buildMode && npm run zip-builds",
@@ -18,7 +18,7 @@
     "build-test-zips": "npm run lint && npm run build && npm run zip-builds-for-tests",
     "copy-files": "npm run copy-other-files && npm run copy-to-ff && npm run copy-browser-specific-files",
     "copy-other-files": "cpy src/extension-pop-up/extension-pop-up.html build/chrome/extension-pop-up/ --flat && cpy src/npm/** build/chrome/npm/ && cpy src/sovendus.png build/chrome/ --flat",
-    "copy-src": "cpy src/page-banner/*.ts build/chrome/src/page-banner/",
+    "copy-src": "cpy src/integration-tester/*.ts build/chrome/src/integration-tester/",
     "copy-to-ff": "cpy build/chrome/**/* build/firefox",
     "copy-browser-specific-files": "cpy src/chrome/* build/chrome && cpy src/firefox/* build/firefox",
     "zip-builds": "zip-build build/chrome release_zips -t 'chrome-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%' && zip-build build/firefox release_zips -t 'firefox-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%'",

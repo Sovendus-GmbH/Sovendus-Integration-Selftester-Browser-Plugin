@@ -53,6 +53,7 @@
   ],
   "exclude": [
     "src/chrome",
+    "node_modules",
     "src/firefox"
   ]
 }

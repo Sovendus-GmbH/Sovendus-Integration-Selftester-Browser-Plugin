@@ -1,9 +1,10 @@
 import {
   outerOverlayId,
   toggleSovendusOverlayId,
-} from "../../page-banner/integration-test-overlay-css-vars.js";
-import type SelfTester from "../../page-banner/integration-tester.js";
-import { transmitIntegrationError } from "../../page-banner/integration-tester.js";
+} from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
+
+import type SelfTester from "../../integration-tester/integration-tester.js";
+import { transmitIntegrationError } from "../../integration-tester/integration-tester.js";
 import { browserAPI } from "../extension-pop-up.js";
 
 export async function copyScreenshotsToClipboard(

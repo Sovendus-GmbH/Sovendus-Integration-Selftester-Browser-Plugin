@@ -2,7 +2,8 @@ import {
   fullscreenClass,
   overlayId,
   toggleSovendusOverlayId,
-} from "../page-banner/integration-test-overlay-css-vars.js";
+} from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
+
 import { browserAPI } from "./extension-pop-up.js";
 
 export async function toggleSelfTesterOverlayVisibility(

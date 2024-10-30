@@ -8,7 +8,6 @@ import {
   testLoadedIFrameId,
   toggleSovendusOverlayId,
 } from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
-
 import { browserAPI } from "../extension-pop-up.js";
 
 export async function hideSelfTesterOverlay(tabId: number): Promise<void> {

@@ -4,8 +4,9 @@ import {
   sovendusOverlayH1Class,
   sovendusOverlayH2Class,
   sovendusOverlayH3Class,
-} from "../page-banner/integration-test-overlay-css-vars.js";
-import { transmitIntegrationError } from "../page-banner/integration-tester.js";
+} from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
+
+import { transmitIntegrationError } from "../integration-tester/integration-tester.js";
 
 const overlay = document.getElementById(
   "outerSovendusIntegrationMethodCheckerOverlay",

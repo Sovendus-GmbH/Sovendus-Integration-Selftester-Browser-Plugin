@@ -1,12 +1,22 @@
+import type {
+  SovApplicationConsumer,
+  SovCbVnApplicationType,
+} from "sovendus-integration-scripts/src/js/sovendus/main/sovendus";
+import type {
+  ConversionsType,
+  SovConsumerType,
+  SovendusPublicConversionWindow,
+} from "sovendus-integration-scripts/src/js/thank-you/thank-you-types";
+
 import {
   sovendusOverlayErrorClass,
   tooltipButtonClass,
   tooltipClass,
-} from "./integration-test-overlay-css-vars.js";
+} from "../integration-tester-ui/integration-test-overlay-css-vars";
 import type {
   ElementValue,
   TestResultResponseDataType,
-} from "./integration-tester-data-to-sync-with-dev-hub.js";
+} from "./integration-tester-data-to-sync-with-dev-hub";
 import {
   BrowserTypes,
   StatusCodes,
@@ -14,7 +24,7 @@ import {
   statusMessages,
   validCountries,
   validCurrencies,
-} from "./integration-tester-data-to-sync-with-dev-hub.js";
+} from "./integration-tester-data-to-sync-with-dev-hub";
 import {
   checkIfValidMd5Hash,
   hasNumberInStringCheck,
@@ -23,7 +33,7 @@ import {
   isValidStreetNumberFormat,
   validateEmail,
   validValueTestResult,
-} from "./value-tester.js";
+} from "./value-tester";
 
 export default class SelfTester {
   integrationType: TestResultType<string>;
@@ -158,6 +168,8 @@ export default class SelfTester {
         window.sovConsumer?.consumerPhone === undefined
           ? window.sovApplication?.consumer?.phone || undefined
           : window.sovConsumer.consumerPhone,
+      journeyUuid: window.sovApplication?.consumer?.journeyUuid,
+      initialTm: window.sovApplication?.consumer?.initialTm,
     };
   }
 
@@ -1222,19 +1234,21 @@ export default class SelfTester {
           elementValue: sovendusDivFound,
         });
       }
-      let statusMessageKeyDIV = StatusMessageKeyTypes.containerDivNotFoundOnDOM;
-      if (this.integrationType.elementValue.startsWith("gtm-")) {
-        statusMessageKeyDIV =
-          StatusMessageKeyTypes.containerDivNotFoundOnDOMGTM;
-      }
-
       return new WarningOrFailTestResult({
         elementValue: iFrameContainerId.elementValue,
-        statusMessageKey: statusMessageKeyDIV,
+        statusMessageKey: this.integrationType.elementValue.startsWith("gtm-")
+          ? StatusMessageKeyTypes.containerDivNotFoundOnDOMGTM
+          : StatusMessageKeyTypes.containerDivNotFoundOnDOM,
         statusCode: StatusCodes.Error,
       });
     }
-    return new DidNotRunTestResult<boolean | string | undefined>();
+    return new WarningOrFailTestResult({
+      elementValue: iFrameContainerId.elementValue,
+      statusMessageKey: this.integrationType.elementValue.startsWith("gtm-")
+        ? StatusMessageKeyTypes.containerDivNoDivIdOnGtm
+        : StatusMessageKeyTypes.containerDivNoDivId,
+      statusCode: StatusCodes.Error,
+    });
   }
 
   getMultipleSovIFramesDetectedTestResult(
@@ -1278,7 +1292,7 @@ export default class SelfTester {
     sovIframesAmount: TestResultType<number | undefined>,
   ): TestResultType<number | undefined> {
     if (multipleSovIframesDetected.statusCode === StatusCodes.Error) {
-      let prevSovIframe: SovIframes | undefined = undefined;
+      let prevSovIframe: ConversionsType | undefined = undefined;
       const multipleIFramesAreSame = window.sovIframes?.every((sovIframe) => {
         const isTheSame = prevSovIframe
           ? sovIframe.trafficSourceNumber ===
@@ -2125,11 +2139,11 @@ export async function transmitIntegrationError(
   errorMessage: string,
   parameters:
     | {
-        windowParameter: SovWindow;
+        windowParameter: SovSelfTesterWindow;
         url?: string;
       }
     | {
-        windowParameter?: SovWindow;
+        windowParameter?: SovSelfTesterWindow;
         url: string;
       },
 ): Promise<void> {
@@ -2154,7 +2168,7 @@ export async function transmitIntegrationError(
 
 function getIntegrationErrorData(
   errorMessage: string,
-  windowParameter: SovWindow | undefined,
+  windowParameter: SovSelfTesterWindow | undefined,
   url: string,
 ): IntegrationErrorDataType {
   return {
@@ -2186,106 +2200,26 @@ interface MergedSovConsumer {
   zipCode: ExplicitAnyType;
   city: ExplicitAnyType;
   country: ExplicitAnyType;
-}
-
-export interface SovConsumer {
-  consumerSalutation?: ExplicitAnyType;
-  consumerFirstName?: ExplicitAnyType;
-  consumerLastName?: ExplicitAnyType;
-  consumerYearOfBirth?: ExplicitAnyType;
-  consumerDateOfBirth?: ExplicitAnyType;
-  consumerEmail?: ExplicitAnyType;
-  consumerEmailHash?: ExplicitAnyType;
-  consumerPhone?: ExplicitAnyType;
-  consumerStreet?: ExplicitAnyType;
-  consumerStreetNumber?: ExplicitAnyType;
-  consumerZipcode?: ExplicitAnyType;
-  consumerCity?: ExplicitAnyType;
-  consumerCountry?: ExplicitAnyType;
-}
-
-interface SovApplicationConsumer {
-  salutation: "Mr." | "Mrs." | null;
-  firstName: string;
-  lastName: string;
-  yearOfBirth: number;
-  dateOfBirth: number;
-  email?: string | undefined;
-  emailHash: string;
-  phone: string;
-  street: string;
-  streetNumber: string;
-  zipCode: string;
-  city: string;
-  country: string;
-}
-
-interface SovApplication {
-  consumer?: SovApplicationConsumer;
-  instances?: Instance[];
-}
-
-export interface SovIframes {
-  trafficSourceNumber?: ExplicitAnyType;
-  trafficMediumNumber?: ExplicitAnyType;
-  sessionId?: ExplicitAnyType;
-  timestamp?: ExplicitAnyType;
-  orderId?: ExplicitAnyType;
-  orderValue?: ExplicitAnyType;
-  orderCurrency?: ExplicitAnyType;
-  usedCouponCode?: ExplicitAnyType;
-  iframeContainerId?: ExplicitAnyType;
-  integrationType?: ExplicitAnyType;
-}
-
-interface Banner {
-  bannerExists?: boolean;
-}
-
-interface Config {
-  overlay?: {
-    showInOverlay?: boolean;
-  };
-  stickyBanner?: {
-    bannerExists?: boolean;
-  };
-}
-
-interface Instance {
-  banner?: Banner;
-  stickyBanner?: Banner;
-  selectBanner?: object;
-  collapsableOverlayClosingType?: string;
-  config?: Config;
-}
-
-interface Awin {
-  Tracking?: {
-    Sovendus?: { trafficSourceNumber?: string; trafficMediumNumber?: string };
-    Sale: object;
-    iMerchantId: number;
-  };
+  journeyUuid: ExplicitAnyType;
+  initialTm: ExplicitAnyType;
 }
 
 export interface IntegrationErrorDataType {
   domain: string;
   errorMessage: string;
   sovSelfTester?: TestResultResponseDataType;
-  sovIframes?: SovIframes[];
-  sovConsumer?: SovConsumer;
+  sovIframes?: ConversionsType[];
+  sovConsumer?: SovConsumerType;
 }
 
-export interface SovWindow extends Window {
-  sovIframes?: SovIframes[];
-  sovConsumer?: SovConsumer;
-  sovApplication?: SovApplication;
+export type SovSelfTesterWindow = SovendusPublicConversionWindow & {
+  sovApplication?: SovCbVnApplicationType;
   sovSelfTester?: SelfTester;
-  AWIN?: Awin;
   // only used by tests
   transmitTestResult?: false;
-}
+};
 
-declare let window: SovWindow;
+declare let window: SovSelfTesterWindow;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ExplicitAnyType = any;

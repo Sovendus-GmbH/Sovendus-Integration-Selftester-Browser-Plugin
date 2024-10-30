@@ -19,11 +19,13 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "/page-banner/integration-test-overlay.js",
-        "/page-banner/integration-tester.js",
-        "/page-banner/value-tester.js",
-        "/page-banner/integration-tester-data-to-sync-with-dev-hub.js",
-        "/page-banner/integration-test-overlay-css-vars.js",
+        "/integration-tester/integration-tester.js",
+        "/integration-tester/value-tester.js",
+        "/integration-tester/integration-tester-data-to-sync-with-dev-hub.js",
+        "/integration-tester-ui/browser-extension-ui-loader.js",
+        "/integration-tester-ui/browser-extension-ui-script-loader.js",
+        "/integration-tester-ui/integration-test-overlay-css-vars.js",
+        "/integration-tester-ui/integration-test-overlay.js",
         "/npm/@floating-ui/core@1.6.7/+esm.js",
         "/npm/@floating-ui/dom@1.6.10/+esm.js",
         "/npm/@floating-ui/utils@0.2.7/+esm.js",

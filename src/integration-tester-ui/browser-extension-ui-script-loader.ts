@@ -3,7 +3,9 @@ function injectScript(): void {
   script.setAttribute("type", "text/javascript");
   script.setAttribute(
     "src",
-    chrome.runtime.getURL("/page-banner/integration-test-overlay.js"),
+    chrome.runtime.getURL(
+      "/integration-tester-ui/browser-extension-ui-loader.js",
+    ),
   );
   script.type = "module";
   document.body.appendChild(script);
