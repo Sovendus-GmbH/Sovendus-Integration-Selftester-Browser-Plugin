@@ -1,9 +1,9 @@
 // import type { autoPlacement, computePosition } from "@floating-ui/dom";
 
-import type { SovSelfTesterWindow } from "../integration-tester/integration-tester";
-import SelfTester from "../integration-tester/integration-tester";
-import { transmitIntegrationError } from "../integration-tester/integration-tester";
-import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
+import type { SovSelfTesterWindow } from "../integration-tester/integration-tester.js";
+import SelfTester from "../integration-tester/integration-tester.js";
+import { transmitIntegrationError } from "../integration-tester/integration-tester.js";
+import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub.js";
 // TODO
 // import {
 //   autoPlacement as autoPlacementFromCDN,
@@ -32,7 +32,7 @@ import {
   toggleSovendusOverlayId,
   tooltipButtonClass,
   tooltipClass,
-} from "./integration-test-overlay-css-vars";
+} from "./integration-test-overlay-css-vars.js";
 
 export async function executeTests(): Promise<void> {
   const sovSelfTester = new SelfTester();

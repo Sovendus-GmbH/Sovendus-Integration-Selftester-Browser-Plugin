@@ -1,22 +1,22 @@
 import type {
   SovApplicationConsumer,
   SovCbVnApplicationType,
-} from "sovendus-integration-scripts/src/js/sovendus/main/sovendus";
+} from "sovendus-integration-scripts/src/js/sovendus/main/sovendus.js";
+import type { ConversionsType } from "sovendus-integration-scripts/src/js/thank-you/utils/IntegrationDataCollector.js";
 import type {
-  ConversionsType,
   SovConsumerType,
   SovendusPublicConversionWindow,
-} from "sovendus-integration-scripts/src/js/thank-you/thank-you-types";
+} from "sovendus-integration-scripts/src/js/thank-you/utils/thank-you-types.js";
 
 import {
   sovendusOverlayErrorClass,
   tooltipButtonClass,
   tooltipClass,
-} from "../integration-tester-ui/integration-test-overlay-css-vars";
+} from "../integration-tester-ui/integration-test-overlay-css-vars.js";
 import type {
   ElementValue,
   TestResultResponseDataType,
-} from "./integration-tester-data-to-sync-with-dev-hub";
+} from "./integration-tester-data-to-sync-with-dev-hub.js";
 import {
   BrowserTypes,
   StatusCodes,
@@ -24,7 +24,7 @@ import {
   statusMessages,
   validCountries,
   validCurrencies,
-} from "./integration-tester-data-to-sync-with-dev-hub";
+} from "./integration-tester-data-to-sync-with-dev-hub.js";
 import {
   checkIfValidMd5Hash,
   hasNumberInStringCheck,
@@ -33,7 +33,7 @@ import {
   isValidStreetNumberFormat,
   validateEmail,
   validValueTestResult,
-} from "./value-tester";
+} from "./value-tester.js";
 
 export default class SelfTester {
   integrationType: TestResultType<string>;
@@ -1201,9 +1201,9 @@ export default class SelfTester {
     if (wasExecuted.statusCode === StatusCodes.Success) {
       const isEnabled = window.sovApplication?.instances?.some(
         (instance) =>
-          Object.keys(instance.config?.overlay || {}).length > 0 ||
-          Object.keys(instance.config?.stickyBanner || {}).length > 0 ||
-          instance?.banner?.bannerExists,
+          instance?.isCollapsableOverlay ||
+          instance?.isStickyBanner ||
+          instance?.isBanner,
       );
       if (isEnabled) {
         return new SuccessTestResult({
@@ -2139,11 +2139,11 @@ export async function transmitIntegrationError(
   errorMessage: string,
   parameters:
     | {
-        windowParameter: SovSelfTesterWindow;
+        windowParameter: Window;
         url?: string;
       }
     | {
-        windowParameter?: SovSelfTesterWindow;
+        windowParameter?: Window;
         url: string;
       },
 ): Promise<void> {
@@ -2157,7 +2157,11 @@ export async function transmitIntegrationError(
         "Content-Type": "application/json",
       },
       body: JSON.stringify(
-        getIntegrationErrorData(errorMessage, windowParameter, domain),
+        getIntegrationErrorData(
+          errorMessage,
+          windowParameter as SovSelfTesterWindow,
+          domain,
+        ),
       ),
     });
   } catch (e) {
