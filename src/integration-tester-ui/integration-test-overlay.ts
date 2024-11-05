@@ -19,6 +19,7 @@ import {
   innerOverlayId,
   outerOverlayId,
   overlayId,
+  sovendusActiveButtonClass,
   sovendusOverlayButtonClass,
   sovendusOverlayErrorClass,
   sovendusOverlayFontClass,
@@ -57,6 +58,83 @@ export async function repeatTestsOnSPA(
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
+}
+
+let activeButton: HTMLElement | undefined = undefined;
+let activeDIV: string = "CBVNdiv";
+
+export function showCBVN(button: HTMLElement, iframe: HTMLIFrameElement): void {
+  const oldDiv = iframe.contentWindow?.document.getElementById(
+    activeDIV,
+  ) as HTMLElement;
+  oldDiv.style.display = "none";
+
+  const CBVNdiv = iframe.contentWindow?.document.getElementById(
+    "CBVNdiv",
+  ) as HTMLElement;
+  CBVNdiv.style.display = "inline";
+
+  activeDIV = "CBVNdiv";
+
+  updateButtonStyles(button, iframe);
+}
+
+export function showOptimize(
+  button: HTMLElement,
+  iframe: HTMLIFrameElement,
+): void {
+  const oldDiv = iframe.contentWindow?.document.getElementById(
+    activeDIV,
+  ) as HTMLElement;
+  oldDiv.style.display = "none";
+  activeDIV = "Optimizediv";
+
+  const optimizeDiv = iframe.contentWindow?.document.getElementById(
+    "Optimizediv",
+  ) as HTMLElement;
+  optimizeDiv.style.display = "inline";
+
+  updateButtonStyles(button, iframe);
+}
+
+export function showCheckoutProducts(
+  button: HTMLElement,
+  iframe: HTMLIFrameElement,
+): void {
+  const oldDiv = iframe.contentWindow?.document.getElementById(
+    activeDIV,
+  ) as HTMLElement;
+  oldDiv.style.display = "none";
+  activeDIV = "CheckoutProductsDIV";
+
+  const checkoutProductsDiv = iframe.contentWindow?.document.getElementById(
+    "CheckoutProductsDIV",
+  ) as HTMLElement;
+  checkoutProductsDiv.style.display = "inline";
+
+  updateButtonStyles(button, iframe);
+}
+
+function updateButtonStyles(
+  button: HTMLElement,
+  iframe: HTMLIFrameElement,
+): void {
+  if (activeButton) {
+    // activeButton.classList.remove(sovendusActiveButtonClass);
+    const activeCheckmark = activeButton.querySelector(
+      ".button-checkmark",
+    ) as HTMLElement;
+    activeCheckmark.style.display = "none";
+  }
+
+  // button.classList.add(sovendusActiveButtonClass);
+  const activeCheckmark = button.querySelector(
+    ".button-checkmark",
+  ) as HTMLElement;
+
+  activeCheckmark.style.display = "inline";
+  activeButton = button;
+  updateIFrameHeight(iframe);
 }
 
 export function removeSelfTesterOverlay(): void {
@@ -98,6 +176,13 @@ export class SelfTesterOverlay {
               ${selfTester.isSovendusJsExecutable.getFormattedGeneralStatusMessage()}
               ${selfTester.isUnknownSovendusJsError.getFormattedGeneralStatusMessage()}
             </ul>
+
+            <div class="${sovendusOverlayFontClass}" style="display: flex; gap: 8px; margin-bottom: 10px; margin-top: 10px">
+                <button id="button-CBVN" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">CB & VN <span class="button-checkmark" style="display: inline;">✔️</span></button>
+                <button id="button-Optimize" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">Optimize <span class="button-checkmark" style="display: none;">✔️</span></button>
+                <button id="button-Checkout" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">Checkout Products <span class="button-checkmark" style="display: none;">✔️</span></button>
+            </div>
+
             ${this.createInnerInnerOverlay(selfTester)}
         `,
     });
@@ -209,12 +294,65 @@ export class SelfTesterOverlay {
       (!selfTester.awinSaleTrackedTestResult.elementValue ||
         !selfTester.awinExecutedTestResult.elementValue);
     return `
-        ${this.getSovIFramesData(selfTester, awinIntegrationNoSaleTrackedOrTrackedToEarly)}
-        ${
-          awinIntegrationDetected
-            ? ""
-            : this.generateConsumerDataReport(selfTester)
-        }
+        <div id="CBVNdiv" style="display: inline;">
+          ${this.getSovIFramesData(selfTester, awinIntegrationNoSaleTrackedOrTrackedToEarly)}
+          ${
+            awinIntegrationDetected
+              ? ""
+              : this.generateConsumerDataReport(selfTester)
+          }
+        </div>
+        <div id="Optimizediv" style="display: none;">
+          ${this.generateOptimizeDataReport(selfTester)}
+        </div>
+        <div id="CheckoutProductsDIV" style="display: none;">
+          ${this.generateCheckoutProductsDataReport(selfTester)}
+        </div>
+    `;
+  }
+
+  generateOptimizeDataReport(testResult: SelfTester): string {
+    return `
+        <div class="${sovendusOverlayFontClass}">
+          <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+            Optimize Data:
+          </h2>
+          <ul class="${sovendusOverlayFontClass}">
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              optimizeId: ${testResult.optimizeId.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              checkoutProductsToken: ${testResult.checkoutProductsToken.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              checkoutProductsId: ${testResult.checkoutProductsId.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              legacy_profityId: ${testResult.profityClientId.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              couponCode: ${testResult.optimizeUsedCouponCode.getFormattedStatusMessage()}
+            </li>
+          </ul>
+        </div>
+    `;
+  }
+
+  generateCheckoutProductsDataReport(testResult: SelfTester): string {
+    return `
+        <div class="${sovendusOverlayFontClass}">
+          <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+            Checkout Products Data:
+          </h2>
+          <ul class="${sovendusOverlayFontClass}">
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              checkoutProductsToken: ${testResult.checkoutProductsToken.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              checkoutProductsId: ${testResult.checkoutProductsId.getFormattedStatusMessage()}
+            </li>
+          </ul>
+        </div>
     `;
   }
 
@@ -460,6 +598,9 @@ export class SelfTesterOverlay {
             border-radius: 8px !important;
             border: solid 1px #fff;
           }
+          .${sovendusActiveButtonClass} {
+            background: #008000 !important;
+          }
           #${sovendusOverlayRepeatTestsId} {
             float: right !important;
             width: 105px !important;
@@ -571,6 +712,27 @@ export class SelfTesterOverlay {
       ?.addEventListener("click", () => {
         void onRepeatTests();
       });
+
+    const btnCBVN = iframe.contentWindow?.document.getElementById(
+      "button-CBVN",
+    ) as HTMLElement;
+    activeButton = btnCBVN;
+    const btnOptimize = iframe.contentWindow?.document.getElementById(
+      "button-Optimize",
+    ) as HTMLElement;
+    const btnCheckout = iframe.contentWindow?.document.getElementById(
+      "button-Checkout",
+    ) as HTMLElement;
+
+    btnCBVN.addEventListener("click", (): void => {
+      void showCBVN(btnCBVN, iframe);
+    });
+    btnOptimize.addEventListener("click", (): void => {
+      void showOptimize(btnOptimize, iframe);
+    });
+    btnCheckout.addEventListener("click", (): void => {
+      void showCheckoutProducts(btnCheckout, iframe);
+    });
 
     const tooltipInfoIcons = (
       document.getElementById(testLoadedIFrameId) as HTMLIFrameElement
