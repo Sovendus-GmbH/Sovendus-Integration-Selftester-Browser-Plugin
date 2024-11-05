@@ -1,22 +1,22 @@
 import type {
   SovApplicationConsumer,
   SovCbVnApplicationType,
-} from "sovendus-integration-scripts/src/js/sovendus/main/sovendus.js";
-import type { ConversionsType } from "sovendus-integration-scripts/src/js/thank-you/utils/IntegrationDataCollector.js";
+} from "sovendus-integration-scripts/src/js/sovendus/main/sovendus";
+import type { ConversionsType } from "sovendus-integration-scripts/src/js/thank-you/utils/IntegrationDataCollector";
 import type {
   SovConsumerType,
   SovendusPublicConversionWindow,
-} from "sovendus-integration-scripts/src/js/thank-you/utils/thank-you-types.js";
+} from "sovendus-integration-scripts/src/js/thank-you/utils/thank-you-types";
 
 import {
   sovendusOverlayErrorClass,
   tooltipButtonClass,
   tooltipClass,
-} from "../integration-tester-ui/integration-test-overlay-css-vars.js";
+} from "../integration-tester-ui/integration-test-overlay-css-vars";
 import type {
   ElementValue,
   TestResultResponseDataType,
-} from "./integration-tester-data-to-sync-with-dev-hub.js";
+} from "./integration-tester-data-to-sync-with-dev-hub";
 import {
   BrowserTypes,
   StatusCodes,
@@ -24,7 +24,7 @@ import {
   statusMessages,
   validCountries,
   validCurrencies,
-} from "./integration-tester-data-to-sync-with-dev-hub.js";
+} from "./integration-tester-data-to-sync-with-dev-hub";
 import {
   checkIfValidMd5Hash,
   hasNumberInStringCheck,
@@ -33,7 +33,7 @@ import {
   isValidStreetNumberFormat,
   validateEmail,
   validValueTestResult,
-} from "./value-tester.js";
+} from "./value-tester";
 
 export default class SelfTester {
   integrationType: TestResultType<string>;

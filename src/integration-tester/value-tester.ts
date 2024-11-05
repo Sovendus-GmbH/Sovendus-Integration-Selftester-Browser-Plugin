@@ -1,7 +1,7 @@
-import type { ExplicitAnyType } from "./integration-tester.js";
-import { safeURI, WarningOrFailTestResult } from "./integration-tester.js";
-import type { StatusMessageKeyTypes } from "./integration-tester-data-to-sync-with-dev-hub.js";
-import { StatusCodes } from "./integration-tester-data-to-sync-with-dev-hub.js";
+import type { ExplicitAnyType } from "./integration-tester";
+import { safeURI, WarningOrFailTestResult } from "./integration-tester";
+import type { StatusMessageKeyTypes } from "./integration-tester-data-to-sync-with-dev-hub";
+import { StatusCodes } from "./integration-tester-data-to-sync-with-dev-hub";
 
 export function validValueTestResult({
   value,
