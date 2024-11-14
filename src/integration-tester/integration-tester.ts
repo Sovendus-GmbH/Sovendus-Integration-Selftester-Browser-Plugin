@@ -1261,6 +1261,7 @@ export default class SelfTester {
     if (wasExecuted.statusCode === StatusCodes.Success) {
       const isEnabled = window.sovApplication?.instances?.some(
         (instance) =>
+          instance?.banner?.bannerExists ||
           instance?.isCollapsableOverlay ||
           instance?.isStickyBanner ||
           instance?.isBanner,
