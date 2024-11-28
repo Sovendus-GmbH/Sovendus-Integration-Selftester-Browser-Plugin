@@ -1,6 +1,6 @@
 {
   "name": "Sovendus Integration Tester",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "manifest_version": 3,
   "description": "Use this extension to verify if your Sovendus integration is setup properly",
   "background": {
@@ -19,14 +19,18 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "/page-banner/self-test-overlay.js",
-        "/page-banner/self-tester.js",
-        "/page-banner/self-tester-data-to-sync-with-dev-hub.js",
-        "/page-banner/self-test-overlay-css-vars.js",
+        "/integration-tester/integration-tester.js",
+        "/integration-tester/value-tester.js",
+        "/integration-tester/integration-tester-data-to-sync-with-dev-hub.js",
+        "/integration-tester-ui/browser-extension-ui-loader.js",
+        "/integration-tester-ui/browser-extension-ui-script-loader.js",
+        "/integration-tester-ui/integration-test-overlay-css-vars.js",
+        "/integration-tester-ui/integration-test-overlay.js",
         "/npm/@floating-ui/core@1.6.7/+esm.js",
         "/npm/@floating-ui/dom@1.6.10/+esm.js",
         "/npm/@floating-ui/utils@0.2.7/+esm.js",
-        "/npm/@floating-ui/utils@0.2.7/dom/+esm.js"
+        "/npm/@floating-ui/utils@0.2.7/dom/+esm.js",
+        "/extension-pop-up/available-integration-script.js"
       ],
       "matches": [
         "<all_urls>"

@@ -1,19 +1,25 @@
-import type { autoPlacement, computePosition } from "@floating-ui/dom";
+// import type { autoPlacement, computePosition } from "@floating-ui/dom";
 
-import {
-  autoPlacement as autoPlacementFromCDN,
-  computePosition as computePositionFromCDN,
-  // downloaded from https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.10/+esm
-  // and adjusted imports from +esm to +esm.js
-  // and removed source maps
-  // TODO figure out a better solution
-} from "../npm/@floating-ui/dom@1.6.10/+esm.js";
+import type { SovSelfTesterWindow } from "../integration-tester/integration-tester";
+import SelfTester from "../integration-tester/integration-tester";
+import { transmitIntegrationError } from "../integration-tester/integration-tester";
+import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
+// TODO
+// import {
+//   autoPlacement as autoPlacementFromCDN,
+//   computePosition as computePositionFromCDN,
+//   // downloaded from https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.10/+esm
+//   // and adjusted imports from +esm to +esm.js
+//   // and removed source maps
+//   // TODO figure out a better solution
+// } from "../npm/@floating-ui/dom@1.6.10/+esm.js";
 import {
   fullscreenClass,
-  IFrameStyleId,
+  iFrameStyleId,
   innerOverlayId,
   outerOverlayId,
   overlayId,
+  sovendusActiveButtonClass,
   sovendusOverlayButtonClass,
   sovendusOverlayErrorClass,
   sovendusOverlayFontClass,
@@ -27,28 +33,22 @@ import {
   toggleSovendusOverlayId,
   tooltipButtonClass,
   tooltipClass,
-} from "./self-test-overlay-css-vars.js";
-import SelfTester from "./self-tester.js";
-import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
+} from "./integration-test-overlay-css-vars";
 
-void (async (): Promise<void> => {
-  await repeatTestsOnSPA(async () => {
-    await executeTests();
-  });
-})();
-
-async function executeTests(): Promise<void> {
-  removeOverlay();
-  window.sovSelfTester = new SelfTester();
-  await window.sovSelfTester.waitForSovendusIntegrationDetected();
+export async function executeTests(): Promise<void> {
+  const sovSelfTester = new SelfTester();
+  window.sovSelfTester = sovSelfTester;
+  await sovSelfTester.waitForSovendusIntegrationDetected();
   const overlay = new SelfTesterOverlay();
-  overlay.createLoadingOverlay();
-  await window.sovSelfTester.waitForSovendusIntegrationToBeLoaded();
-  window.sovSelfTester.selfTestIntegration();
-  overlay.createOverlay(window.sovSelfTester);
+  overlay.createLoadingOverlay(executeTests);
+  await sovSelfTester.waitForSovendusIntegrationToBeLoaded();
+  sovSelfTester.selfTestIntegration();
+  overlay.createOverlay(sovSelfTester, executeTests);
 }
 
-async function repeatTestsOnSPA(tests: () => Promise<void>): Promise<void> {
+export async function repeatTestsOnSPA(
+  tests: () => Promise<void>,
+): Promise<void> {
   let visitedPath = "";
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -60,19 +60,103 @@ async function repeatTestsOnSPA(tests: () => Promise<void>): Promise<void> {
   }
 }
 
-function removeOverlay(): void {
-  document.getElementById(outerOverlayId)?.remove();
+let activeButton: HTMLElement | undefined = undefined;
+let activeDIV: string = "CBVNdiv";
+
+export function showCBVN(button: HTMLElement, iframe: HTMLIFrameElement): void {
+  const oldDiv = iframe.contentWindow?.document.getElementById(
+    activeDIV,
+  ) as HTMLElement;
+  oldDiv.style.display = "none";
+
+  const CBVNdiv = iframe.contentWindow?.document.getElementById(
+    "CBVNdiv",
+  ) as HTMLElement;
+  CBVNdiv.style.display = "inline";
+
+  activeDIV = "CBVNdiv";
+
+  updateButtonStyles(button, iframe);
 }
-class SelfTesterOverlay {
-  createOverlay(selfTester: SelfTester): void {
-    document.getElementById(outerOverlayId)?.remove();
+
+export function showOptimize(
+  button: HTMLElement,
+  iframe: HTMLIFrameElement,
+): void {
+  const oldDiv = iframe.contentWindow?.document.getElementById(
+    activeDIV,
+  ) as HTMLElement;
+  oldDiv.style.display = "none";
+  activeDIV = "Optimizediv";
+
+  const optimizeDiv = iframe.contentWindow?.document.getElementById(
+    "Optimizediv",
+  ) as HTMLElement;
+  optimizeDiv.style.display = "inline";
+
+  updateButtonStyles(button, iframe);
+}
+
+export function showCheckoutProducts(
+  button: HTMLElement,
+  iframe: HTMLIFrameElement,
+): void {
+  const oldDiv = iframe.contentWindow?.document.getElementById(
+    activeDIV,
+  ) as HTMLElement;
+  oldDiv.style.display = "none";
+  activeDIV = "CheckoutProductsDIV";
+
+  const checkoutProductsDiv = iframe.contentWindow?.document.getElementById(
+    "CheckoutProductsDIV",
+  ) as HTMLElement;
+  checkoutProductsDiv.style.display = "inline";
+
+  updateButtonStyles(button, iframe);
+}
+
+function updateButtonStyles(
+  button: HTMLElement,
+  iframe: HTMLIFrameElement,
+): void {
+  if (activeButton) {
+    // activeButton.classList.remove(sovendusActiveButtonClass);
+    const activeCheckmark = activeButton.querySelector(
+      ".button-checkmark",
+    ) as HTMLElement;
+    activeCheckmark.style.display = "none";
+  }
+
+  // button.classList.add(sovendusActiveButtonClass);
+  const activeCheckmark = button.querySelector(
+    ".button-checkmark",
+  ) as HTMLElement;
+
+  activeCheckmark.style.display = "inline";
+  activeButton = button;
+  updateIFrameHeight(iframe);
+}
+
+export function removeSelfTesterOverlay(): void {
+  document.getElementById(outerOverlayId)?.remove();
+  if (window.sovSelfTester) {
+    delete window.sovSelfTester;
+  }
+}
+
+export class SelfTesterOverlay {
+  createOverlay(
+    selfTester: SelfTester,
+    onRepeatTests: () => Promise<void>,
+  ): void {
     this.createOuterOverlay();
     this.createInnerOverlay({
       loadingDone: true,
+      onRepeatTests,
       headerRightElement: `
             <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${sovendusOverlayRepeatTestsId}" style="margin-left: auto">
               repeat tests
-            </button>        
+            </button>   
         `,
       children: `
             <ul class="${sovendusOverlayFontClass}">
@@ -82,6 +166,9 @@ class SelfTesterOverlay {
               <li class="${sovendusOverlayFontClass}">
                 Browser: ${selfTester.browserName.elementValue}
               </li>
+              <li class="${sovendusOverlayFontClass}" style="font-size: 9px !important">
+                URL: ${selfTester.websiteURL.elementValue}
+              </li>
               ${selfTester.multipleIFramesAreSame.getFormattedGeneralStatusMessage()}
               ${selfTester.flexibleIFrameOnDOM.getFormattedGeneralStatusMessage()}
               ${selfTester.isFlexibleIFrameExecutable.getFormattedGeneralStatusMessage()}
@@ -89,14 +176,22 @@ class SelfTesterOverlay {
               ${selfTester.isSovendusJsExecutable.getFormattedGeneralStatusMessage()}
               ${selfTester.isUnknownSovendusJsError.getFormattedGeneralStatusMessage()}
             </ul>
+
+            <div class="${sovendusOverlayFontClass}" style="display: flex; gap: 8px; margin-bottom: 10px; margin-top: 10px">
+                <button id="button-CBVN" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">CB & VN <span class="button-checkmark" style="display: inline;">✔️</span></button>
+                <button id="button-Optimize" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">Optimize <span class="button-checkmark" style="display: none;">✔️</span></button>
+                <button id="button-Checkout" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">Checkout Products <span class="button-checkmark" style="display: none;">✔️</span></button>
+            </div>
+
             ${this.createInnerInnerOverlay(selfTester)}
         `,
     });
   }
 
-  createLoadingOverlay(): void {
+  createLoadingOverlay(onRepeatTests: () => Promise<void>): void {
     this.createOuterOverlay();
     this.createInnerOverlay({
+      onRepeatTests,
       children: `
         <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
           Sovendus detected, tests are currently running...
@@ -109,8 +204,10 @@ class SelfTesterOverlay {
   }
 
   createOuterOverlay(): void {
+    removeSelfTesterOverlay();
     const overlay = document.createElement("div");
     overlay.id = outerOverlayId;
+    overlay.translate = false;
     overlay.innerHTML = `
       ${this.getOuterOverlayStyle()}
       <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${toggleSovendusOverlayId}">
@@ -126,6 +223,10 @@ class SelfTesterOverlay {
     } else {
       // eslint-disable-next-line no-console
       console.error("Failed to add click event to show / hide button");
+      void transmitIntegrationError(
+        "Failed to add click event to show / hide button",
+        { windowParameter: window },
+      );
     }
   }
 
@@ -133,10 +234,12 @@ class SelfTesterOverlay {
     headerRightElement,
     children,
     loadingDone,
+    onRepeatTests,
   }: {
     headerRightElement?: string;
     children: string;
     loadingDone?: true;
+    onRepeatTests: () => Promise<void>;
   }): void {
     const overlay = document.getElementById(overlayId) as HTMLElement;
 
@@ -159,10 +262,15 @@ class SelfTesterOverlay {
       } else {
         // eslint-disable-next-line no-console
         console.error("Failed to get iframe.contentDocument to place content");
+        void transmitIntegrationError(
+          "Failed to get iframe.contentDocument to place content",
+          { windowParameter: window },
+        );
       }
 
       const iFrameStyle = document.createElement("style");
-      iFrameStyle.id = IFrameStyleId;
+      iFrameStyle.id = iFrameStyleId;
+      iFrameStyle.innerHTML = `#${testLoadedIFrameId} { height: 1200px !important; }`;
       overlay.insertAdjacentElement("afterbegin", iFrameStyle);
 
       if (!loadingDone) {
@@ -171,7 +279,7 @@ class SelfTesterOverlay {
 
       updateIFrameHeight(iframe);
       if (loadingDone) {
-        this.addButtonAndInfoEventListener(iframe);
+        this.addButtonAndInfoEventListener(iframe, onRepeatTests);
       }
     };
     iframe.id = loadingDone ? testLoadedIFrameId : testNotLoadedIFrameId;
@@ -186,12 +294,65 @@ class SelfTesterOverlay {
       (!selfTester.awinSaleTrackedTestResult.elementValue ||
         !selfTester.awinExecutedTestResult.elementValue);
     return `
-        ${this.getSovIFramesData(selfTester, awinIntegrationNoSaleTrackedOrTrackedToEarly)}
-        ${
-          awinIntegrationDetected
-            ? ""
-            : this.generateConsumerDataReport(selfTester)
-        }
+        <div id="CBVNdiv" style="display: inline;">
+          ${this.getSovIFramesData(selfTester, awinIntegrationNoSaleTrackedOrTrackedToEarly)}
+          ${
+            awinIntegrationDetected
+              ? ""
+              : this.generateConsumerDataReport(selfTester)
+          }
+        </div>
+        <div id="Optimizediv" style="display: none;">
+          ${this.generateOptimizeDataReport(selfTester)}
+        </div>
+        <div id="CheckoutProductsDIV" style="display: none;">
+          ${this.generateCheckoutProductsDataReport(selfTester)}
+        </div>
+    `;
+  }
+
+  generateOptimizeDataReport(testResult: SelfTester): string {
+    return `
+        <div class="${sovendusOverlayFontClass}">
+          <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+            Optimize Data:
+          </h2>
+          <ul class="${sovendusOverlayFontClass}">
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              optimizeId: ${testResult.optimizeId.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              checkoutProductsToken: ${testResult.checkoutProductsToken.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              checkoutProductsId: ${testResult.checkoutProductsId.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              legacy_profityId: ${testResult.profityClientId.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              couponCode: ${testResult.optimizeUsedCouponCode.getFormattedStatusMessage()}
+            </li>
+          </ul>
+        </div>
+    `;
+  }
+
+  generateCheckoutProductsDataReport(testResult: SelfTester): string {
+    return `
+        <div class="${sovendusOverlayFontClass}">
+          <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+            Checkout Products Data:
+          </h2>
+          <ul class="${sovendusOverlayFontClass}">
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              checkoutProductsToken: ${testResult.checkoutProductsToken.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              checkoutProductsId: ${testResult.checkoutProductsId.getFormattedStatusMessage()}
+            </li>
+          </ul>
+        </div>
     `;
   }
 
@@ -213,6 +374,9 @@ class SelfTesterOverlay {
             </li>
             <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerYearOfBirth: ${testResult.consumerYearOfBirth.getFormattedStatusMessage()}
+            </li>
+            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+              consumerDateOfBirth: ${testResult.consumerDateOfBirth.getFormattedStatusMessage()}
             </li>
             <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
               consumerEmail: ${testResult.consumerEmail.getFormattedStatusMessage()}
@@ -269,6 +433,32 @@ class SelfTesterOverlay {
         </li>
         ${selfTester.sovendusDivFound.getFormattedGeneralStatusMessage()}
       </ul>
+                   
+      ${
+        window.sovIntegrationInfo &&
+        Object.entries(window.sovIntegrationInfo).map(([groupKey, values]) => {
+          return `
+              <ul class="${sovendusOverlayFontClass}">
+                <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+                  ${groupKey}:
+                </h2>
+                ${
+                  values &&
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                  Object.entries(values)
+                    .map(([key, value]) => {
+                      return `
+                      <li class="${sovendusOverlayFontClass}">
+                        ${key}: ${JSON.stringify(value)}
+                      </li>
+                      `;
+                    })
+                    .join("")
+                }
+              </ul>
+            `;
+        })
+      }
       <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
         Order Data:
       </h2>
@@ -342,6 +532,7 @@ class SelfTesterOverlay {
             padding: 12px;
             border: unset;
             border-radius: 8px;
+            z-index: 99999;
           }
           #${innerOverlayId} {
             padding: ${bannerPadding}px !important;
@@ -406,6 +597,9 @@ class SelfTesterOverlay {
             font-size: 16px !important;
             border-radius: 8px !important;
             border: solid 1px #fff;
+          }
+          .${sovendusActiveButtonClass} {
+            background: #008000 !important;
           }
           #${sovendusOverlayRepeatTestsId} {
             float: right !important;
@@ -483,6 +677,7 @@ class SelfTesterOverlay {
           }
           #${toggleSovendusOverlayId} {
             width: 62px !important;
+            height: unset !important;
             position: fixed !important;
             left: calc(50% - 31px) !important;
             right: calc(50% - 31px) !important;
@@ -508,12 +703,36 @@ class SelfTesterOverlay {
         `;
   }
 
-  addButtonAndInfoEventListener(iframe: HTMLIFrameElement): void {
+  addButtonAndInfoEventListener(
+    iframe: HTMLIFrameElement,
+    onRepeatTests: () => Promise<void>,
+  ): void {
     iframe.contentWindow?.document
       .getElementById(sovendusOverlayRepeatTestsId)
       ?.addEventListener("click", () => {
-        void executeTests();
+        void onRepeatTests();
       });
+
+    const btnCBVN = iframe.contentWindow?.document.getElementById(
+      "button-CBVN",
+    ) as HTMLElement;
+    activeButton = btnCBVN;
+    const btnOptimize = iframe.contentWindow?.document.getElementById(
+      "button-Optimize",
+    ) as HTMLElement;
+    const btnCheckout = iframe.contentWindow?.document.getElementById(
+      "button-Checkout",
+    ) as HTMLElement;
+
+    btnCBVN.addEventListener("click", (): void => {
+      void showCBVN(btnCBVN, iframe);
+    });
+    btnOptimize.addEventListener("click", (): void => {
+      void showOptimize(btnOptimize, iframe);
+    });
+    btnCheckout.addEventListener("click", (): void => {
+      void showCheckoutProducts(btnCheckout, iframe);
+    });
 
     const tooltipInfoIcons = (
       document.getElementById(testLoadedIFrameId) as HTMLIFrameElement
@@ -525,19 +744,20 @@ class SelfTesterOverlay {
       if (item.nextElementSibling) {
         const tooltip = item.nextElementSibling as HTMLElement;
 
-        const showTooltip = async (): Promise<void> => {
+        const showTooltip = (): void => {
           tooltip.style.display = "block";
 
-          const { x, y } =
-            await // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-            (computePositionFromCDN as typeof computePosition)(item, tooltip, {
-              middleware: [
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-                (autoPlacementFromCDN as typeof autoPlacement)(),
-              ],
-            });
-          tooltip.style.left = `${x}px`;
-          tooltip.style.top = `${y}px`;
+          // TODO
+          // const { x, y } =
+          //   await // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+          //   (computePositionFromCDN as typeof computePosition)(item, tooltip, {
+          //     middleware: [
+          //       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+          //       (autoPlacementFromCDN as typeof autoPlacement)(),
+          //     ],
+          //   });
+          // tooltip.style.left = `${x}px`;
+          // tooltip.style.top = `${y}px`;
         };
 
         const hideTooltip = (): void => {
@@ -560,26 +780,38 @@ class SelfTesterOverlay {
   }
 }
 
-function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
+export function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
   const _iframe =
     iframe ||
     (document.getElementById(testLoadedIFrameId) as HTMLIFrameElement | null);
   const innerOverlay = _iframe?.contentDocument?.getElementById(innerOverlayId);
   const iFrameStyle = document.getElementById(
-    IFrameStyleId,
+    iFrameStyleId,
   ) as HTMLStyleElement | null;
   if (!_iframe || !innerOverlay || !iFrameStyle) {
     if (!_iframe) {
       // eslint-disable-next-line no-console
       console.error("Failed to get iframe to update iframe height.");
+      void transmitIntegrationError(
+        "Failed to get iframe to update iframe height.",
+        { windowParameter: window },
+      );
     }
     if (!innerOverlay) {
       // eslint-disable-next-line no-console
       console.error("Failed to get innerOverlay to update iframe height.");
+      void transmitIntegrationError(
+        "Failed to get innerOverlay to update iframe height.",
+        { windowParameter: window },
+      );
     }
     if (!iFrameStyle) {
       // eslint-disable-next-line no-console
       console.error("Failed to get iFrameStyle to update iframe height.");
+      void transmitIntegrationError(
+        "Failed to get iFrameStyle to update iframe height.",
+        { windowParameter: window },
+      );
     }
   } else {
     iFrameStyle.innerHTML = `#${testLoadedIFrameId} { height: ${innerOverlay.scrollHeight}px !important; }`;
@@ -593,6 +825,7 @@ function toggleOverlay(): void {
     if (overlay.style.display === "none") {
       overlay.style.display = "block";
       toggle.innerText = "Hide";
+      updateIFrameHeight();
     } else {
       overlay.style.display = "none";
       toggle.innerText = "Show";
@@ -600,9 +833,8 @@ function toggleOverlay(): void {
   }
 }
 
-interface SovWindow extends Window {
-  sovSelfTester?: SelfTester;
+export interface SovDebugOverlayWindow extends SovSelfTesterWindow {
   originalOnresize?: ((this: GlobalEventHandlers, ev: UIEvent) => void) | null;
 }
 
-declare let window: SovWindow;
+declare let window: SovDebugOverlayWindow;

@@ -1,7 +1,7 @@
 import {
   StatusCodes,
   StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+} from "@src/integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import {
   sovAppConsumerAllValidData,
   sovAppDataEverythingIsOkay,
@@ -60,6 +60,62 @@ executeOverlayTests({
           testName: "Malformed",
           sovAppData: sovAppDataMalformedButIsOkay,
           expectedElementValue: "12.06.1991",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerYearOfBirthNotValid,
+        },
+        {
+          testName: "YearTooOld",
+          sovAppData: {
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerYearOfBirth: "1890",
+            },
+            sovIframes1: sovAppIFramesAllValidData,
+          },
+          expectedElementValue: "1890",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerYearOfBirthNotValid,
+        },
+        {
+          testName: "YearInFuture",
+          sovAppData: {
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerYearOfBirth: "2100",
+            },
+            sovIframes1: sovAppIFramesAllValidData,
+          },
+          expectedElementValue: "2100",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerYearOfBirthNotValid,
+        },
+        {
+          testName: "InvalidYearString",
+          sovAppData: {
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerYearOfBirth: "19A1",
+            },
+            sovIframes1: sovAppIFramesAllValidData,
+          },
+          expectedElementValue: "19A1",
+          expectedStatusCode: StatusCodes.Error,
+          expectedStatusMessageKey:
+            StatusMessageKeyTypes.consumerYearOfBirthNotValid,
+        },
+        {
+          testName: "YearWithSpecialCharacters",
+          sovAppData: {
+            sovConsumer: {
+              ...sovAppConsumerAllValidData,
+              consumerYearOfBirth: "199@",
+            },
+            sovIframes1: sovAppIFramesAllValidData,
+          },
+          expectedElementValue: "199@",
           expectedStatusCode: StatusCodes.Error,
           expectedStatusMessageKey:
             StatusMessageKeyTypes.consumerYearOfBirthNotValid,

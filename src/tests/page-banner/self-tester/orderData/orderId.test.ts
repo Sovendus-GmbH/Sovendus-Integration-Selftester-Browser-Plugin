@@ -1,10 +1,11 @@
 import {
   StatusCodes,
   StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+} from "@src/integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import {
   sovAppDataEverythingIsOkay,
   sovAppDataNumberAsStringButIsOkay,
+  sovAppIFramesAllValidData,
 } from "@src/tests/testUtils/sovAppData";
 import {
   generateMalformedDataTests,
@@ -29,6 +30,58 @@ const tests = [
         expectedElementValue: "1234",
         expectedStatusCode: StatusCodes.SuccessButNeedsReview,
         expectedStatusMessageKey: StatusMessageKeyTypes.orderIdSuccess,
+      },
+      {
+        testName: "Success_Alphanumeric",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderId: "order1234ABC", // Valid alphanumeric order ID
+          },
+        },
+        expectedElementValue: "order1234ABC",
+        expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderIdSuccess,
+      },
+      {
+        testName: "Success_WithSpecialCharacters",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderId: "order-1234_ABC", // Valid order ID with hyphen and underscore
+          },
+        },
+        expectedElementValue: "order-1234_ABC",
+        expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderIdSuccess,
+      },
+      {
+        testName: "MalformedOrderID_OnlyNumbers",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderId: "12345678", // Order ID with only numbers (valid but unusual)
+          },
+        },
+        expectedElementValue: "12345678",
+        expectedStatusCode: StatusCodes.SuccessButNeedsReview,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderIdSuccess,
+      },
+      {
+        testName: "MalformedOrderID_SpecialCharactersOnly",
+        sovAppData: {
+          ...sovAppDataEverythingIsOkay,
+          sovIframes1: {
+            ...sovAppIFramesAllValidData,
+            orderId: "@#$%^&*", // Invalid order ID with only special characters
+          },
+        },
+        expectedElementValue: "@#$%^&*",
+        expectedStatusCode: StatusCodes.Error,
+        expectedStatusMessageKey: StatusMessageKeyTypes.orderIdMalformed,
       },
     ],
   }),

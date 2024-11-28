@@ -6,6 +6,7 @@ export interface TestResultResponseDataType {
   consumerFirstName?: TestResultType<string | undefined>;
   consumerLastName?: TestResultType<string | undefined>;
   consumerYearOfBirth?: TestResultType<string | undefined>;
+  consumerDateOfBirth?: TestResultType<string | undefined>;
   consumerEmail?: TestResultType<string | undefined>;
   consumerEmailHash?: TestResultType<string | undefined>;
   consumerStreet?: TestResultType<string | undefined>;
@@ -36,6 +37,35 @@ export interface TestResultResponseDataType {
   isUnknownSovendusJsError?: TestResultType<boolean | undefined>;
 }
 
+export interface SovIframes {
+  trafficSourceNumber?: ExplicitAnyType;
+  trafficMediumNumber?: ExplicitAnyType;
+  sessionId?: ExplicitAnyType;
+  timestamp?: ExplicitAnyType;
+  orderId?: ExplicitAnyType;
+  orderValue?: ExplicitAnyType;
+  orderCurrency?: ExplicitAnyType;
+  usedCouponCode?: ExplicitAnyType;
+  iframeContainerId?: ExplicitAnyType;
+  integrationType?: ExplicitAnyType;
+}
+
+export interface SovConsumer {
+  consumerSalutation?: ExplicitAnyType;
+  consumerFirstName?: ExplicitAnyType;
+  consumerLastName?: ExplicitAnyType;
+  consumerYearOfBirth?: ExplicitAnyType;
+  consumerDateOfBirth?: ExplicitAnyType;
+  consumerEmail?: ExplicitAnyType;
+  consumerEmailHash?: ExplicitAnyType;
+  consumerPhone?: ExplicitAnyType;
+  consumerStreet?: ExplicitAnyType;
+  consumerStreetNumber?: ExplicitAnyType;
+  consumerZipcode?: ExplicitAnyType;
+  consumerCity?: ExplicitAnyType;
+  consumerCountry?: ExplicitAnyType;
+}
+
 export interface TestResultType<TElementValueType> {
   elementValue: TElementValueType;
   statusMessageKey: StatusMessageKeyTypes | undefined;
@@ -55,6 +85,7 @@ export enum StatusCodes {
   SuccessButNeedsReview = "SuccessButNeedsReview",
   Error = "Error",
   TestDidNotRun = "TestDidNotRun",
+  TestFailed = "TestFailed",
 }
 
 export enum BrowserTypes {
@@ -67,6 +98,7 @@ export enum BrowserTypes {
 }
 
 export enum StatusMessageKeyTypes {
+  testFailed = "testFailed",
   awinNoSalesTracked = "awinNoSalesTracked",
   awinSaleTrackedAfterScript = "awinSaleTrackedAfterScript",
   integrationTypeMalformed = "integrationTypeMalformed",
@@ -83,8 +115,12 @@ export enum StatusMessageKeyTypes {
   sovendusJsBlockedByCookieConsent = "sovendusJsBlockedByCookieConsent",
   sovendusJsMissing = "sovendusJsMissing",
   flexibleIFrameJsBlockedByCookieConsent = "flexibleIFrameJsBlockedByCookieConsent",
+  flexibleIFrameJsBlockedByCookieConsentUsingOtherSource = "flexibleIFrameJsBlockedByCookieConsentUsingOtherSource",
   sovendusBannerDisabled = "sovendusBannerDisabled",
   containerDivNotFoundOnDOM = "containerDivNotFoundOnDOM",
+  containerDivNotFoundOnDOMGTM = "containerDivNotFoundOnDOMGTM",
+  containerDivNoDivId = "containerDivNoDivId",
+  containerDivNoDivIdOnGtm = "containerDivNoDivIdOnGtm",
   multipleSovIframesDetected = "multipleSovIframesDetected",
   multipleSovIframesDetectedAndAreSame = "multipleSovIframesDetectedAndAreSame",
   currencyNotValid = "currencyNotValid",
@@ -140,11 +176,48 @@ export enum StatusMessageKeyTypes {
   missingConsumerYearOfBirth = "missingConsumerYearOfBirth",
   consumerYearOfBirthSuccess = "consumerYearOfBirthSuccess",
   consumerYearOfBirthNotValid = "consumerYearOfBirthNotValid",
+  missingConsumerDateOfBirth = "missingConsumerDateOfBirth",
+  consumerDateOfBirthSuccess = "consumerDateOfBirthSuccess",
+  consumerDateOfBirthNotValid = "consumerDateOfBirthNotValid",
   missingConsumerEmail = "missingConsumerEmail",
   missingIframeContainerId = "missingIframeContainerId",
   iFrameContainerIdMalformed = "iFrameContainerIdMalformed",
   iFrameContainerIdHasSpaces = "iFrameContainerIdHasSpaces",
+  numberInConsumerStreet = "numberInStreetName",
   empty = "empty",
+
+  // Optimize & Checkout Products
+
+  missingProfityClientId = "missingProfityClientId",
+  profityClientIdMalformed = "profityClientIdMalformed",
+  profityClientIdSuccess = "profityClientIdSuccess",
+  missingCheckoutProductsId = "missingCheckoutProductsId",
+  checkoutProductsIdMalformed = "checkoutProductsIdMalformed",
+  checkoutProductsIdSuccess = "checkoutProductsIdSuccess",
+  missingCheckoutProductsToken = "missingCheckoutProductsToken",
+  checkoutProductsTokenMalformed = "checkoutProductsTokenMalformed",
+  checkoutProductsTokenSuccess = "checkoutProductsTokenSuccess",
+  missingOptimizeId = "missingOptimizeId",
+  optimizeIdMalformed = "optimizeIdMalformed",
+  optimizeIdSuccess = "optimizeIdSuccess",
+  missingOptimizeTrafficSourceNumber = "missingOptimizeTrafficSourceNumber",
+  optimizeTrafficSourceNumberMalformed = "optimizeTrafficSourceNumberMalformed",
+  optimizeTrafficSourceNumberSuccess = "optimizeTrafficSourceNumberSuccess",
+  optimizeCurrencyNotValid = "optimizeCurrencyNotValid",
+  optimizeCurrencyMissing = "optimizeCurrencyMissing",
+  optimizeCurrencySuccess = "optimizeCurrencySuccess",
+  optimizeOrderValueMissing = "optimizeOrderValueMissing",
+  optimizeOrderValueWrongFormat = "optimizeOrderValueWrongFormat",
+  optimizeOrderValueSuccess = "optimizeOrderValueSuccess",
+  optimizeOrderIdSuccess = "optimizeOrderIdSuccess",
+  optimizeOrderIdMalformed = "optimizeOrderIdMalformed",
+  missingOptimizeOrderId = "missingOptimizeOrderId",
+  missingOptimizeSessionId = "missingOptimizeSessionId",
+  optimizeSessionIdSuccess = "optimizeSessionIdSuccess",
+  optimizeSessionIdMalformed = "optimizeSessionIdMalformed",
+  missingOptimizeCouponCode = "missingOptimizeCouponCode",
+  optimizeCouponCodeSuccess = "optimizeCouponCodeSuccess",
+  optimizeCouponCodeMalformed = "optimizeCouponCodeMalformed",
 }
 
 export const validCountries = [
@@ -182,9 +255,19 @@ export const statusMessages: {
     infoText: string;
   };
 } = {
+  testFailed: {
+    errorText: "TEST FAILED TO RUN",
+    infoText:
+      "For an unknown reason the test failed to run, this is most likely because the value format is not supported.",
+  },
   integrationTypeMalformed: {
     errorText: "VALUE TYPE NOT ALLOWED",
     infoText: "Error: you can only pass a string as the integrationType",
+  },
+  numberInStreetName: {
+    errorText: "NUMBER IN STREET NAME",
+    infoText:
+      "Warning: Make sure the street name doesn't include the street number",
   },
   failedToDetectBrowserType: {
     errorText: "", // error is in BrowserTypes.NotDetected
@@ -241,6 +324,24 @@ export const statusMessages: {
   missingConsumerYearOfBirth: {
     errorText: "VALUE MISSING",
     infoText: "Make sure to pass the year of birth of the customer, e.g. 1991",
+  },
+
+  consumerDateOfBirthNotValid: {
+    errorText: "NOT A VALID BIRTH DATE",
+    infoText:
+      "Make sure to pass the date of birth of the customer as a string, e.g. 01.01.1991",
+  },
+
+  consumerDateOfBirthSuccess: {
+    errorText: "",
+    infoText:
+      "Make sure the date of birth aligns with the date of birth you used for the order.",
+  },
+
+  missingConsumerDateOfBirth: {
+    errorText: "VALUE MISSING",
+    infoText:
+      "Make sure to pass the date of birth of the customer, e.g. 01.01.1991",
   },
 
   consumerEmailNotValid: {
@@ -314,9 +415,33 @@ export const statusMessages: {
     infoText: "",
   },
 
+  flexibleIFrameJsBlockedByCookieConsentUsingOtherSource: {
+    errorText:
+      "Sovendus was detected but flexibleiframe.js was not executed because the script source is '{elementValue}' instead of 'src'. This probably happened because your cookie consent tool blocked the script.",
+    infoText: "",
+  },
+
   containerDivNotFoundOnDOM: {
     errorText:
-      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.",
+      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.<br/><a href='https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Generic-Web-Integration#1.-Place-the-HTML-Markup' target='_blank'>Click Here for the documentation</a>",
+    infoText: "",
+  },
+
+  containerDivNotFoundOnDOMGTM: {
+    errorText:
+      "ERROR: The sovendus container div with the id {elementValue} was not found on the DOM! Make sure to add the div to the DOM before the Sovendus integration script gets executed. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.<br/><a href='https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Google-Tagmanager-Integration#Step-7' target='_blank'>Click Here for the documentation</a>",
+    infoText: "",
+  },
+
+  containerDivNoDivId: {
+    errorText:
+      "ERROR: No container id defined! Make sure to add a div with an id that corresponds to it to the DOM.. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.<br/><a href='https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Generic-Web-Integration#1.-Place-the-HTML-Markup' target='_blank'>Click Here for the documentation</a>",
+    infoText: "",
+  },
+
+  containerDivNoDivIdOnGtm: {
+    errorText:
+      "ERROR: No container id defined! Make sure to add a div with an id that corresponds to it to the DOM. <br/>If the container is missing, you wont see any inline banners on the page, only overlays. On SPA (like react, angular, etc.) this will also have the effect that the banner is not disappearing after leaving the success page.<br/><a href='https://developer-hub.sovendus.com/Voucher-Network-Checkout-Benefits/Web-Integration/Google-Tagmanager-Integration#Step-7' target='_blank'>Click Here for the documentation</a>",
     infoText: "",
   },
 
@@ -365,7 +490,7 @@ export const statusMessages: {
   unixTimestampOlderThan2Minutes: {
     errorText: "TIMESTAMP OLDER THAN 2 MINUTES",
     infoText:
-      "Make sure to pass the unix timestamp in seconds of the order time. If you just refreshed the success page after a while then this is normal and expected",
+      "Make sure to pass the unix timestamp in seconds of the order time (Received: {elementValue}). If you just refreshed the success page after a while then this is normal and expected",
   },
 
   missingOrderId: {
@@ -641,4 +766,150 @@ export const statusMessages: {
     errorText: "",
     infoText: "",
   },
+
+  // Optimize & Checkout Products
+
+  missingProfityClientId: {
+    errorText: "VALUE MISSING",
+    infoText: "Make sure to pass the Profity client ID for identification.",
+  },
+  profityClientIdMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText: "The Profity client ID should be a valid string identifier.",
+  },
+  profityClientIdSuccess: {
+    errorText: "",
+    infoText: "",
+  },
+  missingCheckoutProductsId: {
+    errorText: "VALUE MISSING",
+    infoText:
+      "Ensure that you pass a valid product ID associated with the checkout.",
+  },
+  checkoutProductsIdMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "The product ID must be in a valid format (e.g., a string or numeric identifier).",
+  },
+  checkoutProductsIdSuccess: {
+    errorText: "",
+    infoText: "",
+  },
+  missingCheckoutProductsToken: {
+    errorText: "VALUE MISSING",
+    infoText: "A valid checkout product token must be provided to proceed.",
+  },
+  checkoutProductsTokenMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "The token should be a valid string identifier for product authentication.",
+  },
+  checkoutProductsTokenSuccess: {
+    errorText: "",
+    infoText: "",
+  },
+  missingOptimizeId: {
+    errorText: "VALUE MISSING",
+    infoText: "Ensure to provide a valid optimize ID for tracking purposes.",
+  },
+  optimizeIdMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText: "The optimize ID must be a valid identifier string.",
+  },
+  optimizeIdSuccess: {
+    errorText: "",
+    infoText: "",
+  },
+  missingOptimizeTrafficSourceNumber: {
+    errorText: "VALUE MISSING",
+    infoText:
+      "Make sure the value aligns with the traffic medium number you have received for this country as a string or a number.",
+  },
+  optimizeTrafficSourceNumberMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure the value aligns with the traffic medium number you have received for this country as a string or a number.",
+  },
+  optimizeTrafficSourceNumberSuccess: {
+    errorText: "",
+    infoText:
+      "Make sure the value aligns with the traffic medium number you have received for this country.",
+  },
+  optimizeCurrencyNotValid: {
+    errorText: "NOT A VALID CURRENCY",
+    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
+      ", ",
+    )}`,
+  },
+  optimizeCurrencyMissing: {
+    errorText: "VALUE MISSING",
+    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
+      ", ",
+    )}`,
+  },
+  optimizeCurrencySuccess: {
+    errorText: "",
+    infoText: `The currency is valid, but make sure the value aligns with the actual currency of your order. Valid currencies are: ${validCurrencies.join(
+      ", ",
+    )}`,
+  },
+  optimizeOrderValueMissing: {
+    errorText: "VALUE MISSING",
+    infoText:
+      "Make sure to pass the order value, it needs to be a number e.g. 20.5 and NOT 20,5",
+  },
+  optimizeOrderValueWrongFormat: {
+    errorText: "IS NOT A NUMBER",
+    infoText:
+      "Make sure to pass the order value, it needs to be a number e.g. 20.5 and NOT 20,5",
+  },
+  optimizeOrderValueSuccess: {
+    errorText: "",
+    infoText: "Make sure the order value is net without shipping cost.",
+  },
+  optimizeOrderIdSuccess: {
+    errorText: "",
+    infoText:
+      "Make sure the value aligns with the actual order id of your order.",
+  },
+  optimizeOrderIdMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure the value aligns with the actual order id of your order.",
+  },
+  missingOptimizeOrderId: {
+    errorText: "VALUE MISSING",
+    infoText: "Make sure to pass the order id",
+  },
+  missingOptimizeSessionId: {
+    errorText: "VALUE MISSING",
+    infoText: "Make sure a session id gets passed",
+  },
+  optimizeSessionIdSuccess: {
+    errorText: "",
+    infoText:
+      "Make sure the session id doesn't change after a refresh, but changes with a new session.",
+  },
+  optimizeSessionIdMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure the session id doesn't change after a refresh, but changes with a new session.",
+  },
+  missingOptimizeCouponCode: {
+    errorText: "VALUE MISSING",
+    infoText: "Make sure the used coupon code from the order gets passed",
+  },
+  optimizeCouponCodeSuccess: {
+    errorText:
+      "Make sure the used coupon code from the order aligns with this value.",
+    infoText: "",
+  },
+  optimizeCouponCodeMalformed: {
+    errorText: "VALUE TYPE NOT ALLOWED",
+    infoText:
+      "Make sure the used coupon code from the order aligns with this value.",
+  },
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ExplicitAnyType = any;

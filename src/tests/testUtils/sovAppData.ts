@@ -2,7 +2,7 @@ import type {
   ExplicitAnyType,
   SovConsumer,
   SovIframes,
-} from "@src/page-banner/self-tester";
+} from "@src/integration-tester/integration-tester-data-to-sync-with-dev-hub";
 
 import type { TestDataType } from "./testCaseGenerator";
 
@@ -51,6 +51,7 @@ export const sovAppConsumerAllValidData: SovConsumer = {
   consumerZipcode: "76135",
   consumerPhone: "+4915512005211",
   consumerYearOfBirth: "1991",
+  consumerDateOfBirth: "01.01.1991",
   consumerStreet: "test street",
   consumerStreetNumber: "1a",
   consumerCity: "Karlsruhe",
@@ -80,6 +81,7 @@ export const sovTestTrafficMediumNumbers = {
   CBOverlayVNSticky: { trafficMediumNumber: "23" },
   CBInOverlayCollapsed: { trafficMediumNumber: "25" },
   CBInOverlayCloseable: { trafficMediumNumber: "26" },
+  VNStickyCloseable: { trafficMediumNumber: "27" },
 };
 
 export const sovAppIFramesAllValidData: SovIframes = {
@@ -108,7 +110,7 @@ export const sovAppIFramesAllValidDataDifferent: SovIframes = {
   integrationType: "test-2.0.0",
 };
 
-export const sovAwinID = 18738;
+export const sovAwinID = 8771;
 
 export const sovAppDataEverythingIsOkay: SovDataType = {
   sovConsumer: sovAppConsumerAllValidData,
@@ -137,6 +139,7 @@ export const sovAppDataMalformedButIsOkay: SovDataType = {
     consumerZipcode: "City",
     consumerPhone: "test@test.de",
     consumerYearOfBirth: "12.06.1991",
+    consumerDateOfBirth: "1991-06-12",
     consumerStreet: 1,
     consumerStreetNumber: "Street Name",
     consumerCity: { object: "isNotGood" },
@@ -167,6 +170,7 @@ export const sovAppDataMalformedObjectsButIsOkay: SovDataType = {
     consumerZipcode: malformedObjectData,
     consumerPhone: malformedObjectData,
     consumerYearOfBirth: malformedObjectData,
+    consumerDateOfBirth: malformedObjectData,
     consumerStreet: malformedObjectData,
     consumerStreetNumber: malformedObjectData,
     consumerCity: malformedObjectData,
@@ -196,6 +200,7 @@ export const sovAppDataMalformedObjects: SovDataType = {
     consumerZipcode: malformedObjectData,
     consumerPhone: malformedObjectData,
     consumerYearOfBirth: malformedObjectData,
+    consumerDateOfBirth: malformedObjectData,
     consumerStreet: malformedObjectData,
     consumerStreetNumber: malformedObjectData,
     consumerCity: malformedObjectData,
@@ -224,6 +229,7 @@ export const sovAppDataNumberButIsOkay: SovDataType = {
     consumerZipcode: 1234,
     consumerPhone: 1234,
     consumerYearOfBirth: 1234,
+    consumerDateOfBirth: 1234,
     consumerStreet: 1234,
     consumerStreetNumber: 1234,
     consumerCity: 1234,
@@ -253,6 +259,7 @@ export const sovAppDataNumberAsStringButIsOkay: SovDataType = {
     consumerZipcode: "1234",
     consumerPhone: "1234",
     consumerYearOfBirth: "1234",
+    consumerDateOfBirth: "1234",
     consumerStreet: "1234",
     consumerStreetNumber: "1234",
     consumerCity: "1234",
@@ -282,6 +289,7 @@ export const sovAppDataNumberWithCommaInsteadOfDotButIsOkay: SovDataType = {
     consumerZipcode: "1234,56",
     consumerPhone: "1234,56",
     consumerYearOfBirth: "1234,56",
+    consumerDateOfBirth: "1234,56",
     consumerStreet: "1234,56",
     consumerStreetNumber: "1234,56",
     consumerCity: "1234,56",
@@ -310,6 +318,7 @@ export const sovAppDataFloatNumberButIsOkay: SovDataType = {
     consumerZipcode: 1234.56,
     consumerPhone: 1234.56,
     consumerYearOfBirth: 1234.56,
+    consumerDateOfBirth: 1234.56,
     consumerStreet: 1234.56,
     consumerStreetNumber: 1234.56,
     consumerCity: 1234.56,
@@ -339,6 +348,7 @@ export const sovAppDataTrueButIsOkay: SovDataType = {
     consumerZipcode: true,
     consumerPhone: true,
     consumerYearOfBirth: true,
+    consumerDateOfBirth: true,
     consumerStreet: true,
     consumerStreetNumber: true,
     consumerCity: true,
@@ -368,6 +378,7 @@ export const sovAppDataTrue: SovDataType = {
     consumerZipcode: true,
     consumerPhone: true,
     consumerYearOfBirth: true,
+    consumerDateOfBirth: true,
     consumerStreet: true,
     consumerStreetNumber: true,
     consumerCity: true,
@@ -396,6 +407,7 @@ export const sovAppDataFalseButIsOkay: SovDataType = {
     consumerZipcode: false,
     consumerPhone: false,
     consumerYearOfBirth: false,
+    consumerDateOfBirth: false,
     consumerStreet: false,
     consumerStreetNumber: false,
     consumerCity: false,
@@ -425,6 +437,7 @@ export const sovAppDataFalse: SovDataType = {
     consumerZipcode: false,
     consumerPhone: false,
     consumerYearOfBirth: false,
+    consumerDateOfBirth: false,
     consumerStreet: false,
     consumerStreetNumber: false,
     consumerCity: false,
@@ -453,6 +466,7 @@ export const sovAppDataNullButIsOkay: SovDataType = {
     consumerZipcode: null,
     consumerPhone: null,
     consumerYearOfBirth: null,
+    consumerDateOfBirth: null,
     consumerStreet: null,
     consumerStreetNumber: null,
     consumerCity: null,
@@ -482,6 +496,7 @@ export const sovAppDataEmptyStringButIsOkay: SovDataType = {
     consumerZipcode: "",
     consumerPhone: "",
     consumerYearOfBirth: "",
+    consumerDateOfBirth: "",
     consumerStreet: "",
     consumerStreetNumber: "",
     consumerCity: "",
@@ -511,6 +526,7 @@ export const sovAppDataNull: SovDataType = {
     consumerZipcode: null,
     consumerPhone: null,
     consumerYearOfBirth: null,
+    consumerDateOfBirth: null,
     consumerStreet: null,
     consumerStreetNumber: null,
     consumerCity: null,
@@ -539,6 +555,7 @@ export const sovAppDataUndefinedButIsOkay: SovDataType = {
     consumerZipcode: undefined,
     consumerPhone: undefined,
     consumerYearOfBirth: undefined,
+    consumerDateOfBirth: undefined,
     consumerStreet: undefined,
     consumerStreetNumber: undefined,
     consumerCity: undefined,
@@ -568,6 +585,7 @@ export const sovAppDataUndefined: SovDataType = {
     consumerZipcode: undefined,
     consumerPhone: undefined,
     consumerYearOfBirth: undefined,
+    consumerDateOfBirth: undefined,
     consumerStreet: undefined,
     consumerStreetNumber: undefined,
     consumerCity: undefined,
@@ -597,6 +615,7 @@ export const sovAppDataMalformedArrayButIsOkay: SovDataType = {
     consumerZipcode: malformedArrayData,
     consumerPhone: malformedArrayData,
     consumerYearOfBirth: malformedArrayData,
+    consumerDateOfBirth: malformedArrayData,
     consumerStreet: malformedArrayData,
     consumerStreetNumber: malformedArrayData,
     consumerCity: malformedArrayData,
@@ -626,6 +645,7 @@ export const sovAppDataMalformedArray: SovDataType = {
     consumerZipcode: malformedArrayData,
     consumerPhone: malformedArrayData,
     consumerYearOfBirth: malformedArrayData,
+    consumerDateOfBirth: malformedArrayData,
     consumerStreet: malformedArrayData,
     consumerStreetNumber: malformedArrayData,
     consumerCity: malformedArrayData,

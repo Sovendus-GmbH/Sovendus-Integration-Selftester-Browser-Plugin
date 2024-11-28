@@ -1,6 +1,6 @@
-import { testLoadedIFrameId } from "@src/page-banner/self-test-overlay-css-vars";
-import type SelfTester from "@src/page-banner/self-tester";
-import type { ExplicitAnyType } from "@src/page-banner/self-tester";
+import type SelfTester from "@src/integration-tester/integration-tester";
+import type { ExplicitAnyType } from "@src/integration-tester/integration-tester";
+import { testLoadedIFrameId } from "@src/integration-tester-ui/integration-test-overlay-css-vars";
 import { platform } from "os";
 import { resolve } from "path";
 import type { WebDriver } from "selenium-webdriver";
@@ -54,7 +54,7 @@ export function executeOverlayTests({
             isAwinTest,
             testOptions: testData.testOptions,
           });
-          testData.testFunction({ sovSelfTester, sovAppData });
+          testData.testFunction({ sovSelfTester, sovAppData, driver });
         }, 300_000);
       }
 
@@ -217,7 +217,7 @@ function getAwinIntegrationScript({
     }
   }
   const integrationScript = `
-        ${getChangeFlexibleiframeJsApiToTestingForAwinScript()}
+        ${getChangeFlexibleIFrameJsApiToTestingForAwinScript()}
         ${salesTrackingScript}
         ${awinMasterTagScript}
         ${getChangeSovendusJsScriptTypeScript(
@@ -238,7 +238,7 @@ const awinMasterTagScript = `
         document.body.appendChild(script);
         `;
 
-function getChangeFlexibleiframeJsApiToTestingForAwinScript(): string {
+function getChangeFlexibleIFrameJsApiToTestingForAwinScript(): string {
   return `    
       function interceptAndBlockScripts(originalMethod) {
         return function (node) {
@@ -283,7 +283,7 @@ function getConsumerAndIframeDataAndAddTimeoutIfEnabled({
   `;
   if (testOptions?.regular?.addConsumerIFrameOneSecTimeout) {
     return `(async () => {
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, 2000))
       ${consumerIntegration}
     })();`;
   }
@@ -320,8 +320,7 @@ function getSovendusIntegrationScript({
           var script = document.createElement("script");
           script.type = ${getFlexibleIFrameScriptType(testOptions)};
           script.async = true;
-          script.src =
-            "https://testing4.sovendus.com/sovabo/common/js/flexibleIframe.js";
+          script.setAttribute('${testOptions?.regular?.sourceFlexibleIFrameJs || "src"}', "https://testing4.sovendus.com/sovabo/common/js/flexibleIframe.js");
           document.body.appendChild(script);
         `
     }
@@ -352,7 +351,7 @@ function getFlexibleIFrameScriptType(
 function getChangeSovendusJsScriptTypeScript(
   sovendusJsScriptType: string | null | undefined,
   removeSovendusJs: boolean | undefined,
-  flexibleIFrameJsScriptType?: string | null | undefined,
+  flexibleIFrameJsScriptType?: string | null,
 ): string {
   return sovendusJsScriptType !== undefined ||
     flexibleIFrameJsScriptType !== undefined ||
@@ -433,7 +432,9 @@ async function executeWithTimeout(
         resolve(result); // Resolve with the result of the function
       })
       .catch((error) => {
-        reject(error); // Reject with the error from the function
+        reject(
+          new Error(`Failed to get test data from browser, error: ${error}`),
+        ); // Reject with the error from the function
       })
       .finally(() => {
         // Clear the timeout once the function completes

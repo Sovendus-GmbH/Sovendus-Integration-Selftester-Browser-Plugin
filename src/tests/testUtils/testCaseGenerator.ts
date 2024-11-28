@@ -1,6 +1,7 @@
-import type SelfTester from "@src/page-banner/self-tester";
-import type { StatusMessageKeyTypes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
-import { StatusCodes } from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+import type SelfTester from "@src/integration-tester/integration-tester";
+import type { StatusMessageKeyTypes } from "@src/integration-tester/integration-tester-data-to-sync-with-dev-hub";
+import { StatusCodes } from "@src/integration-tester/integration-tester-data-to-sync-with-dev-hub";
+import type { WebDriver } from "selenium-webdriver";
 
 import type { SovDataType } from "./sovAppData";
 import {
@@ -220,9 +221,11 @@ export type TestDataType = {
   testFunction: ({
     sovSelfTester,
     sovAppData,
+    driver,
   }: {
     sovSelfTester: SelfTester;
     sovAppData: SovDataType;
+    driver: WebDriver;
   }) => void;
   testOptions?: TestOptionsType | undefined;
 };
@@ -237,6 +240,7 @@ export interface TestOptionsType {
   };
   regular?: {
     disableFlexibleIFrameJs?: boolean | undefined;
+    sourceFlexibleIFrameJs?: string | undefined;
     disableSovendusDiv?: boolean | undefined;
     removeSovIFrame?: boolean | undefined;
     flexibleIFrameJsScriptType?: string | undefined | null;
@@ -255,6 +259,7 @@ export type SovSelfTesterKeys =
   | "consumerFirstName"
   | "consumerLastName"
   | "consumerYearOfBirth"
+  | "consumerDateOfBirth"
   | "consumerEmail"
   | "consumerEmailHash"
   | "consumerStreet"
@@ -285,4 +290,5 @@ export type SovSelfTesterKeys =
   | "isUnknownSovendusJsError"
   | "awinIntegrationDetectedTestResult"
   | "awinSaleTrackedTestResult"
-  | "awinExecutedTestResult";
+  | "awinExecutedTestResult"
+  | "isOverlayOrStickyBanner";

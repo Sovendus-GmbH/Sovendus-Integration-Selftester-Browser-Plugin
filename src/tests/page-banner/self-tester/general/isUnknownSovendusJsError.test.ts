@@ -1,7 +1,7 @@
 import {
   StatusCodes,
   StatusMessageKeyTypes,
-} from "@src/page-banner/self-tester-data-to-sync-with-dev-hub";
+} from "@src/integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import { sovAppDataEverythingIsOkay } from "@src/tests/testUtils/sovAppData";
 import { generateTests } from "@src/tests/testUtils/testCaseGenerator";
 import { executeOverlayTests } from "@src/tests/testUtils/testUtils";
@@ -13,7 +13,7 @@ executeOverlayTests({
       elementKey: "isUnknownSovendusJsError",
       testsInfo: [
         {
-          testName: "SovendusJsExecutedWithOneSecondTimeout",
+          testName: "SovendusJsExecutedWithTimeout",
           sovAppData: sovAppDataEverythingIsOkay,
           expectedElementValue: false,
           expectedStatusCode: StatusCodes.Error,
