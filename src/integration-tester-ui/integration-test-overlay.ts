@@ -1,6 +1,9 @@
 // import type { autoPlacement, computePosition } from "@floating-ui/dom";
 
-import type { SovSelfTesterWindow } from "../integration-tester/integration-tester";
+import type {
+  ActiveDIV,
+  SovSelfTesterWindow,
+} from "../integration-tester/integration-tester";
 import SelfTester from "../integration-tester/integration-tester";
 import { transmitIntegrationError } from "../integration-tester/integration-tester";
 import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
@@ -60,83 +63,6 @@ export async function repeatTestsOnSPA(
   }
 }
 
-let activeButton: HTMLElement | undefined = undefined;
-let activeDIV: string = "CBVNdiv";
-
-export function showCBVN(button: HTMLElement, iframe: HTMLIFrameElement): void {
-  const oldDiv = iframe.contentWindow?.document.getElementById(
-    activeDIV,
-  ) as HTMLElement;
-  oldDiv.style.display = "none";
-
-  const CBVNdiv = iframe.contentWindow?.document.getElementById(
-    "CBVNdiv",
-  ) as HTMLElement;
-  CBVNdiv.style.display = "inline";
-
-  activeDIV = "CBVNdiv";
-
-  updateButtonStyles(button, iframe);
-}
-
-export function showOptimize(
-  button: HTMLElement,
-  iframe: HTMLIFrameElement,
-): void {
-  const oldDiv = iframe.contentWindow?.document.getElementById(
-    activeDIV,
-  ) as HTMLElement;
-  oldDiv.style.display = "none";
-  activeDIV = "Optimizediv";
-
-  const optimizeDiv = iframe.contentWindow?.document.getElementById(
-    "Optimizediv",
-  ) as HTMLElement;
-  optimizeDiv.style.display = "inline";
-
-  updateButtonStyles(button, iframe);
-}
-
-export function showCheckoutProducts(
-  button: HTMLElement,
-  iframe: HTMLIFrameElement,
-): void {
-  const oldDiv = iframe.contentWindow?.document.getElementById(
-    activeDIV,
-  ) as HTMLElement;
-  oldDiv.style.display = "none";
-  activeDIV = "CheckoutProductsDIV";
-
-  const checkoutProductsDiv = iframe.contentWindow?.document.getElementById(
-    "CheckoutProductsDIV",
-  ) as HTMLElement;
-  checkoutProductsDiv.style.display = "inline";
-
-  updateButtonStyles(button, iframe);
-}
-
-function updateButtonStyles(
-  button: HTMLElement,
-  iframe: HTMLIFrameElement,
-): void {
-  if (activeButton) {
-    // activeButton.classList.remove(sovendusActiveButtonClass);
-    const activeCheckmark = activeButton.querySelector(
-      ".button-checkmark",
-    ) as HTMLElement;
-    activeCheckmark.style.display = "none";
-  }
-
-  // button.classList.add(sovendusActiveButtonClass);
-  const activeCheckmark = button.querySelector(
-    ".button-checkmark",
-  ) as HTMLElement;
-
-  activeCheckmark.style.display = "inline";
-  activeButton = button;
-  updateIFrameHeight(iframe);
-}
-
 export function removeSelfTesterOverlay(): void {
   document.getElementById(outerOverlayId)?.remove();
   if (window.sovSelfTester) {
@@ -145,6 +71,19 @@ export function removeSelfTesterOverlay(): void {
 }
 
 export class SelfTesterOverlay {
+  iframe!: HTMLIFrameElement;
+  btnCBVN!: HTMLElement;
+  btnOptimize!: HTMLElement;
+  btnCheckout!: HTMLElement;
+  btnIntegration!: HTMLElement;
+
+  currentSovendusProduct:
+    | undefined
+    | "optimize"
+    | "voucherNetwork"
+    | "checkoutProducts"
+    | "IntegrationInfo";
+
   createOverlay(
     selfTester: SelfTester,
     onRepeatTests: () => Promise<void>,
@@ -181,11 +120,125 @@ export class SelfTesterOverlay {
                 <button id="button-CBVN" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">CB & VN <span class="button-checkmark" style="display: inline;">✔️</span></button>
                 <button id="button-Optimize" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">Optimize <span class="button-checkmark" style="display: none;">✔️</span></button>
                 <button id="button-Checkout" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">Checkout Products <span class="button-checkmark" style="display: none;">✔️</span></button>
+                <button id="button-IntegrationInfo" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">Integration Information <span class="button-checkmark" style="display: none;">✔️</span></button>
             </div>
 
             ${this.createInnerInnerOverlay(selfTester)}
         `,
     });
+    this.iframe = document.getElementById(
+      testLoadedIFrameId,
+    ) as HTMLIFrameElement;
+
+    this.btnCBVN = this.iframe.contentWindow?.document.getElementById(
+      "button-CBVN",
+    ) as HTMLElement;
+    this.btnOptimize = this.iframe.contentWindow?.document.getElementById(
+      "button-Optimize",
+    ) as HTMLElement;
+    this.btnCheckout = this.iframe.contentWindow?.document.getElementById(
+      "button-Checkout",
+    ) as HTMLElement;
+    this.btnIntegration = this.iframe.contentWindow?.document.getElementById(
+      "button-IntegrationInfo",
+    ) as HTMLElement;
+
+    this.btnCBVN.addEventListener("click", (): void => {
+      this.currentSovendusProduct = "voucherNetwork";
+      this.toggleView(this.iframe);
+    });
+
+    this.btnOptimize.addEventListener("click", (): void => {
+      this.currentSovendusProduct = "optimize";
+      this.toggleView(this.iframe);
+    });
+
+    this.btnCheckout.addEventListener("click", (): void => {
+      this.currentSovendusProduct = "checkoutProducts";
+      this.toggleView(this.iframe);
+    });
+
+    this.btnIntegration.addEventListener("click", (): void => {
+      this.currentSovendusProduct = "IntegrationInfo";
+      this.toggleView(this.iframe);
+    });
+  }
+
+  toggleView(iframe: HTMLIFrameElement): void {
+    const CBVNdiv = iframe.contentWindow?.document.getElementById(
+      "CBVNdiv",
+    ) as HTMLElement;
+    const optimizeDiv = iframe.contentWindow?.document.getElementById(
+      "Optimizediv",
+    ) as HTMLElement;
+    const checkoutProductsDiv = iframe.contentWindow?.document.getElementById(
+      "CheckoutProductsDIV",
+    ) as HTMLElement;
+    const IntegrationInfoDiv = iframe.contentWindow?.document.getElementById(
+      "IntegrationInfoDIV",
+    ) as HTMLElement;
+
+    if (CBVNdiv) {
+      CBVNdiv.style.display = "none";
+    }
+    if (optimizeDiv) {
+      optimizeDiv.style.display = "none";
+    }
+    if (checkoutProductsDiv) {
+      checkoutProductsDiv.style.display = "none";
+    }
+    if (IntegrationInfoDiv) {
+      IntegrationInfoDiv.style.display = "none";
+    }
+
+    switch (this.currentSovendusProduct) {
+      case "voucherNetwork":
+        if (CBVNdiv) {
+          CBVNdiv.style.display = "inline";
+        }
+        break;
+      case "optimize":
+        if (optimizeDiv) {
+          optimizeDiv.style.display = "inline";
+        }
+        break;
+      case "checkoutProducts":
+        if (checkoutProductsDiv) {
+          checkoutProductsDiv.style.display = "inline";
+        }
+        break;
+      case "IntegrationInfo":
+        if (IntegrationInfoDiv) {
+          IntegrationInfoDiv.style.display = "inline";
+        }
+        break;
+    }
+
+    this.updateButtonStyles(iframe);
+  }
+
+  updateButtonStyles(iframe: HTMLIFrameElement): void {
+    const btnCBVN = iframe.contentWindow?.document.getElementById(
+      "button-CBVN",
+    ) as HTMLElement;
+    const btnOptimize = iframe.contentWindow?.document.getElementById(
+      "button-Optimize",
+    ) as HTMLElement;
+    const btnCheckout = iframe.contentWindow?.document.getElementById(
+      "button-Checkout",
+    ) as HTMLElement;
+    const btnIntegration = iframe.contentWindow?.document.getElementById(
+      "button-IntegrationInfo",
+    ) as HTMLElement;
+
+    btnCBVN.querySelector(".button-checkmark")!.style.display =
+      this.currentSovendusProduct === "voucherNetwork" ? "inline" : "none";
+    btnOptimize.querySelector(".button-checkmark")!.style.display =
+      this.currentSovendusProduct === "optimize" ? "inline" : "none";
+    btnCheckout.querySelector(".button-checkmark")!.style.display =
+      this.currentSovendusProduct === "checkoutProducts" ? "inline" : "none";
+    btnIntegration.querySelector(".button-checkmark")!.style.display =
+      this.currentSovendusProduct === "IntegrationInfo" ? "inline" : "none";
   }
 
   createLoadingOverlay(onRepeatTests: () => Promise<void>): void {
@@ -303,56 +356,94 @@ export class SelfTesterOverlay {
           }
         </div>
         <div id="Optimizediv" style="display: none;">
-          ${this.generateOptimizeDataReport(selfTester)}
+          ${this.generateOptimizeDataReport()}
         </div>
         <div id="CheckoutProductsDIV" style="display: none;">
-          ${this.generateCheckoutProductsDataReport(selfTester)}
+          ${this.generateCheckoutProductsDataReport()}
+        </div>
+        <div id="IntegrationInfoDIV" style="display: none;">
+          ${this.generateIntegrationInfoReport()}
         </div>
     `;
   }
 
-  generateOptimizeDataReport(testResult: SelfTester): string {
+  generateOptimizeDataReport(): string {
     return `
-        <div class="${sovendusOverlayFontClass}">
-          <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
-            Optimize Data:
-          </h2>
-          <ul class="${sovendusOverlayFontClass}">
-            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
-              optimizeId: ${testResult.optimizeId.getFormattedStatusMessage()}
+      <ul class="${sovendusOverlayFontClass}">
+      <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+        Data:
+      </h2>
+      ${
+        window.sovIntegrationInfo.data &&
+        Object.entries(window.sovIntegrationInfo.data)
+          .map(([key, value]) => {
+            return `
+            <li class="${sovendusOverlayFontClass}">
+              ${key}: ${JSON.stringify(value)}
             </li>
-            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
-              checkoutProductsToken: ${testResult.checkoutProductsToken.getFormattedStatusMessage()}
-            </li>
-            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
-              checkoutProductsId: ${testResult.checkoutProductsId.getFormattedStatusMessage()}
-            </li>
-            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
-              legacy_profityId: ${testResult.profityClientId.getFormattedStatusMessage()}
-            </li>
-            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
-              couponCode: ${testResult.optimizeUsedCouponCode.getFormattedStatusMessage()}
-            </li>
-          </ul>
-        </div>
+        `;
+          })
+          .join("")
+      }
+      </ul>
     `;
   }
 
-  generateCheckoutProductsDataReport(testResult: SelfTester): string {
+  generateCheckoutProductsDataReport(): string {
     return `
-        <div class="${sovendusOverlayFontClass}">
+    <ul class="${sovendusOverlayFontClass}">
+    <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+    Data:
+    </h2>
+    ${
+      window.sovIntegrationInfo.data &&
+      Object.entries(window.sovIntegrationInfo.data)
+        .map(([key, value]) => {
+          return `
+        <li class="${sovendusOverlayFontClass}">
+        ${key}: ${JSON.stringify(value)}
+        </li>
+        `;
+        })
+        .join("")
+    }
+    </ul>
+    `;
+  }
+
+  generateIntegrationInfoReport(): string {
+    return `
+        ${
+          window.sovIntegrationInfo &&
+          Object.entries(window.sovIntegrationInfo)
+            .map(([groupKey, values]) => {
+              if (groupKey === "data") {
+                return;
+              }
+              return `
+        <ul class="${sovendusOverlayFontClass}">
           <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
-            Checkout Products Data:
+            ${groupKey}:
           </h2>
-          <ul class="${sovendusOverlayFontClass}">
-            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
-              checkoutProductsToken: ${testResult.checkoutProductsToken.getFormattedStatusMessage()}
-            </li>
-            <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
-              checkoutProductsId: ${testResult.checkoutProductsId.getFormattedStatusMessage()}
-            </li>
-          </ul>
-        </div>
+          ${
+            values &&
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            Object.entries(values)
+              .map(([key, value]) => {
+                return `
+                <li class="${sovendusOverlayFontClass}">
+                  ${key}: ${JSON.stringify(value)}
+                </li>
+                `;
+              })
+              .join("")
+          }
+        </ul>
+      `;
+            })
+            .join("")
+        }
+
     `;
   }
 
@@ -412,6 +503,32 @@ export class SelfTesterOverlay {
     `;
   }
 
+  // ${
+  //   window.sovIntegrationInfo &&
+  //   Object.entries(window.sovIntegrationInfo).map(([groupKey, values]) => {
+  //     return `
+  //         <ul class="${sovendusOverlayFontClass}">
+  //           <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+  //             ${groupKey}:
+  //           </h2>
+  //           ${
+  //             values &&
+  //             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  //             Object.entries(values)
+  //               .map(([key, value]) => {
+  //                 return `
+  //                 <li class="${sovendusOverlayFontClass}">
+  //                   ${key}: ${JSON.stringify(value)}
+  //                 </li>
+  //                 `;
+  //               })
+  //               .join("")
+  //           }
+  //         </ul>
+  //       `;
+  //   })
+  // }
+
   getSovIFramesData(
     selfTester: SelfTester,
     awinIntegrationNoSaleTrackedOrTrackedToEarly: boolean = false,
@@ -434,31 +551,7 @@ export class SelfTesterOverlay {
         ${selfTester.sovendusDivFound.getFormattedGeneralStatusMessage()}
       </ul>
                    
-      ${
-        window.sovIntegrationInfo &&
-        Object.entries(window.sovIntegrationInfo).map(([groupKey, values]) => {
-          return `
-              <ul class="${sovendusOverlayFontClass}">
-                <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
-                  ${groupKey}:
-                </h2>
-                ${
-                  values &&
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                  Object.entries(values)
-                    .map(([key, value]) => {
-                      return `
-                      <li class="${sovendusOverlayFontClass}">
-                        ${key}: ${JSON.stringify(value)}
-                      </li>
-                      `;
-                    })
-                    .join("")
-                }
-              </ul>
-            `;
-        })
-      }
+
       <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
         Order Data:
       </h2>
@@ -713,26 +806,26 @@ export class SelfTesterOverlay {
         void onRepeatTests();
       });
 
-    const btnCBVN = iframe.contentWindow?.document.getElementById(
-      "button-CBVN",
-    ) as HTMLElement;
-    activeButton = btnCBVN;
-    const btnOptimize = iframe.contentWindow?.document.getElementById(
-      "button-Optimize",
-    ) as HTMLElement;
-    const btnCheckout = iframe.contentWindow?.document.getElementById(
-      "button-Checkout",
-    ) as HTMLElement;
+    // const btnCBVN = iframe.contentWindow?.document.getElementById(
+    //   "button-CBVN",
+    // ) as HTMLElement;
+    // window.activeButton = btnCBVN;
+    // const btnOptimize = iframe.contentWindow?.document.getElementById(
+    //   "button-Optimize",
+    // ) as HTMLElement;
+    // const btnCheckout = iframe.contentWindow?.document.getElementById(
+    //   "button-Checkout",
+    // ) as HTMLElement;
 
-    btnCBVN.addEventListener("click", (): void => {
-      void showCBVN(btnCBVN, iframe);
-    });
-    btnOptimize.addEventListener("click", (): void => {
-      void showOptimize(btnOptimize, iframe);
-    });
-    btnCheckout.addEventListener("click", (): void => {
-      void showCheckoutProducts(btnCheckout, iframe);
-    });
+    // btnCBVN.addEventListener("click", (): void => {
+    //   void showCBVN(btnCBVN, iframe);
+    // });
+    // btnOptimize.addEventListener("click", (): void => {
+    //   void showOptimize(btnOptimize, iframe);
+    // });
+    // btnCheckout.addEventListener("click", (): void => {
+    //   void showCheckoutProducts(btnCheckout, iframe);
+    // });
 
     const tooltipInfoIcons = (
       document.getElementById(testLoadedIFrameId) as HTMLIFrameElement

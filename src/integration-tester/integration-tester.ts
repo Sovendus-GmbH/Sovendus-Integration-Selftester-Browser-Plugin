@@ -80,19 +80,6 @@ export default class SelfTester {
 
   sovConsumer?: SovApplicationConsumer;
 
-  // Optimize & Checkout Products
-
-  optimizeId: TestResultType<string | undefined>;
-  checkoutProductsToken: TestResultType<string | undefined>;
-  checkoutProductsId: TestResultType<string | undefined>;
-  profityClientId: TestResultType<string | undefined>;
-  optimizeTrafficSourceNumber: TestResultType<string | undefined>;
-  optimizeOrderCurrency: TestResultType<string | undefined>;
-  optimizeOrderId: TestResultType<string | undefined>;
-  optimizeOrderValue: TestResultType<string | undefined>;
-  optimizeSessionId: TestResultType<string | undefined>;
-  optimizeUsedCouponCode: TestResultType<string | undefined>;
-
   selfTestIntegration(): void {
     const awinIntegrationDetectedTestResult =
       this.executeIntegrationTypeTestResults();
@@ -1716,35 +1703,6 @@ export default class SelfTester {
     });
   }
 
-  getOptimizeParameters(): PageViewDataType {
-    const pageViewData: PageViewDataType = {};
-    const scriptElement = document.currentScript as HTMLScriptElement | null;
-    console.log(document.currentScript);
-    let scriptUrlParams = undefined;
-    if (scriptElement) {
-      scriptUrlParams = new URL(scriptElement.src).searchParams;
-    }
-    console.log(
-      "window.location.search:",
-      window.location.search,
-      "scriptUrlParams:",
-      scriptUrlParams,
-    );
-    const urlParams = new URLSearchParams(window.location.search);
-    Object.entries(interfaceData.urlParamsData || {}).forEach(
-      ([dataKey, paramKey]) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        const paramValue =
-          urlParams?.get(paramKey) || scriptUrlParams?.get(paramKey);
-        if (paramValue) {
-          pageViewData[dataKey as keyof PageViewDataType] = paramValue;
-        }
-      },
-    );
-    console.log("pageViewData:", pageViewData);
-    return pageViewData;
-  }
-
   async transmitTestResult(): Promise<void> {
     try {
       await fetch("http://localhost:3000/api/testing-plugin", {
@@ -1928,19 +1886,6 @@ export default class SelfTester {
     this.awinIntegrationDetectedTestResult = emptyBooleanTestResult;
     this.awinSaleTrackedTestResult = emptyBooleanTestResult;
     this.awinExecutedTestResult = emptyBooleanTestResult;
-
-    // Optimize & Checkout Products
-
-    this.optimizeId = emptyStringUndefinedTestResult;
-    this.checkoutProductsToken = emptyStringUndefinedTestResult;
-    this.checkoutProductsId = emptyStringUndefinedTestResult;
-    this.profityClientId = emptyStringUndefinedTestResult;
-    this.optimizeTrafficSourceNumber = emptyStringUndefinedTestResult;
-    this.optimizeOrderCurrency = emptyStringUndefinedTestResult;
-    this.optimizeOrderId = emptyStringUndefinedTestResult;
-    this.optimizeOrderValue = emptyStringUndefinedTestResult;
-    this.optimizeSessionId = emptyStringUndefinedTestResult;
-    this.optimizeUsedCouponCode = emptyStringUndefinedTestResult;
   }
 }
 
@@ -2334,36 +2279,3 @@ declare let window: SovSelfTesterWindow;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ExplicitAnyType = any;
-
-interface PageViewDataType {
-  optimizeId?: null | string | number;
-  checkoutProductsToken?: string | number | null;
-  checkoutProductsId?: string | number | null;
-  profityClientId?: string | null;
-  couponCode?: string | number | null;
-}
-
-interface InterfaceDataElementType {
-  optimizeId?: string;
-  checkoutProductsToken?: string;
-  checkoutProductsId?: string;
-  legacy_profityId?: string;
-  couponCode?: string;
-}
-
-interface InterfaceDataType {
-  cookieData?: InterfaceDataElementType;
-  urlParamsData?: InterfaceDataElementType;
-  scriptUrlParamsData?: InterfaceDataElementType;
-}
-
-const interfaceData: InterfaceDataType = {
-  // keys that are used to look in url parameters
-  urlParamsData: {
-    optimizeId: "sovOptimizeId",
-    checkoutProductsToken: "sovReqToken",
-    checkoutProductsId: "sovReqProductId",
-    legacy_profityId: "puid",
-    couponCode: "sovCouponCode",
-  },
-};
