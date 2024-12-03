@@ -1,7 +1,7 @@
 import {
   fullscreenClass,
   overlayId,
-  toggleSovendusOverlayId,
+  openSovendusOverlayId,
 } from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
 
 import { browserAPI } from "./extension-pop-up.js";
@@ -12,15 +12,15 @@ export async function toggleSelfTesterOverlayVisibility(
 ): Promise<void> {
   const result = await browserAPI.scripting.executeScript({
     target: { tabId },
-    args: [toggleSovendusOverlayId, overlayId, fullscreenClass],
+    args: [openSovendusOverlayId, overlayId, fullscreenClass],
     func: (
-      toggleSovendusOverlayId: string,
+      openSovendusOverlayId: string,
       overlayId: string,
       fullscreenClass: string,
     ): boolean => {
       let isVisibleNow: boolean = false;
       const overlay = document.getElementById(overlayId);
-      const overlayToggle = document.getElementById(toggleSovendusOverlayId);
+      const overlayToggle = document.getElementById(openSovendusOverlayId);
       if (overlay && overlayToggle) {
         if (overlayToggle.style.display === "none") {
           overlay.style.display = "block";

@@ -6,7 +6,7 @@ import {
   sovendusOverlayH2Class,
   sovendusOverlayRepeatTestsId,
   testLoadedIFrameId,
-  toggleSovendusOverlayId,
+  openSovendusOverlayId,
 } from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
 
 import { browserAPI } from "../extension-pop-up.js";
@@ -14,13 +14,13 @@ import { browserAPI } from "../extension-pop-up.js";
 export async function hideSelfTesterOverlay(tabId: number): Promise<void> {
   await browserAPI.scripting.executeScript({
     target: { tabId },
-    args: [toggleSovendusOverlayId, overlayId, fullscreenClass],
-    func: (toggleSovendusOverlayId, overlayId, fullscreenClass) => {
+    args: [openSovendusOverlayId, overlayId, fullscreenClass],
+    func: (openSovendusOverlayId, overlayId, fullscreenClass) => {
       const overlay = document.getElementById(overlayId);
       if (overlay) {
         overlay.style.display = "none";
         overlay.classList.remove(fullscreenClass);
-        const overlayToggle = document.getElementById(toggleSovendusOverlayId);
+        const overlayToggle = document.getElementById(openSovendusOverlayId);
         if (overlayToggle) {
           overlayToggle.style.display = "none";
         }
@@ -35,14 +35,14 @@ export async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
   await browserAPI.scripting.executeScript({
     target: { tabId },
     args: [
-      toggleSovendusOverlayId,
+      openSovendusOverlayId,
       overlayId,
       fullscreenClass,
       sovendusOverlayRepeatTestsId,
       testLoadedIFrameId,
     ],
     func: (
-      toggleSovendusOverlayId,
+      openSovendusOverlayId,
       overlayId,
       fullscreenClass,
       sovendusOverlayRepeatTestsId,
@@ -54,7 +54,7 @@ export async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
           overlay.style.display = "block";
           overlay.classList.remove(fullscreenClass);
           const overlayToggle = document.getElementById(
-            toggleSovendusOverlayId,
+            openSovendusOverlayId,
           );
           if (overlayToggle) {
             overlayToggle.style.display = "block";
@@ -93,7 +93,7 @@ export async function showSelfTesterOverlay(tabId: number): Promise<void> {
   await browserAPI.scripting.executeScript({
     target: { tabId },
     args: [
-      toggleSovendusOverlayId,
+      openSovendusOverlayId,
       overlayId,
       fullscreenClass,
       sovendusOverlayFontClass,
@@ -103,7 +103,7 @@ export async function showSelfTesterOverlay(tabId: number): Promise<void> {
       testLoadedIFrameId,
     ],
     func: (
-      toggleSovendusOverlayId,
+      openSovendusOverlayId,
       overlayId,
       fullscreenClass,
       sovendusOverlayFontClass,
@@ -120,7 +120,7 @@ export async function showSelfTesterOverlay(tabId: number): Promise<void> {
           overlay.style.display = "block";
           overlay.classList.add(fullscreenClass);
           const overlayToggle = document.getElementById(
-            toggleSovendusOverlayId,
+            openSovendusOverlayId,
           );
           if (overlayToggle) {
             overlayToggle.style.display = "block";

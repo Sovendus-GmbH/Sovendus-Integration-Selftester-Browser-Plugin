@@ -17,9 +17,11 @@ import { StatusCodes } from "../integration-tester/integration-tester-data-to-sy
 //   // TODO figure out a better solution
 // } from "../npm/@floating-ui/dom@1.6.10/+esm.js";
 import {
+  closeSovendusOverlayId,
   fullscreenClass,
   iFrameStyleId,
   innerOverlayId,
+  openSovendusOverlayId,
   outerOverlayId,
   overlayId,
   sovendusActiveButtonClass,
@@ -33,7 +35,6 @@ import {
   sovendusOverlayTextClass,
   testLoadedIFrameId,
   testNotLoadedIFrameId,
-  toggleSovendusOverlayId,
   tooltipButtonClass,
   tooltipClass,
 } from "./integration-test-overlay-css-vars";
@@ -256,6 +257,33 @@ export class SelfTesterOverlay {
     });
   }
 
+  // createOuterOverlay(): void {
+  //   removeSelfTesterOverlay();
+  //   const overlay = document.createElement("div");
+  //   overlay.id = outerOverlayId;
+  //   overlay.translate = false;
+  //   overlay.innerHTML = `
+  //     ${this.getOuterOverlayStyle()}
+  //     <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${openSovendusOverlayId}">
+  //       <img src="sovendus.png" alt="Toggle Overlay" style="width: 30px; height: 30px;" />
+  //     </button>
+  //     <div id="${overlayId}">
+  //     </div>
+  //   `;
+  //   document.body.appendChild(overlay);
+  //   const toggle = document.getElementById(openSovendusOverlayId);
+  //   if (toggle) {
+  //     toggle.addEventListener("click", toggleOverlay);
+  //   } else {
+  //     // eslint-disable-next-line no-console
+  //     console.error("Failed to add click event to show / hide button");
+  //     void transmitIntegrationError(
+  //       "Failed to add click event to show / hide button",
+  //       { windowParameter: window },
+  //     );
+  //   }
+  // }
+
   createOuterOverlay(): void {
     removeSelfTesterOverlay();
     const overlay = document.createElement("div");
@@ -263,23 +291,85 @@ export class SelfTesterOverlay {
     overlay.translate = false;
     overlay.innerHTML = `
       ${this.getOuterOverlayStyle()}
-      <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${toggleSovendusOverlayId}">
-        Hide
+      <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${openSovendusOverlayId}">
+        <img src="integration-tester/src/sovendus.png" alt="Toggle Overlay" style="width: 30px; height: 30px;" />
+      </button>
+      <button id="${closeSovendusOverlayId}" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">
+        &#10006;
       </button>
       <div id="${overlayId}">
       </div>
     `;
     document.body.appendChild(overlay);
-    const toggle = document.getElementById(toggleSovendusOverlayId);
-    if (toggle) {
+
+    const toggle = document.getElementById(openSovendusOverlayId);
+    const close = document.getElementById(closeSovendusOverlayId);
+
+    if (toggle && close) {
       toggle.addEventListener("click", toggleOverlay);
+      close.addEventListener("click", toggleOverlay);
+      this.makeButtonDraggable(toggle);
     } else {
-      // eslint-disable-next-line no-console
-      console.error("Failed to add click event to show / hide button");
+      console.error("Failed to add click event to show / hide buttons");
       void transmitIntegrationError(
-        "Failed to add click event to show / hide button",
+        "Failed to add click event to show / hide buttons",
         { windowParameter: window },
       );
+    }
+  }
+
+  makeButtonDraggable(button: HTMLElement): void {
+    let isDragging = false;
+    let startX: number;
+    let startY: number;
+
+    const onMouseDown = (e: MouseEvent): void => {
+      isDragging = true;
+      startX = e.clientX - button.offsetLeft;
+      startY = e.clientY - button.offsetTop;
+      e.preventDefault();
+    };
+
+    const onMouseMove = (e: MouseEvent): void => {
+      if (!isDragging) {
+        return;
+      }
+
+      const newX = e.clientX - startX;
+      const newY = e.clientY - startY;
+      const maxX = window.innerWidth - button.offsetWidth;
+      const maxY = window.innerHeight - button.offsetHeight;
+
+      button.style.left = `${Math.max(0, Math.min(newX, maxX))}px`;
+      button.style.top = `${Math.max(0, Math.min(newY, maxY))}px`;
+      button.style.bottom = "auto";
+    };
+
+    const onMouseUp = (): void => {
+      isDragging = false;
+      localStorage.setItem(
+        "buttonPosition",
+        JSON.stringify({
+          left: button.style.left,
+          top: button.style.top,
+        }),
+      );
+    };
+
+    button.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+
+    const savedPosition = localStorage.getItem("buttonPosition");
+    if (savedPosition) {
+      const { left, top } = JSON.parse(savedPosition);
+      button.style.left = left;
+      button.style.top = top;
+      button.style.bottom = "auto";
+    } else {
+      button.style.left = "20px";
+      button.style.bottom = "20px";
+      button.style.top = "auto";
     }
   }
 
@@ -768,7 +858,25 @@ export class SelfTesterOverlay {
             left: 0 !important;
             max-height: 100vh !important;
           }
-          #${toggleSovendusOverlayId} {
+          #${openSovendusOverlayId} {
+            width: 62px !important;
+            height: 62px !important;
+            position: fixed !important;
+            display: none;
+            z-index: 2147483647 !important;
+            border: unset !important;
+            line-height: normal !important;
+            cursor: move;
+            touch-action: none;
+            user-select: none;
+            padding: 0 !important;
+            margin: 0 !important;
+            transition: none !important;
+          }
+          #${openSovendusOverlayId}:active {
+            cursor: grabbing;
+          }
+          #${closeSovendusOverlayId} {
             width: 62px !important;
             height: unset !important;
             position: fixed !important;
@@ -780,18 +888,18 @@ export class SelfTesterOverlay {
             line-height: normal !important;
           }
           @media only screen and (max-width: 700px) {
-            #${overlayId} {
-              left: 0 !important;
-              right: 0 !important;
-              top: 50px !important;
-              padding: 15px 0 15px 0 !important;
-              width: 100vw !important;
-            }
-            #${overlayId}.${fullscreenClass} {
-              width: 100vw !important;
-              max-width: 100vw !important;
-            }
+          #${overlayId} {
+            left: 0 !important;
+            right: 0 !important;
+            top: 50px !important;
+            padding: 15px 0 15px 0 !important;
+            width: 100vw !important;
           }
+          #${overlayId}.${fullscreenClass} {
+            width: 100vw !important;
+            max-width: 100vw !important;
+          }
+        }
         </style>
         `;
   }
@@ -911,17 +1019,36 @@ export function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
   }
 }
 
+// function toggleOverlay(): void {
+//   const overlay = document.getElementById(overlayId);
+//   const toggle = document.getElementById(openSovendusOverlayId);
+//   if (overlay && toggle) {
+//     if (overlay.style.display === "none") {
+//       overlay.style.display = "block";
+//       // toggle.innerText = "Hide";
+//       updateIFrameHeight();
+//     } else {
+//       overlay.style.display = "none";
+//       // toggle.innerText = "Show";
+//     }
+//   }
+// }
+
 function toggleOverlay(): void {
   const overlay = document.getElementById(overlayId);
-  const toggle = document.getElementById(toggleSovendusOverlayId);
-  if (overlay && toggle) {
+  const openButton = document.getElementById(openSovendusOverlayId);
+  const closeButton = document.getElementById(closeSovendusOverlayId);
+
+  if (overlay && openButton && closeButton) {
     if (overlay.style.display === "none") {
       overlay.style.display = "block";
-      toggle.innerText = "Hide";
+      openButton.style.display = "none";
+      closeButton.style.display = "block";
       updateIFrameHeight();
     } else {
       overlay.style.display = "none";
-      toggle.innerText = "Show";
+      openButton.style.display = "block";
+      closeButton.style.display = "none";
     }
   }
 }

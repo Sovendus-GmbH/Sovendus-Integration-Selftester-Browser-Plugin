@@ -1,6 +1,6 @@
 import {
   outerOverlayId,
-  toggleSovendusOverlayId,
+  openSovendusOverlayId,
 } from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
 
 import type SelfTester from "../../integration-tester/integration-tester.js";
@@ -59,13 +59,13 @@ export async function checkIfSovendusIsDetected(
   const result = await browserAPI.scripting.executeScript({
     target: { tabId },
     world: "MAIN",
-    args: [outerOverlayId, toggleSovendusOverlayId],
+    args: [outerOverlayId, openSovendusOverlayId],
     func: (
       outerOverlayId,
-      toggleSovendusOverlayId,
+      openSovendusOverlayId,
     ): { sovendusIntegrated: boolean; overlayVisible: boolean } => {
       const sovendusIntegrated = !!document.getElementById(outerOverlayId);
-      const overlayToggle = document.getElementById(toggleSovendusOverlayId);
+      const overlayToggle = document.getElementById(openSovendusOverlayId);
       const overlayVisible = overlayToggle?.style.display !== "none";
       return { sovendusIntegrated, overlayVisible };
     },

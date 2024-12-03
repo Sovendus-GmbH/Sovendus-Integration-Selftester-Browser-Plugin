@@ -329,6 +329,25 @@ function getSovendusIntegrationScript({
         ? awinMasterTagScript
         : ""
     }
+    ${
+      testOptions?.regular?.checkoutProductsJsScript
+        ? testOptions?.regular?.landingPage
+          ? `
+          var script = document.createElement("script");
+          script.type = "text/javascript";
+          script.async = true;
+          script.setAttribute('src', "https://www.sovopt.com/test-optimizeId");
+          document.body.appendChild(script);
+        `
+          : `
+          var script = document.createElement("script");
+          script.type = "text/javascript";
+          script.async = true;
+          script.setAttribute('src', "https://www.sovopt.com/test-optimizeId/conversion/?ordervalue=${sovAppData.sovIframes[0]?.orderValue}&ordernumber=${sovAppData.sovIframes[0]?.orderId}&vouchercode=${sovAppData.sovIframes[0]?.usedCouponCode}&email=${sovAppData.sovConsumer?.consumerEmail}&subtext=123");
+          document.body.appendChild(script);
+        `
+        : ""
+    }
   `;
   return integrationScript;
 }

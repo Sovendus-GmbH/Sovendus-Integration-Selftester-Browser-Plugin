@@ -1038,6 +1038,15 @@ export default class SelfTester {
     return false;
   }
 
+  pixelExists(): boolean {
+    const isImagePresent =
+      document.querySelector(
+        'img[src^="https://press-order-api.sovendus.com/ext/"]',
+      ) !== null;
+
+    return isImagePresent;
+  }
+
   executeOtherSourceFlexibleIFrameJSTest(
     flexibleIFrameJs: HTMLScriptElement | null,
   ): {
@@ -1637,7 +1646,8 @@ export default class SelfTester {
       !(
         this.sovIframesOrConsumerExists() ||
         this.awinIntegrationDetected() ||
-        this.landingPageOrJourneyJSExists()
+        this.landingPageOrJourneyJSExists() ||
+        this.pixelExists()
       )
     ) {
       await new Promise((resolve) => setTimeout(resolve, 300));

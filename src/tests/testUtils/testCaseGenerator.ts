@@ -248,6 +248,8 @@ export interface TestOptionsType {
     removeSovendusJs?: boolean | undefined;
     addConsumerIFrameOneSecTimeout?: boolean | undefined;
     useAwinMasterTagInRegularIntegration?: boolean | undefined;
+    checkoutProductsJsScript?: boolean | undefined;
+    landingPage?: boolean | undefined;
   };
 }
 
@@ -291,4 +293,6 @@ export type SovSelfTesterKeys =
   | "awinIntegrationDetectedTestResult"
   | "awinSaleTrackedTestResult"
   | "awinExecutedTestResult"
-  | "isOverlayOrStickyBanner";
+  | "isOverlayOrStickyBanner"
+  | "thankYouPageDetection"
+  | "landingPageDetection";
