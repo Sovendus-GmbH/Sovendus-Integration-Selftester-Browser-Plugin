@@ -1,5 +1,5 @@
-import type { ExplicitAnyType } from "./integration-tester";
-import { safeURI, WarningOrFailTestResult } from "./integration-tester";
+import type { ExplicitAnyType } from "./integrationTester";
+import { safeURI, WarningOrFailTestResult } from "./integrationTester";
 import type { StatusMessageKeyTypes } from "./integration-tester-data-to-sync-with-dev-hub";
 import { StatusCodes } from "./integration-tester-data-to-sync-with-dev-hub";
 

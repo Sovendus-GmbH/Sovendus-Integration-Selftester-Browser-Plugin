@@ -3,9 +3,9 @@ import {
   outerOverlayId,
 } from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
 
-import type SelfTester from "../../integration-tester/integration-tester.js";
-import { transmitIntegrationError } from "../../integration-tester/integration-tester.js";
-import { browserAPI } from "../extension-pop-up.js";
+import type SelfTester from "../../integration-tester/integrationTester.js";
+import { transmitIntegrationError } from "../../integration-tester/integrationTester.js";
+import { browserAPI } from "../extensionPopUp.js";
 
 export async function copyScreenshotsToClipboard(
   screenshotContainer: HTMLCanvasElement,

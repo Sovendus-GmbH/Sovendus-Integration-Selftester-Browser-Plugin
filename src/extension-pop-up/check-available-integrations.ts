@@ -1,4 +1,4 @@
-import { browserAPI } from "./extension-pop-up.js";
+import { browserAPI } from "./extensionPopUp.js";
 
 export async function checkAvailableIntegrations(tabId: number): Promise<void> {
   await browserAPI.scripting.executeScript({

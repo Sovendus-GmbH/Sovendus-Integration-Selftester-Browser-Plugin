@@ -6,7 +6,7 @@ import {
   sovendusOverlayH3Class,
 } from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
 
-import { transmitIntegrationError } from "../integration-tester/integration-tester.js";
+import { transmitIntegrationError } from "../integration-tester/integrationTester.js";
 
 const overlay = document.getElementById(
   "outerSovendusIntegrationMethodCheckerOverlay",

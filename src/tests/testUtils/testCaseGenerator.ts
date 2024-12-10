@@ -1,4 +1,4 @@
-import type SelfTester from "@src/integration-tester/integration-tester";
+import type SelfTester from "@src/integration-tester/integrationTester";
 import type { StatusMessageKeyTypes } from "@src/integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import { StatusCodes } from "@src/integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import type { WebDriver } from "selenium-webdriver";

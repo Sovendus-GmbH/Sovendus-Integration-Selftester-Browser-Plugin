@@ -1,5 +1,5 @@
-import type SelfTester from "@src/integration-tester/integration-tester";
-import type { ExplicitAnyType } from "@src/integration-tester/integration-tester";
+import type SelfTester from "@src/integration-tester/integrationTester";
+import type { ExplicitAnyType } from "@src/integration-tester/integrationTester";
 import { testLoadedIFrameId } from "@src/integration-tester-ui/integration-test-overlay-css-vars";
 import { platform } from "os";
 import { resolve } from "path";

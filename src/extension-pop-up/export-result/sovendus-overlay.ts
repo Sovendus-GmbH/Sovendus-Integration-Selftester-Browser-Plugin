@@ -1,6 +1,6 @@
-import type SelfTester from "../../integration-tester/integration-tester.js";
-import { transmitIntegrationError } from "../../integration-tester/integration-tester.js";
-import { browserAPI } from "../extension-pop-up.js";
+import type SelfTester from "../../integration-tester/integrationTester.js";
+import { transmitIntegrationError } from "../../integration-tester/integrationTester.js";
+import { browserAPI } from "../extensionPopUp.js";
 
 export async function checkStickyBannerAndOverlayIntegration(
   tabId: number,

@@ -1,4 +1,4 @@
-import { executeTests, repeatTestsOnSPA } from "./integration-test-overlay.js";
+import { executeTests, repeatTestsOnSPA } from "./integrationTestOverlay.js";
 
 void (async (): Promise<void> => {
   await repeatTestsOnSPA(async () => {

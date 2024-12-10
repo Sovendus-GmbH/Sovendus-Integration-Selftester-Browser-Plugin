@@ -1,9 +1,9 @@
 // import type { autoPlacement, computePosition } from "@floating-ui/dom";
 
-import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import type { SovSelfTesterWindow } from "../integration-tester/integrationTester";
 import SelfTester from "../integration-tester/integrationTester";
 import { transmitIntegrationError } from "../integration-tester/integrationTester";
+import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
 // TODO
 // import {
 //   autoPlacement as autoPlacementFromCDN,
@@ -19,6 +19,7 @@ import {
   iFrameStyleId,
   innerOverlayId,
   openSovendusOverlayId,
+  outerMiniOverlayId,
   outerOverlayId,
   overlayId,
   sovendusActiveButtonClass,
