@@ -1,9 +1,13 @@
 // import type { autoPlacement, computePosition } from "@floating-ui/dom";
 
+import type { JSX } from "react";
+import React from "react";
+import ReactDOM from "react-dom/client";
+
+import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import type { SovSelfTesterWindow } from "../integration-tester/integrationTester";
 import SelfTester from "../integration-tester/integrationTester";
 import { transmitIntegrationError } from "../integration-tester/integrationTester";
-import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
 // TODO
 // import {
 //   autoPlacement as autoPlacementFromCDN,
@@ -19,9 +23,9 @@ import {
   iFrameStyleId,
   innerOverlayId,
   openSovendusOverlayId,
-  outerMiniOverlayId,
   outerOverlayId,
   overlayId,
+  overlayRootId,
   sovendusActiveButtonClass,
   sovendusOverlayButtonClass,
   sovendusOverlayErrorClass,
@@ -38,15 +42,31 @@ import {
   tooltipClass,
 } from "./integration-test-overlay-css-vars";
 
-export async function executeTests(): Promise<void> {
+export function executeTests(): void {
+  const testerContainer =
+    document.getElementById(overlayRootId) || document.createElement("div");
+  testerContainer.id = overlayRootId;
+  document.body.appendChild(testerContainer);
+
+  const root = ReactDOM.createRoot(testerContainer);
+  root.render(
+    <React.StrictMode>
+      <Main />
+    </React.StrictMode>,
+  );
+}
+
+export function Main(): JSX.Element {
   const sovSelfTester = new SelfTester();
   window.sovSelfTester = sovSelfTester;
-  await sovSelfTester.waitForSovendusIntegrationDetected();
-  const overlay = new SelfTesterOverlay();
-  overlay.createLoadingOverlay(executeTests);
-  await sovSelfTester.waitForSovendusIntegrationToBeLoaded();
-  sovSelfTester.selfTestIntegration();
-  overlay.createOverlay(sovSelfTester, executeTests);
+
+  // await sovSelfTester.waitForSovendusIntegrationDetected();
+  // const overlay = new SelfTesterOverlay();
+  // overlay.createLoadingOverlay(executeTests);
+  // await sovSelfTester.waitForSovendusIntegrationToBeLoaded();
+  // sovSelfTester.selfTestIntegration();
+  // overlay.createOverlay(sovSelfTester, executeTests);
+  return <>sdfkjnsdkfjskfjksdjfsdkfl</>;
 }
 
 export async function repeatTestsOnSPA(

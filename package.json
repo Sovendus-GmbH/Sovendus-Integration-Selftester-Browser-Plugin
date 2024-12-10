@@ -18,7 +18,7 @@
     "build-test-zips": "yarn run lint && yarn run build && yarn run zip-builds-for-tests",
     "copy-files": "yarn run copy-to-ff && yarn run copy-browser-specific-files",
     "copy-to-ff": "cpy build/chrome/**/* build/firefox",
-    "copy-browser-specific-files": "cpy src/chrome/* build/chrome/ && cpy src/firefox/* build/firefox/**",
+    "copy-browser-specific-files": "cd src && cpy chrome build && cpy firefox build",
     "zip-builds": "zip-build build/chrome release_zips -t 'chrome-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%' && zip-build build/firefox release_zips -t 'firefox-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%'",
     "zip-builds-for-tests": "rimraf test_zips && zip-build build/chrome test_zips -t 'chrome-test-sovendus-integration_TESTING.crx' && zip-build build/firefox test_zips -t 'firefox-test-sovendus-integration_TESTING.xpi'"
   },
