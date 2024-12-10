@@ -1,12 +1,12 @@
 import {
   fullscreenClass,
+  openSovendusOverlayId,
   overlayId,
   sovendusOverlayFontClass,
   sovendusOverlayH1Class,
   sovendusOverlayH2Class,
   sovendusOverlayRepeatTestsId,
   testLoadedIFrameId,
-  openSovendusOverlayId,
 } from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
 
 import { browserAPI } from "../extension-pop-up.js";
@@ -53,9 +53,7 @@ export async function restoreSelfTesterOverlay(tabId: number): Promise<void> {
         if (overlay) {
           overlay.style.display = "block";
           overlay.classList.remove(fullscreenClass);
-          const overlayToggle = document.getElementById(
-            openSovendusOverlayId,
-          );
+          const overlayToggle = document.getElementById(openSovendusOverlayId);
           if (overlayToggle) {
             overlayToggle.style.display = "block";
           }
@@ -119,9 +117,7 @@ export async function showSelfTesterOverlay(tabId: number): Promise<void> {
         if (overlay) {
           overlay.style.display = "block";
           overlay.classList.add(fullscreenClass);
-          const overlayToggle = document.getElementById(
-            openSovendusOverlayId,
-          );
+          const overlayToggle = document.getElementById(openSovendusOverlayId);
           if (overlayToggle) {
             overlayToggle.style.display = "block";
           }

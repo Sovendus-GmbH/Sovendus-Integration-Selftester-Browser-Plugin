@@ -1,6 +1,6 @@
 import {
-  outerOverlayId,
   openSovendusOverlayId,
+  outerOverlayId,
 } from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
 
 import type SelfTester from "../../integration-tester/integration-tester.js";

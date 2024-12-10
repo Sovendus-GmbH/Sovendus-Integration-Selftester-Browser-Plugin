@@ -1,7 +1,7 @@
 import {
   fullscreenClass,
-  overlayId,
   openSovendusOverlayId,
+  overlayId,
 } from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
 
 import { browserAPI } from "./extension-pop-up.js";

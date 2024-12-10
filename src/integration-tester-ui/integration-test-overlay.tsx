@@ -1,9 +1,6 @@
 // import type { autoPlacement, computePosition } from "@floating-ui/dom";
 
-import type {
-  ActiveDIV,
-  SovSelfTesterWindow,
-} from "../integration-tester/integration-tester";
+import type { SovSelfTesterWindow } from "../integration-tester/integration-tester";
 import SelfTester from "../integration-tester/integration-tester";
 import { transmitIntegrationError } from "../integration-tester/integration-tester";
 import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
@@ -22,6 +19,7 @@ import {
   iFrameStyleId,
   innerOverlayId,
   openSovendusOverlayId,
+  outerMiniOverlayId,
   outerOverlayId,
   overlayId,
   sovendusActiveButtonClass,
@@ -31,6 +29,7 @@ import {
   sovendusOverlayH1Class,
   sovendusOverlayH2Class,
   sovendusOverlayH3Class,
+  sovendusOverlayOpenButtonClass,
   sovendusOverlayRepeatTestsId,
   sovendusOverlayTextClass,
   testLoadedIFrameId,
@@ -121,7 +120,6 @@ export class SelfTesterOverlay {
                 <button id="button-CBVN" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">CB & VN <span class="button-checkmark" style="display: inline;">✔️</span></button>
                 <button id="button-Optimize" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">Optimize <span class="button-checkmark" style="display: none;">✔️</span></button>
                 <button id="button-Checkout" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">Checkout Products <span class="button-checkmark" style="display: none;">✔️</span></button>
-                <button id="button-IntegrationInfo" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">Integration Information <span class="button-checkmark" style="display: none;">✔️</span></button>
             </div>
 
             ${this.createInnerInnerOverlay(selfTester)}
@@ -257,33 +255,6 @@ export class SelfTesterOverlay {
     });
   }
 
-  // createOuterOverlay(): void {
-  //   removeSelfTesterOverlay();
-  //   const overlay = document.createElement("div");
-  //   overlay.id = outerOverlayId;
-  //   overlay.translate = false;
-  //   overlay.innerHTML = `
-  //     ${this.getOuterOverlayStyle()}
-  //     <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${openSovendusOverlayId}">
-  //       <img src="sovendus.png" alt="Toggle Overlay" style="width: 30px; height: 30px;" />
-  //     </button>
-  //     <div id="${overlayId}">
-  //     </div>
-  //   `;
-  //   document.body.appendChild(overlay);
-  //   const toggle = document.getElementById(openSovendusOverlayId);
-  //   if (toggle) {
-  //     toggle.addEventListener("click", toggleOverlay);
-  //   } else {
-  //     // eslint-disable-next-line no-console
-  //     console.error("Failed to add click event to show / hide button");
-  //     void transmitIntegrationError(
-  //       "Failed to add click event to show / hide button",
-  //       { windowParameter: window },
-  //     );
-  //   }
-  // }
-
   createOuterOverlay(): void {
     removeSelfTesterOverlay();
     const overlay = document.createElement("div");
@@ -291,8 +262,8 @@ export class SelfTesterOverlay {
     overlay.translate = false;
     overlay.innerHTML = `
       ${this.getOuterOverlayStyle()}
-      <button class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}" id="${openSovendusOverlayId}">
-        <img src="integration-tester/src/sovendus.png" alt="Toggle Overlay" style="width: 30px; height: 30px;" />
+      <button class="${sovendusOverlayFontClass} ${sovendusOverlayOpenButtonClass}" id="${openSovendusOverlayId}">
+        <img src="/sovendus.png?v=1" alt="Toggle Overlay" />
       </button>
       <button id="${closeSovendusOverlayId}" class="${sovendusOverlayFontClass} ${sovendusOverlayButtonClass}">
         &#10006;
@@ -772,6 +743,12 @@ export class SelfTesterOverlay {
           #${innerOverlayId} a:hover {
             color: #15669d !important;
           }
+          .${sovendusOverlayOpenButtonClass} {
+              background: transparent !important;
+              border: none;
+              padding: 0;
+              cursor: pointer;
+          }
           .${sovendusOverlayButtonClass} {
             background: #293049 !important;
             color: #fff !important;
@@ -859,8 +836,9 @@ export class SelfTesterOverlay {
             max-height: 100vh !important;
           }
           #${openSovendusOverlayId} {
-            width: 62px !important;
-            height: 62px !important;
+            background: transparent !important;
+            width: 60px !important;
+            height: 60px !important;
             position: fixed !important;
             display: none;
             z-index: 2147483647 !important;
@@ -872,6 +850,11 @@ export class SelfTesterOverlay {
             padding: 0 !important;
             margin: 0 !important;
             transition: none !important;
+          }
+          #${openSovendusOverlayId} img {
+              display: block;
+              width: 60px;
+              height: 60px;
           }
           #${openSovendusOverlayId}:active {
             cursor: grabbing;
@@ -1018,21 +1001,6 @@ export function updateIFrameHeight(iframe?: HTMLIFrameElement): void {
     iFrameStyle.innerHTML = `#${testLoadedIFrameId} { height: ${innerOverlay.scrollHeight}px !important; }`;
   }
 }
-
-// function toggleOverlay(): void {
-//   const overlay = document.getElementById(overlayId);
-//   const toggle = document.getElementById(openSovendusOverlayId);
-//   if (overlay && toggle) {
-//     if (overlay.style.display === "none") {
-//       overlay.style.display = "block";
-//       // toggle.innerText = "Hide";
-//       updateIFrameHeight();
-//     } else {
-//       overlay.style.display = "none";
-//       // toggle.innerText = "Show";
-//     }
-//   }
-// }
 
 function toggleOverlay(): void {
   const overlay = document.getElementById(overlayId);

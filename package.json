@@ -12,7 +12,7 @@
     "clean": "rimraf build",
     "lint": "eslint src/**/*.ts --no-ignore --fix",
     "test": "jest --silent=false",
-    "test-it": "jest --silent=false -t=consumerDateOfBirth",
+    "test-it": "jest --silent=false -t=PageDetection",
     "build-and-test": "yarn run build-test-zips && yarn run test",
     "build-and-test-it": "yarn run build-test-zips && yarn run test-it",
     "build-test-zips": "yarn run lint && yarn run build && yarn run zip-builds-for-tests",
