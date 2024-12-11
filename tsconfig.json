@@ -11,11 +11,11 @@
     "allowJs": true,
     "allowArbitraryExtensions": true,
     "outDir": "build/chrome",
-    "rootDir": "src",
+    "rootDir": ".",
     "baseUrl": ".",
-    "paths": {
-      "@src/*": ["src/*"]
-    },
+    // "paths": {
+    //   "@src/*": ["src/*"]
+    // },
     // Strict Checks
     "strict": true, // Enable all strict type-checking options
     "noImplicitAny": true, // Raise error on expressions and declarations with an implied "any" type
@@ -46,6 +46,12 @@
     "suppressImplicitAnyIndexErrors": false,
     "noStrictGenericChecks": false
   },
-  "include": ["src/", "src/tests", "vite.config.ts", "build.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/extension-pop-up/**/*.ts",
+    "src/tests",
+    "vite.config.ts"
+  ],
   "exclude": ["src/chrome", "node_modules", "src/firefox"]
 }

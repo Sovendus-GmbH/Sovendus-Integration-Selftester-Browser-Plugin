@@ -1,7 +1,7 @@
-import { checkAvailableIntegrations } from "./check-available-integrations.js";
-import { exportResultsScreenshot } from "./export-result/export-result.js";
-import { checkIfSovendusIsDetected } from "./export-result/utils.js";
-import { toggleSelfTesterOverlayVisibility } from "./toggle-overlay.js";
+import { checkAvailableIntegrations } from "./check-available-integrations";
+import { exportResultsScreenshot } from "./export-result/export-result";
+import { checkIfSovendusIsDetected } from "./export-result/utils";
+import { toggleSelfTesterOverlayVisibility } from "./toggle-overlay";
 
 document.addEventListener("DOMContentLoaded", () => {
   const captureButton = document.getElementById(
@@ -95,6 +95,6 @@ function getTabIdFromTabs(
   throw new Error(`Failed to get tabId for ${functionName}`);
 }
 
-export const browserAPI = (
+export const browserAPI: typeof chrome = (
   typeof browser === "undefined" ? chrome : browser
 ) as typeof chrome;

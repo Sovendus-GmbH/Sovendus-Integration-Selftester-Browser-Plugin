@@ -1,6 +1,6 @@
 {
   "name": "sovendus-integration-tester",
-  "version": "1.7.0",
+  "version": "2.0.0",
   "description": "Sovendus integration tester chrome & firefox extensions",
   "private": false,
   "scripts": {
@@ -25,11 +25,13 @@
   "author": "Marcus Brandstaetter - Sovendus GmbH",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@floating-ui/dom": "^1.6.10",
+    "lucide-react": "^0.468.0",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
   "devDependencies": {
-    "@floating-ui/dom": "^1.6.10",
     "@types/chrome": "^0.0.270",
     "@types/crypto-js": "^4.2.2",
     "@types/firefox-webext-browser": "^120.0.4",

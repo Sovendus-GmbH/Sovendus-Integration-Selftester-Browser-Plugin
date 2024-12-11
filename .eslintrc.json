@@ -14,7 +14,8 @@
   "parserOptions": {
     "ecmaVersion": 12,
     "sourceType": "module",
-    "project": "./integration-tester/tsconfig.json"
+    "project": "./integration-tester/tsconfig.json",
+    "tsconfigRootDir": "."
   },
   "plugins": [
     "simple-import-sort",
@@ -47,10 +48,7 @@
     "no-console": "warn", // Warn when console statements are used
     "no-debugger": "error", // Disallow the use of debugger
     "curly": "error", // Require consistent use of curly braces for blocks
-    "eqeqeq": [
-      "error",
-      "always"
-    ], // Enforce strict equality checks (=== and !==)
+    "eqeqeq": ["error", "always"], // Enforce strict equality checks (=== and !==)
     "no-else-return": "error", // Disallow return before else
     "no-empty-function": "error", // Disallow empty functions
     "no-implied-eval": "error", // Disallow implied eval() through setTimeout, setInterval, etc.
@@ -63,21 +61,12 @@
         "avoidEscape": true
       }
     ], // Enforce double quotes, allow single quotes if escaping
-    "jsx-quotes": [
-      "error",
-      "prefer-double"
-    ], // Enforce double quotes in JSX attributes
+    "jsx-quotes": ["error", "prefer-double"], // Enforce double quotes in JSX attributes
     // Import rules
     "import/order": [
       "error",
       {
-        "groups": [
-          [
-            "builtin",
-            "external",
-            "internal"
-          ]
-        ]
+        "groups": [["builtin", "external", "internal"]]
       }
     ] // Enforce consistent import order
   }

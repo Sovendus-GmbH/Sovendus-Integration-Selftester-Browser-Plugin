@@ -69,9 +69,9 @@ export default defineConfig(async () => {
       cssCodeSplit: true,
     },
     resolve: {
-      alias: {
-        "@src": path.resolve(__dirname, "src"),
-      },
+      // alias: {
+      //   "@src": path.resolve(__dirname, "src"),
+      // },
     },
     server: {
       open: true,

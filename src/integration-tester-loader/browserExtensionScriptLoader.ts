@@ -3,7 +3,7 @@ function injectScript(): void {
   script.setAttribute("type", "text/javascript");
   script.setAttribute(
     "src",
-    chrome.runtime.getURL("/integration-tester-ui/browserExtensionUiLoader.js"),
+    chrome.runtime.getURL("/browserExtensionLoader.js"),
   );
   script.type = "module";
   document.body.appendChild(script);

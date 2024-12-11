@@ -1,4 +1,3 @@
-export const overlayRootId = "sovendusOverlayRoot";
 export const overlayId = "sovendusOverlay";
 export const innerOverlayId = "sovendusInnerOverlay";
 export const testLoadedIFrameId = "sovendusTestLoadedIFrameId";

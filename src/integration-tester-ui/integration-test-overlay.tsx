@@ -1,18 +1,9 @@
-// import type { autoPlacement, computePosition } from "@floating-ui/dom";
+import { autoPlacement, computePosition } from "@floating-ui/dom";
 
 import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import type { SovSelfTesterWindow } from "../integration-tester/integrationTester";
-import SelfTester from "../integration-tester/integrationTester";
+import type SelfTester from "../integration-tester/integrationTester";
 import { transmitIntegrationError } from "../integration-tester/integrationTester";
-// TODO
-// import {
-//   autoPlacement as autoPlacementFromCDN,
-//   computePosition as computePositionFromCDN,
-//   // downloaded from https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.10/+esm
-//   // and adjusted imports from +esm to +esm.js
-//   // and removed source maps
-//   // TODO figure out a better solution
-// } from "../npm/@floating-ui/dom@1.6.10/+esm.js";
 import {
   closeSovendusOverlayId,
   fullscreenClass,
@@ -36,38 +27,6 @@ import {
   tooltipButtonClass,
   tooltipClass,
 } from "./integration-test-overlay-css-vars";
-
-export async function executeTests(): Promise<void> {
-  const sovSelfTester = new SelfTester();
-  window.sovSelfTester = sovSelfTester;
-  await sovSelfTester.waitForSovendusIntegrationDetected();
-  const overlay = new SelfTesterOverlay();
-  overlay.createLoadingOverlay(executeTests);
-  await sovSelfTester.waitForSovendusIntegrationToBeLoaded();
-  sovSelfTester.selfTestIntegration();
-  overlay.createOverlay(sovSelfTester, executeTests);
-}
-
-export async function repeatTestsOnSPA(
-  tests: () => Promise<void>,
-): Promise<void> {
-  let visitedPath = "";
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    if (visitedPath !== window.location.pathname) {
-      visitedPath = window.location.pathname;
-      await tests();
-    }
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  }
-}
-
-export function removeSelfTesterOverlay(): void {
-  document.getElementById(outerOverlayId)?.remove();
-  if (window.sovSelfTester) {
-    delete window.sovSelfTester;
-  }
-}
 
 export class SelfTesterOverlay {
   iframe!: HTMLIFrameElement;
@@ -926,27 +885,17 @@ export class SelfTesterOverlay {
     for (const item of tooltipInfoIcons) {
       if (item.nextElementSibling) {
         const tooltip = item.nextElementSibling as HTMLElement;
-
-        const showTooltip = (): void => {
+        const showTooltip = async (): Promise<void> => {
           tooltip.style.display = "block";
-
-          // TODO
-          // const { x, y } =
-          //   await // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-          //   (computePositionFromCDN as typeof computePosition)(item, tooltip, {
-          //     middleware: [
-          //       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-          //       (autoPlacementFromCDN as typeof autoPlacement)(),
-          //     ],
-          //   });
-          // tooltip.style.left = `${x}px`;
-          // tooltip.style.top = `${y}px`;
+          const { x, y } = await computePosition(item, tooltip, {
+            middleware: [autoPlacement()],
+          });
+          tooltip.style.left = `${x}px`;
+          tooltip.style.top = `${y}px`;
         };
-
         const hideTooltip = (): void => {
           tooltip.style.display = "none";
         };
-
         [
           ["mouseenter", showTooltip],
           ["mouseleave", hideTooltip],

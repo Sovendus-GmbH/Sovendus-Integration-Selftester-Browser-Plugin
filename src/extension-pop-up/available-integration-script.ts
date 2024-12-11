@@ -1,12 +1,11 @@
+import { transmitIntegrationError } from "../integration-tester/integrationTester.js";
 import {
   sovendusOverlayErrorClass,
   sovendusOverlayFontClass,
   sovendusOverlayH1Class,
   sovendusOverlayH2Class,
   sovendusOverlayH3Class,
-} from "@src/integration-tester-ui/integration-test-overlay-css-vars.js";
-
-import { transmitIntegrationError } from "../integration-tester/integrationTester.js";
+} from "../integration-tester-ui/integration-test-overlay-css-vars.js";
 
 const overlay = document.getElementById(
   "outerSovendusIntegrationMethodCheckerOverlay",
