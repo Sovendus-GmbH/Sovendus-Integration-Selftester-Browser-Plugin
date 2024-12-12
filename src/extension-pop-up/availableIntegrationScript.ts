@@ -1,11 +1,11 @@
-import { transmitIntegrationError } from "../integration-tester/integrationTester.js";
+import { transmitIntegrationError } from "../integration-tester/integrationTester";
 import {
   sovendusOverlayErrorClass,
   sovendusOverlayFontClass,
   sovendusOverlayH1Class,
   sovendusOverlayH2Class,
   sovendusOverlayH3Class,
-} from "../integration-tester-ui/integration-test-overlay-css-vars.js";
+} from "../integration-tester-ui/integration-test-overlay-css-vars";
 
 const overlay = document.getElementById(
   "outerSovendusIntegrationMethodCheckerOverlay",
@@ -120,8 +120,8 @@ if (!overlay) {
         shopSystemName,
         cmsName,
         webFrameworkName,
-        statusCode,
-        errorMessage,
+        // statusCode,
+        // errorMessage,
       } = this.getAvailableMethodsFromResponse(data);
       let availableMethods: string = "";
       if (shopSystemName && this.supportedSystems[shopSystemName]) {
@@ -144,26 +144,26 @@ if (!overlay) {
       //   " Integration"
       // )}
       availableMethodsText = `
-  <h3 class='${sovendusOverlayFontClass} ${sovendusOverlayH3Class}' style="border: 1px solid; border-radius: 8px; padding: 8px; text-align: center;">
-    Note that the detection can be wrong and incomplete!
-  </h3>
-  <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">The following integration methods are available:</h2>
-  <h3 class='${sovendusOverlayFontClass} ${sovendusOverlayH3Class}'>
-    Generic Integration
-  </h3>
-  <a href='${this.supportedSystems.generic.docsLink}' target='_blank'>
-  ${this.supportedSystems.generic.name} Integration Documentation
-  </a>
-  ${availableMethods}
-  ${gtmAvailable ? this.formatIntegrationOption(this.supportedSystems.gtm) : ""}
-`;
-      console.log("CMS detection result:", {
-        shopSystemName,
-        cmsName,
-        webFrameworkName,
-        statusCode,
-        errorMessage,
-      });
+        <h3 class='${sovendusOverlayFontClass} ${sovendusOverlayH3Class}' style="border: 1px solid; border-radius: 8px; padding: 8px; text-align: center;">
+          Note that the detection can be wrong and incomplete!
+        </h3>
+        <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">The following integration methods are available:</h2>
+        <h3 class='${sovendusOverlayFontClass} ${sovendusOverlayH3Class}'>
+          Generic Integration
+        </h3>
+        <a href='${this.supportedSystems.generic.docsLink}' target='_blank'>
+        ${this.supportedSystems.generic.name} Integration Documentation
+        </a>
+        ${availableMethods}
+        ${gtmAvailable ? this.formatIntegrationOption(this.supportedSystems.gtm) : ""}
+      `;
+      // console.log("CMS detection result:", {
+      //   shopSystemName,
+      //   cmsName,
+      //   webFrameworkName,
+      //   statusCode,
+      //   errorMessage,
+      // });
 
       return availableMethodsText;
     }

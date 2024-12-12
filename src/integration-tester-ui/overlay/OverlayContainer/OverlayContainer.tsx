@@ -2,9 +2,9 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { DndContext } from "@dnd-kit/core";
 import type { Dispatch, JSX, SetStateAction } from "react";
 import React, { useEffect, useState } from "react";
-import type { IntegrationDetectorData } from "src/integration-detector/integrationDetector";
 
-import { UiState } from "../../integration-tester-loader/integrationTesterLoader";
+import type { IntegrationDetectorData } from "../../../integration-detector/integrationDetector";
+import { UiState } from "../../../integration-tester-loader/integrationTesterLoader";
 import { DraggableOverlay } from "./Overlay";
 
 export function DraggableOverlayContainer({

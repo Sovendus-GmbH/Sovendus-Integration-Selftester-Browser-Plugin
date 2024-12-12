@@ -1,18 +1,18 @@
-import { browserAPI } from "../extensionPopUp.js";
+import { browserAPI } from "../extensionPopUp";
 import {
   hideSelfTesterOverlay,
   restoreSelfTesterOverlay,
   showSelfTesterOverlay,
-} from "./integration-test-overlay.js";
-import { scrollDownToNextSection, scrollToTop } from "./scrolling.js";
+} from "./integration-test-overlay";
+import { scrollDownToNextSection, scrollToTop } from "./scrolling";
 import {
   checkStickyBannerAndOverlayIntegration,
   hideOrShowStickyBannerAndOverlay,
-} from "./sovendus-overlay.js";
+} from "./sovendus-overlay";
 import {
   addDelayBetweenScreenshotOnChrome,
   copyScreenshotsToClipboard,
-} from "./utils.js";
+} from "./utils";
 
 export async function exportResultsScreenshot(
   tabId: number,

@@ -1,4 +1,4 @@
-import { startIntegrationTester } from "./integrationTesterLoader.js";
+import { startIntegrationTester } from "./integrationTesterLoader";
 
 // TODO add blacklist storage
 void startIntegrationTester([]);

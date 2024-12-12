@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Sovendus Integration Tester</title>
+</head>
+
+<body>
+  <script>
+    window.sovIframes = window.sovIframes || [];
+    window.sovIframes.push({
+      trafficSourceNumber: 7849,
+      trafficMediumNumber: 15,
+      sessionId: "asdas",
+      timestamp: Math.floor(Date.now() / 1000),
+      orderId: "13245",
+      orderValue: "1324",
+      orderCurrency: "EUR",
+      usedCouponCode: "1324",
+      iframeContainerId: "sovendus-container",
+      integrationType: "integration-preview-1.0.0",
+    });
+
+    window.sovConsumer = {
+      consumerSalutation: "",
+      consumerFirstName: "",
+      consumerLastName: "",
+      consumerEmail: "",
+      consumerCountry: "",
+      consumerZipcode: "",
+      consumerPhone: "",
+      consumerYearOfBirth: "",
+      consumerDateOfBirth: "",
+      consumerStreet: "",
+      consumerStreetNumber: "",
+      consumerCity: "",
+    };
+  </script>
+  <script src="./js/integration-tester-loader.js" type="module" crossorigin="anonymous"></script>
+  <script src="./js/thank-you.js" type="module" crossorigin="anonymous"></script>
+  <div id="sovendus-container"></div>
+</body>
+
+</html>

@@ -3,12 +3,12 @@ import type { Transform } from "@dnd-kit/utilities";
 import type { CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 import React from "react";
 
-import { maxZIndex } from "../../constants";
-import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
-import type { UiState } from "../../integration-tester-loader/integrationTesterLoader";
+import { maxZIndex } from "../../../constants";
+import type { IntegrationDetectorData } from "../../../integration-detector/integrationDetector";
+import type { UiState } from "../../../integration-tester-loader/integrationTesterLoader";
+import { OverlayContentIframe } from "../OverlayIframe/OverlayIframeRender";
+import { OverlayToolbar } from "../OverlayToolbar/OverlayToolbar";
 import type { OverlayDimensions } from "./OverlayContainer";
-import { OverlayContent } from "./OverlayContent";
-import { OverlayToolbar } from "./OverlayToolbar/OverlayToolbar";
 
 export function DraggableOverlay({
   position,
@@ -41,7 +41,12 @@ export function DraggableOverlay({
         uiState={uiState}
         integrationState={integrationState}
       />
-      <OverlayContent />
+      <OverlayContentIframe
+        overlayDimensions={overlayDimensions}
+        uiState={uiState}
+        integrationState={integrationState}
+      />
+      {/* <OverlayContent /> */}
     </div>
   );
 }

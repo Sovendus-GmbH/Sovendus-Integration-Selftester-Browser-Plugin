@@ -7,23 +7,34 @@ import ReactDOM from "react-dom/client";
 import { overlayRootId } from "../constants";
 import type { IntegrationDetectorData } from "../integration-detector/integrationDetector";
 import { IntegrationDetectorLoop } from "../integration-detector/integrationDetector";
-import { DraggableOverlayContainer } from "../integration-tester-ui/overlay/OverlayContainer";
+import { DraggableOverlayContainer } from "../integration-tester-ui/overlay/OverlayContainer/OverlayContainer";
 
 export function startIntegrationTester(blacklist: string[] | undefined): void {
-  const alreadyRunning = !!document.getElementById(overlayRootId);
+  reactLoader(overlayRootId, Main, blacklist);
+}
+
+function reactLoader(
+  rootId: string,
+  RootComponent: ({
+    blacklist,
+  }: {
+    blacklist: string[] | undefined;
+  }) => JSX.Element,
+  blacklist?: string[],
+): void {
+  const alreadyRunning = !!document.getElementById(rootId);
   if (alreadyRunning) {
     return;
   }
   const testerContainer = document.createElement("div");
-  testerContainer.id = overlayRootId;
-  testerContainer.style.position = "fixed"; // Set position to fixed
-  testerContainer.style.zIndex = "2147483647"; // Set z-index to max value
-  document.body.insertAdjacentElement("beforeend", testerContainer);
+  testerContainer.id = rootId;
+  testerContainer.style.position = "fixed";
+  document.body.appendChild(testerContainer);
 
   const root = ReactDOM.createRoot(testerContainer);
   root.render(
     <React.StrictMode>
-      <Main blacklist={blacklist} />
+      <RootComponent blacklist={blacklist} />
     </React.StrictMode>,
   );
 }
@@ -71,7 +82,7 @@ export function Main({
   }, [integrationState.isBlackListedPage]);
 
   useEffect(() => {
-    const observer = moveOverlayRootToOnTopOfOtherObserver();
+    const observer = moveOverlayRootOnTopOfOtherObserver();
     return (): void => {
       observer.disconnect();
     };
@@ -97,7 +108,7 @@ const moveOverlayRootToOnTopOfOther = (): void => {
   }
 };
 
-const moveOverlayRootToOnTopOfOtherObserver = (): MutationObserver => {
+const moveOverlayRootOnTopOfOtherObserver = (): MutationObserver => {
   moveOverlayRootToOnTopOfOther();
   const observer = new MutationObserver(() => {
     moveOverlayRootToOnTopOfOther();

@@ -4,7 +4,7 @@
   "manifest_version": 3,
   "description": "Use this extension to verify if your Sovendus integration is setup properly",
   "background": {
-    "service_worker": "service-worker.js"
+    "service_worker": "serviceWorker.js"
   },
   "permissions": [
     "scripting",
@@ -19,11 +19,8 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "/browserExtensionUiLoader.js",
-        "/browserExtensionUiScriptLoader.js",
-        "/extensionPopUp.js",
-        "/integrationTester.js",
-        "/integrationTestOverlay.js"
+        "/browserExtensionLoader.js",
+        "/extensionPopUp.js"
       ],
       "matches": [
         "<all_urls>"

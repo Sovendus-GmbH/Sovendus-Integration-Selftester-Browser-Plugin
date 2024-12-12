@@ -1,4 +1,4 @@
-import { browserAPI } from "./extensionPopUp.js";
+import { browserAPI } from "./extensionPopUp";
 
 export async function checkAvailableIntegrations(tabId: number): Promise<void> {
   await browserAPI.scripting.executeScript({
@@ -8,9 +8,8 @@ export async function checkAvailableIntegrations(tabId: number): Promise<void> {
       script.setAttribute("type", "text/javascript");
       script.setAttribute(
         "src",
-        chrome.runtime.getURL(
-          "/extension-pop-up/available-integration-script.js",
-        ),
+        // TODO FIX
+        chrome.runtime.getURL("/availableIntegrationScript.js"),
       );
       script.type = "module";
       document.body.appendChild(script);

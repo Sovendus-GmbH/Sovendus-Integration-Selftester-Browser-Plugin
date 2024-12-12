@@ -3,19 +3,20 @@
     "jsx": "react",
     "noEmitOnError": true,
     "removeComments": true,
-    // "sourceMap": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "target": "ESNext",
+    "sourceMap": true,
     "module": "ESNext",
-    "allowJs": true,
+    "moduleResolution": "node",
+    "target": "ESNext",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": false,
     "allowArbitraryExtensions": true,
-    "outDir": "build/chrome",
+    "outDir": "build",
     "rootDir": ".",
     "baseUrl": ".",
-    // "paths": {
-    //   "@src/*": ["src/*"]
-    // },
+    "paths": {
+      "*": ["node_modules/*"]
+    },
     // Strict Checks
     "strict": true, // Enable all strict type-checking options
     "noImplicitAny": true, // Raise error on expressions and declarations with an implied "any" type
@@ -46,12 +47,9 @@
     "suppressImplicitAnyIndexErrors": false,
     "noStrictGenericChecks": false
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/extension-pop-up/**/*.ts",
-    "src/tests",
-    "vite.config.ts"
-  ],
-  "exclude": ["src/chrome", "node_modules", "src/firefox"]
+  "ts-node": {
+    "esm": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "build.ts"],
+  "exclude": ["src/chrome", "node_modules", "src/firefox", "build"]
 }
