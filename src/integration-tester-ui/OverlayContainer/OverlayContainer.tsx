@@ -66,9 +66,9 @@ function useDragger(uiState: UiState): {
 
   useEffect(() => {
     if (uiState.overlaySize === OverlaySize.SMALL) {
-      setOverlayDimensions({ width: 150, height: 100 });
+      setOverlayDimensions({ width: 200, height: 150 });
     } else if (uiState.overlaySize === OverlaySize.MEDIUM) {
-      setOverlayDimensions({ width: 350, height: 250 });
+      setOverlayDimensions({ width: 400, height: 250 });
     } else {
       setOverlayDimensions({
         width: Math.min(750, window.innerWidth),

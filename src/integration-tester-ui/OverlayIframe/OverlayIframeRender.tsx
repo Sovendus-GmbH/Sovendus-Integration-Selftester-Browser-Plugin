@@ -13,8 +13,9 @@ export function OverlayContentIframe(props: {
   setUiState: Dispatch<SetStateAction<UiState>>;
   uiState: UiState;
   integrationState: IntegrationDetectorData;
+  isDragging: boolean;
+  toolBarHeight: number;
 }): JSX.Element {
-  const toolBarHeight = 50;
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const iframe: HTMLIFrameElement | null = iframeRef.current;
   const iframeDoc = iframe?.contentDocument || iframe?.contentWindow?.document;
@@ -23,16 +24,18 @@ export function OverlayContentIframe(props: {
     if (!hasLoaded) {
       return;
     }
-    console.log("OverlayContentIframe", props);
     renderReactInIframe(iframeDoc, props);
   }, [props, hasLoaded]);
 
   return (
     <iframe
       ref={iframeRef}
-      height={props.overlayDimensions.height - toolBarHeight}
+      height={props.overlayDimensions.height - props.toolBarHeight}
       width={props.overlayDimensions.width}
-      style={{ border: "unset" }}
+      style={{
+        border: "unset",
+        pointerEvents: props.isDragging ? "none" : "auto",
+      }}
     ></iframe>
   );
 }
@@ -59,7 +62,13 @@ function renderReactInIframe(
   iframeDoc.body.style.margin = "0";
   iframeDoc.body.style.padding = "0";
   const root = createRoot(mountNode);
-  root.render(<OverlayContent {...props} />);
+  root.render(
+    <OverlayContent
+      setUiState={props.setUiState}
+      uiState={props.uiState}
+      integrationState={props.integrationState}
+    />,
+  );
 
   // void updateIFrameHeight(iframe, setIframeDimensions);
 }

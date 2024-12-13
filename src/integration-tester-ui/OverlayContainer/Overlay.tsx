@@ -26,9 +26,10 @@ export function DraggableOverlay({
   uiState: UiState;
   integrationState: IntegrationDetectorData;
 }): JSX.Element {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: "draggable",
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: "draggable",
+    });
 
   const startTouchPosition = useRef<{ x: number; y: number } | null>(null);
   const currentPos = useRef(position);
@@ -71,6 +72,7 @@ export function DraggableOverlay({
   };
 
   const overlayStyle = getOverlayStyle(position, transform, overlayDimensions);
+  const toolBarHeight = 50;
 
   return (
     <div
@@ -87,12 +89,15 @@ export function DraggableOverlay({
         setUiState={setUiState}
         uiState={uiState}
         integrationState={integrationState}
+        toolBarHeight={toolBarHeight}
       />
       <OverlayContentIframe
         overlayDimensions={overlayDimensions}
         uiState={uiState}
         integrationState={integrationState}
         setUiState={setUiState}
+        isDragging={isDragging}
+        toolBarHeight={toolBarHeight}
       />
     </div>
   );

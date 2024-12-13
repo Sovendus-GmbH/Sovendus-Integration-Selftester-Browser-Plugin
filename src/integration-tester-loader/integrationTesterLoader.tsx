@@ -70,6 +70,7 @@ export function Main({
     overlaySize: OverlaySize.SMALL,
     integrationType: undefined,
   });
+
   const { integrationState } = useIntegrationTester(blacklist);
   useOverlayOnTopMover();
   return integrationState.isBlackListedPage ? (
@@ -98,16 +99,13 @@ function useIntegrationTester(blacklist: string[] | undefined): {
   useEffect(() => {
     integrationStateRef.current = integrationState;
   }, [integrationState]);
-
-  useMemo(
-    () =>
-      new IntegrationDetectorLoop(
-        blacklist,
-        setIntegrationState,
-        integrationStateRef.current,
-      ),
-    [],
-  );
+  window.sovIntegrationDetector =
+    window.sovIntegrationDetector ||
+    new IntegrationDetectorLoop(
+      blacklist,
+      setIntegrationState,
+      integrationStateRef.current,
+    );
 
   return { integrationState };
 }
@@ -138,3 +136,8 @@ const moveOverlayRootToOnTopOfOther = (): void => {
     }
   }
 };
+
+interface SovWindow extends Window {
+  sovIntegrationDetector?: IntegrationDetectorLoop;
+}
+declare const window: SovWindow;

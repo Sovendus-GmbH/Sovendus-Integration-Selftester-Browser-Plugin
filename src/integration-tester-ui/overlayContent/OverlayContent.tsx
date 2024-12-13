@@ -7,20 +7,16 @@ import {
   IntegrationType,
   OverlaySize,
 } from "../../integration-tester-loader/integrationTesterLoader";
-import type { OverlayDimensions } from "../OverlayContainer/OverlayContainer";
 
 export function OverlayContent({
-  overlayDimensions,
   setUiState,
   uiState,
   integrationState,
 }: {
-  overlayDimensions: OverlayDimensions;
   setUiState: Dispatch<SetStateAction<UiState>>;
   uiState: UiState;
   integrationState: IntegrationDetectorData;
 }): JSX.Element {
-  console.log(uiState);
   if (uiState.overlaySize === OverlaySize.SMALL) {
     return (
       <div style={{ height: "100%", width: "100%", display: "block" }}>

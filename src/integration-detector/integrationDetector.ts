@@ -7,7 +7,7 @@ import { logger } from "../logger/logger";
 
 export interface IntegrationDetectorData {
   shouldCheck: boolean;
-  selfTester?: SelfTester;
+  selfTester: SelfTester | undefined;
   integrationState: IntegrationState;
   isBlackListedPage: boolean;
 }
@@ -148,6 +148,9 @@ export class IntegrationDetectorLoop {
     this.setState((prevState) => ({
       ...prevState,
       integrationState: sovendusDetectionStatus,
+      selfTester: sovendusDetectionStatus.detected
+        ? prevState.selfTester
+        : undefined,
     }));
   }
 
