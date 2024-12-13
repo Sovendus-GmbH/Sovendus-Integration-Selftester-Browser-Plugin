@@ -157,7 +157,7 @@ if (!overlay) {
         ${availableMethods}
         ${gtmAvailable ? this.formatIntegrationOption(this.supportedSystems.gtm) : ""}
       `;
-      // console.log("CMS detection result:", {
+      // logger("CMS detection result:", {
       //   shopSystemName,
       //   cmsName,
       //   webFrameworkName,

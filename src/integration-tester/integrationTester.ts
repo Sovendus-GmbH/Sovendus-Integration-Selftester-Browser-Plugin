@@ -9,10 +9,15 @@ import type {
 } from "sovendus-integration-scripts/src/js/thank-you/utils/thank-you-types";
 
 import {
+  type IntegrationDetectorData,
+  scriptAliases,
+} from "../integration-detector/integrationDetector";
+import {
   sovendusOverlayErrorClass,
   tooltipButtonClass,
   tooltipClass,
 } from "../integration-tester-ui/integration-test-overlay-css-vars";
+import { logger } from "../logger/logger";
 import type {
   ElementValue,
   TestResultResponseDataType,
@@ -36,6 +41,7 @@ import {
 } from "./value-tester";
 
 export default class SelfTester {
+  integrationDetectorData: IntegrationDetectorData;
   integrationType: TestResultType<string>;
   browserName: TestResultType<BrowserTypes>;
   websiteURL: TestResultType<string>;
@@ -113,9 +119,8 @@ export default class SelfTester {
         trafficMediumNumber,
       );
     }
-    if (window.transmitTestResult !== false) {
-      void this.transmitTestResult();
-    }
+
+    void this.transmitTestResult();
   }
 
   getSovConsumerData(): MergedSovConsumer {
@@ -306,7 +311,11 @@ export default class SelfTester {
 
     this.awinIntegrationDetectedTestResult =
       this.getAwinIntegrationDetectedTestResult(valueTestResult);
-    if (this.awinIntegrationDetected() && !valueTestResult.elementValue) {
+    if (
+      this.integrationDetectorData.integrationState.status.thankYouPage.awin
+        .hasAwinIntegration &&
+      !valueTestResult.elementValue
+    ) {
       this.integrationType = new SuccessTestResult<string>({
         elementValue: `Awin (Merchant ID: ${this.getAwinMerchantId()})`,
       });
@@ -353,8 +362,8 @@ export default class SelfTester {
   ): TestResultType<boolean> {
     return new SuccessTestResult({
       elementValue:
-        this.awinIntegrationDetected() &&
-        !integrationTypeTestResult.elementValue,
+        this.integrationDetectorData.integrationState.status.thankYouPage
+          .awin && !integrationTypeTestResult.elementValue,
     });
   }
 
@@ -1004,49 +1013,6 @@ export default class SelfTester {
     }
   }
 
-  scriptAliases = {
-    domains: [
-      "file:///C:/Users/marcus.brandstaetter/sovendus-code/sovendus-integrations/integration-scripts/dist",
-      "https://api.sovendus.com",
-      "https://testing4.sovendus.com",
-    ],
-    page: [
-      "js/page.js",
-      // legacy
-      "js/landing.js",
-    ],
-    journeySuccess: [
-      "js/journey-success.js",
-      // legacy
-      "js/profity.js",
-      "js/client.js",
-      "js/sovendusloader.js",
-      "sovabo/common/js/dynamicIframe.js",
-
-      "sovabo/common/js/flexibleIframe.js",
-    ],
-  };
-
-  landingPageOrJourneyJSExists(): boolean {
-    for (const domain of this.scriptAliases.domains) {
-      for (const page of this.scriptAliases.page) {
-        if (document.querySelector(`[src="${domain}/${page}"]`)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  pixelExists(): boolean {
-    const isImagePresent =
-      document.querySelector(
-        'img[src^="https://press-order-api.sovendus.com/ext/"]',
-      ) !== null;
-
-    return isImagePresent;
-  }
-
   executeOtherSourceFlexibleIFrameJSTest(
     flexibleIFrameJs: HTMLScriptElement | null,
   ): {
@@ -1055,8 +1021,8 @@ export default class SelfTester {
   } {
     const scriptAliasesArr: string[] = [];
 
-    this.scriptAliases.domains.forEach((domain) => {
-      this.scriptAliases.journeySuccess.forEach((path) => {
+    scriptAliases.domains.forEach((domain) => {
+      scriptAliases.thankYouPage.forEach((path) => {
         scriptAliasesArr.push(`${domain}/${path}`);
       });
     });
@@ -1070,7 +1036,7 @@ export default class SelfTester {
             (attr) =>
               scriptAliasesArr.some((script) => {
                 attr.value.endsWith(script);
-                //console.log(script);
+                //logger(script);
               }),
             // attr.value.endsWith(
             //   ".sovendus.com/sovabo/common/js/flexibleIframe.js",
@@ -1238,13 +1204,13 @@ export default class SelfTester {
       false;
     if (wasExecuted) {
       // eslint-disable-next-line no-console
-      console.log("Sovendus was executed");
+      logger("Sovendus was executed");
       return new SuccessTestResult<boolean>({
         elementValue: true,
       });
     }
     // eslint-disable-next-line no-console
-    console.log("Sovendus was detected but not executed");
+    logger("Sovendus was detected but not executed");
     return new WarningOrFailTestResultWithoutStatusMessageKey<boolean>({
       elementValue: wasExecuted,
       statusCode: StatusCodes.Error,
@@ -1608,79 +1574,8 @@ export default class SelfTester {
     }
   }
 
-  sovIframesOrConsumerExists(): boolean {
-    return !!(window.sovIframes || window.sovConsumer);
-  }
-
-  sovApplicationExists(): boolean {
-    return !!window.sovApplication?.consumer;
-  }
-
   getAwinMerchantId(): number | string {
     return window.AWIN?.Tracking?.iMerchantId || "not available";
-  }
-
-  sovInstancesLoaded(): boolean {
-    return !!window.sovApplication?.instances?.find(
-      (instance) =>
-        instance.banner?.bannerExists ||
-        instance.collapsableOverlayClosingType ||
-        instance.stickyBanner?.bannerExists,
-    );
-  }
-
-  awinIntegrationDetected(): boolean {
-    return !!window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber;
-  }
-
-  async waitForSovendusIntegrationDetected(): Promise<void> {
-    // eslint-disable-next-line no-console
-    console.log("No Sovendus integration detected yet");
-
-    // //TODO Remove
-    // void transmitIntegrationError("Cors Error Test", {
-    //   windowParameter: window,
-    // });
-
-    while (
-      !(
-        this.sovIframesOrConsumerExists() ||
-        this.awinIntegrationDetected() ||
-        this.landingPageOrJourneyJSExists() ||
-        this.pixelExists()
-      )
-    ) {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-    }
-    // eslint-disable-next-line no-console
-    console.log("Sovendus has been detected");
-  }
-
-  async waitForSovendusIntegrationToBeLoaded(): Promise<void> {
-    await this.waitForSovApplicationObject();
-    if (this.sovApplicationExists()) {
-      await this.waitForBannerToBeLoaded();
-    }
-  }
-
-  async waitForSovApplicationObject(): Promise<void> {
-    let waitedSeconds = 0;
-    while (!this.sovApplicationExists() && waitedSeconds < 5) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      waitedSeconds += 0.5;
-    }
-  }
-
-  async waitForBannerToBeLoaded(): Promise<void> {
-    let waitedSeconds = 0;
-    while (!this.sovInstancesLoaded() && waitedSeconds < 2) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      waitedSeconds += 0.5;
-    }
-    // wait a bit longer, just in case multiple integrations fire later
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    // eslint-disable-next-line no-console
-    console.log("Sovendus banner loaded");
   }
 
   getBrowserName(): TestResultType<BrowserTypes> {
@@ -1714,22 +1609,24 @@ export default class SelfTester {
   }
 
   async transmitTestResult(): Promise<void> {
-    try {
-      await fetch("http://localhost:3000/api/testing-plugin", {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(this.getTestResultResponseData()),
-      });
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to transmit sovendus test result - error:", e);
-      // void transmitIntegrationError(
-      //   `Failed to transmit sovendus test result - error: ${e}`,
-      //   { windowParameter: window },
-      // );
+    if (window.transmitTestResult !== false) {
+      try {
+        await fetch("http://localhost:3000/api/testing-plugin", {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.getTestResultResponseData()),
+        });
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to transmit sovendus test result - error:", e);
+        // void transmitIntegrationError(
+        //   `Failed to transmit sovendus test result - error: ${e}`,
+        //   { windowParameter: window },
+        // );
+      }
     }
   }
 
@@ -1842,7 +1739,10 @@ export default class SelfTester {
     };
   }
 
-  constructor() {
+  constructor(integrationDetectorData: IntegrationDetectorData) {
+    this.integrationDetectorData = integrationDetectorData;
+
+    window.transmitTestResult = false;
     const emptyStringUndefinedTestResult = new DidNotRunTestResult<
       string | undefined
     >();
@@ -2176,7 +2076,7 @@ export function safeURI(
     }
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.log(
+    logger(
       "Error in safeURI(",
       uriType,
       ") - Value: (",
@@ -2209,26 +2109,31 @@ export async function transmitIntegrationError(
         url: string;
       },
 ): Promise<void> {
-  const { windowParameter, url } = parameters;
-  const domain = url || windowParameter?.location.href || "";
-  try {
-    await fetch("http://localhost:3000/api/testing-plugin-error", {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(
-        getIntegrationErrorData(
-          errorMessage,
-          windowParameter as SovSelfTesterWindow,
-          domain,
+  if (window.transmitTestResult !== false) {
+    const { windowParameter, url } = parameters;
+    const domain = url || windowParameter?.location.href || "";
+    try {
+      await fetch("http://localhost:3000/api/testing-plugin-error", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(
+          getIntegrationErrorData(
+            errorMessage,
+            windowParameter as SovSelfTesterWindow,
+            domain,
+          ),
         ),
-      ),
-    });
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error("Failed to transmit sovendus Integration Error - error:", e);
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(
+        "Failed to transmit sovendus Integration Error - error:",
+        e,
+      );
+    }
   }
 }
 

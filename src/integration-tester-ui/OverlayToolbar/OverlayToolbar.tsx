@@ -3,8 +3,10 @@ import { AlignJustify, CircleDot, Minus, Plus } from "lucide-react";
 import type { Dispatch, JSX, SetStateAction } from "react";
 import React from "react";
 
-import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
-import { IntegrationState } from "../../integration-tester-loader/integrationTesterLoader";
+import {
+  DetectionState,
+  type IntegrationDetectorData,
+} from "../../integration-detector/integrationDetector";
 import { UiState } from "../../integration-tester-loader/integrationTesterLoader";
 import type { OverlayDimensions } from "../OverlayContainer/OverlayContainer";
 
@@ -173,7 +175,8 @@ function DetectionStatus({
       >
         <CircleDot
           color={
-            integrationState.integrationState === IntegrationState.NOT_DETECTED
+            integrationState.integrationState.detectionState ===
+            DetectionState.NOT_DETECTED
               ? "red"
               : "green"
           }

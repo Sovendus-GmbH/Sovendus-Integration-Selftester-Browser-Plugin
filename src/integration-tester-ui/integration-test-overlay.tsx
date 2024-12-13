@@ -912,27 +912,3 @@ export class SelfTesterOverlay {
 }
 
 
-function toggleOverlay(): void {
-  const overlay = document.getElementById(overlayId);
-  const openButton = document.getElementById(openSovendusOverlayId);
-  const closeButton = document.getElementById(closeSovendusOverlayId);
-
-  if (overlay && openButton && closeButton) {
-    if (overlay.style.display === "none") {
-      overlay.style.display = "block";
-      openButton.style.display = "none";
-      closeButton.style.display = "block";
-      updateIFrameHeight();
-    } else {
-      overlay.style.display = "none";
-      openButton.style.display = "block";
-      closeButton.style.display = "none";
-    }
-  }
-}
-
-export interface SovDebugOverlayWindow extends SovSelfTesterWindow {
-  originalOnresize?: ((this: GlobalEventHandlers, ev: UIEvent) => void) | null;
-}
-
-declare let window: SovDebugOverlayWindow;

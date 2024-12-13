@@ -1,13 +1,17 @@
 "use client";
 
 import type { JSX } from "react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 
 import { overlayRootId } from "../constants";
 import type { IntegrationDetectorData } from "../integration-detector/integrationDetector";
-import { IntegrationDetectorLoop } from "../integration-detector/integrationDetector";
+import {
+  defaultIntegrationState,
+  IntegrationDetectorLoop,
+} from "../integration-detector/integrationDetector";
 import { DraggableOverlayContainer } from "../integration-tester-ui/OverlayContainer/OverlayContainer";
+import { logger } from "../logger/logger";
 
 export function startIntegrationTester(blacklist: string[] | undefined): void {
   reactLoader(overlayRootId, Main, blacklist);
@@ -26,6 +30,7 @@ function reactLoader(
   if (alreadyRunning) {
     return;
   }
+  logger("Starting integration tester");
   const testerContainer = document.createElement("div");
   testerContainer.id = rootId;
   testerContainer.style.position = "fixed";
@@ -37,12 +42,6 @@ function reactLoader(
       <RootComponent blacklist={blacklist} />
     </React.StrictMode>,
   );
-}
-
-export enum IntegrationState {
-  NOT_DETECTED = "not-detected",
-  DETECTED = "detected",
-  LOADED = "loaded",
 }
 
 export enum UiState {
@@ -57,37 +56,8 @@ export function Main({
   blacklist: string[] | undefined;
 }): JSX.Element {
   const [uiState, setUiState] = useState<UiState>(UiState.SMALL);
-  const [integrationState, setIntegrationState] =
-    useState<IntegrationDetectorData>({
-      shouldCheck: true,
-      setSelfTester: undefined,
-      integrationState: IntegrationState.NOT_DETECTED,
-      isBlackListedPage: true,
-    });
-  const integrationDetector: IntegrationDetectorLoop = useMemo(
-    () =>
-      new IntegrationDetectorLoop(
-        blacklist,
-        setIntegrationState,
-        integrationState,
-      ),
-    [],
-  );
-
-  useEffect(() => {
-    if (!integrationState.isBlackListedPage) {
-      void integrationDetector.integrationDetectionLoop();
-    }
-    return;
-  }, [integrationState.isBlackListedPage]);
-
-  useEffect(() => {
-    const observer = moveOverlayRootOnTopOfOtherObserver();
-    return (): void => {
-      observer.disconnect();
-    };
-  }, []);
-
+  const { integrationState } = useIntegrationTester(blacklist);
+  useOverlayOnTopMover();
   return integrationState.isBlackListedPage ? (
     <></>
   ) : (
@@ -99,14 +69,43 @@ export function Main({
   );
 }
 
-const moveOverlayRootToOnTopOfOther = (): void => {
-  const integrationTesterRoot = document.getElementById(overlayRootId);
-  if (integrationTesterRoot && integrationTesterRoot.parentNode) {
-    if (integrationTesterRoot !== integrationTesterRoot.parentNode.lastChild) {
-      integrationTesterRoot.parentNode.appendChild(integrationTesterRoot);
-    }
-  }
-};
+function useIntegrationTester(blacklist: string[] | undefined): {
+  integrationState: IntegrationDetectorData;
+} {
+  const [integrationState, setIntegrationState] =
+    useState<IntegrationDetectorData>({
+      shouldCheck: true,
+      selfTester: undefined,
+      integrationState: defaultIntegrationState,
+      isBlackListedPage: true,
+    });
+  const integrationStateRef = useRef(integrationState);
+
+  useEffect(() => {
+    integrationStateRef.current = integrationState;
+  }, [integrationState]);
+
+  useMemo(
+    () =>
+      new IntegrationDetectorLoop(
+        blacklist,
+        setIntegrationState,
+        integrationStateRef.current,
+      ),
+    [],
+  );
+
+  return { integrationState };
+}
+
+function useOverlayOnTopMover(): void {
+  useEffect(() => {
+    const observer = moveOverlayRootOnTopOfOtherObserver();
+    return (): void => {
+      observer.disconnect();
+    };
+  }, []);
+}
 
 const moveOverlayRootOnTopOfOtherObserver = (): MutationObserver => {
   moveOverlayRootToOnTopOfOther();
@@ -115,4 +114,13 @@ const moveOverlayRootOnTopOfOtherObserver = (): MutationObserver => {
   });
   observer.observe(document.body, { childList: true, subtree: true });
   return observer;
+};
+
+const moveOverlayRootToOnTopOfOther = (): void => {
+  const integrationTesterRoot = document.getElementById(overlayRootId);
+  if (integrationTesterRoot && integrationTesterRoot.parentNode) {
+    if (integrationTesterRoot !== integrationTesterRoot.parentNode.lastChild) {
+      integrationTesterRoot.parentNode.appendChild(integrationTesterRoot);
+    }
+  }
 };
