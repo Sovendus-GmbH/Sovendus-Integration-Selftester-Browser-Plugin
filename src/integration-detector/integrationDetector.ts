@@ -7,7 +7,7 @@ import { logger } from "../logger/logger";
 
 export interface IntegrationDetectorData {
   shouldCheck: boolean;
-  selfTester: SelfTester | undefined;
+  selfTester?: SelfTester;
   integrationState: IntegrationState;
   isBlackListedPage: boolean;
 }

@@ -1,7 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import type { Transform } from "@dnd-kit/utilities";
 import type { CSSProperties, Dispatch, JSX, SetStateAction } from "react";
-import React from "react";
+import React, { useRef } from "react";
 
 import { maxZIndex } from "../../constants";
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
@@ -30,9 +30,56 @@ export function DraggableOverlay({
     id: "draggable",
   });
 
+  const startTouchPosition = useRef<{ x: number; y: number } | null>(null);
+  const currentPos = useRef(position);
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>): void => {
+    const touch = e.touches[0];
+    if (touch) {
+      startTouchPosition.current = {
+        x: touch.clientX - currentPos.current.x,
+        y: touch.clientY - currentPos.current.y,
+      };
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>): void => {
+    if (!startTouchPosition.current) {
+      return;
+    }
+
+    const touch = e.touches[0];
+    if (touch) {
+      const newX = touch.clientX - startTouchPosition.current.x;
+      const newY = touch.clientY - startTouchPosition.current.y;
+
+      const boundedX = Math.max(
+        10,
+        Math.min(window.innerWidth - overlayDimensions.width - 10, newX),
+      );
+      const boundedY = Math.max(
+        10,
+        Math.min(window.innerHeight - overlayDimensions.height - 10, newY),
+      );
+
+      currentPos.current = { x: boundedX, y: boundedY };
+    }
+  };
+
+  const handleTouchEnd = (): void => {
+    startTouchPosition.current = null;
+  };
+
   const overlayStyle = getOverlayStyle(position, transform, overlayDimensions);
+
   return (
-    <div style={overlayStyle.outerOverlayStyle} {...attributes}>
+    <div
+      style={overlayStyle.outerOverlayStyle}
+      {...attributes}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <OverlayToolbar
         overlayDimensions={overlayDimensions}
         setNodeRef={setNodeRef}
@@ -41,7 +88,6 @@ export function DraggableOverlay({
         uiState={uiState}
         integrationState={integrationState}
       />
-
       <OverlayContentIframe
         overlayDimensions={overlayDimensions}
         uiState={uiState}
@@ -61,12 +107,20 @@ function getOverlayStyle(
   transform: Transform | null,
   overlayDimensions: OverlayDimensions,
 ): OverlayStyle {
-  let outerOverlayStyle: CSSProperties = {};
-  outerOverlayStyle = {
-    transform: `translate3d(${position.x + (transform ? transform.x : 0)}px, ${position.y + (transform ? transform.y : 0)}px, 0)`,
+  const xPos = position.x + (transform ? transform.x : 0);
+  const yPos = position.y + (transform ? transform.y : 0);
+
+  const outerOverlayStyle: CSSProperties = {
+    transform: `translate3d(${Math.max(
+      10,
+      Math.min(window.innerWidth - overlayDimensions.width - 10, xPos),
+    )}px, ${Math.max(
+      10,
+      Math.min(window.innerHeight - overlayDimensions.height - 10, yPos),
+    )}px, 0)`,
     width: `${overlayDimensions.width}px`,
     height: `${overlayDimensions.height}px`,
-    backgroundColor: "lightblue",
+    backgroundColor: "#439CEF",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -74,6 +128,8 @@ function getOverlayStyle(
     flexDirection: "column",
     borderRadius: "10px",
     overflow: "hidden",
+    position: "absolute",
+    touchAction: "none",
   };
   return { outerOverlayStyle };
 }

@@ -4,13 +4,14 @@ import type { Dispatch, JSX, SetStateAction } from "react";
 import React, { useEffect, useState } from "react";
 
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
-import { UiState } from "../../integration-tester-loader/integrationTesterLoader";
+import type { UiState } from "../../integration-tester-loader/integrationTesterLoader";
+import { OverlaySize } from "../../integration-tester-loader/integrationTesterLoader";
 import { DraggableOverlay } from "./Overlay";
 
 export function DraggableOverlayContainer({
-  integrationState,
   uiState,
   setUiState,
+  integrationState,
 }: {
   uiState: UiState;
   setUiState: Dispatch<SetStateAction<UiState>>;
@@ -64,9 +65,9 @@ function useDragger(uiState: UiState): {
   }, [overlayDimensions]);
 
   useEffect(() => {
-    if (uiState === UiState.SMALL) {
+    if (uiState.overlaySize === OverlaySize.SMALL) {
       setOverlayDimensions({ width: 150, height: 100 });
-    } else if (uiState === UiState.MEDIUM) {
+    } else if (uiState.overlaySize === OverlaySize.MEDIUM) {
       setOverlayDimensions({ width: 350, height: 250 });
     } else {
       setOverlayDimensions({
@@ -77,7 +78,7 @@ function useDragger(uiState: UiState): {
     setPosition((prevPosition) =>
       handleBoundaries(prevPosition.x, prevPosition.y),
     );
-  }, [uiState]);
+  }, [uiState.overlaySize]);
 
   useEffect(() => {
     const handleResize = (): void => {

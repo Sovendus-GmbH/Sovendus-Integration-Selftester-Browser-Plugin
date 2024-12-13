@@ -44,10 +44,21 @@ function reactLoader(
   );
 }
 
-export enum UiState {
+export interface UiState {
+  overlaySize: OverlaySize;
+  integrationType: IntegrationType | undefined;
+}
+
+export enum OverlaySize {
   SMALL = "small",
   MEDIUM = "medium",
   LARGE = "large",
+}
+
+export enum IntegrationType {
+  CB_VN = "Checkout Benefits & Voucher Network",
+  CHECKOUT_PRODUCTS = "Checkout Products",
+  OPTIMIZE = "Optimize",
 }
 
 export function Main({
@@ -55,7 +66,10 @@ export function Main({
 }: {
   blacklist: string[] | undefined;
 }): JSX.Element {
-  const [uiState, setUiState] = useState<UiState>(UiState.SMALL);
+  const [uiState, setUiState] = useState<UiState>({
+    overlaySize: OverlaySize.SMALL,
+    integrationType: undefined,
+  });
   const { integrationState } = useIntegrationTester(blacklist);
   useOverlayOnTopMover();
   return integrationState.isBlackListedPage ? (

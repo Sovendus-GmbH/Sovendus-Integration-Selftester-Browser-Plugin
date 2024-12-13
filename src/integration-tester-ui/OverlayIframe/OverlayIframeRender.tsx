@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import React, { type JSX, useEffect, useRef, useState } from "react";
+import React, { type JSX, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
@@ -16,38 +16,16 @@ export function OverlayContentIframe(props: {
 }): JSX.Element {
   const toolBarHeight = 50;
   const iframeRef = useRef<HTMLIFrameElement>(null);
-
+  const iframe: HTMLIFrameElement | null = iframeRef.current;
+  const iframeDoc = iframe?.contentDocument || iframe?.contentWindow?.document;
+  const hasLoaded = !!iframeDoc?.body;
   useEffect(() => {
-    const iframe: HTMLIFrameElement | null = iframeRef.current;
-    if (!iframe) {
+    if (!hasLoaded) {
       return;
     }
-    const onLoad = (): void => {
-      const doc =
-        iframe.contentDocument || (iframe.contentWindow?.document as Document);
-      // const win = iframe.contentWindow as Window;
-
-      // win.addEventListener(
-      //   "resize",
-      //   (): void => void updateIFrameHeight(iframe, setIframeDimensions),
-      // );
-
-      const mountNode = doc.createElement("div");
-      mountNode.id = innerOverlayId;
-      doc.body.appendChild(mountNode);
-      doc.body.style.margin = "0";
-      doc.body.style.padding = "0";
-      const root = createRoot(mountNode);
-      root.render(<OverlayContent {...props} />);
-
-      // void updateIFrameHeight(iframe, setIframeDimensions);
-    };
-    iframe.addEventListener("load", onLoad);
-
-    return (): void => {
-      iframe.removeEventListener("load", onLoad);
-    };
-  }, [props]);
+    console.log("OverlayContentIframe", props);
+    renderReactInIframe(iframeDoc, props);
+  }, [props, hasLoaded]);
 
   return (
     <iframe
@@ -57,6 +35,33 @@ export function OverlayContentIframe(props: {
       style={{ border: "unset" }}
     ></iframe>
   );
+}
+
+function renderReactInIframe(
+  iframeDoc: Document,
+  props: {
+    overlayDimensions: OverlayDimensions;
+    setUiState: Dispatch<SetStateAction<UiState>>;
+    uiState: UiState;
+    integrationState: IntegrationDetectorData;
+  },
+): void {
+  // const win = iframe.contentWindow as Window;
+
+  // win.addEventListener(
+  //   "resize",
+  //   (): void => void updateIFrameHeight(iframe, setIframeDimensions),
+  // );
+  iframeDoc.getElementById(innerOverlayId)?.remove();
+  const mountNode = iframeDoc.createElement("div");
+  mountNode.id = innerOverlayId;
+  iframeDoc.body.appendChild(mountNode);
+  iframeDoc.body.style.margin = "0";
+  iframeDoc.body.style.padding = "0";
+  const root = createRoot(mountNode);
+  root.render(<OverlayContent {...props} />);
+
+  // void updateIFrameHeight(iframe, setIframeDimensions);
 }
 
 // async function updateIFrameHeight(
