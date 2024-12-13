@@ -3,9 +3,9 @@ import type { Transform } from "@dnd-kit/utilities";
 import type { CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 import React from "react";
 
-import { maxZIndex } from "../../../constants";
-import type { IntegrationDetectorData } from "../../../integration-detector/integrationDetector";
-import type { UiState } from "../../../integration-tester-loader/integrationTesterLoader";
+import { maxZIndex } from "../../constants";
+import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
+import type { UiState } from "../../integration-tester-loader/integrationTesterLoader";
 import { OverlayContentIframe } from "../OverlayIframe/OverlayIframeRender";
 import { OverlayToolbar } from "../OverlayToolbar/OverlayToolbar";
 import type { OverlayDimensions } from "./OverlayContainer";
@@ -41,12 +41,13 @@ export function DraggableOverlay({
         uiState={uiState}
         integrationState={integrationState}
       />
+
       <OverlayContentIframe
         overlayDimensions={overlayDimensions}
         uiState={uiState}
         integrationState={integrationState}
+        setUiState={setUiState}
       />
-      {/* <OverlayContent /> */}
     </div>
   );
 }

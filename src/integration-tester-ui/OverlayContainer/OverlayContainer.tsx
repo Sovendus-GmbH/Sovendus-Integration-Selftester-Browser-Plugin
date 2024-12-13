@@ -3,8 +3,8 @@ import { DndContext } from "@dnd-kit/core";
 import type { Dispatch, JSX, SetStateAction } from "react";
 import React, { useEffect, useState } from "react";
 
-import type { IntegrationDetectorData } from "../../../integration-detector/integrationDetector";
-import { UiState } from "../../../integration-tester-loader/integrationTesterLoader";
+import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
+import { UiState } from "../../integration-tester-loader/integrationTesterLoader";
 import { DraggableOverlay } from "./Overlay";
 
 export function DraggableOverlayContainer({
@@ -58,16 +58,25 @@ function useDragger(uiState: UiState): {
   });
 
   useEffect(() => {
+    setPosition((prevPosition) =>
+      handleBoundaries(prevPosition.x, prevPosition.y),
+    );
+  }, [overlayDimensions]);
+
+  useEffect(() => {
     if (uiState === UiState.SMALL) {
       setOverlayDimensions({ width: 150, height: 100 });
     } else if (uiState === UiState.MEDIUM) {
-      setOverlayDimensions({ width: 300, height: 200 });
+      setOverlayDimensions({ width: 350, height: 250 });
     } else {
       setOverlayDimensions({
         width: Math.min(750, window.innerWidth),
-        height: Math.min(900, window.innerHeight),
+        height: Math.min(750, window.innerHeight),
       });
     }
+    setPosition((prevPosition) =>
+      handleBoundaries(prevPosition.x, prevPosition.y),
+    );
   }, [uiState]);
 
   useEffect(() => {

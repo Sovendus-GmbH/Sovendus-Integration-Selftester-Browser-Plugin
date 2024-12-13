@@ -17,7 +17,6 @@ if (typeof browser === "undefined") {
 }
 
 function injectScriptFn(): void {
-  console.log("Injecting script");
   function injectScript(): void {
     const script = document.createElement("script");
     script.setAttribute("type", "text/javascript");

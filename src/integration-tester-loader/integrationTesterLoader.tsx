@@ -7,7 +7,7 @@ import ReactDOM from "react-dom/client";
 import { overlayRootId } from "../constants";
 import type { IntegrationDetectorData } from "../integration-detector/integrationDetector";
 import { IntegrationDetectorLoop } from "../integration-detector/integrationDetector";
-import { DraggableOverlayContainer } from "../integration-tester-ui/overlay/OverlayContainer/OverlayContainer";
+import { DraggableOverlayContainer } from "../integration-tester-ui/OverlayContainer/OverlayContainer";
 
 export function startIntegrationTester(blacklist: string[] | undefined): void {
   reactLoader(overlayRootId, Main, blacklist);
