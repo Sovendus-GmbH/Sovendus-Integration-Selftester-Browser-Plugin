@@ -1,7 +1,7 @@
 "use client";
 
 import type { JSX } from "react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 
 import { overlayRootId } from "../constants";
@@ -9,6 +9,7 @@ import type { IntegrationDetectorData } from "../integration-detector/integratio
 import {
   defaultIntegrationState,
   IntegrationDetectorLoop,
+  isBlacklistedPage,
 } from "../integration-detector/integrationDetector";
 import { DraggableOverlayContainer } from "../integration-tester-ui/OverlayContainer/OverlayContainer";
 import { logger } from "../logger/logger";
@@ -92,7 +93,7 @@ function useIntegrationTester(blacklist: string[] | undefined): {
       shouldCheck: true,
       selfTester: undefined,
       integrationState: defaultIntegrationState,
-      isBlackListedPage: true,
+      isBlackListedPage: isBlacklistedPage(blacklist),
     });
   const integrationStateRef = useRef(integrationState);
 
@@ -102,7 +103,6 @@ function useIntegrationTester(blacklist: string[] | undefined): {
   window.sovIntegrationDetector =
     window.sovIntegrationDetector ||
     new IntegrationDetectorLoop(
-      blacklist,
       setIntegrationState,
       integrationStateRef.current,
     );

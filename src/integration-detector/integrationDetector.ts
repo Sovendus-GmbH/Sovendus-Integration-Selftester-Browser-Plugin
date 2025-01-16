@@ -73,18 +73,11 @@ export class IntegrationDetectorLoop {
   private setState: Dispatch<SetStateAction<IntegrationDetectorData>>;
 
   constructor(
-    blacklist: string[] | undefined,
     setState: Dispatch<SetStateAction<IntegrationDetectorData>>,
     state: IntegrationDetectorData,
   ) {
     this.state = state;
     this.setState = setState;
-    this.setState({
-      shouldCheck: true,
-      selfTester: undefined,
-      integrationState: defaultIntegrationState,
-      isBlackListedPage: isBlacklistedPage(blacklist),
-    });
     void this.integrationDetectionLoop();
   }
 
@@ -431,7 +424,7 @@ function endsWithDomainPath(domains: string[], scripts: string[]): boolean {
   return false;
 }
 
-function isBlacklistedPage(blacklist: string[] | undefined): boolean {
+export function isBlacklistedPage(blacklist: string[] | undefined): boolean {
   const _blacklist: string[] = [...defaultBlacklist, ...(blacklist || [])];
   return _blacklist.includes(window.location.host);
 }
