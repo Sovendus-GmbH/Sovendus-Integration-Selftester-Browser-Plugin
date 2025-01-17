@@ -2076,14 +2076,7 @@ export function safeURI(
     }
   } catch (e) {
     // eslint-disable-next-line no-console
-    logger(
-      "Error in safeURI(",
-      uriType,
-      ") - Value: (",
-      value,
-      ")- Error -> ",
-      e,
-    );
+    logger(`Error in safeURI(${uriType}) - Value: (${value})- Error -> ${e}`);
     void transmitIntegrationError(
       `Error in safeURI(
       ${uriType}
