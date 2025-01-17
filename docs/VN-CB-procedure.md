@@ -27,11 +27,3 @@
 ## The optimal result for your integration looks like this
 
 ![vn&cb-image](https://raw.githubusercontent.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/main/docs/VN&CB.png)
-
-## Additional Notes for Shopify App Users
-
-The Shopify App (new version) is not yet recognized by the Self-Test Extension, and therefore no data will be displayed. Instead, please ensure that the integration is visible on the Thank You page.
-
-## Example Image for Shopify App Integration
-
-![Shopify-App-image](https://raw.githubusercontent.com/Sovendus-GmbH/Sovendus-Integration-Selftester-Browser-Plugin/main/docs/Shopify-App.png)
