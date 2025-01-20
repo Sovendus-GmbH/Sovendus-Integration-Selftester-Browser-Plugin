@@ -7,7 +7,7 @@ import type { IntegrationDetectorData } from "../../integration-detector/integra
 import { DetectionState } from "../../integration-detector/integrationDetector";
 import type { UiState } from "../../integration-tester-loader/integrationTesterLoader";
 import { OverlaySize } from "../../integration-tester-loader/integrationTesterLoader";
-import type { OverlayDimensions } from "../OverlayContainer/OverlayContainer";
+import type { OverlayDimensions } from "../overlay-container/OverlayContainer";
 
 export function OverlayToolbar({
   overlayDimensions,

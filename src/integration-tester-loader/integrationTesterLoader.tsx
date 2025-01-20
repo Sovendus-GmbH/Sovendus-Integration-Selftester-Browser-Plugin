@@ -11,7 +11,7 @@ import {
   IntegrationDetectorLoop,
   isBlacklistedPage,
 } from "../integration-detector/integrationDetector";
-import { DraggableOverlayContainer } from "../integration-tester-ui/OverlayContainer/OverlayContainer";
+import { DraggableOverlayContainer } from "../integration-tester-ui/overlay-container/OverlayContainer";
 import { logger } from "../logger/logger";
 
 export function startIntegrationTester(blacklist: string[] | undefined): void {

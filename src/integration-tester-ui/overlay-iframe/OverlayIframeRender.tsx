@@ -5,8 +5,8 @@ import { createRoot } from "react-dom/client";
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
 import type { UiState } from "../../integration-tester-loader/integrationTesterLoader";
 import { innerOverlayId } from "../integration-test-overlay-css-vars";
-import type { OverlayDimensions } from "../OverlayContainer/OverlayContainer";
-import { OverlayContent } from "../overlayContent/OverlayContent";
+import type { OverlayDimensions } from "../overlay-container/OverlayContainer";
+import { OverlayContent } from "../overlay-content/OverlayContent";
 
 export function OverlayContentIframe(props: {
   overlayDimensions: OverlayDimensions;

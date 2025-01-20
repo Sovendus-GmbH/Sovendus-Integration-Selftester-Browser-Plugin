@@ -1,7 +1,6 @@
 import { autoPlacement, computePosition } from "@floating-ui/dom";
 
 import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
-import type { SovSelfTesterWindow } from "../integration-tester/integrationTester";
 import type SelfTester from "../integration-tester/integrationTester";
 import { transmitIntegrationError } from "../integration-tester/integrationTester";
 import {
@@ -910,5 +909,3 @@ export class SelfTesterOverlay {
     }
   }
 }
-
-

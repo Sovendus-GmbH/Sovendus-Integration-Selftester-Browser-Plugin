@@ -6,8 +6,8 @@ import React, { useRef } from "react";
 import { maxZIndex } from "../../constants";
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
 import type { UiState } from "../../integration-tester-loader/integrationTesterLoader";
-import { OverlayContentIframe } from "../OverlayIframe/OverlayIframeRender";
-import { OverlayToolbar } from "../OverlayToolbar/OverlayToolbar";
+import { OverlayContentIframe } from "../overlay-iframe/OverlayIframeRender";
+import { OverlayToolbar } from "../overlay-toolbar/OverlayToolbar";
 import type { OverlayDimensions } from "./OverlayContainer";
 
 export function DraggableOverlay({
