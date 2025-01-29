@@ -16,7 +16,7 @@ import {
   sovendusOverlayErrorClass,
   tooltipButtonClass,
   tooltipClass,
-} from "../integration-tester-ui/integration-test-overlay-css-vars";
+} from "../integration-tester-ui/old/integration-test-overlay-css-vars";
 import { logger } from "../logger/logger";
 import type {
   ElementValue,
@@ -2180,7 +2180,7 @@ export type SovSelfTesterWindow = SovendusPublicConversionWindow & {
   sovApplication?: SovCbVnApplicationType;
   sovSelfTester?: SelfTester;
   // only used by tests
-  transmitTestResult?: false;
+  transmitTestResult?: boolean;
 };
 
 declare let window: SovSelfTesterWindow;

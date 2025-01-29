@@ -12,7 +12,8 @@
   "permissions": [
     "<all_urls>",
     "scripting",
-    "clipboardWrite"
+    "clipboardWrite",
+    "storage"
   ],
   "icons": {
     "128": "sovendus.png"

@@ -8,7 +8,8 @@
   },
   "permissions": [
     "scripting",
-    "webNavigation"
+    "webNavigation",
+    "storage"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -16,11 +17,23 @@
   "action": {
     "default_popup": "extensionPopUp.html"
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "contentScript.js"
+      ]
+    }
+  ],
   "web_accessible_resources": [
     {
       "resources": [
         "/browserExtensionLoader.js",
-        "/extensionPopUp.js"
+        "/extensionPopUp.js",
+        "/extensionPopUp.js.map",
+        "/browserExtensionLoader.js.map"
       ],
       "matches": [
         "<all_urls>"

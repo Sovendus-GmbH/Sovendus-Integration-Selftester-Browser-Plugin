@@ -5,7 +5,7 @@ import {
   sovendusOverlayH1Class,
   sovendusOverlayH2Class,
   sovendusOverlayH3Class,
-} from "../integration-tester-ui/integration-test-overlay-css-vars";
+} from "../integration-tester-ui/old/integration-test-overlay-css-vars";
 
 const overlay = document.getElementById(
   "outerSovendusIntegrationMethodCheckerOverlay",

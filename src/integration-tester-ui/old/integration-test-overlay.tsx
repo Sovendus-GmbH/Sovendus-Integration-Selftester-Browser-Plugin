@@ -1,8 +1,8 @@
 import { autoPlacement, computePosition } from "@floating-ui/dom";
 
-import { StatusCodes } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
-import type SelfTester from "../integration-tester/integrationTester";
-import { transmitIntegrationError } from "../integration-tester/integrationTester";
+import { StatusCodes } from "../../integration-tester/integration-tester-data-to-sync-with-dev-hub";
+import type SelfTester from "../../integration-tester/integrationTester";
+import { transmitIntegrationError } from "../../integration-tester/integrationTester";
 import {
   closeSovendusOverlayId,
   fullscreenClass,

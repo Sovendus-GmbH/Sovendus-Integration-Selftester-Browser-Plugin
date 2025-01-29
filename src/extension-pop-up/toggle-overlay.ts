@@ -2,7 +2,7 @@ import {
   fullscreenClass,
   openSovendusOverlayId,
   overlayId,
-} from "../integration-tester-ui/integration-test-overlay-css-vars";
+} from "../integration-tester-ui/old/integration-test-overlay-css-vars";
 import { browserAPI } from "./extensionPopUp";
 
 export async function toggleSelfTesterOverlayVisibility(

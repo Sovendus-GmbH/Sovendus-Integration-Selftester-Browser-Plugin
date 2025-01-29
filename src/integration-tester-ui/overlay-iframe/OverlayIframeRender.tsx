@@ -3,10 +3,9 @@ import React, { type JSX, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
-import type { UiState } from "../../integration-tester-loader/integrationTesterLoader";
-import { innerOverlayId } from "../integration-test-overlay-css-vars";
-import type { OverlayDimensions } from "../overlay-container/OverlayContainer";
-import { OverlayContent } from "../overlay-content/OverlayContent";
+import { innerOverlayId } from "../old/integration-test-overlay-css-vars";
+import { OverlayContent } from "../components/overlay-content";
+import { OverlayDimensions, UiState } from "../types";
 
 export function OverlayContentIframe(props: {
   overlayDimensions: OverlayDimensions;

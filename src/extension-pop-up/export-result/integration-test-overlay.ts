@@ -7,7 +7,7 @@ import {
   sovendusOverlayH2Class,
   sovendusOverlayRepeatTestsId,
   testLoadedIFrameId,
-} from "../../integration-tester-ui/integration-test-overlay-css-vars";
+} from "../../integration-tester-ui/old/integration-test-overlay-css-vars";
 import { browserAPI } from "../extensionPopUp";
 
 export async function hideSelfTesterOverlay(tabId: number): Promise<void> {

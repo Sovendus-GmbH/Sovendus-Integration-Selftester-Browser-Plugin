@@ -1,113 +1,108 @@
 "use client";
 
 import type { JSX } from "react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
-import { overlayRootId } from "../constants";
-import type { IntegrationDetectorData } from "../integration-detector/integrationDetector";
-import {
-  defaultIntegrationState,
-  IntegrationDetectorLoop,
-  isBlacklistedPage,
-} from "../integration-detector/integrationDetector";
-import { DraggableOverlayContainer } from "../integration-tester-ui/overlay-container/OverlayContainer";
-import { logger } from "../logger/logger";
+import { maxZIndex, overlayRootId } from "../constants";
+import { debug, logger } from "../logger/logger";
+import { ErrorBoundary } from "../integration-tester-ui/components/ErrorBoundary";
 
-export function startIntegrationTester(blacklist: string[] | undefined): void {
-  reactLoader(overlayRootId, Main, blacklist);
+import { DraggableOverlayContainer } from "../integration-tester-ui/components/overlay-container";
+
+import { useOverlayState } from "../integration-tester-ui/hooks/useOverlayState";
+import { ExtensionSettings } from "./browserExtensionLoader";
+
+export function startIntegrationTester(
+  settings: ExtensionSettings,
+  getSettings: () => Promise<ExtensionSettings>,
+  updateSettings: (newSettings: Partial<ExtensionSettings>) => Promise<boolean>,
+): void {
+  if (!document.getElementById(overlayRootId)) {
+    reactLoader({
+      rootId: overlayRootId,
+      RootComponent: Main,
+      settings,
+      getSettings,
+      updateSettings,
+    });
+  } else {
+    logger("Integration tester is already running");
+  }
 }
 
-function reactLoader(
-  rootId: string,
+function reactLoader({
+  rootId,
+  RootComponent,
+  settings,
+  getSettings,
+  updateSettings,
+}: {
+  rootId: string;
   RootComponent: ({
-    blacklist,
+    settings,
+    getSettings,
+    updateSettings,
   }: {
-    blacklist: string[] | undefined;
-  }) => JSX.Element,
-  blacklist?: string[],
-): void {
-  const alreadyRunning = !!document.getElementById(rootId);
-  if (alreadyRunning) {
-    return;
-  }
-  logger("Starting integration tester");
+    settings: ExtensionSettings;
+    getSettings: () => Promise<ExtensionSettings>;
+    updateSettings: (
+      newSettings: Partial<ExtensionSettings>,
+    ) => Promise<boolean>;
+  }) => JSX.Element;
+  settings: ExtensionSettings;
+  getSettings: () => Promise<ExtensionSettings>;
+  updateSettings: (newSettings: Partial<ExtensionSettings>) => Promise<boolean>;
+}): void {
   const testerContainer = document.createElement("div");
   testerContainer.id = rootId;
   testerContainer.style.position = "fixed";
+  testerContainer.style.zIndex = maxZIndex.toString();
   document.body.appendChild(testerContainer);
 
   const root = ReactDOM.createRoot(testerContainer);
+  logger("Starting integration tester react loader");
   root.render(
     <React.StrictMode>
-      <RootComponent blacklist={blacklist} />
+      <ErrorBoundary>
+        <RootComponent
+          settings={settings}
+          getSettings={getSettings}
+          updateSettings={updateSettings}
+        />
+      </ErrorBoundary>
     </React.StrictMode>,
   );
 }
 
-export interface UiState {
-  overlaySize: OverlaySize;
-  integrationType: IntegrationType | undefined;
-}
-
-export enum OverlaySize {
-  SMALL = "small",
-  MEDIUM = "medium",
-  LARGE = "large",
-}
-
-export enum IntegrationType {
-  CB_VN = "Checkout Benefits & Voucher Network",
-  CHECKOUT_PRODUCTS = "Checkout Products",
-  OPTIMIZE = "Optimize",
-}
-
 export function Main({
-  blacklist,
+  settings,
+  getSettings,
+  updateSettings,
 }: {
-  blacklist: string[] | undefined;
+  settings: ExtensionSettings;
+  getSettings: () => Promise<ExtensionSettings>;
+  updateSettings: (newSettings: Partial<ExtensionSettings>) => Promise<boolean>;
 }): JSX.Element {
-  const [uiState, setUiState] = useState<UiState>({
-    overlaySize: OverlaySize.SMALL,
-    integrationType: undefined,
-  });
+  debug("Main", "Rendering Main component", settings);
 
-  const { integrationState } = useIntegrationTester(blacklist);
+  const overlayState = useOverlayState(getSettings, updateSettings)();
   useOverlayOnTopMover();
-  return integrationState.isBlackListedPage ? (
-    <></>
-  ) : (
-    <DraggableOverlayContainer
-      uiState={uiState}
-      setUiState={setUiState}
-      integrationState={integrationState}
-    />
-  );
-}
-
-function useIntegrationTester(blacklist: string[] | undefined): {
-  integrationState: IntegrationDetectorData;
-} {
-  const [integrationState, setIntegrationState] =
-    useState<IntegrationDetectorData>({
-      shouldCheck: true,
-      selfTester: undefined,
-      integrationState: defaultIntegrationState,
-      isBlackListedPage: isBlacklistedPage(blacklist),
-    });
-  const integrationStateRef = useRef(integrationState);
 
   useEffect(() => {
-    integrationStateRef.current = integrationState;
-  }, [integrationState]);
-  window.sovIntegrationDetector =
-    window.sovIntegrationDetector ||
-    new IntegrationDetectorLoop(
-      setIntegrationState,
-      integrationStateRef.current,
-    );
+    overlayState.setBlacklist(settings.blacklist);
+  }, [settings.blacklist]);
 
-  return { integrationState };
+  if (overlayState.integrationState.isBlackListedPage) {
+    debug("Main", "Page is blacklisted, returning empty fragment");
+    return <></>;
+  }
+
+  return (
+    <ErrorBoundary>
+      <DraggableOverlayContainer overlayState={overlayState} />
+    </ErrorBoundary>
+  );
 }
 
 function useOverlayOnTopMover(): void {
@@ -125,6 +120,7 @@ const moveOverlayRootOnTopOfOtherObserver = (): MutationObserver => {
     moveOverlayRootToOnTopOfOther();
   });
   observer.observe(document.body, { childList: true, subtree: true });
+
   return observer;
 };
 
@@ -136,8 +132,3 @@ const moveOverlayRootToOnTopOfOther = (): void => {
     }
   }
 };
-
-interface SovWindow extends Window {
-  sovIntegrationDetector?: IntegrationDetectorLoop;
-}
-declare const window: SovWindow;
