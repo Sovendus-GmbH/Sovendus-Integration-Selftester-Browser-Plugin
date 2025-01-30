@@ -1,11 +1,7 @@
-import { debug } from "../logger/logger";
 import type { SovSelfTesterWindow } from "../integration-tester/integrationTester";
-import { startIntegrationTester } from "./integrationTesterLoader";
-
-export interface ExtensionSettings {
-  transmitTestResult: boolean;
-  blacklist: string[];
-}
+import { startIntegrationTester } from "../integration-tester-loader/integrationTesterLoader";
+import { debug } from "../logger/logger";
+import type { ExtensionSettings, ExtensionSettingsEvent } from "./types";
 
 async function initializeExtension(): Promise<void> {
   debug("browserExtensionLoader", "Starting integration tester");
@@ -14,7 +10,7 @@ async function initializeExtension(): Promise<void> {
     return new Promise((resolve) => {
       debug("browserExtensionLoader", "Requesting settings from browser");
       window.postMessage({ type: "GET_SETTINGS" }, "*");
-      const messageHandler = (event: MessageEvent) => {
+      const messageHandler = (event: ExtensionSettingsEvent): void => {
         if (event.data.type === "SETTINGS_RESPONSE") {
           debug(
             "browserExtensionLoader",
@@ -22,7 +18,7 @@ async function initializeExtension(): Promise<void> {
             event.data.settings,
           );
           window.removeEventListener("message", messageHandler);
-          resolve(event.data.settings);
+          resolve(event.data.settings as ExtensionSettings);
         }
       };
 
@@ -48,7 +44,7 @@ async function initializeExtension(): Promise<void> {
         "*",
       );
 
-      const messageHandler = (event: MessageEvent) => {
+      const messageHandler = (event: ExtensionSettingsEvent): void => {
         if (event.data.type === "SETTINGS_UPDATE_RESPONSE") {
           window.removeEventListener("message", messageHandler);
           debug(
@@ -56,7 +52,7 @@ async function initializeExtension(): Promise<void> {
             "Success updating settings from browser",
             newSettings,
           );
-          resolve(event.data.success);
+          resolve(event.data.success || false);
         }
       };
 

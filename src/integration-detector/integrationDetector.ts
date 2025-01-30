@@ -324,7 +324,7 @@ export class IntegrationDetectorLoop {
     );
   }
 
-  private awinIntegrationDetected(): boolean {
+  private awinSovendusIntegrationDetected(): boolean {
     return !!window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber;
   }
 

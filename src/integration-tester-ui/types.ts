@@ -1,4 +1,4 @@
-import { OverlayState } from "./hooks/useOverlayState";
+import type { OverlayState } from "./hooks/useOverlayState";
 
 export interface UiState {
   overlaySize: OverlaySize;

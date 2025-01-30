@@ -4,14 +4,12 @@ import type { JSX } from "react";
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
+import type { ExtensionSettings } from "../browser-extension-specific/types";
 import { maxZIndex, overlayRootId } from "../constants";
-import { debug, logger } from "../logger/logger";
 import { ErrorBoundary } from "../integration-tester-ui/components/ErrorBoundary";
-
 import { DraggableOverlayContainer } from "../integration-tester-ui/components/overlay-container";
-
 import { useOverlayState } from "../integration-tester-ui/hooks/useOverlayState";
-import { ExtensionSettings } from "./browserExtensionLoader";
+import { debug, logger } from "../logger/logger";
 
 export function startIntegrationTester(
   settings: ExtensionSettings,
