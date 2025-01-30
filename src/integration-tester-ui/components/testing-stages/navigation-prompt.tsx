@@ -1,13 +1,16 @@
-import React, { JSX, useState } from "react";
 import {
   ArrowRight,
+  CheckCircle,
   ChevronDown,
   ChevronUp,
-  CheckCircle,
   XCircle,
 } from "lucide-react";
-import { OverlaySize, StepProps } from "../../types";
-import { StatusItem } from "../status-item";
+import type { JSX } from "react";
+import React, { useState } from "react";
+
+import type { StepProps } from "../../types";
+import { OverlaySize } from "../../types";
+import { StatusItem } from "./components/status-item";
 
 export function NavigationPrompt({ overlayState }: StepProps): JSX.Element {
   const [isExpanded, setIsExpanded] = useState(false);

@@ -1,6 +1,6 @@
-import React from "react";
 import { type CheckCircle } from "lucide-react";
-import { JSX } from "react";
+import type { JSX } from "react";
+import React from "react";
 
 interface StatusItemProps {
   label: string;

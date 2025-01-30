@@ -1,9 +1,11 @@
-import React, { JSX, useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { IntegrationType } from "../types";
-import type { UiState } from "../types";
-import { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
-import { styles } from "../styles";
+import type { JSX } from "react";
+import React, { useState } from "react";
+
+import type { IntegrationDetectorData } from "../../../../integration-detector/integrationDetector";
+import { styles } from "../../../styles";
+import type { UiState } from "../../../types";
+import { IntegrationType } from "../../../types";
 import { CBVNContent } from "./cb-vn-content";
 import { CheckoutProductsContent } from "./checkout products-content";
 import { OptimizeContent } from "./optimize-content";
