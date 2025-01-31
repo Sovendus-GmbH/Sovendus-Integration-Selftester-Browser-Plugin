@@ -5,17 +5,23 @@ import { debug } from "../../../logger/logger";
 import type { StepProps } from "../../types";
 import { OverlaySize } from "../../types";
 
-export function InitialPrompt({ overlayState }: StepProps): JSX.Element {
-  const isSmall = overlayState.uiState.overlaySize === OverlaySize.SMALL;
+export function InitialPrompt({
+  overlayState: {
+    handleInitialSovendusCheck,
+    openBlacklistConfirmation,
+    testerStorage: { uiState },
+  },
+}: StepProps): JSX.Element {
+  const isSmall = uiState.overlaySize === OverlaySize.SMALL;
 
   const handleAccept = (): void => {
     debug("InitialPrompt", "Accept clicked");
-    overlayState.handleInitialSovendusCheck();
+    handleInitialSovendusCheck();
   };
 
   const handleDecline = (): void => {
     debug("InitialPrompt", "Decline clicked");
-    overlayState.openBlacklistConfirmation();
+    openBlacklistConfirmation();
   };
 
   const buttonStyle: React.CSSProperties = {

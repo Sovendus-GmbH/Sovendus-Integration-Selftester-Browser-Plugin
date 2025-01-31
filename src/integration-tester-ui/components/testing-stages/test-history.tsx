@@ -6,9 +6,8 @@ import type { TestRun } from "../../hooks/useOverlayState";
 import type { StepProps } from "../../types";
 
 export function TestHistory({ overlayState }: StepProps): JSX.Element {
-  const completedTests = overlayState.testHistory.filter(
-    (test) => test.completed,
-  );
+  const { getTestRunHistory } = overlayState;
+  const completedTests = getTestRunHistory().filter((test) => test.completed);
 
   const containerStyle: React.CSSProperties = {
     color: "white",
@@ -94,7 +93,7 @@ export function TestHistory({ overlayState }: StepProps): JSX.Element {
                   Test Run {test.id}
                 </h3>
                 <p style={{ fontSize: "0.875rem", marginBottom: "0.5rem" }}>
-                  Run at: {new Date(test.timestamp).toLocaleString()}
+                  Run at: {new Date(test.startTime).toLocaleString()}
                 </p>
                 <p style={{ fontSize: "0.875rem", marginBottom: "0.5rem" }}>
                   Consent:{" "}
@@ -121,7 +120,7 @@ export function TestHistory({ overlayState }: StepProps): JSX.Element {
       </div>
       <div style={buttonContainerStyle}>
         <button
-          onClick={overlayState.exitHistoryView}
+          onClick={overlayState.transitionBack}
           style={{
             ...buttonStyle,
             backgroundColor: "#4B5563",
@@ -145,7 +144,7 @@ function TestResultDisplay({
 }: {
   title: string;
   result: TestRun["landingPageResult"];
-}) {
+}): JSX.Element {
   const containerStyle: React.CSSProperties = {
     backgroundColor: "rgba(0, 0, 0, 0.2)",
     padding: "0.75rem",

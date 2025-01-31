@@ -6,10 +6,15 @@ import type { StepProps } from "../../types";
 import { PageType } from "../../types";
 import { OverlaySize } from "../../types";
 
-export function PageSelection({ overlayState }: StepProps): JSX.Element {
-  const isBig = overlayState.uiState.overlaySize === OverlaySize.LARGE;
-  const isMedium = overlayState.uiState.overlaySize === OverlaySize.MEDIUM;
-  const isSmall = overlayState.uiState.overlaySize === OverlaySize.SMALL;
+export function PageSelection({
+  overlayState: {
+    handlePageSelection,
+    testerStorage: { uiState },
+  },
+}: StepProps): JSX.Element {
+  const isBig = uiState.overlaySize === OverlaySize.LARGE;
+  const isMedium = uiState.overlaySize === OverlaySize.MEDIUM;
+  const isSmall = uiState.overlaySize === OverlaySize.SMALL;
   const containerStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
@@ -30,7 +35,6 @@ export function PageSelection({ overlayState }: StepProps): JSX.Element {
     flexDirection: isSmall || isMedium ? "column" : "row",
     gap: isSmall ? "0.25rem" : "0.5rem",
   };
-  console.log("isBig", isBig, "isMedium", isMedium, "isSmall", isSmall);
   return (
     <div style={containerStyle}>
       {!isSmall ? <h2 style={headingStyle}>Select Current Page</h2> : <></>}
@@ -46,7 +50,7 @@ export function PageSelection({ overlayState }: StepProps): JSX.Element {
               }}
             />
           }
-          onClick={() => overlayState.handlePageSelection(PageType.LANDING)}
+          onClick={() => handlePageSelection(PageType.LANDING)}
           small={!isBig}
         />
         <PageOption
@@ -60,7 +64,7 @@ export function PageSelection({ overlayState }: StepProps): JSX.Element {
               }}
             />
           }
-          onClick={() => overlayState.handlePageSelection(PageType.SUCCESS)}
+          onClick={() => handlePageSelection(PageType.SUCCESS)}
           small={!isBig}
         />
       </div>
@@ -82,7 +86,7 @@ function PageOption({
   icon,
   onClick,
   small,
-}: PageOptionProps) {
+}: PageOptionProps): JSX.Element {
   const buttonStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",

@@ -26,12 +26,12 @@ export class ErrorBoundary extends Component<
     return { hasError: true, error, errorInfo: null };
   }
 
-  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     this.setState({ errorInfo });
     debug("ErrorBoundary", "Uncaught error:", { error, errorInfo });
   }
 
-  override render() {
+  override render(): ReactNode {
     if (this.state.hasError) {
       const containerStyle: React.CSSProperties = {
         padding: "1rem",

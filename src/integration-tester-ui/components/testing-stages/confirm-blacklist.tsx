@@ -5,17 +5,23 @@ import { debug } from "../../../logger/logger";
 import type { StepProps } from "../../types";
 import { OverlaySize } from "../../types";
 
-export function ConfirmBlacklist({ overlayState }: StepProps): JSX.Element {
-  const isSmall = overlayState.uiState.overlaySize === OverlaySize.SMALL;
+export function ConfirmBlacklist({
+  overlayState: {
+    addToBlacklist,
+    hideOverlay,
+    testerStorage: { uiState },
+  },
+}: StepProps): JSX.Element {
+  const isSmall = uiState.overlaySize === OverlaySize.SMALL;
 
   const handleBlacklist = (): void => {
     debug("InitialPrompt", "Blacklist clicked");
-    overlayState.handleInitialSevendusCheck();
+    void addToBlacklist();
   };
 
   const handleHideOverlay = (): void => {
     debug("InitialPrompt", "HideOverlay clicked");
-    overlayState.closeOverlay();
+    hideOverlay();
   };
 
   const buttonStyle: React.CSSProperties = {

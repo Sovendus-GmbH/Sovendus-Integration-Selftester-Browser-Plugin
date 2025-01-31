@@ -5,8 +5,13 @@ import React from "react";
 import type { StepProps } from "../../types";
 import { OverlaySize } from "../../types";
 
-export function ConsentSelectionStep({ overlayState }: StepProps): JSX.Element {
-  const isSmall = overlayState.uiState.overlaySize === OverlaySize.SMALL;
+export function ConsentSelectionStep({
+  overlayState: {
+    handleConsentSelection,
+    testerStorage: { uiState },
+  },
+}: StepProps): JSX.Element {
+  const isSmall = uiState.overlaySize === OverlaySize.SMALL;
 
   const containerStyle: React.CSSProperties = {
     display: "flex",
@@ -50,7 +55,7 @@ export function ConsentSelectionStep({ overlayState }: StepProps): JSX.Element {
               style={{ width: "1rem", height: "1rem", color: "#34D399" }}
             />
           }
-          onClick={() => overlayState.handleConsentSelection(true)}
+          onClick={() => handleConsentSelection(true)}
           isSmall={isSmall}
         />
         <ConsentOption
@@ -60,7 +65,7 @@ export function ConsentSelectionStep({ overlayState }: StepProps): JSX.Element {
               style={{ width: "1rem", height: "1rem", color: "#FBBF24" }}
             />
           }
-          onClick={() => overlayState.handleConsentSelection(false)}
+          onClick={() => handleConsentSelection(false)}
           isSmall={isSmall}
         />
       </div>
@@ -78,7 +83,12 @@ interface ConsentOptionProps {
   isSmall: boolean;
 }
 
-function ConsentOption({ title, icon, onClick, isSmall }: ConsentOptionProps) {
+function ConsentOption({
+  title,
+  icon,
+  onClick,
+  isSmall,
+}: ConsentOptionProps): JSX.Element {
   const buttonStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",

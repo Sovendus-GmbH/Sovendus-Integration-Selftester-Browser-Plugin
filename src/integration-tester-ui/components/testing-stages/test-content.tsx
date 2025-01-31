@@ -5,35 +5,35 @@ import { useEffect } from "react";
 
 import type { TestResult } from "../../hooks/useOverlayState";
 import type { StepProps } from "../../types";
-import { OverlaySize, PageType, TestingState } from "../../types";
+import { OverlaySize, PageType } from "../../types";
 import { AccordionContent } from "./components/accordion-content";
 import { StatusItem } from "./components/status-item";
 
 export function TestContent({ overlayState }: StepProps): JSX.Element {
-  const isSmall = overlayState.uiState.overlaySize === OverlaySize.SMALL;
+  const {
+    handleTestCompletion,
+    testerStorage: { uiState },
+  } = overlayState;
+  const isSmall = uiState.overlaySize === OverlaySize.SMALL;
 
   useEffect(() => {
-    if (overlayState.uiState.testingState === TestingState.IN_PROGRESS) {
+    if (uiState.testingState === TestingState.IN_PROGRESS) {
       const timer = setTimeout(() => {
         const result: TestResult = {
-          status: overlayState.integrationState.integrationState.detected
+          status: integrationState.integrationState.detected
             ? "success"
             : "error",
-          details: overlayState.integrationState.integrationState.detected
+          details: integrationState.integrationState.detected
             ? "Integration detected successfully"
             : "Integration not detected",
         };
-        overlayState.handleTestCompletion(result);
+        handleTestCompletion(result);
       }, 3000);
 
       return (): void => clearTimeout(timer);
     }
     return;
-  }, [
-    overlayState.integrationState.integrationState.detected,
-    overlayState.handleTestCompletion,
-    overlayState.uiState.testingState,
-  ]);
+  }, []);
 
   const containerStyle: React.CSSProperties = {
     display: "flex",

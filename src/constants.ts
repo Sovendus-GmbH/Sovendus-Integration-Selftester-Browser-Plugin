@@ -26,7 +26,6 @@ export const defaultBlacklist: string[] = [
   "www.walmart.com",
   "www.craigslist.org",
   "www.nytimes.com",
-  "www.etsy.com",
   "www.xfinity.com",
   "www.wikia.com",
 ];

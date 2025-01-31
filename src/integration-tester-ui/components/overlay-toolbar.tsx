@@ -5,6 +5,7 @@ import React from "react";
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
 import { DetectionState } from "../../integration-detector/integrationDetector";
 import type { OverlayState } from "../hooks/useOverlayState";
+import type { StageType } from "../testing-flow-config";
 import { testingFlowConfig } from "../testing-flow-config";
 import { OverlaySize } from "../types";
 
@@ -17,14 +18,17 @@ export function OverlayToolbar({
   dragHandleProps,
   overlayState,
 }: OverlayToolbarProps): JSX.Element {
-  const currentStage = overlayState.currentStage;
-  const stageConfig = testingFlowConfig.stages[currentStage];
+  const currentTestRun = overlayState.getCurrentTestRun();
+  const stageConfig = testingFlowConfig.stages[
+    currentTestRun.currentStage
+  ] as StageType;
   const availableSizes = stageConfig.availableSizes;
   const currentSizeIndex = availableSizes.indexOf(
-    overlayState.uiState.overlaySize,
+    overlayState.testerStorage.uiState.overlaySize,
   );
 
-  const isSmall = overlayState.uiState.overlaySize === OverlaySize.SMALL;
+  const isSmall =
+    overlayState.testerStorage.uiState.overlaySize === OverlaySize.SMALL;
   const showMinusButton = currentSizeIndex > 0;
   const showPlusButton = currentSizeIndex < availableSizes.length - 1;
 
@@ -76,10 +80,7 @@ export function OverlayToolbar({
         )}
       </div>
       <div style={buttonContainerStyle}>
-        <DetectionStatus
-          integrationState={overlayState.integrationState}
-          isSmall={isSmall}
-        />
+        <DetectionStatus integrationState={overlayState.integrationState} />
         <button onClick={overlayState.showTestHistory} style={buttonStyle}>
           <History size={16} />
         </button>
@@ -112,11 +113,9 @@ export function OverlayToolbar({
 
 function DetectionStatus({
   integrationState,
-  isSmall,
 }: {
   integrationState: IntegrationDetectorData;
-  isSmall: boolean;
-}) {
+}): JSX.Element {
   const status =
     integrationState?.integrationState?.status?.detectionState ||
     DetectionState.NOT_DETECTED;

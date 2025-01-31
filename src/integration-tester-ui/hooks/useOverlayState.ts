@@ -2,22 +2,28 @@ import { useMemo } from "react";
 import type { StoreApi, UseBoundStore } from "zustand";
 import { create } from "zustand";
 
-import type { ExtensionStorage } from "../../browser-extension-specific/types";
+import type {
+  ExtensionStorage,
+  ExtensionStorageLoaded,
+} from "../../browser-extension-specific/types";
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
 import { defaultIntegrationState } from "../../integration-detector/integrationDetector";
 import { isBlacklistedPage } from "../../integration-detector/integrationDetector";
 import { debug } from "../../logger/logger";
-import type { StageName } from "../testing-flow-config";
+import type { StageKeys, StageName, StageType } from "../testing-flow-config";
 import { testingFlowConfig } from "../testing-flow-config";
 import type { UiState } from "../types";
-import { OverlaySize, PageType, TestingState } from "../types";
+import { OverlaySize, PageType } from "../types";
 
 export interface TestRun {
   id: string;
-  timestamp: number;
-  withConsent: boolean;
+  startTime: number;
+  withConsent: boolean | undefined;
+  currentPageType: PageType | undefined;
   landingPageResult: TestResult;
   successPageResult: TestResult;
+  currentStage: StageName;
+  lastStage: StageName | undefined;
   completed: boolean;
 }
 
@@ -27,20 +33,23 @@ export interface TestResult {
 }
 
 export interface OverlayState {
-  uiState: UiState;
-  currentStage: StageName;
-  currentPageType: PageType;
-  testingCompleted: { landing: boolean; success: boolean };
-  testHistory: TestRun[];
-  currentTestRun: TestRun | null;
-  landingPageResult: TestResult | null;
-  successPageResult: TestResult | null;
+  currentHost: string;
+  isPromptVisible: boolean;
   integrationState: IntegrationDetectorData;
-  testerStorage: ExtensionStorage;
+  testerStorage: ExtensionStorageLoaded;
   _getSettings: () => Promise<ExtensionStorage>;
   _updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>;
   setUiState: (state: Partial<UiState>) => void;
-  transition: (action: string) => void;
+  setPosition: (
+    positionCallBack: (position: { x: number; y: number }) => {
+      x: number;
+      y: number;
+    },
+  ) => void;
+  transition: (nextStage: StageKeys) => void;
+  getTestRunHistory: () => TestRun[];
+  getCurrentTestRun: () => TestRun;
+  setCurrentTestRunData: (testRunData: Partial<TestRun>) => void;
   handleInitialSovendusCheck: () => void;
   handleConsentSelection: (withConsent: boolean) => void;
   handlePageSelection: (pageType: PageType) => void;
@@ -48,11 +57,12 @@ export interface OverlayState {
   handleNavigateToSuccessPage: () => void;
   startNewTest: () => void;
   showTestHistory: () => void;
-  exitHistoryView: () => void;
+  transitionBack: () => void;
   addToBlacklist: () => Promise<void>;
   resizeOverlay: (direction: "increase" | "decrease") => void;
-  closeOverlay: () => void;
+  hideOverlay: () => void;
   openBlacklistConfirmation: () => void;
+  saveSettings: () => Promise<void>;
 }
 
 export const useOverlayState = (
@@ -62,29 +72,69 @@ export const useOverlayState = (
 ): ReturnType<typeof useMemo<UseBoundStore<StoreApi<OverlayState>>>> => {
   return useMemo(() => {
     return create<OverlayState>((set, get) => {
-      const isBlackListedPage: boolean = isBlacklistedPage(settings.blacklist);
+      const isBlackListedPage: boolean = isBlacklistedPage(settings?.blacklist);
       return {
-        uiState: {
-          overlaySize: OverlaySize.SMALL,
-          integrationType: undefined,
-          testingState: TestingState.NOT_STARTED,
-          isPromptVisible: !isBlackListedPage,
-        },
-        currentStage: "initialPrompt",
-        currentPageType: PageType.LANDING,
-        testingCompleted: { landing: false, success: false },
-        testHistory: [],
-        currentTestRun: null,
-        landingPageResult: null,
-        successPageResult: null,
+        currentHost: window.location.host,
+        isPromptVisible: !isBlackListedPage,
         _getSettings: getSettings,
         _updateSettings: updateSettings,
-        testerStorage: settings,
+        testerStorage: {
+          currentPageType: PageType.LANDING,
+          testHistory: [],
+          currentTestRuns: {
+            [window.location.host]: createNewTestRun(),
+          },
+          ...settings,
+          uiState: {
+            position: { x: 20, y: 20 },
+            overlaySize: OverlaySize.SMALL,
+            integrationType: undefined,
+
+            // testingState: TestingState.NOT_STARTED,
+            ...settings.uiState,
+          },
+        },
         integrationState: {
           shouldCheck: true,
           selfTester: undefined,
           integrationState: defaultIntegrationState,
           isBlackListedPage: isBlackListedPage,
+        },
+
+        getCurrentTestRun: () => {
+          const {
+            currentHost,
+            testerStorage: { currentTestRuns },
+          } = get();
+          return currentTestRuns?.[currentHost] as TestRun;
+        },
+
+        getTestRunHistory: () => {
+          const {
+            currentHost,
+            testerStorage: { testHistory },
+          } = get();
+          return testHistory?.[currentHost] as TestRun[];
+        },
+
+        setCurrentTestRunData: (testRunData: Partial<TestRun>) => {
+          set((state) => {
+            const currentRun = state.testerStorage.currentTestRuns?.[
+              window.location.host
+            ] as TestRun;
+            return {
+              testerStorage: {
+                ...state.testerStorage,
+                currentTestRuns: {
+                  ...state.testerStorage.currentTestRuns,
+                  [window.location.host]: {
+                    ...currentRun,
+                    ...testRunData,
+                  },
+                },
+              },
+            };
+          });
         },
 
         addToBlacklist: async () => {
@@ -95,7 +145,7 @@ export const useOverlayState = (
           const { _updateSettings, testerStorage: settings } = get();
           await _updateSettings({
             ...settings,
-            blacklist: [...settings.blacklist, window.location.host],
+            blacklist: [...(settings?.blacklist || []), window.location.host],
           });
           set((state) => ({
             integrationState: {
@@ -106,45 +156,41 @@ export const useOverlayState = (
         },
 
         openBlacklistConfirmation: () => {
-          get().transition("DECLINE");
+          get().transition(
+            testingFlowConfig.transitions.initialPrompt.DECLINE!,
+          );
         },
 
         setUiState: (partialState) =>
           set((state) => ({
-            uiState: { ...state.uiState, ...partialState },
+            testerStorage: {
+              ...state.testerStorage,
+              uiState: {
+                ...state.testerStorage.uiState,
+                ...partialState,
+              },
+            },
           })),
 
-        transition: (action) => {
-          const { currentStage } = get();
-          const nextStage =
-            testingFlowConfig.flow.transitions[currentStage]?.[action];
-          if (nextStage) {
-            debug(
-              "useOverlayState",
-              `Transitioning from ${currentStage} to ${nextStage}`,
-            );
-            const stageConfig =
-              testingFlowConfig.stages[nextStage as StageName];
-            set({ currentStage: nextStage as StageName });
-            get().setUiState({ overlaySize: stageConfig.defaultSize });
-          } else {
-            debug(
-              "useOverlayState",
-              `No transition found for action ${action} in stage ${currentStage}`,
-            );
-          }
+        transition: (nextStage: StageKeys) => {
+          debug("useOverlayState", `Transitioning to ${nextStage}`);
+          const stageConfig = testingFlowConfig.stages[nextStage] as StageType;
+          const { getCurrentTestRun, setCurrentTestRunData, setUiState } =
+            get();
+          const currentRun = getCurrentTestRun();
+          setCurrentTestRunData({
+            lastStage: currentRun.currentStage,
+            currentStage: nextStage,
+          });
+          setUiState({ overlaySize: stageConfig.defaultSize });
         },
 
         handleInitialSovendusCheck: () => {
           debug("useOverlayState", 'Initial prompt response: "accepted"');
-          set({ currentStage: "consentSelection" });
-          get().setUiState({
-            overlaySize: testingFlowConfig.stages.consentSelection.defaultSize,
-          });
+          get().transition(testingFlowConfig.transitions.initialPrompt.ACCEPT!);
         },
 
-        closeOverlay: () => {
-          console.log("sdhjfkjdfjdksfhhjk");
+        hideOverlay: () => {
           get().setUiState({ isPromptVisible: false });
         },
 
@@ -153,23 +199,19 @@ export const useOverlayState = (
             "useOverlayState",
             `Consent selection: ${withConsent ? "with consent" : "without consent"}`,
           );
-          const newTestRun: TestRun = {
-            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            timestamp: Date.now(),
-            withConsent,
-            landingPageResult: { status: "not-run", details: "" },
-            successPageResult: { status: "not-run", details: "" },
-            completed: false,
-          };
-          set({ currentTestRun: newTestRun });
-          get().transition("SELECT");
+          get().setCurrentTestRunData({ withConsent });
+          get().transition(
+            testingFlowConfig.transitions.consentSelection.SELECT!,
+          );
         },
 
         handlePageSelection: (pageType) => {
           debug("useOverlayState", `Page selection: ${pageType}`);
-          set({ currentPageType: pageType });
+          get().setCurrentTestRunData({ currentPageType: pageType });
           get().transition(
-            pageType === PageType.LANDING ? "SELECT_LANDING" : "SELECT_SUCCESS",
+            pageType === PageType.LANDING
+              ? testingFlowConfig.transitions.pageSelection.SELECT_LANDING!
+              : testingFlowConfig.transitions.pageSelection.SELECT_SUCCESS!,
           );
         },
 
@@ -216,37 +258,23 @@ export const useOverlayState = (
 
         handleNavigateToSuccessPage: () => {
           debug("useOverlayState", "Navigating to success page");
-          set({ currentPageType: PageType.SUCCESS });
-          get().transition("NAVIGATE");
+          get().setCurrentTestRunData({ currentPageType: PageType.SUCCESS });
+          get().transition(
+            testingFlowConfig.transitions.landingPageTest.NAVIGATE!,
+          );
         },
 
         startNewTest: () => {
           debug("useOverlayState", "Starting new test");
-          set({
-            testingCompleted: { landing: false, success: false },
-            landingPageResult: null,
-            successPageResult: null,
-            currentPageType: PageType.LANDING,
-            currentTestRun: null,
-            currentStage: "consentSelection",
-          });
-          get().setUiState({
-            overlaySize: testingFlowConfig.stages.consentSelection.defaultSize,
-            testingState: TestingState.NOT_STARTED,
-          });
+          get().setCurrentTestRunData(createNewTestRun());
+          get().transition(testingFlowConfig.transitions.initialPrompt.ACCEPT!);
         },
 
         showTestHistory: () => {
           debug("useOverlayState", "Showing test history");
-          const { uiState } = get();
-          set({
-            uiState: {
-              ...uiState,
-              overlaySize: testingFlowConfig.stages.testHistory.defaultSize,
-              testingState: TestingState.COMPLETED,
-            },
-            currentStage: "testHistory",
-          });
+          get().transition(
+            testingFlowConfig.transitions.testHistory.TO_TEST_HISTORY!,
+          );
         },
 
         resizeOverlay: (direction: "increase" | "decrease") => {
@@ -269,19 +297,56 @@ export const useOverlayState = (
           }
         },
 
-        exitHistoryView: () => {
+        transitionBack: () => {
           debug("useOverlayState", "Exiting history view");
-          const { uiState } = get();
-          set({
-            uiState: {
-              ...uiState,
-              overlaySize: OverlaySize.SMALL,
-              testingState: TestingState.NOT_STARTED,
+          const { getCurrentTestRun, transition } = get();
+          const currentTestRun = getCurrentTestRun();
+          if (!currentTestRun.lastStage) {
+            console.error("No last stage found to go back to");
+            return;
+          }
+          transition(currentTestRun.lastStage);
+        },
+
+        setPosition: (setPositionCallback) => {
+          debug("useOverlayState", "Setting position");
+          const {
+            testerStorage: {
+              uiState: { position },
             },
-            currentStage: "initialPrompt",
+          } = get();
+          const newPosition = setPositionCallback(position);
+          set({
+            testerStorage: {
+              ...get().testerStorage,
+              uiState: {
+                ...get().testerStorage.uiState,
+                position: newPosition,
+              },
+            },
           });
+        },
+
+        saveSettings: async () => {
+          debug("useOverlayState", "Saving settings");
+          const { testerStorage, _updateSettings } = get();
+          await _updateSettings(testerStorage);
         },
       } as OverlayState;
     });
   }, []);
 };
+
+function createNewTestRun(): TestRun {
+  return {
+    id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    startTime: Date.now(),
+    withConsent: undefined,
+    landingPageResult: { status: "not-run", details: "" },
+    successPageResult: { status: "not-run", details: "" },
+    currentStage: "initialPrompt",
+    completed: false,
+    lastStage: undefined,
+    currentPageType: PageType.LANDING,
+  };
+}

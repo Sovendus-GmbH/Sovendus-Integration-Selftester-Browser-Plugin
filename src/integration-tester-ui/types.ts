@@ -1,14 +1,14 @@
 import type { OverlayState } from "./hooks/useOverlayState";
 
 export interface UiState {
+  position: { x: number; y: number };
   overlaySize: OverlaySize;
   integrationType: IntegrationType | undefined;
-  testingState: TestingState;
+  // testingState: TestingState;
   isPromptVisible: boolean;
 }
 
 export enum OverlaySize {
-  
   SMALL = "small",
   MEDIUM = "medium",
   LARGE = "large",
@@ -20,11 +20,11 @@ export enum IntegrationType {
   OPTIMIZE = "Optimize",
 }
 
-export enum TestingState {
-  NOT_STARTED = "not_started",
-  IN_PROGRESS = "in_progress",
-  COMPLETED = "completed",
-}
+// export enum TestingState {
+//   NOT_STARTED = "not_started",
+//   IN_PROGRESS = "in_progress",
+//   COMPLETED = "completed",
+// }
 
 export enum PageType {
   UNKNOWN = "unknown",

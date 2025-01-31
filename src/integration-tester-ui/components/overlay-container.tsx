@@ -1,3 +1,4 @@
+import type { DragEndEvent } from "@dnd-kit/core";
 import { DndContext, useDraggable } from "@dnd-kit/core";
 import type { JSX } from "react";
 import React, { useEffect, useState } from "react";
@@ -5,8 +6,8 @@ import React, { useEffect, useState } from "react";
 import { maxZIndex } from "../../constants";
 import { debug } from "../../logger/logger";
 import type { OverlayState } from "../hooks/useOverlayState";
-import type { OverlayDimensions, UiState } from "../types";
-import { OverlaySize, TestingState } from "../types";
+import type { OverlayDimensions } from "../types";
+import { OverlaySize } from "../types";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { OverlayContent } from "./overlay-content";
 import { OverlayToolbar } from "./overlay-toolbar";
@@ -17,21 +18,16 @@ export function DraggableOverlayContainer({
   overlayState: OverlayState;
 }): JSX.Element {
   debug("DraggableOverlayContainer", "Rendering", overlayState);
-
-  const [position, setPosition] = useState({ x: 20, y: 20 });
-  const [overlayDimensions, setOverlayDimensions] = useState<OverlayDimensions>(
-    {
-      width: 150,
-      height: 60,
-    },
-  );
+  const {
+    testerStorage: { uiState },
+    setPosition,
+  } = overlayState;
+  const [overlayDimensions, setOverlayDimensions] =
+    useState<OverlayDimensions>(smallDimension);
 
   useEffect(() => {
     try {
-      const newDimensions = getOverlayDimensions(
-        overlayState.uiState.overlaySize,
-        overlayState.uiState,
-      );
+      const newDimensions = getOverlayDimensions(uiState.overlaySize);
       setOverlayDimensions(newDimensions);
       setPosition((prev) => ({
         x: Math.min(prev.x, window.innerWidth - newDimensions.width - 20),
@@ -40,9 +36,9 @@ export function DraggableOverlayContainer({
     } catch (error) {
       debug("DraggableOverlayContainer", "Error in useEffect", error);
     }
-  }, [overlayState.uiState.overlaySize, overlayState.uiState.testingState]);
+  }, [uiState]);
 
-  const handleDragEnd = (event: any): void => {
+  const handleDragEnd = (event: DragEndEvent): void => {
     try {
       const { delta } = event;
       setPosition((prev) => ({
@@ -66,12 +62,12 @@ export function DraggableOverlayContainer({
     }
   };
 
-  return overlayState.uiState.isPromptVisible ? (
+  return uiState.isPromptVisible ? (
     <div style={{ position: "fixed", top: 0, left: 0, zIndex: maxZIndex }}>
       <ErrorBoundary>
         <DndContext onDragEnd={handleDragEnd}>
           <DraggableOverlay
-            position={position}
+            position={uiState.position}
             overlayDimensions={overlayDimensions}
             overlayState={overlayState}
           />
@@ -91,7 +87,7 @@ function DraggableOverlay({
   position: { x: number; y: number };
   overlayDimensions: OverlayDimensions;
   overlayState: OverlayState;
-}) {
+}): JSX.Element {
   debug("DraggableOverlay", "Rendering", {
     position,
     overlayDimensions,
@@ -132,7 +128,7 @@ function DraggableOverlay({
   }
 }
 
-function ErrorComponent({ error }: { error: unknown }) {
+function ErrorComponent({ error }: { error: unknown }): JSX.Element {
   const style: React.CSSProperties = {
     padding: "1rem",
     backgroundColor: "#FEE2E2",
@@ -164,22 +160,21 @@ function ErrorComponent({ error }: { error: unknown }) {
   );
 }
 
-function getOverlayDimensions(
-  size: OverlaySize,
-  uiState: UiState,
-): OverlayDimensions {
-  switch (size) {
+function getOverlayDimensions(overlaySize: OverlaySize): OverlayDimensions {
+  switch (overlaySize) {
     case OverlaySize.SMALL:
-      return { width: 200, height: 100 };
+      return smallDimension;
     case OverlaySize.MEDIUM:
       return {
         width: 300,
-        height: uiState.testingState === TestingState.IN_PROGRESS ? 250 : 200,
+        height: 250,
       };
     case OverlaySize.LARGE:
       return {
         width: 400,
-        height: uiState.testingState === TestingState.COMPLETED ? 400 : 350,
+        height: 400,
       };
   }
 }
+
+const smallDimension = { width: 200, height: 100 };

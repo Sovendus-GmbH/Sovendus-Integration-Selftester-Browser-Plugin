@@ -12,10 +12,16 @@ import type { StepProps } from "../../types";
 import { OverlaySize } from "../../types";
 import { StatusItem } from "./components/status-item";
 
-export function NavigationPrompt({ overlayState }: StepProps): JSX.Element {
+export function NavigationPrompt({
+  overlayState: {
+    getCurrentTestRun,
+    handleNavigateToSuccessPage,
+    testerStorage: { uiState },
+  },
+}: StepProps): JSX.Element {
   const [isExpanded, setIsExpanded] = useState(false);
-  const isSmall = overlayState.uiState.overlaySize === OverlaySize.SMALL;
-
+  const isSmall = uiState.overlaySize === OverlaySize.SMALL;
+  const currentTestRun = getCurrentTestRun();
   const containerStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
@@ -73,7 +79,7 @@ export function NavigationPrompt({ overlayState }: StepProps): JSX.Element {
   return (
     <div style={containerStyle}>
       <h2 style={headingStyle}>Navigate to Order Success Page</h2>
-      {overlayState.landingPageResult && (
+      {currentTestRun.landingPageResult && (
         <div style={resultContainerStyle}>
           <div
             style={resultHeaderStyle}
@@ -81,14 +87,14 @@ export function NavigationPrompt({ overlayState }: StepProps): JSX.Element {
           >
             <StatusItem
               label='Landing Page Test'
-              value={overlayState.landingPageResult.status}
+              value={currentTestRun.landingPageResult.status}
               icon={
-                overlayState.landingPageResult.status === "success"
+                currentTestRun.landingPageResult.status === "success"
                   ? CheckCircle
                   : XCircle
               }
               color={
-                overlayState.landingPageResult.status === "success"
+                currentTestRun.landingPageResult.status === "success"
                   ? "#34D399"
                   : "#F87171"
               }
@@ -98,7 +104,7 @@ export function NavigationPrompt({ overlayState }: StepProps): JSX.Element {
           </div>
           {isExpanded && (
             <div style={resultDetailsStyle}>
-              <p>{overlayState.landingPageResult.details}</p>
+              <p>{currentTestRun.landingPageResult.details}</p>
             </div>
           )}
         </div>
@@ -107,10 +113,7 @@ export function NavigationPrompt({ overlayState }: StepProps): JSX.Element {
         Please complete an order or navigate to the order success page to
         continue testing.
       </p>
-      <button
-        onClick={overlayState.handleNavigateToSuccessPage}
-        style={buttonStyle}
-      >
+      <button onClick={handleNavigateToSuccessPage} style={buttonStyle}>
         <span style={{ marginRight: "0.5rem" }}>I'm on the success page</span>
         <ArrowRight size={isSmall ? 16 : 20} />
       </button>
