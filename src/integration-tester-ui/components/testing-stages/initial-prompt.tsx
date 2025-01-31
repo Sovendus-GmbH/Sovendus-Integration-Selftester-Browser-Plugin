@@ -8,14 +8,14 @@ import { OverlaySize } from "../../types";
 export function InitialPrompt({ overlayState }: StepProps): JSX.Element {
   const isSmall = overlayState.uiState.overlaySize === OverlaySize.SMALL;
 
-  const handleAccept = () => {
+  const handleAccept = (): void => {
     debug("InitialPrompt", "Accept clicked");
-    overlayState.handleInitialPromptResponse(true);
+    overlayState.handleInitialSevendusCheck();
   };
 
-  const handleDecline = () => {
+  const handleDecline = (): void => {
     debug("InitialPrompt", "Decline clicked");
-    overlayState.handleInitialPromptResponse(false);
+    overlayState.closeOverlay();
   };
 
   const buttonStyle: React.CSSProperties = {

@@ -37,7 +37,7 @@ export interface OverlayState {
   integrationState: IntegrationDetectorData;
   setUiState: (state: Partial<UiState>) => void;
   transition: (action: string) => void;
-  handleInitialPromptResponse: (accepted: boolean) => void;
+  handleInitialSevendusCheck: () => void;
   handleConsentSelection: (withConsent: boolean) => void;
   handlePageSelection: (pageType: PageType) => void;
   handleTestCompletion: (result: TestResult) => void;
@@ -112,19 +112,17 @@ export const useOverlayState = (
         }
       },
 
-      handleInitialPromptResponse: (accepted) => {
-        debug(
-          "useOverlayState",
-          `Initial prompt response: ${accepted ? "accepted" : "declined"}`,
-        );
-        if (accepted) {
-          set({ currentStage: "consentSelection" });
-          get().setUiState({
-            overlaySize: testingFlowConfig.stages.consentSelection.defaultSize,
-          });
-        } else {
-          get().setUiState({ isPromptVisible: false });
-        }
+      handleInitialSevendusCheck: () => {
+        debug("useOverlayState", 'Initial prompt response: "accepted"');
+        set({ currentStage: "consentSelection" });
+        get().setUiState({
+          overlaySize: testingFlowConfig.stages.consentSelection.defaultSize,
+        });
+      },
+
+      closeOverlay: () => {
+        console.log("sdhjfkjdfjdksfhhjk");
+        get().setUiState({ isPromptVisible: false });
       },
 
       handleConsentSelection: (withConsent) => {
@@ -242,11 +240,6 @@ export const useOverlayState = (
             },
           });
         }
-      },
-
-      closeOverlay: () => {
-        console.log("sdhjfkjdfjdksfhhjk");
-        get().setUiState({ isPromptVisible: false });
       },
 
       exitHistoryView: () => {
