@@ -1,17 +1,11 @@
 import type { JSX } from "react";
 import React from "react";
 
-import type { IntegrationDetectorData } from "../../../../integration-detector/integrationDetector";
 import { styles } from "../../../styles";
-import type { UiState } from "../../../types";
 
 export function CheckoutProductsContent({
-  integrationState,
-  uiState,
-}: {
-  integrationState: IntegrationDetectorData;
-  uiState: UiState;
-}): JSX.Element {
+  overlayState,
+}: StepProps): JSX.Element {
   const selfTester = integrationState.selfTester;
 
   if (!selfTester) {

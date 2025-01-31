@@ -1,4 +1,4 @@
-import { ArrowLeft, Eye, Grip, History, Minus, Plus, X } from "lucide-react";
+import { ArrowLeft, Eye, Grip, History, Minus, Plus } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
@@ -16,22 +16,27 @@ interface OverlayToolbarProps {
 
 export function OverlayToolbar({
   dragHandleProps,
-  overlayState,
+  overlayState: {
+    openBlacklistConfirmation,
+    transitionBack,
+    getCurrentTestRun,
+    testerStorage: { uiState },
+    showTestHistory,
+    resizeOverlay,
+    integrationState,
+  },
 }: OverlayToolbarProps): JSX.Element {
-  const currentTestRun = overlayState.getCurrentTestRun();
+  const currentTestRun = getCurrentTestRun();
   const stageConfig = testingFlowConfig.stages[
     currentTestRun.currentStage
   ] as StageType;
   const availableSizes = stageConfig.availableSizes;
-  const currentSizeIndex = availableSizes.indexOf(
-    overlayState.testerStorage.uiState.overlaySize,
-  );
+  const currentSizeIndex = availableSizes.indexOf(uiState.overlaySize);
 
-  const isSmall =
-    overlayState.testerStorage.uiState.overlaySize === OverlaySize.SMALL;
+  const isSmall = uiState.overlaySize === OverlaySize.SMALL;
   const showMinusButton = currentSizeIndex > 0;
   const showPlusButton = currentSizeIndex < availableSizes.length - 1;
-  const showCloseButton = overlayState.currentStage !== "confirmBlacklist";
+  const showCloseButton = currentTestRun.currentStage !== "confirmBlacklist";
 
   const toolbarStyle: React.CSSProperties = {
     display: "flex",
@@ -81,36 +86,27 @@ export function OverlayToolbar({
         )}
       </div>
       <div style={buttonContainerStyle}>
-        <DetectionStatus integrationState={overlayState.integrationState} />
-        <button onClick={overlayState.showTestHistory} style={buttonStyle}>
+        <DetectionStatus integrationState={integrationState} />
+        <button onClick={showTestHistory} style={buttonStyle}>
           <History size={16} />
         </button>
         {showPlusButton && (
-          <button
-            onClick={() => overlayState.resizeOverlay("increase")}
-            style={buttonStyle}
-          >
+          <button onClick={() => resizeOverlay("increase")} style={buttonStyle}>
             <Plus size={16} />
           </button>
         )}
         {showMinusButton && (
-          <button
-            onClick={() => overlayState.resizeOverlay("decrease")}
-            style={buttonStyle}
-          >
+          <button onClick={() => resizeOverlay("decrease")} style={buttonStyle}>
             <Minus size={16} />
           </button>
         )}
         {showCloseButton && (
-          <button
-            onClick={overlayState.openBlacklistConfirmation}
-            style={buttonStyle}
-          >
+          <button onClick={openBlacklistConfirmation} style={buttonStyle}>
             <Eye size={16} />
           </button>
         )}
         {!showCloseButton && (
-          <button onClick={overlayState.exitHistoryView} style={buttonStyle}>
+          <button onClick={transitionBack} style={buttonStyle}>
             <ArrowLeft size={16} />
           </button>
         )}

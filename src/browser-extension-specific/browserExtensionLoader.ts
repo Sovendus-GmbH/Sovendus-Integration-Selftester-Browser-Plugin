@@ -8,12 +8,10 @@ async function initializeExtension(): Promise<void> {
 
   async function getSettings(): Promise<ExtensionStorage> {
     return new Promise((resolve) => {
-      debug("browserExtensionLoader", "Requesting settings from browser");
-      window.postMessage({ type: "GET_SETTINGS" }, "*");
       const messageHandler = (event: ExtensionSettingsEvent): void => {
-        if (event.data.type === "SETTINGS_RESPONSE") {
+        if (event.data.type === "GET_SETTINGS_RESPONSE") {
           debug(
-            "browserExtensionLoader",
+            "browserSettingsBridge][browserExtensionLoader",
             "Received settings from browser",
             event.data.settings,
           );
@@ -21,8 +19,16 @@ async function initializeExtension(): Promise<void> {
           resolve(event.data.settings as ExtensionStorage);
         }
       };
-
       window.addEventListener("message", messageHandler);
+      debug(
+        "browserSettingsBridge][browserExtensionLoader",
+        "Requesting settings from browser",
+      );
+      window.postMessage({ type: "GET_SETTINGS" }, "*");
+      debug(
+        "browserSettingsBridge][browserExtensionLoader",
+        "Requested settings from browser",
+      );
     });
   }
 
@@ -31,7 +37,7 @@ async function initializeExtension(): Promise<void> {
   ): Promise<boolean> {
     return new Promise((resolve) => {
       debug(
-        "browserExtensionLoader",
+        "browserSettingsBridge][browserExtensionLoader",
         "Started updating settings from browser",
         newSettings,
       );
@@ -45,10 +51,10 @@ async function initializeExtension(): Promise<void> {
       );
 
       const messageHandler = (event: ExtensionSettingsEvent): void => {
-        if (event.data.type === "SETTINGS_UPDATE_RESPONSE") {
+        if (event.data.type === "UPDATE_SETTINGS_RESPONSE") {
           window.removeEventListener("message", messageHandler);
           debug(
-            "browserExtensionLoader",
+            "browserSettingsBridge][browserExtensionLoader",
             "Success updating settings from browser",
             newSettings,
           );
@@ -60,8 +66,7 @@ async function initializeExtension(): Promise<void> {
     });
   }
   const settings = await getSettings();
-  window.transmitTestResult = settings.transmitTestResult;
-  void startIntegrationTester(settings, getSettings, updateSettings);
+  startIntegrationTester(settings, getSettings, updateSettings);
 }
 
 void initializeExtension();

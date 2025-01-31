@@ -1,17 +1,14 @@
 import type { JSX } from "react";
 import React from "react";
 
-import type { IntegrationDetectorData } from "../../../../integration-detector/integrationDetector";
+import type { TestRun } from "../../../hooks/useOverlayState";
 import { styles } from "../../../styles";
-import type { UiState } from "../../../types";
+import type { StepProps } from "../../../types";
 
 export function CBVNContent({
-  integrationState,
-  uiState,
-}: {
-  integrationState: IntegrationDetectorData;
-  uiState: UiState;
-}): JSX.Element {
+  overlayState,
+  currentTestRun,
+}: StepProps & { currentTestRun: TestRun }): JSX.Element {
   const selfTester = integrationState.selfTester;
 
   if (!selfTester) {

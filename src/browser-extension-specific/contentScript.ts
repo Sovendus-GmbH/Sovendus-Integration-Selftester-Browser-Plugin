@@ -1,31 +1,69 @@
+import { defaultStorage } from "../integration-tester-ui/testing-flow-config";
 import { debug } from "../logger/logger";
 import { browserAPI } from "./browser-api";
-import type { ExtensionSettingsEvent } from "./types";
+import type { ExtensionSettingsEvent, ExtensionStorageLoaded } from "./types";
 
-const script = document.createElement("script");
-script.src = chrome.runtime.getURL("browserExtensionLoader.js");
-document.documentElement.appendChild(script);
-
-// Handle messages from page to service worker
+// Handle saving and retrieving settings from the browser
 window.addEventListener("message", (event: ExtensionSettingsEvent) => {
   if (event.source !== window) {
     return;
   }
-  if (
-    event.data.type === "GET_SETTINGS" ||
-    event.data.type === "UPDATE_SETTINGS"
-  ) {
-    void browserAPI.runtime.sendMessage(event.data);
+  if (event.data.type === "GET_SETTINGS") {
     debug(
-      "contentScript",
-      `Forwarded ${event.data.type} message to serviceWorker`,
-      event.data,
+      "browserSettingsBridge][contentScript",
+      "Received GET settings request from page...",
+    );
+    browserAPI.storage.local.get(defaultStorage, (settings) => {
+      try {
+        window.postMessage(
+          {
+            type: "GET_SETTINGS_RESPONSE",
+            settings: settings as ExtensionStorageLoaded,
+          },
+          "*",
+        );
+        debug(
+          "browserSettingsBridge][contentScript",
+          "Sent successfully:",
+          settings,
+        );
+      } catch (error) {
+        debug(
+          "browserSettingsBridge][contentScript",
+          "Error sending settings:",
+          { error, settings },
+        );
+      }
+    });
+  } else if (event.data.type === "UPDATE_SETTINGS") {
+    debug(
+      "browserSettingsBridge][contentScript",
+      "Received UPDATE settings request from page...",
+    );
+    browserAPI.storage.local.set(
+      event.data.settings as ExtensionStorageLoaded,
+      () => {
+        try {
+          window.postMessage(
+            {
+              type: "SETTINGS_UPDATE_RESPONSE",
+              success: true,
+            },
+            "*",
+          );
+          debug(
+            "browserSettingsBridge][contentScript",
+            "UPDATED settings successfully:",
+            event.data.settings,
+          );
+        } catch (error) {
+          debug(
+            "browserSettingsBridge][contentScript",
+            "Error updating settings:",
+            { error, settings: event.data.settings },
+          );
+        }
+      },
     );
   }
-});
-
-// Handle messages from service worker to page
-browserAPI.runtime.onMessage.addListener((message) => {
-  window.postMessage(message, "*");
-  debug("contentScript", `Forwarded ${message} message to page`);
 });

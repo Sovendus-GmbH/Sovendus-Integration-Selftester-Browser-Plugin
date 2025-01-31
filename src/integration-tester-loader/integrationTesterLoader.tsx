@@ -91,6 +91,10 @@ export function Main({
     debug("Main", "Page is blacklisted, returning empty fragment");
     return <></>;
   }
+  if (!overlayState.isPromptVisible) {
+    debug("Main", "Overlay is currently hidden");
+    return <></>;
+  }
 
   return (
     <ErrorBoundary>

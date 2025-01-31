@@ -11,11 +11,19 @@ import { StatusItem } from "./components/status-item";
 
 export function TestContent({ overlayState }: StepProps): JSX.Element {
   const {
-    handleTestCompletion,
     testerStorage: { uiState },
+    handleTestCompletion,
+    getCurrentTestRun,
+    handleNavigateToSuccessPage,
   } = overlayState;
   const isSmall = uiState.overlaySize === OverlaySize.SMALL;
-
+  const currentTestRun = getCurrentTestRun();
+  const currentSelfTester =
+    currentTestRun.currentPageType === PageType.LANDING
+      ? currentTestRun.landingPageResult
+      : currentTestRun.currentPageType === PageType.SUCCESS
+        ? currentTestRun.successPageResult
+        : undefined;
   useEffect(() => {
     if (uiState.testingState === TestingState.IN_PROGRESS) {
       const timer = setTimeout(() => {
@@ -107,7 +115,7 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
   return (
     <div style={containerStyle}>
       <h2 style={headingStyle}>
-        {overlayState.currentPageType === PageType.LANDING
+        {currentTestRun.currentPageType === PageType.LANDING
           ? "Landing Page Test"
           : "Order Success Page Test"}
       </h2>
@@ -168,41 +176,34 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
           </>
         )}
       </div>
-      {overlayState.currentPageType === PageType.LANDING &&
+      {currentTestRun.currentPageType === PageType.LANDING &&
         renderTestResult(overlayState.landingPageResult, "Landing Page")}
-      {overlayState.currentPageType === PageType.SUCCESS && (
+      {currentTestRun.currentPageType === PageType.SUCCESS && (
         <>
-          {renderTestResult(overlayState.landingPageResult, "Landing Page")}
-          {renderTestResult(overlayState.successPageResult, "Success Page")}
+          {renderTestResult(currentTestRun.landingPageResult, "Landing Page")}
+          {renderTestResult(currentTestRun.successPageResult, "Success Page")}
         </>
       )}
-      {overlayState.currentPageType === PageType.LANDING &&
-        overlayState.uiState.testingState === TestingState.COMPLETED && (
-          <button
-            onClick={overlayState.handleNavigateToSuccessPage}
-            style={buttonStyle}
-          >
+      {currentTestRun.currentPageType === PageType.LANDING &&
+        uiState.testingState === TestingState.COMPLETED && (
+          <button onClick={handleNavigateToSuccessPage} style={buttonStyle}>
             <span style={{ marginRight: "0.5rem" }}>
               I'm on the success page
             </span>
             <ArrowRight size={isSmall ? 16 : 20} />
           </button>
         )}
-      {overlayState.currentPageType === PageType.SUCCESS &&
-        overlayState.uiState.testingState === TestingState.COMPLETED && (
+      {currentPageType === PageType.SUCCESS &&
+        uiState.testingState === TestingState.COMPLETED && (
           <button onClick={overlayState.startNewTest} style={buttonStyle}>
             <span style={{ marginRight: "0.5rem" }}>Restart Test</span>
             <RotateCcw size={isSmall ? 16 : 20} />
           </button>
         )}
-      {overlayState.uiState.overlaySize === OverlaySize.LARGE && (
+      {uiState.overlaySize === OverlaySize.LARGE && (
         <AccordionContent
-          integrationState={overlayState.integrationState}
-          uiState={overlayState.uiState}
-          currentStep={
-            overlayState.currentPageType === PageType.LANDING ? 1 : 2
-          }
-          withConsent={true}
+          overlayState={overlayState}
+          currentTestRun={currentTestRun}
         />
       )}
     </div>

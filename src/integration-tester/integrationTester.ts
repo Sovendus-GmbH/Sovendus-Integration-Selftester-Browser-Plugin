@@ -1609,7 +1609,7 @@ export default class SelfTester {
   }
 
   async transmitTestResult(): Promise<void> {
-    if (window.transmitTestResult !== false) {
+    if (window.sovTransmitTestResult !== false) {
       try {
         await fetch("http://localhost:3000/api/testing-plugin", {
           method: "POST",
@@ -1742,7 +1742,7 @@ export default class SelfTester {
   constructor(integrationDetectorData: IntegrationDetectorData) {
     this.integrationDetectorData = integrationDetectorData;
 
-    window.transmitTestResult = false;
+    window.sovTransmitTestResult = false;
     const emptyStringUndefinedTestResult = new DidNotRunTestResult<
       string | undefined
     >();
@@ -2102,7 +2102,7 @@ export async function transmitIntegrationError(
         url: string;
       },
 ): Promise<void> {
-  if (window.transmitTestResult !== false) {
+  if (window.sovTransmitTestResult !== false) {
     const { windowParameter, url } = parameters;
     const domain = url || windowParameter?.location.href || "";
     try {
@@ -2180,7 +2180,7 @@ export type SovSelfTesterWindow = SovendusPublicConversionWindow & {
   sovApplication?: SovCbVnApplicationType;
   sovSelfTester?: SelfTester;
   // only used by tests
-  transmitTestResult?: boolean;
+  sovTransmitTestResult?: boolean;
 };
 
 declare let window: SovSelfTesterWindow;

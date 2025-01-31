@@ -22,6 +22,7 @@ export function DraggableOverlayContainer({
     testerStorage: { uiState },
     setPosition,
   } = overlayState;
+
   const [overlayDimensions, setOverlayDimensions] =
     useState<OverlayDimensions>(smallDimension);
 
@@ -36,7 +37,7 @@ export function DraggableOverlayContainer({
     } catch (error) {
       debug("DraggableOverlayContainer", "Error in useEffect", error);
     }
-  }, [uiState]);
+  }, [uiState.overlaySize]);
 
   const handleDragEnd = (event: DragEndEvent): void => {
     try {
@@ -61,8 +62,7 @@ export function DraggableOverlayContainer({
       debug("DraggableOverlayContainer", "Error in handleDragEnd", error);
     }
   };
-
-  return uiState.isPromptVisible ? (
+  return (
     <div style={{ position: "fixed", top: 0, left: 0, zIndex: maxZIndex }}>
       <ErrorBoundary>
         <DndContext onDragEnd={handleDragEnd}>
@@ -74,8 +74,6 @@ export function DraggableOverlayContainer({
         </DndContext>
       </ErrorBoundary>
     </div>
-  ) : (
-    <></>
   );
 }
 

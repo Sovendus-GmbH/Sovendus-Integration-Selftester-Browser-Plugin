@@ -3,9 +3,8 @@ import type { OverlayState } from "./hooks/useOverlayState";
 export interface UiState {
   position: { x: number; y: number };
   overlaySize: OverlaySize;
-  integrationType: IntegrationType | undefined;
+  // integrationType: IntegrationType | undefined;
   // testingState: TestingState;
-  isPromptVisible: boolean;
 }
 
 export enum OverlaySize {
@@ -14,11 +13,11 @@ export enum OverlaySize {
   LARGE = "large",
 }
 
-export enum IntegrationType {
-  CB_VN = "Checkout Benefits & Voucher Network",
-  CHECKOUT_PRODUCTS = "Checkout Products",
-  OPTIMIZE = "Optimize",
-}
+// export enum IntegrationType {
+//   CB_VN = "Checkout Benefits & Voucher Network",
+//   CHECKOUT_PRODUCTS = "Checkout Products",
+//   OPTIMIZE = "Optimize",
+// }
 
 // export enum TestingState {
 //   NOT_STARTED = "not_started",

@@ -7,6 +7,16 @@ export function logger(message: string, level: "info" = "info"): void {
   }
 }
 
+export function error(
+  component: string,
+  message: string,
+  data?: ExplicitAnyType,
+): void {
+  // TODO send this to api
+  // eslint-disable-next-line no-console
+  console.log(`[DEBUG][${component}] ${message}`, data ? data : "");
+}
+
 export function debug(
   component: string,
   message: string,

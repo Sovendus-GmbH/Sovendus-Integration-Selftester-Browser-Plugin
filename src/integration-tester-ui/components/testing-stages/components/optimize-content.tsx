@@ -1,18 +1,11 @@
+import { X } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import type { IntegrationDetectorData } from "../../../../integration-detector/integrationDetector";
+import type { StepProps } from "../../../../integration-tester-ui/types";
 import { styles } from "../../../styles";
-import type { UiState } from "../../../types";
-import { X } from "lucide-react";
 
-export function OptimizeContent({
-  integrationState,
-  uiState,
-}: {
-  integrationState: IntegrationDetectorData;
-  uiState: UiState;
-}): JSX.Element {
+export function OptimizeContent({ overlayState }: StepProps): JSX.Element {
   const selfTester = integrationState.selfTester;
 
   const notFoundHeader: React.CSSProperties = {
