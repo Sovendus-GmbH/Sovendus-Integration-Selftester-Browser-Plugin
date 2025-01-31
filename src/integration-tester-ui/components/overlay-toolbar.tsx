@@ -1,12 +1,12 @@
-import React, { JSX } from "react";
-import { Grip, Plus, Minus, X, History } from "lucide-react";
+import { Grip, History, Minus, Plus, X } from "lucide-react";
+import type { JSX } from "react";
+import React from "react";
+
+import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
+import { DetectionState } from "../../integration-detector/integrationDetector";
+import type { OverlayState } from "../hooks/useOverlayState";
+import { testingFlowConfig } from "../testing-flow-config";
 import { OverlaySize } from "../types";
-import {
-  DetectionState,
-  IntegrationDetectorData,
-} from "../../integration-detector/integrationDetector";
-import { OverlayState } from "../hooks/useOverlayState";
-import { StageName, testingFlowConfig } from "../testing-flow-config";
 
 interface OverlayToolbarProps {
   dragHandleProps?: Record<string, any>;
@@ -17,7 +17,7 @@ export function OverlayToolbar({
   dragHandleProps,
   overlayState,
 }: OverlayToolbarProps): JSX.Element {
-  const currentStage = overlayState.currentStage as StageName;
+  const currentStage = overlayState.currentStage;
   const stageConfig = testingFlowConfig.stages[currentStage];
   const availableSizes = stageConfig.availableSizes;
   const currentSizeIndex = availableSizes.indexOf(

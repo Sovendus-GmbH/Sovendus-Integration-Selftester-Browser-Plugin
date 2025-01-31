@@ -1,5 +1,6 @@
 import React from "react";
 import { Component, type ErrorInfo, type ReactNode } from "react";
+
 import { debug } from "../../logger/logger";
 
 interface ErrorBoundaryProps {

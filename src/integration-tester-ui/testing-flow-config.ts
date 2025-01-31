@@ -1,7 +1,7 @@
-import { TestContent } from "./components/test-content";
 import { ConsentSelectionStep } from "./components/testing-stages/consent-selection";
 import { InitialPrompt } from "./components/testing-stages/initial-prompt";
 import { PageSelection } from "./components/testing-stages/page-selection";
+import { TestContent } from "./components/testing-stages/test-content";
 import { TestHistory } from "./components/testing-stages/test-history";
 import { OverlaySize } from "./types";
 

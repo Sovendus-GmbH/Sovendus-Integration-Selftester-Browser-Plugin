@@ -1,6 +1,9 @@
-import React, { JSX } from "react";
 import { Shield, ShieldOff } from "lucide-react";
-import { OverlaySize, StepProps } from "../../types";
+import type { JSX } from "react";
+import React from "react";
+
+import type { StepProps } from "../../types";
+import { OverlaySize } from "../../types";
 
 export function ConsentSelectionStep({ overlayState }: StepProps): JSX.Element {
   const isSmall = overlayState.uiState.overlaySize === OverlaySize.SMALL;

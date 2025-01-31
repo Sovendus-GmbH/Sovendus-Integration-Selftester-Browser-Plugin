@@ -1,6 +1,9 @@
-import React, { JSX } from "react";
 import { Home, ShoppingBag } from "lucide-react";
-import { PageType, StepProps } from "../../types";
+import type { JSX } from "react";
+import React from "react";
+
+import type { StepProps } from "../../types";
+import { PageType } from "../../types";
 import { OverlaySize } from "../../types";
 
 export function PageSelection({ overlayState }: StepProps): JSX.Element {

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { create } from "zustand";
 
-import type { ExtensionSettings } from "../../browser-extension-specific/browserExtensionLoader";
+import type { ExtensionSettings } from "../../browser-extension-specific/types";
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
 import { defaultIntegrationState } from "../../integration-detector/integrationDetector";
 import { isBlacklistedPage } from "../../integration-detector/integrationDetector";

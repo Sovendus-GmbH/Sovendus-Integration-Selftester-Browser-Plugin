@@ -1,7 +1,9 @@
-import React, { JSX } from "react";
-import { TestRun } from "../../hooks/useOverlayState";
-import { StepProps } from "../../types";
 import { ArrowLeft, RotateCcw } from "lucide-react";
+import type { JSX } from "react";
+import React from "react";
+
+import type { TestRun } from "../../hooks/useOverlayState";
+import type { StepProps } from "../../types";
 
 export function TestHistory({ overlayState }: StepProps): JSX.Element {
   const completedTests = overlayState.testHistory.filter(
@@ -161,7 +163,7 @@ function TestResultDisplay({
     alignItems: "center",
   };
 
-  const getStatusColor = () => {
+  const getStatusColor = (): string => {
     switch (result.status) {
       case "success":
         return "#34D399";

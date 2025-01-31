@@ -1,8 +1,9 @@
-import React, { JSX } from "react";
+import type { JSX } from "react";
+import React from "react";
 
-import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
-import { UiState } from "../types";
-import { styles } from "../styles";
+import type { IntegrationDetectorData } from "../../../../integration-detector/integrationDetector";
+import { styles } from "../../../styles";
+import type { UiState } from "../../../types";
 
 export function OptimizeContent({
   integrationState,

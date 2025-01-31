@@ -1,8 +1,10 @@
-import React, { JSX } from "react";
-import type { StepProps } from "../types";
-import { OverlayState } from "../hooks/useOverlayState";
-import { StageName, testingFlowConfig } from "../testing-flow-config";
+import type { JSX } from "react";
+import React from "react";
+
 import { debug } from "../../logger/logger";
+import type { OverlayState } from "../hooks/useOverlayState";
+import { testingFlowConfig } from "../testing-flow-config";
+import type { StepProps } from "../types";
 
 interface OverlayContentProps {
   overlayState: OverlayState;
@@ -19,9 +21,8 @@ export function OverlayContent({
     return <></>;
   }
 
-  const StageComponent = testingFlowConfig.stages[
-    overlayState.currentStage as StageName
-  ].component as (props: StepProps) => JSX.Element;
+  const StageComponent = testingFlowConfig.stages[overlayState.currentStage]
+    .component as (props: StepProps) => JSX.Element;
 
   return (
     <div className='flex flex-col h-full'>

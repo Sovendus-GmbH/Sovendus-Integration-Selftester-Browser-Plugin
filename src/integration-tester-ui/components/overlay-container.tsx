@@ -1,18 +1,15 @@
 import { DndContext, useDraggable } from "@dnd-kit/core";
 import type { JSX } from "react";
 import React, { useEffect, useState } from "react";
-import {
-  OverlayDimensions,
-  OverlaySize,
-  TestingState,
-  UiState,
-} from "../types";
-import { OverlayState } from "../hooks/useOverlayState";
+
+import { maxZIndex } from "../../constants";
 import { debug } from "../../logger/logger";
+import type { OverlayState } from "../hooks/useOverlayState";
+import type { OverlayDimensions, UiState } from "../types";
+import { OverlaySize, TestingState } from "../types";
 import { ErrorBoundary } from "./ErrorBoundary";
-import { OverlayToolbar } from "./overlay-toolbar";
 import { OverlayContent } from "./overlay-content";
-import { maxZIndex, overlayRootId } from "../../constants";
+import { OverlayToolbar } from "./overlay-toolbar";
 
 export function DraggableOverlayContainer({
   overlayState,
@@ -45,7 +42,7 @@ export function DraggableOverlayContainer({
     }
   }, [overlayState.uiState.overlaySize, overlayState.uiState.testingState]);
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: any): void => {
     try {
       const { delta } = event;
       setPosition((prev) => ({

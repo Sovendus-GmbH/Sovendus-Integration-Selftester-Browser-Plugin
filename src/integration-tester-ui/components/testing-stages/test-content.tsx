@@ -1,11 +1,13 @@
-import React, { JSX } from "react";
+import { ArrowRight, CheckCircle, RotateCcw, XCircle } from "lucide-react";
+import type { JSX } from "react";
+import React from "react";
 import { useEffect } from "react";
-import { CheckCircle, XCircle, ArrowRight, RotateCcw } from "lucide-react";
-import { TestingState, OverlaySize, PageType } from "../types";
-import type { StepProps } from "../types";
-import type { TestResult } from "../hooks/useOverlayState";
-import { StatusItem } from "./status-item";
-import { AccordionContent } from "./accordion-content";
+
+import type { TestResult } from "../../hooks/useOverlayState";
+import type { StepProps } from "../../types";
+import { OverlaySize, PageType, TestingState } from "../../types";
+import { AccordionContent } from "./components/accordion-content";
+import { StatusItem } from "./components/status-item";
 
 export function TestContent({ overlayState }: StepProps): JSX.Element {
   const isSmall = overlayState.uiState.overlaySize === OverlaySize.SMALL;
@@ -24,7 +26,7 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
         overlayState.handleTestCompletion(result);
       }, 3000);
 
-      return () => clearTimeout(timer);
+      return (): void => clearTimeout(timer);
     }
     return;
   }, [
@@ -68,7 +70,9 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
   };
 
   const renderTestResult = (result: TestResult | null, title: string) => {
-    if (!result) return null;
+    if (!result) {
+      return null;
+    }
     return (
       <div style={{ marginTop: "0.5rem" }}>
         <h3

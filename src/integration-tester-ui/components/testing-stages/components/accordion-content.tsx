@@ -25,7 +25,7 @@ export function AccordionContent({
     null,
   );
 
-  const toggleSection = (section: IntegrationType) => {
+  const toggleSection = (section: IntegrationType): void => {
     setActiveSection(activeSection === section ? null : section);
   };
 
@@ -33,7 +33,7 @@ export function AccordionContent({
     title: string,
     content: JSX.Element,
     type: IntegrationType,
-  ) => (
+  ): JSX.Element => (
     <div style={styles["accordionSection"]}>
       <div
         style={styles["accordionHeader"]}
