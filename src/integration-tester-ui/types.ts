@@ -8,6 +8,7 @@ export interface UiState {
 }
 
 export enum OverlaySize {
+  
   SMALL = "small",
   MEDIUM = "medium",
   LARGE = "large",

@@ -52,6 +52,7 @@ export interface OverlayState {
   addToBlacklist: () => Promise<void>;
   resizeOverlay: (direction: "increase" | "decrease") => void;
   closeOverlay: () => void;
+  openBlacklistConfirmation: () => void;
 }
 
 export const useOverlayState = (
@@ -102,6 +103,10 @@ export const useOverlayState = (
               isBlackListedPage: true,
             },
           }));
+        },
+
+        openBlacklistConfirmation: () => {
+          get().transition("CONFIRM_BLACKLIST");
         },
 
         setUiState: (partialState) =>

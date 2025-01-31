@@ -1,3 +1,4 @@
+import { ConfirmBlacklist } from "./components/testing-stages/confirm-blacklist";
 import { ConsentSelectionStep } from "./components/testing-stages/consent-selection";
 import { InitialPrompt } from "./components/testing-stages/initial-prompt";
 import { PageSelection } from "./components/testing-stages/page-selection";
@@ -10,6 +11,11 @@ export const testingFlowConfig = {
     initialPrompt: {
       component: InitialPrompt,
       availableSizes: [OverlaySize.SMALL, OverlaySize.MEDIUM],
+      defaultSize: OverlaySize.SMALL,
+    },
+    confirmBlacklist: {
+      component: ConfirmBlacklist,
+      availableSizes: [OverlaySize.SMALL],
       defaultSize: OverlaySize.SMALL,
     },
     consentSelection: {
@@ -48,6 +54,10 @@ export const testingFlowConfig = {
       initialPrompt: {
         ACCEPT: "consentSelection",
         DECLINE: "end",
+      },
+      confirmBlacklist: {
+        BLACKLIST: "confirmBlacklist",
+        HIDE_OVERLAY: "declineBlacklist",
       },
       consentSelection: {
         SELECT: "pageSelection",
