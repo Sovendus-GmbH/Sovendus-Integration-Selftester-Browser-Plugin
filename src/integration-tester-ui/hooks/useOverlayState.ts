@@ -106,7 +106,7 @@ export const useOverlayState = (
         },
 
         openBlacklistConfirmation: () => {
-          get().transition("CONFIRM_BLACKLIST");
+          get().transition("DECLINE");
         },
 
         setUiState: (partialState) =>

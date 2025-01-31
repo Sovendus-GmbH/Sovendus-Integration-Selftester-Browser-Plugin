@@ -87,10 +87,6 @@ export function Main({
   const overlayState = useOverlayState(settings, getSettings, updateSettings)();
   useOverlayOnTopMover();
 
-  useEffect(() => {
-    overlayState.setBlacklist(settings.blacklist);
-  }, [settings.blacklist]);
-
   if (overlayState.integrationState.isBlackListedPage) {
     debug("Main", "Page is blacklisted, returning empty fragment");
     return <></>;

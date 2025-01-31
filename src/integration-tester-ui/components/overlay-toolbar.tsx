@@ -99,7 +99,10 @@ export function OverlayToolbar({
             <Minus size={16} />
           </button>
         )}
-        <button onClick={overlayState.closeOverlay} style={buttonStyle}>
+        <button
+          onClick={overlayState.openBlacklistConfirmation}
+          style={buttonStyle}
+        >
           <X size={16} />
         </button>
       </div>

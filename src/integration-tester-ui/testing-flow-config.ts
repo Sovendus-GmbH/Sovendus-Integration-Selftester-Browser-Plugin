@@ -53,7 +53,7 @@ export const testingFlowConfig = {
     transitions: {
       initialPrompt: {
         ACCEPT: "consentSelection",
-        DECLINE: "end",
+        DECLINE: "confirmBlacklist",
       },
       confirmBlacklist: {
         BLACKLIST: "confirmBlacklist",

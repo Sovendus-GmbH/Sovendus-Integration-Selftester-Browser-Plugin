@@ -15,7 +15,7 @@ export function InitialPrompt({ overlayState }: StepProps): JSX.Element {
 
   const handleDecline = (): void => {
     debug("InitialPrompt", "Decline clicked");
-    overlayState.closeOverlay();
+    overlayState.openBlacklistConfirmation();
   };
 
   const buttonStyle: React.CSSProperties = {
