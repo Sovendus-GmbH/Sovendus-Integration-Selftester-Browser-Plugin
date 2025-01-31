@@ -31,13 +31,35 @@ export function DraggableOverlayContainer({
       const newDimensions = getOverlayDimensions(uiState.overlaySize);
       setOverlayDimensions(newDimensions);
       setPosition((prev) => ({
-        x: Math.min(prev.x, window.innerWidth - newDimensions.width - 20),
-        y: Math.min(prev.y, window.innerHeight - newDimensions.height - 20),
+        x: Math.min(prev.x, window.innerWidth - newDimensions.width - 0),
+        y: Math.min(prev.y, window.innerHeight - newDimensions.height - 0),
       }));
     } catch (error) {
       debug("DraggableOverlayContainer", "Error in useEffect", error);
     }
   }, [uiState.overlaySize]);
+
+  useEffect(() => {
+    const handleResize = (): void => {
+      setPosition((prev) => ({
+        x: Math.max(
+          Math.min(prev.x, window.innerWidth - overlayDimensions.width - 0),
+          0,
+        ),
+        y: Math.max(
+          Math.min(prev.y, window.innerHeight - overlayDimensions.height - 0),
+          0,
+        ),
+      }));
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup event listener on component unmount
+    return (): void => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [overlayDimensions]);
 
   const handleDragEnd = (event: DragEndEvent): void => {
     try {

@@ -14,15 +14,11 @@ interface OverlayContentProps {
 export function OverlayContent({
   overlayState,
 }: OverlayContentProps): JSX.Element {
-  const { testerStorage, getCurrentTestRun } = overlayState;
+  const { getCurrentTestRun } = overlayState;
   const currentTestRun = getCurrentTestRun();
   debug("OverlayContent", "Rendering", {
     currentStage: currentTestRun.currentStage,
   });
-
-  if (!testerStorage.uiState.isPromptVisible) {
-    return <></>;
-  }
 
   const StageComponent = (
     testingFlowConfig.stages[currentTestRun.currentStage] as StageType
