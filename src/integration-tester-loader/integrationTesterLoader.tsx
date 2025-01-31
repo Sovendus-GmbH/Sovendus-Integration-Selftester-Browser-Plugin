@@ -4,7 +4,7 @@ import type { JSX } from "react";
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
-import type { ExtensionSettings } from "../browser-extension-specific/types";
+import type { ExtensionStorage } from "../browser-extension-specific/types";
 import { maxZIndex, overlayRootId } from "../constants";
 import { ErrorBoundary } from "../integration-tester-ui/components/ErrorBoundary";
 import { DraggableOverlayContainer } from "../integration-tester-ui/components/overlay-container";
@@ -12,9 +12,9 @@ import { useOverlayState } from "../integration-tester-ui/hooks/useOverlayState"
 import { debug, logger } from "../logger/logger";
 
 export function startIntegrationTester(
-  settings: ExtensionSettings,
-  getSettings: () => Promise<ExtensionSettings>,
-  updateSettings: (newSettings: Partial<ExtensionSettings>) => Promise<boolean>,
+  settings: ExtensionStorage,
+  getSettings: () => Promise<ExtensionStorage>,
+  updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>,
 ): void {
   if (!document.getElementById(overlayRootId)) {
     reactLoader({
@@ -42,15 +42,15 @@ function reactLoader({
     getSettings,
     updateSettings,
   }: {
-    settings: ExtensionSettings;
-    getSettings: () => Promise<ExtensionSettings>;
+    settings: ExtensionStorage;
+    getSettings: () => Promise<ExtensionStorage>;
     updateSettings: (
-      newSettings: Partial<ExtensionSettings>,
+      newSettings: Partial<ExtensionStorage>,
     ) => Promise<boolean>;
   }) => JSX.Element;
-  settings: ExtensionSettings;
-  getSettings: () => Promise<ExtensionSettings>;
-  updateSettings: (newSettings: Partial<ExtensionSettings>) => Promise<boolean>;
+  settings: ExtensionStorage;
+  getSettings: () => Promise<ExtensionStorage>;
+  updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>;
 }): void {
   const testerContainer = document.createElement("div");
   testerContainer.id = rootId;
@@ -78,13 +78,13 @@ export function Main({
   getSettings,
   updateSettings,
 }: {
-  settings: ExtensionSettings;
-  getSettings: () => Promise<ExtensionSettings>;
-  updateSettings: (newSettings: Partial<ExtensionSettings>) => Promise<boolean>;
+  settings: ExtensionStorage;
+  getSettings: () => Promise<ExtensionStorage>;
+  updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>;
 }): JSX.Element {
   debug("Main", "Rendering Main component", settings);
 
-  const overlayState = useOverlayState(getSettings, updateSettings)();
+  const overlayState = useOverlayState(settings, getSettings, updateSettings)();
   useOverlayOnTopMover();
 
   useEffect(() => {

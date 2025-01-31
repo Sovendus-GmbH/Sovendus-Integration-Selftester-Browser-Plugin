@@ -1,4 +1,4 @@
-export interface ExtensionSettings {
+export interface ExtensionStorage {
   transmitTestResult: boolean;
   blacklist: string[];
 }
@@ -9,6 +9,6 @@ export type ExtensionSettingsEvent = MessageEvent<{
     | "UPDATE_SETTINGS"
     | "SETTINGS_RESPONSE"
     | "SETTINGS_UPDATE_RESPONSE";
-  settings?: ExtensionSettings;
+  settings?: ExtensionStorage;
   success?: boolean;
 }>;

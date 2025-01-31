@@ -10,7 +10,7 @@ export function InitialPrompt({ overlayState }: StepProps): JSX.Element {
 
   const handleAccept = (): void => {
     debug("InitialPrompt", "Accept clicked");
-    overlayState.handleInitialSevendusCheck();
+    overlayState.handleInitialSovendusCheck();
   };
 
   const handleDecline = (): void => {

@@ -1,12 +1,12 @@
 import type { SovSelfTesterWindow } from "../integration-tester/integrationTester";
 import { startIntegrationTester } from "../integration-tester-loader/integrationTesterLoader";
 import { debug } from "../logger/logger";
-import type { ExtensionSettings, ExtensionSettingsEvent } from "./types";
+import type { ExtensionSettingsEvent, ExtensionStorage } from "./types";
 
 async function initializeExtension(): Promise<void> {
   debug("browserExtensionLoader", "Starting integration tester");
 
-  async function getSettings(): Promise<ExtensionSettings> {
+  async function getSettings(): Promise<ExtensionStorage> {
     return new Promise((resolve) => {
       debug("browserExtensionLoader", "Requesting settings from browser");
       window.postMessage({ type: "GET_SETTINGS" }, "*");
@@ -18,7 +18,7 @@ async function initializeExtension(): Promise<void> {
             event.data.settings,
           );
           window.removeEventListener("message", messageHandler);
-          resolve(event.data.settings as ExtensionSettings);
+          resolve(event.data.settings as ExtensionStorage);
         }
       };
 
@@ -27,7 +27,7 @@ async function initializeExtension(): Promise<void> {
   }
 
   async function updateSettings(
-    newSettings: Partial<ExtensionSettings>,
+    newSettings: Partial<ExtensionStorage>,
   ): Promise<boolean> {
     return new Promise((resolve) => {
       debug(
