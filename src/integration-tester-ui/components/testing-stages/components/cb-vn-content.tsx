@@ -15,13 +15,7 @@ export function CBVNContent({
   const selfTester = integrationState.selfTester;
 
   if (!selfTester) {
-    return (
-      <div style={styles["contentContainer"]}>
-        <p style={styles["text"]}>
-          No Checkout Benefits & Voucher Network integration detected.
-        </p>
-      </div>
-    );
+    return <></>;
   }
 
   return (

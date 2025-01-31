@@ -15,11 +15,7 @@ export function CheckoutProductsContent({
   const selfTester = integrationState.selfTester;
 
   if (!selfTester) {
-    return (
-      <div style={styles["contentContainer"]}>
-        <p style={styles["text"]}>No Checkout Products integration detected.</p>
-      </div>
-    );
+    return <></>;
   }
 
   return (

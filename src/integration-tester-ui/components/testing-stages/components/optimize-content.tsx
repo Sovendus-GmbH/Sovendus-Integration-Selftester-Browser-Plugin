@@ -4,6 +4,7 @@ import React from "react";
 import type { IntegrationDetectorData } from "../../../../integration-detector/integrationDetector";
 import { styles } from "../../../styles";
 import type { UiState } from "../../../types";
+import { X } from "lucide-react";
 
 export function OptimizeContent({
   integrationState,
@@ -14,10 +15,26 @@ export function OptimizeContent({
 }): JSX.Element {
   const selfTester = integrationState.selfTester;
 
+  const notFoundHeader: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "30rem",
+    backgroundColor: "#FEE2E2",
+    margin: "auto",
+    fontSize: "1rem",
+    fontWeight: "600",
+    color: "#DC2626",
+    padding: "0.5rem 1rem",
+    width: "fit-content",
+  };
+
   if (!selfTester) {
     return (
-      <div style={styles["contentContainer"]}>
-        <p style={styles["text"]}>No Optimize integration detected.</p>
+      <div style={notFoundHeader}>
+        <h1 style={{ margin: 0 }}>Optimize</h1>
+        <X size={30} />
       </div>
     );
   }

@@ -15,12 +15,12 @@ export function ConfirmBlacklist({
   const isSmall = uiState.overlaySize === OverlaySize.SMALL;
 
   const handleBlacklist = (): void => {
-    debug("InitialPrompt", "Blacklist clicked");
+    debug("ConfirmBlacklist", "Blacklist clicked");
     void addToBlacklist();
   };
 
   const handleHideOverlay = (): void => {
-    debug("InitialPrompt", "HideOverlay clicked");
+    debug("ConfirmBlacklist", "HideOverlay clicked");
     hideOverlay();
   };
 
@@ -40,6 +40,7 @@ export function ConfirmBlacklist({
     backgroundColor: "#7C3AED",
   };
   const containerStyle: React.CSSProperties = {
+    marginTop: "0.3rem",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -55,6 +56,18 @@ export function ConfirmBlacklist({
     gap: "0.5rem",
   };
 
+  const infoTextStyle: React.CSSProperties = {
+    marginTop: "0.5rem",
+    fontSize: "0.88rem",
+    color: "#E0E0E0",
+    textAlign: "center",
+    lineHeight: "1.4",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    padding: "0.3rem",
+    borderRadius: "0.5rem",
+    fontFamily: "Arial, sans-serif",
+  };
+
   return (
     <div style={containerStyle}>
       <div style={buttonContainerStyle}>
@@ -62,9 +75,15 @@ export function ConfirmBlacklist({
           Blacklist this Page
         </button>
         <button style={declineButtonStyle} onClick={handleHideOverlay}>
-          Hide Overlay temporary
+          Hide Overlay
         </button>
       </div>
+      <p style={infoTextStyle}>
+        If you hide the tester or blacklist this page, you can re-enable it by
+        clicking on the extension icon in the top-right corner of your browser.
+        In the menu, select the option to whitelist this page or show the tester
+        again.
+      </p>
     </div>
   );
 }

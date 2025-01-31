@@ -16,8 +16,8 @@ export const testingFlowConfig: TestingFlowConfigType = {
     },
     confirmBlacklist: {
       component: ConfirmBlacklist,
-      availableSizes: [OverlaySize.SMALL],
-      defaultSize: OverlaySize.SMALL,
+      availableSizes: [OverlaySize.MEDIUM],
+      defaultSize: OverlaySize.MEDIUM,
     },
     consentSelection: {
       component: ConsentSelectionStep,

@@ -171,8 +171,8 @@ function getOverlayDimensions(overlaySize: OverlaySize): OverlayDimensions {
       };
     case OverlaySize.LARGE:
       return {
-        width: 400,
-        height: 400,
+        width: 700,
+        height: 550,
       };
   }
 }

@@ -1,4 +1,4 @@
-import { Grip, History, Minus, Plus, X } from "lucide-react";
+import { ArrowLeft, Eye, Grip, History, Minus, Plus, X } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
@@ -31,6 +31,7 @@ export function OverlayToolbar({
     overlayState.testerStorage.uiState.overlaySize === OverlaySize.SMALL;
   const showMinusButton = currentSizeIndex > 0;
   const showPlusButton = currentSizeIndex < availableSizes.length - 1;
+  const showCloseButton = overlayState.currentStage !== "confirmBlacklist";
 
   const toolbarStyle: React.CSSProperties = {
     display: "flex",
@@ -100,12 +101,19 @@ export function OverlayToolbar({
             <Minus size={16} />
           </button>
         )}
-        <button
-          onClick={overlayState.openBlacklistConfirmation}
-          style={buttonStyle}
-        >
-          <X size={16} />
-        </button>
+        {showCloseButton && (
+          <button
+            onClick={overlayState.openBlacklistConfirmation}
+            style={buttonStyle}
+          >
+            <Eye size={16} />
+          </button>
+        )}
+        {!showCloseButton && (
+          <button onClick={overlayState.exitHistoryView} style={buttonStyle}>
+            <ArrowLeft size={16} />
+          </button>
+        )}
       </div>
     </div>
   );
@@ -122,10 +130,15 @@ function DetectionStatus({
   const color = status === DetectionState.NOT_DETECTED ? "#F87171" : "#34D399";
 
   const statusStyle: React.CSSProperties = {
-    width: "0.75rem",
-    height: "0.75rem",
+    width: "0.85rem",
+    height: "0.85rem",
     borderRadius: "50%",
     backgroundColor: color,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: "0.22rem",
+    marginRight: "0.2rem",
   };
 
   return <div style={statusStyle} title={`Integration ${status}`} />;
