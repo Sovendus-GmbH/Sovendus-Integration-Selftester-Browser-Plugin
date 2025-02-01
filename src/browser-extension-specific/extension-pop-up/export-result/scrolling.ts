@@ -1,4 +1,4 @@
-import { browserAPI } from "../extensionPopUp";
+import { browserAPI } from "../../browser-api";
 
 export async function scrollToTop(tabId: number): Promise<void> {
   await browserAPI.scripting.executeScript({

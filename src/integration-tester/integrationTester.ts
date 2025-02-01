@@ -312,7 +312,7 @@ export default class SelfTester {
     this.awinIntegrationDetectedTestResult =
       this.getAwinIntegrationDetectedTestResult(valueTestResult);
     if (
-      this.integrationDetectorData.integrationState.status.thankYouPage.awin
+      this.integrationDetectorData.status.thankYouPage.awin
         .hasAwinIntegration &&
       !valueTestResult.elementValue
     ) {
@@ -362,8 +362,8 @@ export default class SelfTester {
   ): TestResultType<boolean> {
     return new SuccessTestResult({
       elementValue:
-        this.integrationDetectorData.integrationState.status.thankYouPage
-          .awin && !integrationTypeTestResult.elementValue,
+        this.integrationDetectorData.status.thankYouPage.awin &&
+        !integrationTypeTestResult.elementValue,
     });
   }
 

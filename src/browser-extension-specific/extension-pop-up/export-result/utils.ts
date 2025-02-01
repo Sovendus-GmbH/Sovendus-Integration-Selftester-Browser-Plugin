@@ -1,10 +1,10 @@
-import type SelfTester from "../../integration-tester/integrationTester.js";
-import { transmitIntegrationError } from "../../integration-tester/integrationTester.js";
+import type SelfTester from "../../../integration-tester/integrationTester.js";
+import { transmitIntegrationError } from "../../../integration-tester/integrationTester.js";
 import {
   openSovendusOverlayId,
   outerOverlayId,
-} from "../../integration-tester-ui/old/integration-test-overlay-css-vars.js";
-import { browserAPI } from "../extensionPopUp.js";
+} from "../../../integration-tester-ui/old/integration-test-overlay-css-vars.js";
+import { browserAPI } from "../../browser-api";
 
 export async function copyScreenshotsToClipboard(
   screenshotContainer: HTMLCanvasElement,

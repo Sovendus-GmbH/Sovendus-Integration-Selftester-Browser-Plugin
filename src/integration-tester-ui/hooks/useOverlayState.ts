@@ -11,27 +11,15 @@ import { defaultIntegrationState } from "../../integration-detector/integrationD
 import { isBlacklistedPage } from "../../integration-detector/integrationDetector";
 import type { SovSelfTesterWindow } from "../../integration-tester/integrationTester";
 import { debug, error } from "../../logger/logger";
-import type { StageKeys, StageName, StageType } from "../testing-flow-config";
 import { testingFlowConfig } from "../testing-flow-config";
-import type { OverlaySize } from "../types";
+import type {
+  OverlaySize,
+  StageKeys,
+  StageType,
+  TestResult,
+  TestRun,
+} from "../types";
 import { PageType } from "../types";
-
-export interface TestRun {
-  id: string;
-  startTime: number;
-  withConsent: boolean | undefined;
-  currentPageType: PageType | undefined;
-  landingPageResult: TestResult;
-  successPageResult: TestResult;
-  currentStage: StageName;
-  lastStage: StageName | undefined;
-  completed: boolean;
-}
-
-export interface TestResult {
-  status: "success" | "error" | "not-run";
-  details: string;
-}
 
 export interface OverlayState {
   currentHost: string;
@@ -46,6 +34,11 @@ export interface OverlayState {
       x: number;
       y: number;
     },
+  ) => void;
+  setIntegrationState: (
+    positionCallBack: (
+      position: IntegrationDetectorData,
+    ) => Partial<IntegrationDetectorData>,
   ) => void;
   transition: (nextStage: StageKeys) => void;
   getTestRunHistory: () => TestRun[];
@@ -96,12 +89,7 @@ export const useOverlayState = (
         _getSettings: getSettings,
         _updateSettings: updateSettings,
         testerStorage: newTesterStorage,
-        integrationState: {
-          shouldCheck: true,
-          selfTester: undefined,
-          integrationState: defaultIntegrationState,
-          isBlackListedPage: isBlackListedPage,
-        },
+        integrationState: defaultIntegrationState,
 
         getCurrentTestRun: (): TestRun => {
           const {
@@ -116,7 +104,7 @@ export const useOverlayState = (
             currentHost,
             testerStorage: { testHistory },
           } = get();
-          return testHistory?.[currentHost] as TestRun[];
+          return (testHistory?.[currentHost] || []) as TestRun[];
         },
 
         setCurrentTestRunData: (testRunData: Partial<TestRun>): void => {
@@ -144,16 +132,16 @@ export const useOverlayState = (
             `Adding ${window.location.host} to blacklist`,
           );
           const { _updateSettings, testerStorage } = get();
-          set((state) => ({
-            blacklist: [...testerStorage.blacklist, window.location.host],
-            integrationState: {
-              ...state.integrationState,
-              isBlackListedPage: true,
-            },
-          }));
-          void _updateSettings({
-            ...testerStorage,
-            blacklist: [...testerStorage.blacklist, window.location.host],
+          set((state) => {
+            const newTesterStorage = {
+              ...state.testerStorage,
+              blacklist: [...testerStorage.blacklist, window.location.host],
+            };
+            void _updateSettings(newTesterStorage);
+            return {
+              testerStorage: newTesterStorage,
+              isPromptVisible: false,
+            };
           });
         },
 
@@ -350,6 +338,16 @@ export const useOverlayState = (
           transition(currentTestRun.lastStage);
         },
 
+        setIntegrationState: (setStateCallback): void => {
+          set((state) => {
+            const newState = setStateCallback(state.integrationState);
+            debug("setIntegrationState", "Setting state", newState);
+            return {
+              integrationState: { ...state.integrationState, ...newState },
+            };
+          });
+        },
+
         setPosition: (setPositionCallback): void => {
           debug("useOverlayState", "Setting position");
           const { updateTesterStorage } = get();
@@ -382,8 +380,16 @@ function createNewTestRun(): TestRun {
     id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     startTime: Date.now(),
     withConsent: undefined,
-    landingPageResult: { status: "not-run", details: "" },
-    successPageResult: { status: "not-run", details: "" },
+    landingPageResult: {
+      status: "not-run",
+      details: "",
+      integrationTester: undefined,
+    },
+    successPageResult: {
+      status: "not-run",
+      details: "",
+      integrationTester: undefined,
+    },
     currentStage: "initialPrompt",
     completed: false,
     lastStage: undefined,

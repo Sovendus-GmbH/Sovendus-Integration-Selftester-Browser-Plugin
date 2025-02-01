@@ -2,11 +2,18 @@ import type { JSX } from "react";
 import React from "react";
 
 import { styles } from "../../../styles";
+import type { StepProps, TestRun } from "../../../types";
+import type { TestResult } from "../../../types";
 
 export function CheckoutProductsContent({
   overlayState,
-}: StepProps): JSX.Element {
-  const selfTester = integrationState.selfTester;
+  currentTestRun,
+  currentPageTestResult,
+}: StepProps & {
+  currentTestRun: TestRun;
+  currentPageTestResult: TestResult;
+}): JSX.Element {
+  const selfTester = currentPageTestResult.integrationTester;
 
   if (!selfTester) {
     return <></>;

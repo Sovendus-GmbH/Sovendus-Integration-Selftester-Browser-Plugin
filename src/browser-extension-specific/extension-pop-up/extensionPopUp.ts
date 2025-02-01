@@ -95,6 +95,6 @@ function getTabIdFromTabs(
   throw new Error(`Failed to get tabId for ${functionName}`);
 }
 
-export const browserAPI: typeof chrome = (
-  typeof browser === "undefined" ? chrome : browser
-) as typeof chrome;
+// export const browserAPI: typeof chrome = (
+//   typeof browser === "undefined" ? chrome : browser
+// ) as typeof chrome;

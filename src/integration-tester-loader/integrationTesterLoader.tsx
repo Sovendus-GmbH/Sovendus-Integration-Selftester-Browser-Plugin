@@ -6,6 +6,7 @@ import ReactDOM from "react-dom/client";
 
 import type { ExtensionStorage } from "../browser-extension-specific/types";
 import { maxZIndex, overlayRootId } from "../constants";
+import { useIntegrationDetector } from "../integration-detector/integrationDetector";
 import { ErrorBoundary } from "../integration-tester-ui/components/ErrorBoundary";
 import { DraggableOverlayContainer } from "../integration-tester-ui/components/overlay-container";
 import { useOverlayState } from "../integration-tester-ui/hooks/useOverlayState";
@@ -59,7 +60,7 @@ function reactLoader({
   document.body.appendChild(testerContainer);
 
   const root = ReactDOM.createRoot(testerContainer);
-  logger("Starting integration tester react loader");
+  logger("Starting integration tester loader");
   root.render(
     <React.StrictMode>
       <ErrorBoundary>
@@ -87,14 +88,12 @@ export function Main({
   const overlayState = useOverlayState(settings, getSettings, updateSettings)();
   useOverlayOnTopMover();
 
-  if (overlayState.integrationState.isBlackListedPage) {
-    debug("Main", "Page is blacklisted, returning empty fragment");
-    return <></>;
-  }
   if (!overlayState.isPromptVisible) {
-    debug("Main", "Overlay is currently hidden");
+    debug("Main", "Overlay is currently hidden or blacklisted");
     return <></>;
   }
+
+  useIntegrationDetector(overlayState);
 
   return (
     <ErrorBoundary>

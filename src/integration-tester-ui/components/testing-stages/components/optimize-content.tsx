@@ -2,11 +2,22 @@ import { X } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import type { StepProps } from "../../../../integration-tester-ui/types";
+import type {
+  StepProps,
+  TestResult,
+  TestRun,
+} from "../../../../integration-tester-ui/types";
 import { styles } from "../../../styles";
 
-export function OptimizeContent({ overlayState }: StepProps): JSX.Element {
-  const selfTester = integrationState.selfTester;
+export function OptimizeContent({
+  overlayState,
+  currentTestRun,
+  currentPageTestResult,
+}: StepProps & {
+  currentTestRun: TestRun;
+  currentPageTestResult: TestResult;
+}): JSX.Element {
+  const selfTester = currentPageTestResult.integrationTester;
 
   const notFoundHeader: React.CSSProperties = {
     display: "flex",

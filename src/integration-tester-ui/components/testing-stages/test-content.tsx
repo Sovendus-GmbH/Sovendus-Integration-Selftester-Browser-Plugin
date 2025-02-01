@@ -1,10 +1,15 @@
-import { ArrowRight, CheckCircle, RotateCcw, XCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle,
+  RotateCcw,
+  XCircle,
+} from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
-import { useEffect } from "react";
 
-import type { TestResult } from "../../hooks/useOverlayState";
-import type { StepProps } from "../../types";
+import { DetectionState } from "../../../integration-detector/integrationDetector";
+import type { StepProps, TestResult } from "../../types";
 import { OverlaySize, PageType } from "../../types";
 import { AccordionContent } from "./components/accordion-content";
 import { StatusItem } from "./components/status-item";
@@ -15,33 +20,20 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
     handleTestCompletion,
     getCurrentTestRun,
     handleNavigateToSuccessPage,
+    setCurrentTestRunData,
+    handlePageSelection,
+    integrationState,
   } = overlayState;
   const isSmall = uiState.overlaySize === OverlaySize.SMALL;
   const currentTestRun = getCurrentTestRun();
-  const currentSelfTester =
+  const currentPageTestResult = (
     currentTestRun.currentPageType === PageType.LANDING
       ? currentTestRun.landingPageResult
       : currentTestRun.currentPageType === PageType.SUCCESS
         ? currentTestRun.successPageResult
-        : undefined;
-  useEffect(() => {
-    if (uiState.testingState === TestingState.IN_PROGRESS) {
-      const timer = setTimeout(() => {
-        const result: TestResult = {
-          status: integrationState.integrationState.detected
-            ? "success"
-            : "error",
-          details: integrationState.integrationState.detected
-            ? "Integration detected successfully"
-            : "Integration not detected",
-        };
-        handleTestCompletion(result);
-      }, 3000);
-
-      return (): void => clearTimeout(timer);
-    }
-    return;
-  }, []);
+        : undefined
+  ) as TestResult;
+  const currentPageTesterState = currentPageTestResult.integrationTester;
 
   const containerStyle: React.CSSProperties = {
     display: "flex",
@@ -77,41 +69,43 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
     fontSize: isSmall ? "0.875rem" : "1rem",
   };
 
-  const renderTestResult = (result: TestResult | null, title: string) => {
-    if (!result) {
-      return null;
-    }
-    return (
-      <div style={{ marginTop: "0.5rem" }}>
-        <h3
-          style={{
-            fontWeight: "600",
-            fontSize: isSmall ? "0.75rem" : "0.875rem",
-          }}
-        >
-          {title} Test Result:
-        </h3>
-        <StatusItem
-          label='Status'
-          value={result.status}
-          icon={result.status === "success" ? CheckCircle : XCircle}
-          color={result.status === "success" ? "#34D399" : "#F87171"}
-          small={isSmall}
-        />
-        {result.details && (
-          <p
-            style={{
-              fontSize: isSmall ? "0.75rem" : "0.875rem",
-              marginTop: "0.25rem",
-            }}
-          >
-            {result.details}
-          </p>
-        )}
-      </div>
-    );
-  };
-
+  // const renderTestResult = (result: TestResult | null, title: string) => {
+  //   if (!result) {
+  //     return null;
+  //   }
+  //   return (
+  //     <div style={{ marginTop: "0.5rem" }}>
+  //       <h3
+  //         style={{
+  //           fontWeight: "600",
+  //           fontSize: isSmall ? "0.75rem" : "0.875rem",
+  //         }}
+  //       >
+  //         {title} Test Result:
+  //       </h3>
+  //       <StatusItem
+  //         label='Status'
+  //         value={result.status}
+  //         icon={result.status === "success" ? CheckCircle : XCircle}
+  //         color={result.status === "success" ? "#34D399" : "#F87171"}
+  //         small={isSmall}
+  //       />
+  //       {result.details && (
+  //         <p
+  //           style={{
+  //             fontSize: isSmall ? "0.75rem" : "0.875rem",
+  //             marginTop: "0.25rem",
+  //           }}
+  //         >
+  //           {result.details}
+  //         </p>
+  //       )}
+  //     </div>
+  //   );
+  // };
+  const isDetected =
+    overlayState.integrationState.status.detectionState ===
+    DetectionState.DETECTED;
   return (
     <div style={containerStyle}>
       <h2 style={headingStyle}>
@@ -123,87 +117,84 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
         <StatusItem
           label='Status'
           value={
-            overlayState.uiState.testingState === TestingState.IN_PROGRESS
-              ? "Testing..."
-              : "Completed"
+            // uiState.testingState === TestingState.IN_PROGRESS
+            //   ? "Testing..."
+            //   :
+            "Completed"
           }
           icon={
-            overlayState.uiState.testingState === TestingState.IN_PROGRESS
-              ? undefined
-              : CheckCircle
+            // uiState.testingState === TestingState.IN_PROGRESS
+            //   ? undefined
+            //   :
+            CheckCircle
           }
           color={
-            overlayState.uiState.testingState === TestingState.IN_PROGRESS
-              ? "#FBBF24"
-              : "#34D399"
+            // uiState.testingState === TestingState.IN_PROGRESS
+            //   ? "#FBBF24"
+            //   :
+            "#34D399"
           }
           small={isSmall}
         />
         <StatusItem
           label='Integration'
-          value={
-            overlayState.integrationState.integrationState.detected
-              ? "Detected"
-              : "Not Detected"
-          }
-          icon={
-            overlayState.integrationState.integrationState.detected
-              ? CheckCircle
-              : XCircle
-          }
-          color={
-            overlayState.integrationState.integrationState.detected
-              ? "#34D399"
-              : "#F87171"
-          }
+          value={isDetected ? "Detected" : "Not Detected"}
+          icon={isDetected ? CheckCircle : XCircle}
+          color={isDetected ? "#34D399" : "#F87171"}
           small={isSmall}
         />
-        {overlayState.integrationState.integrationState.detected && (
+        {isDetected && (
           <>
             <StatusItem
               label='Type'
-              value={overlayState.uiState.integrationType || "Unknown"}
+              value={
+                currentPageTesterState?.integrationType.elementValue ||
+                "Unknown"
+              }
               small={isSmall}
             />
             <StatusItem
               label='State'
-              value={
-                overlayState.integrationState.integrationState.status
-                  .detectionState
-              }
+              value={overlayState.integrationState.status.detectionState}
               small={isSmall}
             />
           </>
         )}
       </div>
-      {currentTestRun.currentPageType === PageType.LANDING &&
+      {/* {currentTestRun.currentPageType === PageType.LANDING &&
         renderTestResult(overlayState.landingPageResult, "Landing Page")}
       {currentTestRun.currentPageType === PageType.SUCCESS && (
         <>
           {renderTestResult(currentTestRun.landingPageResult, "Landing Page")}
           {renderTestResult(currentTestRun.successPageResult, "Success Page")}
         </>
+      )} */}
+      {currentTestRun.currentPageType === PageType.LANDING && (
+        <button onClick={handleNavigateToSuccessPage} style={buttonStyle}>
+          <span style={{ marginRight: "0.5rem" }}>I'm on the success page</span>
+          <ArrowRight size={isSmall ? 16 : 20} />
+        </button>
       )}
-      {currentTestRun.currentPageType === PageType.LANDING &&
-        uiState.testingState === TestingState.COMPLETED && (
-          <button onClick={handleNavigateToSuccessPage} style={buttonStyle}>
-            <span style={{ marginRight: "0.5rem" }}>
-              I'm on the success page
-            </span>
-            <ArrowRight size={isSmall ? 16 : 20} />
-          </button>
-        )}
-      {currentPageType === PageType.SUCCESS &&
-        uiState.testingState === TestingState.COMPLETED && (
-          <button onClick={overlayState.startNewTest} style={buttonStyle}>
-            <span style={{ marginRight: "0.5rem" }}>Restart Test</span>
-            <RotateCcw size={isSmall ? 16 : 20} />
-          </button>
-        )}
+      {currentTestRun.currentPageType === PageType.SUCCESS && (
+        <button
+          onClick={() => handlePageSelection(PageType.LANDING)}
+          style={buttonStyle}
+        >
+          <span style={{ marginRight: "0.5rem" }}>
+            Back to landing page test
+          </span>
+          <ArrowLeft size={isSmall ? 16 : 20} />
+        </button>
+      )}
+      <button onClick={overlayState.startNewTest} style={buttonStyle}>
+        <span style={{ marginRight: "0.5rem" }}>Restart Test</span>
+        <RotateCcw size={isSmall ? 16 : 20} />
+      </button>
       {uiState.overlaySize === OverlaySize.LARGE && (
         <AccordionContent
           overlayState={overlayState}
           currentTestRun={currentTestRun}
+          currentPageTestResult={currentPageTestResult}
         />
       )}
     </div>

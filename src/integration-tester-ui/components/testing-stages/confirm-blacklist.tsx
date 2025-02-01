@@ -24,9 +24,9 @@ export function ConfirmBlacklist({
     hideOverlay();
   };
 
-  const buttonStyle: React.CSSProperties = {
+  const blacklistButtonStyle: React.CSSProperties = {
     padding: "0.5rem 1rem",
-    backgroundColor: "#4F46E5",
+    backgroundColor: "#D30000",
     color: "white",
     borderRadius: "0.375rem",
     border: "none",
@@ -35,8 +35,8 @@ export function ConfirmBlacklist({
     fontSize: isSmall ? "0.75rem" : "0.875rem",
   };
 
-  const declineButtonStyle: React.CSSProperties = {
-    ...buttonStyle,
+  const hideButtonStyle: React.CSSProperties = {
+    ...blacklistButtonStyle,
     backgroundColor: "#7C3AED",
   };
   const containerStyle: React.CSSProperties = {
@@ -71,10 +71,10 @@ export function ConfirmBlacklist({
   return (
     <div style={containerStyle}>
       <div style={buttonContainerStyle}>
-        <button style={buttonStyle} onClick={handleBlacklist}>
+        <button style={blacklistButtonStyle} onClick={handleBlacklist}>
           Blacklist this Page
         </button>
-        <button style={declineButtonStyle} onClick={handleHideOverlay}>
+        <button style={hideButtonStyle} onClick={handleHideOverlay}>
           Hide Overlay
         </button>
       </div>

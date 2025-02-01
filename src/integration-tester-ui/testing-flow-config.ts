@@ -5,7 +5,7 @@ import { InitialPrompt } from "./components/testing-stages/initial-prompt";
 import { PageSelection } from "./components/testing-stages/page-selection";
 import { TestContent } from "./components/testing-stages/test-content";
 import { TestHistory } from "./components/testing-stages/test-history";
-import type { StepProps } from "./types";
+import type { TestingFlowConfigType } from "./types";
 import { OverlaySize } from "./types";
 
 export const defaultStorage: ExtensionStorage = {
@@ -39,7 +39,7 @@ export const testingFlowConfig: TestingFlowConfigType = {
     pageSelection: {
       component: PageSelection,
       availableSizes: [
-        OverlaySize.SMALL,
+        // OverlaySize.SMALL,
         OverlaySize.MEDIUM,
         OverlaySize.LARGE,
       ],
@@ -48,12 +48,12 @@ export const testingFlowConfig: TestingFlowConfigType = {
     landingPageTest: {
       component: TestContent,
       availableSizes: [OverlaySize.MEDIUM, OverlaySize.LARGE],
-      defaultSize: OverlaySize.MEDIUM,
+      defaultSize: OverlaySize.LARGE,
     },
     successPageTest: {
       component: TestContent,
       availableSizes: [OverlaySize.MEDIUM, OverlaySize.LARGE],
-      defaultSize: OverlaySize.MEDIUM,
+      defaultSize: OverlaySize.LARGE,
     },
     testHistory: {
       component: TestHistory,
@@ -93,48 +93,3 @@ export const testingFlowConfig: TestingFlowConfigType = {
     declineBlacklist: {},
   },
 };
-
-export type TestingFlowConfigType = {
-  stages: {
-    [stageKey in StageKeys]?: StageType;
-  };
-  initialStage: StageKeys;
-  transitions: {
-    [stageKey in StageKeys]: TransitionType;
-  };
-};
-
-export type TransitionType = {
-  [transitionType in TransitionTypes]?: StageKeys;
-};
-
-export type StageType = {
-  component: ({ overlayState }: StepProps) => React.JSX.Element;
-  availableSizes: OverlaySize[];
-  defaultSize: OverlaySize;
-};
-
-export type StageKeys =
-  | "initialPrompt"
-  | "confirmBlacklist"
-  | "consentSelection"
-  | "pageSelection"
-  | "landingPageTest"
-  | "declineBlacklist"
-  | "successPageTest"
-  | "testHistory";
-
-export type TransitionTypes =
-  | "ACCEPT"
-  | "DECLINE"
-  | "BLACKLIST"
-  | "HIDE_OVERLAY"
-  | "SELECT"
-  | "SELECT_LANDING"
-  | "SELECT_SUCCESS"
-  | "COMPLETE"
-  | "NAVIGATE"
-  | "TO_TEST_HISTORY"
-  | "RESTART";
-
-export type StageName = keyof typeof testingFlowConfig.stages;

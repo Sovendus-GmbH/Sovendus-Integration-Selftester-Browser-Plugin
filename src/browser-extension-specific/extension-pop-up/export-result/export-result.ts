@@ -1,4 +1,4 @@
-import { browserAPI } from "../extensionPopUp";
+import { browserAPI } from "../../browser-api";
 import {
   hideSelfTesterOverlay,
   restoreSelfTesterOverlay,

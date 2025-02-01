@@ -3,13 +3,17 @@ import React from "react";
 
 import type { TestRun } from "../../../hooks/useOverlayState";
 import { styles } from "../../../styles";
-import type { StepProps } from "../../../types";
+import type { StepProps, TestResult } from "../../../types";
 
 export function CBVNContent({
   overlayState,
   currentTestRun,
-}: StepProps & { currentTestRun: TestRun }): JSX.Element {
-  const selfTester = integrationState.selfTester;
+  currentPageTestResult,
+}: StepProps & {
+  currentTestRun: TestRun;
+  currentPageTestResult: TestResult;
+}): JSX.Element {
+  const selfTester = currentPageTestResult.integrationTester;
 
   if (!selfTester) {
     return <></>;

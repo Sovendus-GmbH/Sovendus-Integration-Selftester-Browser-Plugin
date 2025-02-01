@@ -121,8 +121,7 @@ function DetectionStatus({
   integrationState: IntegrationDetectorData;
 }): JSX.Element {
   const status =
-    integrationState?.integrationState?.status?.detectionState ||
-    DetectionState.NOT_DETECTED;
+    integrationState?.status?.detectionState || DetectionState.NOT_DETECTED;
   const color = status === DetectionState.NOT_DETECTED ? "#F87171" : "#34D399";
 
   const statusStyle: React.CSSProperties = {
