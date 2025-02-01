@@ -107,6 +107,7 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
   const isDetected =
     overlayState.integrationState.status.detectionState ===
     DetectionState.DETECTED;
+  const [screenshotUrl, setScreenshotUrl] = React.useState<string | null>(null);
   return (
     <div style={containerStyle}>
       <h2 style={headingStyle}>
@@ -174,6 +175,23 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
         currentTestRun={currentTestRun}
         overlayState={overlayState}
       />
+      <div>
+        <button
+          onClick={async () => {
+            const screenshotUrl = await overlayState._getScreenshot();
+            console.log(screenshotUrl);
+            setScreenshotUrl(screenshotUrl);
+          }}
+        >
+          take screenshot
+        </button>
+        <h3>Screenshot</h3>
+        <img
+          src={screenshotUrl}
+          alt='Screenshot'
+          style={{ maxWidth: "100%" }}
+        />
+      </div>
       {currentTestRun.currentPageType === PageType.LANDING && (
         <button onClick={handleNavigateToSuccessPage} style={buttonStyle}>
           <span style={{ marginRight: "0.5rem" }}>I'm on the success page</span>

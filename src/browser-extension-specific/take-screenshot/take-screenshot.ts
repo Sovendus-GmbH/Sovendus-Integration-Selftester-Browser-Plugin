@@ -1,4 +1,4 @@
-import { browserAPI } from "../../browser-api";
+import { browserAPI } from "../browser-api";
 import {
   hideSelfTesterOverlay,
   restoreSelfTesterOverlay,
@@ -9,18 +9,13 @@ import {
   checkStickyBannerAndOverlayIntegration,
   hideOrShowStickyBannerAndOverlay,
 } from "./sovendus-overlay";
-import {
-  addDelayBetweenScreenshotOnChrome,
-  copyScreenshotsToClipboard,
-} from "./utils";
+import { addDelayBetweenScreenshotOnChrome } from "./utils";
 
-export async function exportResultsScreenshot(
-  tabId: number,
-  captureButton: HTMLElement,
-  alertContainer: HTMLElement,
-): Promise<void> {
-  captureButton.innerText = "Copying In Progress...";
-
+export async function createFullPageScreenShot(tabId: number): Promise<{
+  screenShotUri?: string;
+  success: boolean;
+  errorMessage: string | undefined;
+}> {
   const { ctx, screenshotContainer } = getScreenshotCanvas();
   await hideSelfTesterOverlay(tabId);
   const sovendusOverlayIntegration =
@@ -36,30 +31,44 @@ export async function exportResultsScreenshot(
   );
 
   if (mobileDeviceEmulatorIsOverlappedByDevTools) {
-    return abortEarlyAndSetErrorMessage(tabId, captureButton, alertContainer);
+    return {
+      success: false,
+      errorMessage:
+        "Error: The mobile device emulation window can not be overlapped by the developer console.",
+    };
   }
 
-  await copyScreenshotsToClipboard(screenshotContainer);
-
+  // await copyScreenshotsToClipboard(screenshotContainer);
+  let errorMessage: string | undefined = undefined;
   if (mobileDeviceEmulatorZoomLevelSet) {
-    setZoomDetectedWarningMessage(alertContainer);
+    errorMessage =
+      "Warning: Zoom detected, the screenshot might be blurry. Set the zoom to 100% if possible!";
   }
   if (sovendusOverlayIntegration) {
     await hideOrShowStickyBannerAndOverlay(false, tabId);
   }
   await restoreSelfTesterOverlay(tabId);
-  setSuccessMessage(captureButton);
+  const blob = await screenshotContainer.convertToBlob();
+  const screenshotUrl = URL.createObjectURL(blob);
+  return {
+    success: true,
+    screenShotUri: screenshotUrl,
+    errorMessage,
+  };
 }
 
 async function drawFullPageScreenshot(
   tabId: number,
-  ctx: CanvasRenderingContext2D,
-  screenshotContainer: HTMLCanvasElement,
+  ctx: OffscreenCanvasRenderingContext2D,
+  screenshotContainer: OffscreenCanvas,
   sovendusOverlayIntegration: boolean,
 ): Promise<{
   mobileDeviceEmulatorIsOverlappedByDevTools: boolean;
   mobileDeviceEmulatorZoomLevelSet: boolean;
 }> {
+  // chrome.tabs.captureVisibleTab((dataUrl) => {
+  //   console.log("dataUrl", dataUrl);
+  // });
   const {
     zoomAdjustedHeight,
     scrollHeight,
@@ -111,7 +120,7 @@ async function drawSegmentScreenshot({
   zoomLevel,
 }: {
   tabId: number;
-  ctx: CanvasRenderingContext2D;
+  ctx: OffscreenCanvasRenderingContext2D;
   screenshotElementVerticalPosition: number;
   viewPortHeight: number;
   remainingScrollHeight: number;
@@ -119,10 +128,13 @@ async function drawSegmentScreenshot({
   zoomLevel: number;
 }): Promise<void> {
   return new Promise((resolve) => {
-    chrome.tabs.captureVisibleTab((screenshotDataUrl): void => {
-      const screenshotImage = new Image();
-      screenshotImage.src = screenshotDataUrl;
-      screenshotImage.onload = async (): Promise<void> => {
+    chrome.tabs.captureVisibleTab(
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      async (screenshotDataUrl): Promise<void> => {
+        const response = await fetch(screenshotDataUrl);
+        const blob = await response.blob();
+        const screenshotImage = await createImageBitmap(blob);
+
         let newScreenshotElementVerticalPosition =
           screenshotElementVerticalPosition;
 
@@ -170,13 +182,13 @@ async function drawSegmentScreenshot({
           await scrollToTop(tabId);
         }
         resolve();
-      };
-    });
+      },
+    );
   });
 }
 
 async function createSovendusOverlayScreenshot(
-  ctx: CanvasRenderingContext2D,
+  ctx: OffscreenCanvasRenderingContext2D,
   zoomAdjustedHeight: number,
 ): Promise<void> {
   return new Promise((resolve) => {
@@ -198,7 +210,7 @@ async function createSovendusOverlayScreenshot(
 }
 
 async function createDebugInfoScreenshot(
-  ctx: CanvasRenderingContext2D,
+  ctx: OffscreenCanvasRenderingContext2D,
 ): Promise<void> {
   await addDelayBetweenScreenshotOnChrome();
   return new Promise((resolve) => {
@@ -221,7 +233,7 @@ async function createDebugInfoScreenshot(
 
 async function getScreenShotDimensions(
   tabId: number,
-  screenshotContainer: HTMLCanvasElement,
+  screenshotContainer: OffscreenCanvas,
   sovendusOverlayIntegration: boolean,
 ): Promise<{
   zoomAdjustedHeight: number;
@@ -314,54 +326,62 @@ async function getZoomAdjustedDimensions(): Promise<{
   width: number;
   height: number;
 }> {
+  // chrome.tabs.captureVisibleTab((dataUrl) => {
+  //   console.log("dataUrl", dataUrl);
+  // });
+  await addDelayBetweenScreenshotOnChrome();
+
   return new Promise((resolve) => {
-    chrome.tabs.captureVisibleTab({ format: "png" }, (screenshotDataUrl) => {
-      const img = new Image();
-      img.src = screenshotDataUrl;
-      img.onload = (): void => {
-        resolve({ width: img.width, height: img.height });
-      };
-    });
+    chrome.tabs.captureVisibleTab(
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      async (screenshotDataUrl) => {
+        console.log("screenshotDataUrl", screenshotDataUrl);
+        const response = await fetch(screenshotDataUrl);
+        const blob = await response.blob();
+        const bitmap = await createImageBitmap(blob);
+        resolve({ width: bitmap.width, height: bitmap.height });
+      },
+    );
   });
 }
 
 function getScreenshotCanvas(): {
-  ctx: CanvasRenderingContext2D;
-  screenshotContainer: HTMLCanvasElement;
+  screenshotContainer: OffscreenCanvas;
+  ctx: OffscreenCanvasRenderingContext2D;
 } {
-  const screenshotContainer: HTMLCanvasElement = document.getElementById(
-    "screenshot-canvas",
-  ) as HTMLCanvasElement;
-  const ctx = screenshotContainer.getContext("2d") as CanvasRenderingContext2D;
+  const screenshotContainer: OffscreenCanvas = new OffscreenCanvas(1, 1);
+  const ctx: OffscreenCanvasRenderingContext2D = screenshotContainer.getContext(
+    "2d",
+  ) as OffscreenCanvasRenderingContext2D;
   if (!ctx || !screenshotContainer) {
     throw new Error("No screenshot canvas found");
   }
   return { ctx, screenshotContainer };
 }
 
-async function abortEarlyAndSetErrorMessage(
-  tabId: number,
-  captureButton: HTMLElement,
-  alertContainer: HTMLElement,
-): Promise<void> {
-  captureButton.innerText = "Failed to copy";
-  captureButton.style.background = "red";
-  captureButton.style.color = "white";
-  alertContainer.innerText =
-    "Error: The mobile device emulation window can not be overlapped by the developer console.";
-  alertContainer.style.display = "block";
-  await restoreSelfTesterOverlay(tabId);
-}
+// async function abortEarlyAndSetErrorMessage(
+//   tabId: number,
+//   captureButton: HTMLElement,
+//   alertContainer: HTMLElement,
+// ): Promise<void> {
+//   captureButton.innerText = "Failed to copy";
+//   captureButton.style.background = "red";
+//   captureButton.style.color = "white";
+//   alertContainer.innerText =
+//     "Error: The mobile device emulation window can not be overlapped by the developer console.";
+//   alertContainer.style.display = "block";
+//   await restoreSelfTesterOverlay(tabId);
+// }
 
-function setZoomDetectedWarningMessage(alertContainer: HTMLElement): void {
-  alertContainer.innerText =
-    "Warning: Zoom detected, the screenshot might be blurry. Set the zoom to 100% if possible!";
-  alertContainer.style.display = "block";
-  alertContainer.style.background = "orange";
-}
+// function setZoomDetectedWarningMessage(alertContainer: HTMLElement): void {
+//   alertContainer.innerText =
+//     "Warning: Zoom detected, the screenshot might be blurry. Set the zoom to 100% if possible!";
+//   alertContainer.style.display = "block";
+//   alertContainer.style.background = "orange";
+// }
 
-function setSuccessMessage(captureButton: HTMLElement): void {
-  captureButton.innerText = "Copy Test Result Again";
-  captureButton.style.background = "green";
-  captureButton.style.color = "white";
-}
+// function setSuccessMessage(captureButton: HTMLElement): void {
+//   captureButton.innerText = "Copy Test Result Again";
+//   captureButton.style.background = "green";
+//   captureButton.style.color = "white";
+// }

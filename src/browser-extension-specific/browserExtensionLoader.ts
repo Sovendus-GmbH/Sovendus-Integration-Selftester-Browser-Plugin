@@ -4,7 +4,7 @@ import type {
   ExtensionSettingsEvent,
   ExtensionStorage,
 } from "../integration-tester-ui/testing-storage";
-import { debug } from "../logger/logger";
+import { debug, error } from "../logger/logger";
 
 async function initializeExtension(): Promise<void> {
   debug("browserExtensionLoader", "Starting integration tester");
@@ -31,6 +31,42 @@ async function initializeExtension(): Promise<void> {
       debug(
         "browserSettingsBridge][browserExtensionLoader",
         "Requested settings from browser",
+      );
+    });
+  }
+
+  async function takeScreenshot(): Promise<string> {
+    return new Promise((resolve) => {
+      const messageHandler = (event: ExtensionSettingsEvent): void => {
+        if (event.data.type === "TAKE_SCREENSHOT_RESPONSE") {
+          if (event.data.success) {
+            debug(
+              "browserSettingsBridge][browserExtensionLoader",
+              "Screenshot received from browser",
+              event.data.settings,
+            );
+            window.removeEventListener("message", messageHandler);
+            resolve(event.data.screenshotUrl as string);
+          } else {
+            error(
+              "browserSettingsBridge][browserExtensionLoader",
+              "Screenshot request failed",
+              event.data,
+            );
+            window.removeEventListener("message", messageHandler);
+            resolve("");
+          }
+        }
+      };
+      window.addEventListener("message", messageHandler);
+      debug(
+        "browserSettingsBridge][browserExtensionLoader",
+        "Requesting screenshot from browser",
+      );
+      window.postMessage({ type: "TAKE_SCREENSHOT" }, "*");
+      debug(
+        "browserSettingsBridge][browserExtensionLoader",
+        "Requested screenshot from browser",
       );
     });
   }
@@ -69,7 +105,7 @@ async function initializeExtension(): Promise<void> {
     });
   }
   const settings = await getSettings();
-  startIntegrationTester(settings, getSettings, updateSettings);
+  startIntegrationTester(settings, getSettings, updateSettings, takeScreenshot);
 }
 
 void initializeExtension();

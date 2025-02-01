@@ -1,12 +1,12 @@
+// import { exportResultsScreenshot } from "./export-result/export-result";
+import { checkIfSovendusIsDetected } from "../take-screenshot/utils";
 import { checkAvailableIntegrations } from "./check-available-integrations";
-import { exportResultsScreenshot } from "./export-result/export-result";
-import { checkIfSovendusIsDetected } from "./export-result/utils";
 import { toggleSelfTesterOverlayVisibility } from "./toggle-overlay";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const captureButton = document.getElementById(
-    "capture-button",
-  ) as HTMLElement;
+  // const captureButton = document.getElementById(
+  //   "capture-button",
+  // ) as HTMLElement;
   const alertContainer = document.getElementById(
     "alertContainer",
   ) as HTMLElement;
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
       void (async (): Promise<void> => {
         const { sovendusIntegrated, overlayVisible } =
           await checkIfSovendusIsDetected(tabId);
-        addExportResultClickEvent(tabId, captureButton, alertContainer);
+        // addExportResultClickEvent(tabId, captureButton, alertContainer);
         addCheckAvailableMethodsClickEvent(
           tabId,
           sovendusIntegrated,
@@ -39,15 +39,15 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 });
 
-function addExportResultClickEvent(
-  tabId: number,
-  captureButton: HTMLElement,
-  alertContainer: HTMLElement,
-): void {
-  captureButton.addEventListener("click", () => {
-    void exportResultsScreenshot(tabId, captureButton, alertContainer);
-  });
-}
+// function addExportResultClickEvent(
+//   tabId: number,
+//   captureButton: HTMLElement,
+//   alertContainer: HTMLElement,
+// ): void {
+//   captureButton.addEventListener("click", () => {
+//     void exportResultsScreenshot(tabId, captureButton, alertContainer);
+//   });
+// }
 
 function addCheckAvailableMethodsClickEvent(
   tabId: number,

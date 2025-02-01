@@ -16,14 +16,17 @@ export function startIntegrationTester(
   settings: ExtensionStorage,
   getSettings: () => Promise<ExtensionStorage>,
   updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>,
+  takeScreenshot: () => Promise<string>,
 ): void {
-  if (!document.getElementById(overlayRootId)) {
+  if (!window.testerLoaderDidLoad) {
+    window.testerLoaderDidLoad = true;
     reactLoader({
       rootId: overlayRootId,
       RootComponent: Main,
       settings,
       getSettings,
       updateSettings,
+      takeScreenshot,
     });
   } else {
     logger("Integration tester is already running");
@@ -36,6 +39,7 @@ function reactLoader({
   settings,
   getSettings,
   updateSettings,
+  takeScreenshot,
 }: {
   rootId: string;
   RootComponent: ({
@@ -48,10 +52,12 @@ function reactLoader({
     updateSettings: (
       newSettings: Partial<ExtensionStorage>,
     ) => Promise<boolean>;
+    takeScreenshot: () => Promise<string>;
   }) => JSX.Element;
   settings: ExtensionStorage;
   getSettings: () => Promise<ExtensionStorage>;
   updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>;
+  takeScreenshot: () => Promise<string>;
 }): void {
   const testerContainer = document.createElement("div");
   testerContainer.id = rootId;
@@ -68,6 +74,7 @@ function reactLoader({
           settings={settings}
           getSettings={getSettings}
           updateSettings={updateSettings}
+          takeScreenshot={takeScreenshot}
         />
       </ErrorBoundary>
     </React.StrictMode>,
@@ -78,14 +85,21 @@ export function Main({
   settings,
   getSettings,
   updateSettings,
+  takeScreenshot,
 }: {
   settings: ExtensionStorage;
   getSettings: () => Promise<ExtensionStorage>;
   updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>;
+  takeScreenshot: () => Promise<string>;
 }): JSX.Element {
   debug("Main", "Rendering Main component", settings);
 
-  const overlayState = useOverlayState(settings, getSettings, updateSettings)();
+  const overlayState = useOverlayState(
+    settings,
+    getSettings,
+    updateSettings,
+    takeScreenshot,
+  )();
   useOverlayOnTopMover();
 
   if (!overlayState.isPromptVisible) {
@@ -129,3 +143,9 @@ const moveOverlayRootToOnTopOfOther = (): void => {
     }
   }
 };
+
+interface LoaderWindow extends Window {
+  testerLoaderDidLoad: boolean;
+}
+
+declare const window: LoaderWindow;

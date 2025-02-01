@@ -14,7 +14,7 @@ export function error(
 ): void {
   // TODO send this to api
   // eslint-disable-next-line no-console
-  console.log(`[DEBUG][${component}] ${message}`, data ? data : "");
+  console.error(`[ERROR][${component}] ${message}`, data ? data : "");
 }
 
 export function debug(

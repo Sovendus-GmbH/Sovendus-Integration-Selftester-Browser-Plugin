@@ -14,9 +14,13 @@ export type ExtensionSettingsEvent = MessageEvent<{
     | "GET_SETTINGS"
     | "UPDATE_SETTINGS"
     | "GET_SETTINGS_RESPONSE"
+    | "TAKE_SCREENSHOT"
+    | "TAKE_SCREENSHOT_RESPONSE"
     | "UPDATE_SETTINGS_RESPONSE";
   settings?: ExtensionStorage;
   success?: boolean;
+  screenshotUrl?: string;
+  error?: string;
 }>;
 
 export enum OverlaySize {

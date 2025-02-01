@@ -59,12 +59,14 @@ export interface OverlayState {
     ) => Partial<ExtensionStorage>,
   ) => void;
   saveSettings: () => Promise<void>;
+  _getScreenshot: () => Promise<string>;
 }
 
 export const useOverlayState = (
   testerStorage: ExtensionStorage,
   getSettings: () => Promise<ExtensionStorage>,
   updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>,
+  takeScreenshot: () => Promise<string>,
 ): ReturnType<typeof useMemo<UseBoundStore<StoreApi<OverlayState>>>> => {
   return useMemo(() => {
     return create<OverlayState>((set, get) => {
@@ -85,6 +87,7 @@ export const useOverlayState = (
         currentHost,
         _getSettings: getSettings,
         _updateSettings: updateSettings,
+        _getScreenshot: takeScreenshot,
         testerStorage: newTesterStorage,
         integrationState: defaultIntegrationState,
 

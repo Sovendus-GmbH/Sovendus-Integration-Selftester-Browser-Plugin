@@ -270,9 +270,15 @@ export class IntegrationDetectorLoop {
     hasOptimizePageScript: boolean;
     hasOptimizeConversionScript: boolean;
   } {
-    const optimizeScript = document.querySelector(
-      `[src^="${scriptAliases.optimizeScript}"]`,
-    ) as HTMLScriptElement | undefined;
+    let optimizeScript: HTMLScriptElement | undefined = undefined;
+    for (const scriptUrl of scriptAliases.optimizeScripts) {
+      optimizeScript = document.querySelector(`[src^="${scriptUrl}"]`) as
+        | HTMLScriptElement
+        | undefined;
+      if (optimizeScript) {
+        break;
+      }
+    }
     if (optimizeScript) {
       const hasOptimizeConversionScript =
         optimizeScript.src.includes("conversion");
@@ -378,7 +384,7 @@ export const scriptAliases = {
   // https://www.sovopt.com/OPTIMIZE_ID/conversion/?
   // example page script:
   // https://www.sovopt.com/OPTIMIZE_ID
-  optimizeScript: ["https://www.sovopt.com/"],
+  optimizeScripts: ["https://www.sovopt.com/", "https://www.getback.ch"],
   checkoutProductsPixel: ["https://press-order-api.sovendus.com/ext/"],
 };
 

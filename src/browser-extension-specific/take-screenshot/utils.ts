@@ -1,45 +1,45 @@
-import type SelfTester from "../../../integration-tester/integrationTester.js";
-import { transmitIntegrationError } from "../../../integration-tester/integrationTester.js";
+import type SelfTester from "../../integration-tester/integrationTester.js";
+import { transmitIntegrationError } from "../../integration-tester/integrationTester.js";
 import {
   openSovendusOverlayId,
   outerOverlayId,
-} from "../../../integration-tester-ui/old/integration-test-overlay-css-vars.js";
-import { browserAPI } from "../../browser-api";
+} from "../../integration-tester-ui/old/integration-test-overlay-css-vars.js";
+import { browserAPI } from "../browser-api.js";
 
-export async function copyScreenshotsToClipboard(
-  screenshotContainer: HTMLCanvasElement,
-): Promise<void> {
-  await new Promise<void>((resolve) => {
-    void (async (): Promise<void> => {
-      if (isFirefox()) {
-        const response = await fetch(screenshotContainer.toDataURL());
-        const buffer = await response.arrayBuffer();
-        await browser.clipboard.setImageData(buffer, "png");
-        resolve();
-      } else {
-        screenshotContainer.toBlob((blob: Blob | null): void => {
-          if (!blob) {
-            throw new Error("Failed to save to clipboard");
-          }
-          const data = [new ClipboardItem({ [blob.type]: blob })];
-          navigator.clipboard
-            .write(data)
-            .then(() => {
-              resolve();
-            })
-            .catch((error) => {
-              // eslint-disable-next-line no-console
-              console.error("Failed to copy to the clipboard, error:", error);
-              void transmitIntegrationError(
-                `Failed to copy to the clipboard, error: ${error}`,
-                { windowParameter: window },
-              );
-            });
-        });
-      }
-    })();
-  });
-}
+// export async function copyScreenshotsToClipboard(
+//   screenshotContainer: OffscreenCanvas,
+// ): Promise<void> {
+//   await new Promise<void>((resolve) => {
+//     void (async (): Promise<void> => {
+//       if (isFirefox()) {
+//         const response = await fetch(screenshotContainer.toDataURL());
+//         const buffer = await response.arrayBuffer();
+//         await browser.clipboard.setImageData(buffer, "png");
+//         resolve();
+//       } else {
+//         screenshotContainer.toBlob((blob: Blob | null): void => {
+//           if (!blob) {
+//             throw new Error("Failed to save to clipboard");
+//           }
+//           const data = [new ClipboardItem({ [blob.type]: blob })];
+//           navigator.clipboard
+//             .write(data)
+//             .then(() => {
+//               resolve();
+//             })
+//             .catch((error) => {
+//               // eslint-disable-next-line no-console
+//               console.error("Failed to copy to the clipboard, error:", error);
+//               void transmitIntegrationError(
+//                 `Failed to copy to the clipboard, error: ${error}`,
+//                 { windowParameter: window },
+//               );
+//             });
+//         });
+//       }
+//     })();
+//   });
+// }
 
 export async function addDelayBetweenScreenshotOnChrome(): Promise<void> {
   if (!isFirefox()) {
@@ -49,7 +49,7 @@ export async function addDelayBetweenScreenshotOnChrome(): Promise<void> {
 }
 
 function isFirefox(): boolean {
-  return !window.ClipboardItem;
+  return !(typeof chrome !== "undefined" && typeof browser === "undefined");
 }
 
 export async function checkIfSovendusIsDetected(
