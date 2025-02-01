@@ -8,8 +8,8 @@ import {
 import type { JSX } from "react";
 import React, { useState } from "react";
 
-import type { StepProps } from "../../types";
-import { OverlaySize } from "../../types";
+import type { StepProps } from "../../testing-storage";
+import { OverlaySize } from "../../testing-storage";
 import { StatusItem } from "./components/status-item";
 
 export function NavigationPrompt({

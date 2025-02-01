@@ -2,12 +2,10 @@ import { X } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import type {
-  StepProps,
-  TestResult,
-  TestRun,
-} from "../../../../integration-tester-ui/types";
 import { styles } from "../../../styles";
+import type { StepProps } from "../../../testing-storage";
+import type { TestRun } from "../../../testing-storage";
+import type { TestResult } from "../../../testing-storage";
 
 export function OptimizeContent({
   overlayState,

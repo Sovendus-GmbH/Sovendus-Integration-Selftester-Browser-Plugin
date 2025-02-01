@@ -1,7 +1,10 @@
-import { defaultStorage } from "../integration-tester-ui/testing-flow-config";
+import {
+  defaultStorage,
+  type ExtensionSettingsEvent,
+  type ExtensionStorage,
+} from "../integration-tester-ui/testing-storage";
 import { debug } from "../logger/logger";
 import { browserAPI } from "./browser-api";
-import type { ExtensionSettingsEvent, ExtensionStorageLoaded } from "./types";
 
 // Handle saving and retrieving settings from the browser
 window.addEventListener("message", (event: ExtensionSettingsEvent) => {
@@ -18,7 +21,7 @@ window.addEventListener("message", (event: ExtensionSettingsEvent) => {
         window.postMessage(
           {
             type: "GET_SETTINGS_RESPONSE",
-            settings: settings as ExtensionStorageLoaded,
+            settings: settings as ExtensionStorage,
           },
           "*",
         );

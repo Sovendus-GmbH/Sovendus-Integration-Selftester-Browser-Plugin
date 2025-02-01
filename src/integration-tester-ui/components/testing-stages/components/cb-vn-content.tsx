@@ -1,9 +1,10 @@
 import type { JSX } from "react";
 import React from "react";
 
-import type { TestRun } from "../../../hooks/useOverlayState";
 import { styles } from "../../../styles";
-import type { StepProps, TestResult } from "../../../types";
+import type { StepProps } from "../../../testing-storage";
+import type { TestRun } from "../../../testing-storage";
+import type { TestResult } from "../../../testing-storage";
 
 export function CBVNContent({
   overlayState,

@@ -2,7 +2,7 @@ import { ArrowLeft, RotateCcw } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import type { StepProps, TestRun } from "../../types";
+import type { StepProps, TestRun } from "../../testing-storage";
 
 export function TestHistory({ overlayState }: StepProps): JSX.Element {
   const { getTestRunHistory } = overlayState;

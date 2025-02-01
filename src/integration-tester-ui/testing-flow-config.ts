@@ -1,23 +1,11 @@
-import type { ExtensionStorage } from "../browser-extension-specific/types";
 import { ConfirmBlacklist } from "./components/testing-stages/confirm-blacklist";
 import { ConsentSelectionStep } from "./components/testing-stages/consent-selection";
 import { InitialPrompt } from "./components/testing-stages/initial-prompt";
 import { PageSelection } from "./components/testing-stages/page-selection";
 import { TestContent } from "./components/testing-stages/test-content";
 import { TestHistory } from "./components/testing-stages/test-history";
-import type { TestingFlowConfigType } from "./types";
-import { OverlaySize } from "./types";
-
-export const defaultStorage: ExtensionStorage = {
-  transmitTestResult: undefined,
-  testHistory: {},
-  blacklist: [],
-  currentTestRuns: {},
-  uiState: {
-    position: { x: 20, y: 20 },
-    overlaySize: OverlaySize.SMALL,
-  },
-};
+import type { TestingFlowConfigType } from "./testing-storage";
+import { OverlaySize } from "./testing-storage";
 
 export const testingFlowConfig: TestingFlowConfigType = {
   stages: {

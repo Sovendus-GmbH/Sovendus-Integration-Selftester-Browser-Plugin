@@ -2,10 +2,6 @@ import { useMemo } from "react";
 import type { StoreApi, UseBoundStore } from "zustand";
 import { create } from "zustand";
 
-import type {
-  ExtensionStorage,
-  ExtensionStorageLoaded,
-} from "../../browser-extension-specific/types";
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
 import { defaultIntegrationState } from "../../integration-detector/integrationDetector";
 import { isBlacklistedPage } from "../../integration-detector/integrationDetector";
@@ -13,18 +9,19 @@ import type { SovSelfTesterWindow } from "../../integration-tester/integrationTe
 import { debug, error } from "../../logger/logger";
 import { testingFlowConfig } from "../testing-flow-config";
 import type {
+  ExtensionStorage,
   OverlaySize,
   StageKeys,
   StageType,
   TestResult,
   TestRun,
-} from "../types";
-import { PageType } from "../types";
+} from "../testing-storage";
+import { PageType } from "../testing-storage";
 
 export interface OverlayState {
   currentHost: string;
   integrationState: IntegrationDetectorData;
-  testerStorage: ExtensionStorageLoaded;
+  testerStorage: ExtensionStorage;
   isPromptVisible: boolean;
   _getSettings: () => Promise<ExtensionStorage>;
   _updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>;
@@ -58,8 +55,8 @@ export interface OverlayState {
   openBlacklistConfirmation: () => void;
   updateTesterStorage: (
     updateCallBack: (
-      currentState: ExtensionStorageLoaded,
-    ) => Partial<ExtensionStorageLoaded>,
+      currentState: ExtensionStorage,
+    ) => Partial<ExtensionStorage>,
   ) => void;
   saveSettings: () => Promise<void>;
 }
@@ -75,7 +72,7 @@ export const useOverlayState = (
         testerStorage?.blacklist,
       );
       const currentHost: string = window.location.host;
-      const newTesterStorage: ExtensionStorageLoaded = {
+      const newTesterStorage: ExtensionStorage = {
         ...testerStorage,
         currentTestRuns: {
           ...testerStorage.currentTestRuns,
@@ -104,7 +101,7 @@ export const useOverlayState = (
             currentHost,
             testerStorage: { testHistory },
           } = get();
-          return (testHistory?.[currentHost] || []) as TestRun[];
+          return testHistory?.[currentHost] || [];
         },
 
         setCurrentTestRunData: (testRunData: Partial<TestRun>): void => {
@@ -308,8 +305,8 @@ export const useOverlayState = (
 
         updateTesterStorage: (
           updateCallBack: (
-            currentState: ExtensionStorageLoaded,
-          ) => Partial<ExtensionStorageLoaded>,
+            currentState: ExtensionStorage,
+          ) => Partial<ExtensionStorage>,
         ): void => {
           const { _updateSettings } = get();
           set((state) => {
@@ -395,6 +392,11 @@ function createNewTestRun(): TestRun {
     lastStage: undefined,
     currentPageType: PageType.LANDING,
   };
+}
+
+export interface OverlayDimensions {
+  width: number;
+  height: number;
 }
 
 declare let window: SovSelfTesterWindow;

@@ -1,8 +1,9 @@
 import type { JSX } from "react";
 import React, { useState } from "react";
 
-import type { TestRun } from "../../../hooks/useOverlayState";
-import type { IntegrationType, StepProps, TestResult } from "../../../types";
+import type { IntegrationType, StepProps } from "../../../testing-storage";
+import type { TestRun } from "../../../testing-storage";
+import type { TestResult } from "../../../testing-storage";
 import { CBVNContent } from "./cb-vn-content";
 import { CheckoutProductsContent } from "./checkout products-content";
 import { OptimizeContent } from "./optimize-content";

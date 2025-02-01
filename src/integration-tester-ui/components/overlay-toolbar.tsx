@@ -5,9 +5,9 @@ import React from "react";
 import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
 import { DetectionState } from "../../integration-detector/integrationDetector";
 import type { OverlayState } from "../hooks/useOverlayState";
-import type { StageType } from "../testing-flow-config";
 import { testingFlowConfig } from "../testing-flow-config";
-import { OverlaySize } from "../types";
+import type { StageType } from "../testing-storage";
+import { OverlaySize } from "../testing-storage";
 
 interface OverlayToolbarProps {
   dragHandleProps?: Record<string, any>;

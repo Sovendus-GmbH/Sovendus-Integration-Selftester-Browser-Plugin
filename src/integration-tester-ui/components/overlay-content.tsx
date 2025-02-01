@@ -3,9 +3,8 @@ import React from "react";
 
 import { debug } from "../../logger/logger";
 import type { OverlayState } from "../hooks/useOverlayState";
-import type { StageType } from "../testing-flow-config";
 import { testingFlowConfig } from "../testing-flow-config";
-import type { StepProps } from "../types";
+import type { StageType, StepProps } from "../testing-storage";
 
 interface OverlayContentProps {
   overlayState: OverlayState;

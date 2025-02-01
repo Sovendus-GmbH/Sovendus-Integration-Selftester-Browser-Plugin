@@ -5,9 +5,8 @@ import React, { useEffect, useState } from "react";
 
 import { maxZIndex } from "../../constants";
 import { debug } from "../../logger/logger";
-import type { OverlayState } from "../hooks/useOverlayState";
-import type { OverlayDimensions } from "../types";
-import { OverlaySize } from "../types";
+import type { OverlayDimensions, OverlayState } from "../hooks/useOverlayState";
+import { OverlaySize } from "../testing-storage";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { OverlayContent } from "./overlay-content";
 import { OverlayToolbar } from "./overlay-toolbar";

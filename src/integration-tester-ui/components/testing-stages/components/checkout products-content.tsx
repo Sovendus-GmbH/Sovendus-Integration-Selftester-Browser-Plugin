@@ -2,8 +2,9 @@ import type { JSX } from "react";
 import React from "react";
 
 import { styles } from "../../../styles";
-import type { StepProps, TestRun } from "../../../types";
-import type { TestResult } from "../../../types";
+import type { StepProps } from "../../../testing-storage";
+import type { TestRun } from "../../../testing-storage";
+import type { TestResult } from "../../../testing-storage";
 
 export function CheckoutProductsContent({
   overlayState,

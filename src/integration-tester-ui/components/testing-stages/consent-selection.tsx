@@ -2,8 +2,8 @@ import { Shield, ShieldOff } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import type { StepProps } from "../../types";
-import { OverlaySize } from "../../types";
+import type { StepProps } from "../../testing-storage";
+import { OverlaySize } from "../../testing-storage";
 
 export function ConsentSelectionStep({
   overlayState: {

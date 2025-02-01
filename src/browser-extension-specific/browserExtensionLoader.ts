@@ -1,7 +1,10 @@
 import type { SovSelfTesterWindow } from "../integration-tester/integrationTester";
 import { startIntegrationTester } from "../integration-tester-loader/integrationTesterLoader";
+import type {
+  ExtensionSettingsEvent,
+  ExtensionStorage,
+} from "../integration-tester-ui/testing-storage";
 import { debug } from "../logger/logger";
-import type { ExtensionSettingsEvent, ExtensionStorage } from "./types";
 
 async function initializeExtension(): Promise<void> {
   debug("browserExtensionLoader", "Starting integration tester");

@@ -9,8 +9,9 @@ import type { JSX } from "react";
 import React from "react";
 
 import { DetectionState } from "../../../integration-detector/integrationDetector";
-import type { StepProps, TestResult } from "../../types";
-import { OverlaySize, PageType } from "../../types";
+import { DownloadIntegrationTestReport } from "../../../integration-test-report/integration-test-report";
+import type { TestResult } from "../../testing-storage";
+import { OverlaySize, PageType, type StepProps } from "../../testing-storage";
 import { AccordionContent } from "./components/accordion-content";
 import { StatusItem } from "./components/status-item";
 
@@ -169,6 +170,10 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
           {renderTestResult(currentTestRun.successPageResult, "Success Page")}
         </>
       )} */}
+      <DownloadIntegrationTestReport
+        currentTestRun={currentTestRun}
+        overlayState={overlayState}
+      />
       {currentTestRun.currentPageType === PageType.LANDING && (
         <button onClick={handleNavigateToSuccessPage} style={buttonStyle}>
           <span style={{ marginRight: "0.5rem" }}>I'm on the success page</span>
