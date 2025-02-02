@@ -5,6 +5,7 @@ import React from "react";
 
 import { DetectionState } from "../../detector/integration-detector";
 import type { OverlayState } from "../hooks/use-overlay-state";
+import { colors, styles } from "../styles";
 import { testingFlowConfig } from "../testing-flow-config";
 import type { StageType, TestRun } from "../testing-storage";
 import { OverlaySize } from "../testing-storage";
@@ -43,8 +44,9 @@ export function OverlayToolbar({
     alignItems: "center",
     justifyContent: "space-between",
     padding: "0.25rem",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: colors.backgroundToolBar,
     backdropFilter: "blur(4px)",
+    ...styles.text,
   };
 
   const dragHandleStyle: React.CSSProperties = {
@@ -52,27 +54,31 @@ export function OverlayToolbar({
     alignItems: "center",
     gap: "0.25rem",
     cursor: "move",
-    color: "white",
     padding: "0.125rem 0.25rem",
     borderRadius: "0.25rem",
     transition: "background-color 0.2s",
     flexGrow: 1,
+    ...styles.text,
   };
 
   const buttonContainerStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
     gap: "0.25rem",
+    ...styles.text,
   };
 
   const buttonStyle: React.CSSProperties = {
-    color: "white",
+    ...styles.text,
     background: "none",
     border: "none",
     cursor: "pointer",
     padding: "0.125rem",
     borderRadius: "0.25rem",
     transition: "color 0.2s",
+    display: "flex",
+    marginTop: "auto",
+    marginBottom: "auto",
   };
 
   return (
@@ -80,7 +86,15 @@ export function OverlayToolbar({
       <div {...listeners} style={dragHandleStyle}>
         <Grip size={16} />
         {!isSmall && (
-          <span style={{ fontWeight: "600", fontSize: "0.75rem" }}>
+          <span
+            style={{
+              fontWeight: "600",
+              fontSize: "1rem",
+              display: "flex",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+          >
             Sovendus Tester
           </span>
         )}
@@ -128,18 +142,19 @@ function DetectionStatus({
           DetectionState.DETECTED
         ? currentTestRun.landingPageResult.integrationDetector?.detectionState
         : DetectionState.NOT_DETECTED;
-  const color = status === DetectionState.NOT_DETECTED ? "#F87171" : "#34D399";
+  const color =
+    status === DetectionState.NOT_DETECTED ? colors.error : colors.success;
 
   const statusStyle: React.CSSProperties = {
     width: "0.85rem",
     height: "0.85rem",
     borderRadius: "50%",
     backgroundColor: color,
-    display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: "0.22rem",
-    marginRight: "0.2rem",
+    display: "flex",
+    marginTop: "auto",
+    marginBottom: "auto",
   };
 
   return <div style={statusStyle} title={`Integration ${status}`} />;

@@ -3,8 +3,9 @@ import { type CSSProperties } from "react";
 export const colors = {
   primary: "#4F46E5",
   secondary: "#10B981",
-  background: "#F3F4F6",
-  text: "#1F2937",
+  background: "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)",
+  backgroundToolBar: "rgba(255, 255, 255, 0.1)",
+  text: "#F3F4F6",
   textLight: "#6B7280",
   white: "#FFFFFF",
   error: "#EF4444",
@@ -13,10 +14,24 @@ export const colors = {
   disabled: "#D1D5DB",
 };
 
-export const styles: Record<string, CSSProperties> = {
+export const styles: {
+  [key in
+    | "overlay"
+    | "toolbar"
+    | "content"
+    | "button"
+    | "text"
+    | "textLight"]: CSSProperties;
+} = {
+  text: {
+    color: colors.text,
+  },
+  textLight: {
+    color: colors.textLight,
+  },
   overlay: {
     position: "fixed",
-    backgroundColor: colors.white,
+    backgroundColor: colors.background,
     borderRadius: "0.75rem",
     boxShadow:
       "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",

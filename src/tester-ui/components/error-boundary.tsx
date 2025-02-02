@@ -3,6 +3,7 @@ import React from "react";
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
 import { debugUi } from "../../logger/ui-logger";
+import { styles } from "../styles";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -51,9 +52,10 @@ function ErrorComponent({
   errorInfo,
 }: {
   error: Error | null;
-  errorInfo?: React.ErrorInfo | null;
+  errorInfo: React.ErrorInfo | null;
 }): JSX.Element {
   const containerStyle: React.CSSProperties = {
+    ...styles.text,
     padding: "1rem",
     backgroundColor: "#FEE2E2",
     border: "1px solid #F87171",
@@ -62,25 +64,30 @@ function ErrorComponent({
   };
 
   const headingStyle: React.CSSProperties = {
+    ...styles.text,
     fontSize: "1.5rem",
     fontWeight: "bold",
     marginBottom: "1rem",
   };
 
   const paragraphStyle: React.CSSProperties = {
+    ...styles.text,
     marginBottom: "1rem",
   };
 
   const detailsStyle: React.CSSProperties = {
+    ...styles.text,
     whiteSpace: "pre-wrap",
   };
 
   const summaryStyle: React.CSSProperties = {
+    ...styles.text,
     cursor: "pointer",
     marginBottom: "0.5rem",
   };
 
   const preStyle: React.CSSProperties = {
+    ...styles.text,
     fontSize: "0.75rem",
     overflowX: "auto",
     backgroundColor: "#F3F4F6",
@@ -100,14 +107,26 @@ function ErrorComponent({
           <strong>Error:</strong>{" "}
           {error && (error?.toString?.() || JSON.stringify(error))}
         </div>
-        <div style={paragraphStyle}>
-          <strong>Stack Trace:</strong>
-        </div>
-        <pre style={preStyle}>{error && error.stack}</pre>
-        <div style={{ ...paragraphStyle, marginTop: "1rem" }}>
-          <strong>Component Stack:</strong>
-        </div>
-        <pre style={preStyle}>{errorInfo && errorInfo.componentStack}</pre>
+        {error?.stack ? (
+          <>
+            <div style={paragraphStyle}>
+              <strong>Stack Trace:</strong>
+            </div>
+            <pre style={preStyle}>{error.stack}</pre>
+          </>
+        ) : (
+          <></>
+        )}
+        {errorInfo?.componentStack ? (
+          <>
+            <div style={{ ...paragraphStyle, marginTop: "1rem" }}>
+              <strong>Component Stack:</strong>
+            </div>
+            <pre style={preStyle}>{errorInfo.componentStack}</pre>
+          </>
+        ) : (
+          <></>
+        )}
       </details>
     </div>
   );

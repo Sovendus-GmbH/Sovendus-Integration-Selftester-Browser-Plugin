@@ -42,35 +42,32 @@ export function OptimizeContent({
   }
 
   return (
-    <div style={styles["contentContainer"]}>
-      <div style={styles["sectionTitle"]}>Optimize Data:</div>
-      <div style={styles["text"]}>
+    <div style={styles.contentContainer}>
+      <div style={styles.sectionTitle}>Optimize Data:</div>
+      <div style={styles.text}>
         Optimize ID: {selfTester.optimizeId?.elementValue || "Not detected"}
       </div>
-      <div style={styles["text"]}>
+      <div style={styles.text}>
         Checkout Products Token:{" "}
         {selfTester.checkoutProductsToken?.elementValue || "Not detected"}
       </div>
-      <div style={styles["text"]}>
+      <div style={styles.text}>
         Checkout Products ID:{" "}
         {selfTester.checkoutProductsId?.elementValue || "Not detected"}
       </div>
-      <div style={styles["text"]}>
-        Legacy Profity ID:{" "}
-        {selfTester.legacyProfityId?.elementValue || "Not detected"}
-      </div>
 
-      <div style={styles["sectionTitle"]}>Order Data:</div>
-      <div style={styles["text"]}>
+
+      <div style={styles.sectionTitle}>Order Data:</div>
+      <div style={styles.text}>
         Currency: {selfTester.orderCurrency?.elementValue}
       </div>
-      <div style={styles["text"]}>
+      <div style={styles.text}>
         Order ID: {selfTester.orderId?.elementValue}
       </div>
-      <div style={styles["text"]}>
+      <div style={styles.text}>
         Order Value: {selfTester.orderValue?.elementValue}
       </div>
-      <div style={styles["text"]}>
+      <div style={styles.text}>
         Coupon Code: {selfTester.usedCouponCode?.elementValue}
       </div>
     </div>

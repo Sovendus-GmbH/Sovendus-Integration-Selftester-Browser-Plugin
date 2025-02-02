@@ -8,6 +8,7 @@ import type {
   OverlayDimensions,
   OverlayState,
 } from "../hooks/use-overlay-state";
+import { colors, styles } from "../styles";
 import { ErrorBoundary } from "./error-boundary";
 import { OverlayContent } from "./overlay-content";
 import { OverlayToolbar } from "./overlay-toolbar";
@@ -43,9 +44,10 @@ export function DraggableOverlay({
     flexDirection: "column",
     borderRadius: "0.5rem",
     boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-    background: "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)",
+    background: colors.background,
     overflow: "hidden",
     zIndex: maxZIndex,
+    ...styles.text,
   };
 
   return (

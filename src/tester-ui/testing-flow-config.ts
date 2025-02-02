@@ -1,9 +1,10 @@
 import { ConfirmBlacklist } from "./components/testing-stages/confirm-blacklist";
 import { ConsentSelectionStep } from "./components/testing-stages/consent-selection";
 import { InitialPrompt } from "./components/testing-stages/initial-prompt";
+import { LandingPageTestContent } from "./components/testing-stages/landing-page-test-content/test-content";
 import { PageSelection } from "./components/testing-stages/page-selection";
-import { TestContent } from "./components/testing-stages/test-content";
 import { TestHistory } from "./components/testing-stages/test-history";
+import { ThankyouTestContent } from "./components/testing-stages/thankyou-page-test-content/test-content";
 import type { TestingFlowConfigType } from "./testing-storage";
 import { OverlaySize } from "./testing-storage";
 
@@ -34,12 +35,12 @@ export const testingFlowConfig: TestingFlowConfigType = {
       defaultSize: OverlaySize.MEDIUM,
     },
     landingPageTest: {
-      component: TestContent,
+      component: LandingPageTestContent,
       availableSizes: [OverlaySize.MEDIUM, OverlaySize.LARGE],
       defaultSize: OverlaySize.LARGE,
     },
     successPageTest: {
-      component: TestContent,
+      component: ThankyouTestContent,
       availableSizes: [OverlaySize.MEDIUM, OverlaySize.LARGE],
       defaultSize: OverlaySize.LARGE,
     },

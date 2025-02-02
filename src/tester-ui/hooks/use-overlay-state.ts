@@ -58,6 +58,9 @@ export interface OverlayState {
   ) => void;
   saveSettings: () => Promise<void>;
   _getScreenshot: () => Promise<string>;
+  takeScreenshot: (
+    pageType: PageType.SUCCESS | PageType.LANDING,
+  ) => Promise<boolean>;
 }
 
 export const useOverlayState = (
@@ -352,6 +355,27 @@ export const useOverlayState = (
           const { testerStorage, _updateSettings } = get();
           await _updateSettings(testerStorage);
         },
+        takeScreenshot: async (
+          pageType: PageType.SUCCESS | PageType.LANDING,
+        ): Promise<boolean> => {
+          debugUi("useOverlayState", "Taking screenshot");
+          const { _getScreenshot } = get();
+          const screenshotUri = await _getScreenshot();
+          if (screenshotUri) {
+            const { setCurrentTestRunData } = get();
+            setCurrentTestRunData(() => ({
+              [pageType === PageType.LANDING
+                ? "landingPageResult"
+                : "successPageResult"]: {
+                screenshotUri,
+              },
+            }));
+            debugUi("useOverlayState", "Screenshot taken", screenshotUri);
+            return true;
+          }
+          error("useOverlayState", "Screenshot failed");
+          return false;
+        },
       } satisfies OverlayState;
     });
   }, []);
@@ -366,10 +390,12 @@ function createNewTestRun(): TestRun {
     landingPageResult: {
       integrationTester: undefined,
       integrationDetector: defaultIntegrationState,
+      screenshotUri: undefined,
     },
     successPageResult: {
       integrationTester: undefined,
       integrationDetector: defaultIntegrationState,
+      screenshotUri: undefined,
     },
     currentStage: "initialPrompt",
     completed: false,

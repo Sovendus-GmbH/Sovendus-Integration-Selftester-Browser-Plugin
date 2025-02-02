@@ -121,4 +121,5 @@ export type TransitionTypes =
 export interface TestResult {
   integrationTester: TestResultDataType | undefined;
   integrationDetector: IntegrationDetectorData;
+  screenshotUri: string | undefined;
 }

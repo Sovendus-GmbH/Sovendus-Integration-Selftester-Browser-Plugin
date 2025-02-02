@@ -22,28 +22,14 @@ export function CheckoutProductsContent({
 
   return (
     <div style={styles["contentContainer"]}>
-      <h3 style={styles["sectionTitle"]}>Checkout Products Data:</h3>
-      <div style={styles["text"]}>
+      <h3 style={styles.sectionTitle}>Checkout Products Data:</h3>
+      <div style={styles.text}>
         Checkout Products Token:{" "}
         {selfTester.checkoutProductsToken?.elementValue || "Not detected"}
       </div>
-      <div style={styles["text"]}>
+      <div style={styles.text}>
         Checkout Products ID:{" "}
         {selfTester.checkoutProductsId?.elementValue || "Not detected"}
-      </div>
-
-      <h3 style={styles["sectionTitle"]}>Order Data:</h3>
-      <div style={styles["text"]}>
-        Currency: {selfTester.orderCurrency?.elementValue}
-      </div>
-      <div style={styles["text"]}>
-        Order ID: {selfTester.orderId?.elementValue}
-      </div>
-      <div style={styles["text"]}>
-        Order Value: {selfTester.orderValue?.elementValue}
-      </div>
-      <div style={styles["text"]}>
-        Used Coupon Code: {selfTester.usedCouponCode?.elementValue}
       </div>
     </div>
   );
