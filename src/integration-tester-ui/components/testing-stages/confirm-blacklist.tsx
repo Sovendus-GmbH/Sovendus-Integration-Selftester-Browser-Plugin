@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import React from "react";
 
-import { debug } from "../../../logger/logger";
+import { debugUi } from "../../../logger/ui-logger";
 import type { StepProps } from "../../testing-storage";
 import { OverlaySize } from "../../testing-storage";
 
@@ -15,12 +15,12 @@ export function ConfirmBlacklist({
   const isSmall = uiState.overlaySize === OverlaySize.SMALL;
 
   const handleBlacklist = (): void => {
-    debug("ConfirmBlacklist", "Blacklist clicked");
+    debugUi("ConfirmBlacklist", "Blacklist clicked");
     void addToBlacklist();
   };
 
   const handleHideOverlay = (): void => {
-    debug("ConfirmBlacklist", "HideOverlay clicked");
+    debugUi("ConfirmBlacklist", "HideOverlay clicked");
     hideOverlay();
   };
 

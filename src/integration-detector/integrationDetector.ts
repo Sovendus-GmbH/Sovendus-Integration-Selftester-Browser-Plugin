@@ -1,10 +1,14 @@
-import { type RefObject, useEffect, useMemo, useRef } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 
-import { defaultBlacklist } from "../constants";
 import type { SovSelfTesterWindow } from "../integration-tester/integrationTester";
 import SelfTester from "../integration-tester/integrationTester";
 import type { OverlayState } from "../integration-tester-ui/hooks/useOverlayState";
-import { debug, logger } from "../logger/logger";
+import {
+  PageType,
+  type TestRun,
+} from "../integration-tester-ui/testing-storage";
+import { debugDetector } from "../logger/detection-logger";
+import { logger } from "../logger/logger";
 
 export function useIntegrationDetector(
   overlayState: OverlayState,
@@ -14,16 +18,23 @@ export function useIntegrationDetector(
   useEffect(() => {
     overlayStateRef.current = overlayState;
   }, [overlayState]);
-  return useMemo(() => new IntegrationDetectorLoop(overlayStateRef), []);
+
+  window.sovDetector =
+    window.sovDetector || createDetectorLoop(overlayStateRef);
+  return window.sovDetector;
+}
+
+function createDetectorLoop(
+  overlayStateRef: RefObject<OverlayState>,
+): IntegrationDetectorLoop {
+  debugDetector("createDetectorLoop", "Creating detector loop");
+  return new IntegrationDetectorLoop(overlayStateRef);
 }
 export interface IntegrationDetectorData {
-  shouldCheck: boolean;
-  status: {
-    detectionState: DetectionState;
-    testingState: TestingState;
-    page: IntegrationPageState;
-    thankYouPage: IntegrationThankYouPageState;
-  };
+  detectionState: DetectionState;
+  testingState: TestingState;
+  page: IntegrationPageState;
+  thankYouPage: IntegrationThankYouPageState;
 }
 
 interface IntegrationThankYouPageState {
@@ -81,9 +92,11 @@ export enum TestingState {
 
 export class IntegrationDetectorLoop {
   private overlayStateRef: RefObject<OverlayState>;
+  public shouldStop = false;
 
   constructor(overlayState: RefObject<OverlayState>) {
     this.overlayStateRef = overlayState;
+    debugDetector("IntegrationDetectorLoop", "Created");
     void this.integrationDetectionLoop();
   }
 
@@ -94,11 +107,10 @@ export class IntegrationDetectorLoop {
   }
 
   private async integrationDetection(): Promise<void> {
-    await this.waitForSovendusIntegrationDetected();
-    debug("integrationDetection", "Sovendus detected");
+    const detectionResult = await this.waitForSovendusIntegrationDetected();
     await this.waitForSovendusIntegrationToBeLoaded();
     const sovSelfTester = (window.sovSelfTester = new SelfTester(
-      this.overlayStateRef.current.integrationState,
+      detectionResult,
     ));
     sovSelfTester.selfTestIntegration();
     // this.setState((prevState) => ({
@@ -117,50 +129,73 @@ export class IntegrationDetectorLoop {
     let visitedPath = "";
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      if (this.overlayStateRef.current.integrationState.shouldCheck) {
+      if (this.overlayStateRef.current.shouldCheck) {
         if (visitedPath !== window.location.pathname) {
           visitedPath = window.location.pathname;
           await tests();
         }
       }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
     }
   }
 
-  private async waitForSovendusIntegrationDetected(): Promise<void> {
+  private async waitForSovendusIntegrationDetected(): Promise<TestRun> {
     // eslint-disable-next-line no-console
     logger("No Sovendus integration detected yet");
 
-    this.overlayStateRef.current.setIntegrationState(
-      () => defaultIntegrationState,
-    );
-    while (
-      this.overlayStateRef.current.integrationState.status.detectionState !==
-      DetectionState.DETECTED
-    ) {
-      debug(
+    // this.overlayStateRef.current.setCurrentTestRunData(() => ({
+    //   defaultIntegrationState,
+    // }));
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      debugDetector(
         "waitForSovendusIntegrationDetected",
-        "Detector Loop started, state:",
-        this.overlayStateRef.current.integrationState.status.detectionState,
+        "Detector Loop started",
       );
-      await new Promise((resolve) => setTimeout(resolve, 300));
       const sovendusDetectionStatus = this.isSovendusDetected();
-      if (
-        sovendusDetectionStatus.status.detectionState !==
-        this.overlayStateRef.current.integrationState.status.detectionState
-      ) {
-        this.overlayStateRef.current.setIntegrationState(
-          () => sovendusDetectionStatus,
+      if (sovendusDetectionStatus.detectionState === DetectionState.DETECTED) {
+        const isLandingPage = sovendusDetectionStatus.page.isSovendusPage;
+        let testResult: TestRun | undefined = undefined;
+        this.overlayStateRef.current.setCurrentTestRunData((currentResult) => {
+          const testResultUpdate: Partial<TestRun> = {
+            startTime: Date.now(),
+            completed: false,
+          };
+          testResultUpdate.lastStage = currentResult.currentStage;
+          if (isLandingPage) {
+            testResultUpdate.currentStage = "landingPageTest";
+            testResultUpdate.currentPageType = PageType.LANDING;
+            testResultUpdate.landingPageResult = {
+              integrationTester: undefined,
+              integrationDetector: sovendusDetectionStatus,
+            };
+          } else {
+            testResultUpdate.currentStage = "successPageTest";
+            testResultUpdate.currentPageType = PageType.SUCCESS;
+            testResultUpdate.successPageResult = {
+              integrationTester: undefined,
+              integrationDetector: sovendusDetectionStatus,
+            };
+          }
+          testResult = { ...currentResult, ...testResultUpdate };
+          return testResultUpdate;
+        });
+        if (testResult) {
+          logger("Sovendus has been detected");
+          return testResult;
+        }
+        debugDetector(
+          "waitForSovendusIntegrationDetected",
+          "Test result not set",
         );
       }
-      debug(
+      debugDetector(
         "waitForSovendusIntegrationDetected",
         "Detector Loop done, detectionStatus:",
-        sovendusDetectionStatus.status.detectionState,
+        sovendusDetectionStatus.detectionState,
       );
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-    // eslint-disable-next-line no-console
-    logger("Sovendus has been detected");
   }
 
   private async waitForSovendusIntegrationToBeLoaded(): Promise<void> {
@@ -180,17 +215,14 @@ export class IntegrationDetectorLoop {
     const detected =
       sovendusThankYouPageStatus.detected || sovendusPageStatus.detected;
     return {
-      shouldCheck: true,
-      status: {
-        detectionState: detected
-          ? DetectionState.DETECTED
-          : DetectionState.NOT_DETECTED,
-        testingState: detected
-          ? TestingState.IN_PROGRESS
-          : TestingState.NOT_STARTED,
-        page: sovendusPageStatus.status,
-        thankYouPage: sovendusThankYouPageStatus.status,
-      },
+      detectionState: detected
+        ? DetectionState.DETECTED
+        : DetectionState.NOT_DETECTED,
+      testingState: detected
+        ? TestingState.IN_PROGRESS
+        : TestingState.NOT_STARTED,
+      page: sovendusPageStatus.status,
+      thankYouPage: sovendusThankYouPageStatus.status,
     };
   }
 
@@ -430,13 +462,10 @@ const defaultPageState: IntegrationPageState = {
 };
 
 export const defaultIntegrationState: IntegrationDetectorData = {
-  shouldCheck: true,
-  status: {
-    detectionState: DetectionState.NOT_DETECTED,
-    testingState: TestingState.NOT_STARTED,
-    thankYouPage: defaultThankYouPageState,
-    page: defaultPageState,
-  },
+  detectionState: DetectionState.NOT_DETECTED,
+  testingState: TestingState.NOT_STARTED,
+  thankYouPage: defaultThankYouPageState,
+  page: defaultPageState,
 };
 
 function endsWithDomainPath(domains: string[], scripts: string[]): boolean {
@@ -450,9 +479,8 @@ function endsWithDomainPath(domains: string[], scripts: string[]): boolean {
   return false;
 }
 
-export function isBlacklistedPage(blacklist: string[] | undefined): boolean {
-  const _blacklist: string[] = [...defaultBlacklist, ...(blacklist || [])];
-  return _blacklist.includes(window.location.host);
+export interface IntegrationDetectorWindow extends SovSelfTesterWindow {
+  sovDetector?: IntegrationDetectorLoop;
 }
 
-declare let window: SovSelfTesterWindow;
+declare let window: IntegrationDetectorWindow;

@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import React from "react";
 
-import { debug } from "../../../logger/logger";
+import { debugUi } from "../../../logger/ui-logger";
 import type { StepProps } from "../../testing-storage";
 import { OverlaySize } from "../../testing-storage";
 export function InitialPrompt({
@@ -14,12 +14,12 @@ export function InitialPrompt({
   const isSmall = uiState.overlaySize === OverlaySize.SMALL;
 
   const handleAccept = (): void => {
-    debug("InitialPrompt", "Accept clicked");
+    debugUi("InitialPrompt", "Accept clicked");
     handleInitialSovendusCheck();
   };
 
   const handleDecline = (): void => {
-    debug("InitialPrompt", "Decline clicked");
+    debugUi("InitialPrompt", "Decline clicked");
     openBlacklistConfirmation();
   };
 

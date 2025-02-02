@@ -1,3 +1,4 @@
+import type { IntegrationDetectorData } from "../integration-detector/integrationDetector";
 import type SelfTester from "../integration-tester/integrationTester";
 import type { OverlayState } from "./hooks/useOverlayState";
 
@@ -120,7 +121,6 @@ export type TransitionTypes =
   | "RESTART";
 
 export interface TestResult {
-  status: "success" | "error" | "not-run";
-  details: string;
   integrationTester: SelfTester | undefined;
+  integrationDetector: IntegrationDetectorData;
 }

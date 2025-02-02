@@ -1,21 +1,21 @@
+import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { ArrowLeft, Eye, Grip, History, Minus, Plus } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import type { IntegrationDetectorData } from "../../integration-detector/integrationDetector";
 import { DetectionState } from "../../integration-detector/integrationDetector";
 import type { OverlayState } from "../hooks/useOverlayState";
 import { testingFlowConfig } from "../testing-flow-config";
-import type { StageType } from "../testing-storage";
+import type { StageType, TestRun } from "../testing-storage";
 import { OverlaySize } from "../testing-storage";
 
 interface OverlayToolbarProps {
-  dragHandleProps?: Record<string, any>;
+  listeners: SyntheticListenerMap | undefined;
   overlayState: OverlayState;
 }
 
 export function OverlayToolbar({
-  dragHandleProps,
+  listeners,
   overlayState: {
     openBlacklistConfirmation,
     transitionBack,
@@ -23,7 +23,6 @@ export function OverlayToolbar({
     testerStorage: { uiState },
     showTestHistory,
     resizeOverlay,
-    integrationState,
   },
 }: OverlayToolbarProps): JSX.Element {
   const currentTestRun = getCurrentTestRun();
@@ -77,7 +76,7 @@ export function OverlayToolbar({
 
   return (
     <div style={toolbarStyle}>
-      <div {...dragHandleProps} style={dragHandleStyle}>
+      <div {...listeners} style={dragHandleStyle}>
         <Grip size={16} />
         {!isSmall && (
           <span style={{ fontWeight: "600", fontSize: "0.75rem" }}>
@@ -86,7 +85,7 @@ export function OverlayToolbar({
         )}
       </div>
       <div style={buttonContainerStyle}>
-        <DetectionStatus integrationState={integrationState} />
+        <DetectionStatus currentTestRun={currentTestRun} />
         <button onClick={showTestHistory} style={buttonStyle}>
           <History size={16} />
         </button>
@@ -116,12 +115,18 @@ export function OverlayToolbar({
 }
 
 function DetectionStatus({
-  integrationState,
+  currentTestRun,
 }: {
-  integrationState: IntegrationDetectorData;
+  currentTestRun: TestRun;
 }): JSX.Element {
   const status =
-    integrationState?.status?.detectionState || DetectionState.NOT_DETECTED;
+    currentTestRun.successPageResult.integrationDetector?.detectionState ===
+    DetectionState.DETECTED
+      ? currentTestRun.successPageResult.integrationDetector?.detectionState
+      : currentTestRun.landingPageResult.integrationDetector?.detectionState ===
+          DetectionState.DETECTED
+        ? currentTestRun.landingPageResult.integrationDetector?.detectionState
+        : DetectionState.NOT_DETECTED;
   const color = status === DetectionState.NOT_DETECTED ? "#F87171" : "#34D399";
 
   const statusStyle: React.CSSProperties = {

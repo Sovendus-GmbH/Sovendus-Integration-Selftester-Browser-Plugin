@@ -8,6 +8,7 @@ import {
 import type { JSX } from "react";
 import React, { useState } from "react";
 
+import { DetectionState } from "../../../integration-detector/integrationDetector";
 import type { StepProps } from "../../testing-storage";
 import { OverlaySize } from "../../testing-storage";
 import { StatusItem } from "./components/status-item";
@@ -87,14 +88,19 @@ export function NavigationPrompt({
           >
             <StatusItem
               label='Landing Page Test'
-              value={currentTestRun.landingPageResult.status}
+              value={
+                currentTestRun.landingPageResult.integrationDetector
+                  .detectionState
+              }
               icon={
-                currentTestRun.landingPageResult.status === "success"
+                currentTestRun.landingPageResult.integrationDetector
+                  .detectionState === DetectionState.DETECTED
                   ? CheckCircle
                   : XCircle
               }
               color={
-                currentTestRun.landingPageResult.status === "success"
+                currentTestRun.landingPageResult.integrationDetector
+                  .detectionState === DetectionState.DETECTED
                   ? "#34D399"
                   : "#F87171"
               }
@@ -104,7 +110,11 @@ export function NavigationPrompt({
           </div>
           {isExpanded && (
             <div style={resultDetailsStyle}>
-              <p>{currentTestRun.landingPageResult.details}</p>
+              <p>
+                {JSON.stringify(
+                  currentTestRun.landingPageResult.integrationDetector,
+                )}
+              </p>
             </div>
           )}
         </div>

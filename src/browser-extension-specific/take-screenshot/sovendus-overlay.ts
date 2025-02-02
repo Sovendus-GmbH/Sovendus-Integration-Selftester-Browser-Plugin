@@ -1,5 +1,6 @@
 import type SelfTester from "../../integration-tester/integrationTester";
 import { transmitIntegrationError } from "../../integration-tester/integrationTester";
+import { error } from "../../logger/logger";
 import { browserAPI } from "../browser-api";
 
 export async function checkStickyBannerAndOverlayIntegration(
@@ -12,21 +13,13 @@ export async function checkStickyBannerAndOverlayIntegration(
       return !!window.sovSelfTester?.isOverlayOrStickyBanner.elementValue;
     },
   });
-  const sitesUrl = await getWindowFromPage(tabId);
-
-  // if (sitesUrl) {
-  //   void transmitIntegrationError("Cors error test", {
-  //     url: sitesUrl,
-  //   });
-  // } else {
-  //   void transmitIntegrationError("Cors error test no siteWindow", {
-  //     windowParameter: window,
-  //   });
-  // }
 
   if (result?.[0]?.result === undefined) {
-    // eslint-disable-next-line no-console
-    console.error("Failed to check if an overlay is used");
+    const sitesUrl = await getSiteUrlFromPage(tabId);
+    error(
+      "takeScreenshot][checkStickyBannerAndOverlayIntegration",
+      "Failed to check if an overlay is used",
+    );
     if (sitesUrl) {
       void transmitIntegrationError("Failed to check if an overlay is used", {
         url: sitesUrl,
@@ -42,7 +35,7 @@ export async function checkStickyBannerAndOverlayIntegration(
   return result[0].result;
 }
 
-async function getWindowFromPage(tabId: number): Promise<string | false> {
+async function getSiteUrlFromPage(tabId: number): Promise<string | false> {
   const result = await browserAPI.scripting.executeScript({
     target: { tabId },
     world: "MAIN",

@@ -4,7 +4,7 @@ import type { JSX } from "react";
 import React, { useEffect, useState } from "react";
 
 import { maxZIndex } from "../../constants";
-import { debug } from "../../logger/logger";
+import { debugUi } from "../../logger/ui-logger";
 import type { OverlayDimensions, OverlayState } from "../hooks/useOverlayState";
 import { OverlaySize } from "../testing-storage";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -16,7 +16,7 @@ export function DraggableOverlayContainer({
 }: {
   overlayState: OverlayState;
 }): JSX.Element {
-  debug("DraggableOverlayContainer", "Rendering", overlayState);
+  debugUi("DraggableOverlayContainer", "Rendering", overlayState);
   const {
     testerStorage: { uiState },
     setPosition,
@@ -34,7 +34,7 @@ export function DraggableOverlayContainer({
         y: Math.min(prev.y, window.innerHeight - newDimensions.height - 0),
       }));
     } catch (error) {
-      debug("DraggableOverlayContainer", "Error in useEffect", error);
+      debugUi("DraggableOverlayContainer", "Error in useEffect", error);
     }
   }, [uiState.overlaySize]);
 
@@ -80,20 +80,18 @@ export function DraggableOverlayContainer({
         ),
       }));
     } catch (error) {
-      debug("DraggableOverlayContainer", "Error in handleDragEnd", error);
+      debugUi("DraggableOverlayContainer", "Error in handleDragEnd", error);
     }
   };
   return (
     <div style={{ position: "fixed", top: 0, left: 0, zIndex: maxZIndex }}>
-      <ErrorBoundary>
-        <DndContext onDragEnd={handleDragEnd}>
-          <DraggableOverlay
-            position={uiState.position}
-            overlayDimensions={overlayDimensions}
-            overlayState={overlayState}
-          />
-        </DndContext>
-      </ErrorBoundary>
+      <DndContext onDragEnd={handleDragEnd}>
+        <DraggableOverlay
+          position={uiState.position}
+          overlayDimensions={overlayDimensions}
+          overlayState={overlayState}
+        />
+      </DndContext>
     </div>
   );
 }
@@ -107,7 +105,7 @@ function DraggableOverlay({
   overlayDimensions: OverlayDimensions;
   overlayState: OverlayState;
 }): JSX.Element {
-  debug("DraggableOverlay", "Rendering", {
+  debugUi("DraggableOverlay", "Rendering", {
     position,
     overlayDimensions,
     overlayState,
@@ -133,16 +131,15 @@ function DraggableOverlay({
     };
 
     return (
-      <div ref={setNodeRef} style={style} {...attributes}>
-        <OverlayToolbar
-          dragHandleProps={{ ...listeners }}
-          overlayState={overlayState}
-        />
-        <OverlayContent overlayState={overlayState} />
-      </div>
+      <ErrorBoundary>
+        <div ref={setNodeRef} style={style} {...attributes}>
+          <OverlayToolbar listeners={listeners} overlayState={overlayState} />
+          <OverlayContent overlayState={overlayState} />
+        </div>
+      </ErrorBoundary>
     );
   } catch (error) {
-    debug("DraggableOverlay", "Error in rendering", error);
+    debugUi("DraggableOverlay", "Error in rendering", error);
     return <ErrorComponent error={error} />;
   }
 }

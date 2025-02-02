@@ -5,12 +5,15 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
 import { maxZIndex, overlayRootId } from "../constants";
+import type { IntegrationDetectorWindow } from "../integration-detector/integrationDetector";
 import { useIntegrationDetector } from "../integration-detector/integrationDetector";
 import { ErrorBoundary } from "../integration-tester-ui/components/ErrorBoundary";
 import { DraggableOverlayContainer } from "../integration-tester-ui/components/overlay-container";
+import type { OverlayState } from "../integration-tester-ui/hooks/useOverlayState";
 import { useOverlayState } from "../integration-tester-ui/hooks/useOverlayState";
 import type { ExtensionStorage } from "../integration-tester-ui/testing-storage";
-import { debug, logger } from "../logger/logger";
+import { logger } from "../logger/logger";
+import { debugTesterLoader } from "../logger/tester-loader-logger";
 
 export function startIntegrationTester(
   settings: ExtensionStorage,
@@ -20,6 +23,7 @@ export function startIntegrationTester(
 ): void {
   if (!window.testerLoaderDidLoad) {
     window.testerLoaderDidLoad = true;
+
     reactLoader({
       rootId: overlayRootId,
       RootComponent: Main,
@@ -29,7 +33,10 @@ export function startIntegrationTester(
       takeScreenshot,
     });
   } else {
-    logger("Integration tester is already running");
+    debugTesterLoader(
+      "startIntegrationTester",
+      "Integration tester is already running",
+    );
   }
 }
 
@@ -92,7 +99,7 @@ export function Main({
   updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>;
   takeScreenshot: () => Promise<string>;
 }): JSX.Element {
-  debug("Main", "Rendering Main component", settings);
+  debugTesterLoader("Main", "Rendering Main component", settings);
 
   const overlayState = useOverlayState(
     settings,
@@ -100,20 +107,28 @@ export function Main({
     updateSettings,
     takeScreenshot,
   )();
+  useIntegrationDetector(overlayState);
+
   useOverlayOnTopMover();
 
   if (!overlayState.isPromptVisible) {
-    debug("Main", "Overlay is currently hidden or blacklisted");
+    debugTesterLoader("Main", "Overlay is currently hidden or blacklisted");
+    if (window.sovDetector) {
+      window.sovDetector.shouldStop = true;
+      delete window.sovDetector;
+    }
     return <></>;
   }
 
-  useIntegrationDetector(overlayState);
+  return <ActiveMain overlayState={overlayState} />;
+}
 
-  return (
-    <ErrorBoundary>
-      <DraggableOverlayContainer overlayState={overlayState} />
-    </ErrorBoundary>
-  );
+function ActiveMain({
+  overlayState,
+}: {
+  overlayState: OverlayState;
+}): JSX.Element {
+  return <DraggableOverlayContainer overlayState={overlayState} />;
 }
 
 function useOverlayOnTopMover(): void {
@@ -144,8 +159,8 @@ const moveOverlayRootToOnTopOfOther = (): void => {
   }
 };
 
-interface LoaderWindow extends Window {
-  testerLoaderDidLoad: boolean;
+interface LoaderWindow extends IntegrationDetectorWindow {
+  testerLoaderDidLoad?: boolean;
 }
 
 declare const window: LoaderWindow;

@@ -37,7 +37,6 @@ export async function createFullPageScreenShot(tabId: number): Promise<{
     };
   }
 
-  // await copyScreenshotsToClipboard(screenshotContainer);
   let errorMessage: string | undefined = undefined;
   if (mobileDeviceEmulatorZoomLevelSet) {
     errorMessage =

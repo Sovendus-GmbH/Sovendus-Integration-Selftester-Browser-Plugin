@@ -2,10 +2,10 @@ import { PDFDocument, rgb } from "pdf-lib";
 import type { JSX } from "react";
 import React from "react";
 
+import type { IntegrationDetectorData } from "../integration-detector/integrationDetector";
+import type { OverlayState } from "../integration-tester-ui/hooks/useOverlayState";
 import type { TestRun } from "../integration-tester-ui/testing-storage";
 import type { TestResult } from "../integration-tester-ui/testing-storage";
-import { OverlayState } from "../integration-tester-ui/hooks/useOverlayState";
-import type { IntegrationDetectorData } from "../integration-detector/integrationDetector";
 
 export function DownloadIntegrationTestReport({
   currentTestRun,
@@ -233,6 +233,6 @@ export function DownloadIntegrationTestReport({
   };
 
   return (
-    <button onClick={generatePDF}>Download Integration Test Report</button>
+    <button onClick={void generatePDF}>Download Integration Test Report</button>
   );
 }

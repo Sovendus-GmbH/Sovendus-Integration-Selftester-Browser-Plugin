@@ -3,7 +3,8 @@ import {
   type ExtensionSettingsEvent,
   type ExtensionStorage,
 } from "../integration-tester-ui/testing-storage";
-import { debug, error } from "../logger/logger";
+import { debugContentScript } from "../logger/content-script-logger";
+import { error } from "../logger/logger";
 import { browserAPI } from "./browser-api";
 import type { ScreenShotRequest, ScreenShotResponse } from "./types";
 
@@ -19,11 +20,10 @@ function contentScript(event: ExtensionSettingsEvent): void {
       } satisfies ScreenShotRequest,
       (response: ScreenShotResponse) => {
         if (response && response.screenShotUri) {
-          debug(
-            "browserBridge][contentScript",
-            "Received screenshot from background...",
-            { screenShotUri: response.screenShotUri, source: event.source },
-          );
+          debugContentScript("Received screenshot from background...", {
+            screenShotUri: response.screenShotUri,
+            source: event.source,
+          });
           window.postMessage(
             {
               type: "TAKE_SCREENSHOT_RESPONSE",
@@ -49,10 +49,7 @@ function contentScript(event: ExtensionSettingsEvent): void {
       },
     );
   } else if (event.data.type === "GET_SETTINGS") {
-    debug(
-      "browserBridge][contentScript",
-      "Received GET settings request from page...",
-    );
+    debugContentScript("Received GET settings request from page...");
     browserAPI.storage.local.get(defaultStorage, (settings) => {
       try {
         window.postMessage(
@@ -62,7 +59,7 @@ function contentScript(event: ExtensionSettingsEvent): void {
           },
           "*",
         );
-        debug("browserBridge][contentScript", "Sent successfully:", settings);
+        debugContentScript("Sent successfully:", settings);
       } catch (e) {
         error("browserBridge][contentScript", "Error sending settings:", {
           error: e,
@@ -71,10 +68,7 @@ function contentScript(event: ExtensionSettingsEvent): void {
       }
     });
   } else if (event.data.type === "UPDATE_SETTINGS") {
-    debug(
-      "browserBridge][contentScript",
-      "Received UPDATE settings request from page...",
-    );
+    debugContentScript("Received UPDATE settings request from page...");
     browserAPI.storage.local.set(
       event.data.settings as ExtensionStorage,
       () => {
@@ -86,8 +80,7 @@ function contentScript(event: ExtensionSettingsEvent): void {
             },
             "*",
           );
-          debug(
-            "browserBridge][contentScript",
+          debugContentScript(
             "UPDATED settings successfully:",
             event.data.settings,
           );

@@ -1,7 +1,7 @@
 import React from "react";
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
-import { debug } from "../../logger/logger";
+import { debugUi } from "../../logger/ui-logger";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     this.setState({ errorInfo });
-    debug("ErrorBoundary", "Uncaught error:", { error, errorInfo });
+    debugUi("ErrorBoundary", "Uncaught error:", { error, errorInfo });
   }
 
   override render(): ReactNode {

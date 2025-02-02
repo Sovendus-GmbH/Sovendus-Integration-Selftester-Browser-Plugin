@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import React from "react";
 
-import { debug } from "../../logger/logger";
+import { debugUi } from "../../logger/ui-logger";
 import type { OverlayState } from "../hooks/useOverlayState";
 import { testingFlowConfig } from "../testing-flow-config";
 import type { StageType, StepProps } from "../testing-storage";
@@ -15,7 +15,7 @@ export function OverlayContent({
 }: OverlayContentProps): JSX.Element {
   const { getCurrentTestRun } = overlayState;
   const currentTestRun = getCurrentTestRun();
-  debug("OverlayContent", "Rendering", {
+  debugUi("OverlayContent", "Rendering", {
     currentStage: currentTestRun.currentStage,
   });
 

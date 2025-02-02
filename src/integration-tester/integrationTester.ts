@@ -8,15 +8,17 @@ import type {
   SovendusPublicConversionWindow,
 } from "sovendus-integration-scripts/src/js/thank-you/utils/thank-you-types";
 
-import {
-  type IntegrationDetectorData,
-  scriptAliases,
-} from "../integration-detector/integrationDetector";
+import { scriptAliases } from "../integration-detector/integrationDetector";
 import {
   sovendusOverlayErrorClass,
   tooltipButtonClass,
   tooltipClass,
 } from "../integration-tester-ui/old/integration-test-overlay-css-vars";
+import type { TestResult } from "../integration-tester-ui/testing-storage";
+import {
+  PageType,
+  type TestRun,
+} from "../integration-tester-ui/testing-storage";
 import { logger } from "../logger/logger";
 import type {
   ElementValue,
@@ -41,7 +43,8 @@ import {
 } from "./value-tester";
 
 export default class SelfTester {
-  integrationDetectorData: IntegrationDetectorData;
+  testRun: TestRun;
+  detectionResult: TestResult;
   integrationType: TestResultType<string>;
   browserName: TestResultType<BrowserTypes>;
   websiteURL: TestResultType<string>;
@@ -312,7 +315,7 @@ export default class SelfTester {
     this.awinIntegrationDetectedTestResult =
       this.getAwinIntegrationDetectedTestResult(valueTestResult);
     if (
-      this.integrationDetectorData.status.thankYouPage.awin
+      this.detectionResult.integrationDetector.thankYouPage.awin
         .hasAwinIntegration &&
       !valueTestResult.elementValue
     ) {
@@ -362,7 +365,7 @@ export default class SelfTester {
   ): TestResultType<boolean> {
     return new SuccessTestResult({
       elementValue:
-        this.integrationDetectorData.status.thankYouPage.awin &&
+        this.detectionResult.integrationDetector.thankYouPage.awin &&
         !integrationTypeTestResult.elementValue,
     });
   }
@@ -1739,8 +1742,12 @@ export default class SelfTester {
     };
   }
 
-  constructor(integrationDetectorData: IntegrationDetectorData) {
-    this.integrationDetectorData = integrationDetectorData;
+  constructor(testRun: TestRun) {
+    this.testRun = testRun;
+    this.detectionResult =
+      testRun.currentPageType === PageType.SUCCESS
+        ? testRun.successPageResult
+        : testRun.landingPageResult;
 
     window.sovTransmitTestResult = false;
     const emptyStringUndefinedTestResult = new DidNotRunTestResult<

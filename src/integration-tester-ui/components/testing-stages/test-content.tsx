@@ -23,7 +23,6 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
     handleNavigateToSuccessPage,
     setCurrentTestRunData,
     handlePageSelection,
-    integrationState,
   } = overlayState;
   const isSmall = uiState.overlaySize === OverlaySize.SMALL;
   const currentTestRun = getCurrentTestRun();
@@ -105,7 +104,7 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
   //   );
   // };
   const isDetected =
-    overlayState.integrationState.status.detectionState ===
+    currentPageTestResult.integrationDetector?.detectionState ===
     DetectionState.DETECTED;
   const [screenshotUrl, setScreenshotUrl] = React.useState<string | null>(null);
   return (
@@ -157,7 +156,7 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
             />
             <StatusItem
               label='State'
-              value={overlayState.integrationState.status.detectionState}
+              value={currentPageTestResult.integrationDetector.detectionState}
               small={isSmall}
             />
           </>
@@ -171,28 +170,30 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
           {renderTestResult(currentTestRun.successPageResult, "Success Page")}
         </>
       )} */}
-      <DownloadIntegrationTestReport
-        currentTestRun={currentTestRun}
-        overlayState={overlayState}
-      />
-      <div>
-        <button
-          onClick={async () => {
-            console.log("clicking screencap button");
-            const screenshotUrl = await overlayState._getScreenshot();
-            console.log(screenshotUrl);
-            setScreenshotUrl(screenshotUrl);
-          }}
-        >
-          take screenshot
-        </button>
-        <h3>Screenshot</h3>
-        <img
-          src={screenshotUrl}
-          alt='Screenshot'
-          style={{ maxWidth: "100%" }}
-        />
-      </div>
+      {currentTestRun.currentPageType === PageType.SUCCESS ? (
+        <div>
+          <DownloadIntegrationTestReport
+            currentTestRun={currentTestRun}
+            overlayState={overlayState}
+          />
+          <button
+            onClick={async () => {
+              const screenshotUrl = await overlayState._getScreenshot();
+              setScreenshotUrl(screenshotUrl);
+            }}
+          >
+            take screenshot
+          </button>
+          <h3>Screenshot</h3>
+          <img
+            src={screenshotUrl}
+            alt='Screenshot'
+            style={{ maxWidth: "100%" }}
+          />
+        </div>
+      ) : (
+        <></>
+      )}
       {currentTestRun.currentPageType === PageType.LANDING && (
         <button onClick={handleNavigateToSuccessPage} style={buttonStyle}>
           <span style={{ marginRight: "0.5rem" }}>I'm on the success page</span>

@@ -1,4 +1,5 @@
-import { debug, error } from "../logger/logger";
+import { error } from "../logger/logger";
+import { debugWorker } from "../logger/worker-logger";
 import { browserAPI } from "./browser-api";
 import { createFullPageScreenShot } from "./take-screenshot/take-screenshot";
 import type { ScreenShotRequest, ScreenShotResponse } from "./types";
@@ -21,17 +22,13 @@ class ScreenshotHandler {
     sendResponse: (response?: ScreenShotResponse) => void,
   ): Promise<void> {
     try {
-      debug("browserBridge][serviceWorker", "Taking screenshot...", {
+      debugWorker("Taking screenshot...", {
         tabId,
       });
       const screenshotResponse = await createFullPageScreenShot(tabId);
-      debug("browserBridge][serviceWorker", "Screenshot taken successfully");
+      debugWorker("Screenshot taken successfully");
       sendResponse(screenshotResponse);
-      debug(
-        "browserBridge][serviceWorker",
-        "Sent screenshot to contentScript...",
-        { success: true },
-      );
+      debugWorker("Sent screenshot to contentScript...", { success: true });
     } catch (e) {
       error("browserBridge][serviceWorker", "Error taking screenshot:", e);
       sendResponse({
@@ -47,20 +44,16 @@ class ScreenshotHandler {
     tabId: number,
     sendResponse: (response?: ScreenShotResponse) => void,
   ): Promise<void> {
-    debug("browserBridge][serviceWorker", "Processing screenshot request", {
+    debugWorker("Processing screenshot request", {
       action: request.action,
       tabId,
     });
 
     if (request.action === "TAKE_SCREENSHOT_SERVICE_WORKER") {
-      debug(
-        "browserBridge][serviceWorker",
-        "Received take screenshot request...",
-        { request },
-      );
+      debugWorker("Received take screenshot request...", { request });
       await this.takeScreenshot(tabId, sendResponse);
     } else {
-      debug("browserBridge][serviceWorker", "Ignoring unknown request action", {
+      debugWorker("Ignoring unknown request action", {
         action: request.action,
       });
     }
@@ -68,17 +61,20 @@ class ScreenshotHandler {
 }
 
 function serviceWorker({ tabId }: { tabId: number }): void {
-  // Guard against multiple initializations
+  // If a service worker for this tab is already initialized, shut it down
   if (initializedTabs.has(tabId)) {
-    debug(
-      "browserBridge][serviceWorker",
-      "Service worker already initialized",
+    debugWorker(
+      "Service worker already initialized, shutting it down before reinitializing",
       { tabId },
     );
-    return;
+    const tab = initializedTabs.get(tabId);
+    if (tab) {
+      browserAPI.runtime.onMessage.removeListener(tab.messageHandler);
+      initializedTabs.delete(tabId);
+    }
   }
 
-  debug("browserBridge][serviceWorker", "Initializing service worker", {
+  debugWorker("Initializing service worker", {
     tabId,
   });
 
@@ -89,7 +85,7 @@ function serviceWorker({ tabId }: { tabId: number }): void {
     _sender: chrome.runtime.MessageSender,
     sendResponse: (response?: ScreenShotResponse) => void,
   ): true => {
-    debug("browserBridge][serviceWorker", "Message handler called", {
+    debugWorker("Message handler called", {
       request,
     });
     void screenshotHandler.handleScreenshotRequest(
@@ -100,7 +96,7 @@ function serviceWorker({ tabId }: { tabId: number }): void {
     return true; // Indicates we'll respond asynchronously
   };
 
-  // Store handlers
+  // Store the new handlers
   initializedTabs.set(tabId, {
     handler: screenshotHandler,
     messageHandler,
@@ -127,7 +123,7 @@ function serviceWorker({ tabId }: { tabId: number }): void {
     }
   });
 
-  debug("browserBridge][serviceWorker", "Setup complete");
+  debugWorker("Setup complete");
 }
 
 function injectScriptFn(url: string): void {
