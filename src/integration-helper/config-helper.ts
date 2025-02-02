@@ -2,7 +2,10 @@ import { defaultBlacklist } from "../constants";
 
 export function isBlacklistedPage(blacklist: string[] | undefined): boolean {
   const _blacklist: string[] = [...defaultBlacklist, ...(blacklist || [])];
-  return _blacklist.includes(removeSubdomain(window.location.host));
+  return (
+    _blacklist.includes(removeSubdomain(window.location.host)) ||
+    window.location.protocol === "chrome-extension:"
+  );
 }
 
 export function removeSubdomain(host: string): string {

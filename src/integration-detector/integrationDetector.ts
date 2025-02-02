@@ -113,15 +113,15 @@ export class IntegrationDetectorLoop {
       detectionResult,
     ));
     sovSelfTester.selfTestIntegration();
-    // this.setState((prevState) => ({
-    //   ...prevState,
-    //   integrationState: {
-    //     ...prevState.integrationState,
-    //     detectionState: DetectionState.LOADING,
-    //   },
-    //   selfTester: sovSelfTester,
-    // }));
-    // eslint-disable-next-line no-console
+    this.overlayStateRef.current.setCurrentTestRunData(() => {
+      const testResult = { ...detectionResult };
+      if (testResult.currentPageType === PageType.LANDING) {
+        testResult.landingPageResult.integrationTester = sovSelfTester;
+      } else {
+        testResult.successPageResult.integrationTester = sovSelfTester;
+      }
+      return testResult;
+    });
     logger("Integration tests finished");
   }
 
@@ -154,7 +154,8 @@ export class IntegrationDetectorLoop {
       );
       const sovendusDetectionStatus = this.isSovendusDetected();
       if (sovendusDetectionStatus.detectionState === DetectionState.DETECTED) {
-        const isLandingPage = sovendusDetectionStatus.page.isSovendusPage;
+        const isSovendusThankYouPage =
+          sovendusDetectionStatus.thankYouPage.isSovendusThankYouPage;
         let testResult: TestRun | undefined = undefined;
         this.overlayStateRef.current.setCurrentTestRunData((currentResult) => {
           const testResultUpdate: Partial<TestRun> = {
@@ -162,7 +163,7 @@ export class IntegrationDetectorLoop {
             completed: false,
           };
           testResultUpdate.lastStage = currentResult.currentStage;
-          if (isLandingPage) {
+          if (!isSovendusThankYouPage) {
             testResultUpdate.currentStage = "landingPageTest";
             testResultUpdate.currentPageType = PageType.LANDING;
             testResultUpdate.landingPageResult = {

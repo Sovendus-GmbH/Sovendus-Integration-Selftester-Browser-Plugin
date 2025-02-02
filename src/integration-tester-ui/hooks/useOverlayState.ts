@@ -2,8 +2,11 @@ import { useMemo } from "react";
 import type { StoreApi, UseBoundStore } from "zustand";
 import { create } from "zustand";
 
-import { isBlacklistedPage, removeSubdomain } from "../../helper/config-helper";
 import { defaultIntegrationState } from "../../integration-detector/integrationDetector";
+import {
+  isBlacklistedPage,
+  removeSubdomain,
+} from "../../integration-helper/config-helper";
 import type { SovSelfTesterWindow } from "../../integration-tester/integrationTester";
 import { error } from "../../logger/logger";
 import { debugUi } from "../../logger/ui-logger";
@@ -72,7 +75,9 @@ export const useOverlayState = (
       const isBlackListedPage: boolean = isBlacklistedPage(
         testerStorage?.blacklist,
       );
-      const currentHost: string = removeSubdomain(window.location.host);
+      const currentHost: string = window.location.host
+        ? removeSubdomain(window.location.host)
+        : window.location.origin;
       const newTesterStorage: ExtensionStorage = {
         ...testerStorage,
         currentTestRuns: {
@@ -108,16 +113,16 @@ export const useOverlayState = (
         },
 
         setCurrentTestRunData: (setCallback): void => {
-          const { updateTesterStorage } = get();
+          const { updateTesterStorage, currentHost } = get();
           updateTesterStorage((testerStorage) => {
             const currentRun = testerStorage.currentTestRuns?.[
-              window.location.host
+              currentHost
             ] as TestRun;
             return {
               ...testerStorage,
               currentTestRuns: {
                 ...testerStorage.currentTestRuns,
-                [window.location.host]: {
+                [currentHost]: {
                   ...currentRun,
                   ...setCallback(currentRun),
                 },
@@ -127,23 +132,27 @@ export const useOverlayState = (
         },
 
         addToBlacklist: (): void => {
-          debugUi(
-            "useOverlayState",
-            `Adding ${window.location.host} to blacklist`,
-          );
-          const { _updateSettings, testerStorage } = get();
-          set((state) => {
-            const newTesterStorage = {
-              ...state.testerStorage,
-              blacklist: [...testerStorage.blacklist, window.location.host],
-            };
-            void _updateSettings(newTesterStorage);
-            return {
-              testerStorage: newTesterStorage,
-              isPromptVisible: false,
-              shouldCheck: false,
-            };
-          });
+          if (window.location.host) {
+            debugUi(
+              "useOverlayState",
+              `Adding ${window.location.host} to blacklist`,
+            );
+            const { _updateSettings, testerStorage } = get();
+            set((state) => {
+              const newTesterStorage = {
+                ...state.testerStorage,
+                blacklist: [...testerStorage.blacklist, window.location.host],
+              };
+              void _updateSettings(newTesterStorage);
+              return {
+                testerStorage: newTesterStorage,
+                isPromptVisible: false,
+                shouldCheck: false,
+              };
+            });
+          } else {
+            // TODO handle file urls
+          }
         },
 
         openBlacklistConfirmation: (): void => {
@@ -334,23 +343,27 @@ export const useOverlayState = (
 
         setPosition: (setPositionCallback): void => {
           debugUi("useOverlayState", "Setting position");
-          const { updateTesterStorage, isInitialized } = get();
-          updateTesterStorage(
-            (testerStorage) => {
-              const newPosition = setPositionCallback(
-                testerStorage.uiState.position,
-              );
-              return {
-                ...testerStorage,
-                uiState: {
-                  ...testerStorage.uiState,
-                  position: newPosition,
-                },
-              };
-            },
-            isInitialized ? true : false,
+          const { updateTesterStorage, isInitialized, testerStorage } = get();
+          const newPosition = setPositionCallback(
+            testerStorage.uiState.position,
           );
-          set({ isInitialized: true });
+          if (newPosition !== testerStorage.uiState.position) {
+            updateTesterStorage(
+              () => {
+                return {
+                  ...testerStorage,
+                  uiState: {
+                    ...testerStorage.uiState,
+                    position: newPosition,
+                  },
+                };
+              },
+              isInitialized ? true : false,
+            );
+          }
+          if (!isInitialized) {
+            set({ isInitialized: true });
+          }
         },
         saveSettings: async (): Promise<void> => {
           debugUi("useOverlayState", "Saving settings");

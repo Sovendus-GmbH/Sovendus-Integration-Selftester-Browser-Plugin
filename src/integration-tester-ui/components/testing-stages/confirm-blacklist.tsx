@@ -81,9 +81,23 @@ export function ConfirmBlacklist({
         </div>
       </div>
       <div style={buttonContainerStyle}>
-        <button style={blacklistButtonStyle} onClick={handleBlacklist}>
-          Blacklist this Page
-        </button>
+        {window.location.host ? (
+          <button style={blacklistButtonStyle} onClick={handleBlacklist}>
+            Blacklist this Page
+          </button>
+        ) : (
+          <button
+            style={{
+              ...blacklistButtonStyle,
+              backgroundColor: "grey",
+              cursor: "not-allowed",
+            }}
+            onClick={handleBlacklist}
+            disabled
+          >
+            Cant blacklist file urls
+          </button>
+        )}
         <button style={hideButtonStyle} onClick={handleHideOverlay}>
           Hide Overlay
         </button>

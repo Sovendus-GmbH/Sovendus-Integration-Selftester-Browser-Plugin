@@ -196,7 +196,12 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
       )}
       {currentTestRun.currentPageType === PageType.LANDING && (
         <button onClick={handleNavigateToSuccessPage} style={buttonStyle}>
-          <span style={{ marginRight: "0.5rem" }}>I'm on the success page</span>
+          <span style={{ marginRight: "0.5rem" }}>
+            {currentTestRun.successPageResult.integrationDetector.thankYouPage
+              .isSovendusThankYouPage
+              ? "Go back to the success page result"
+              : "I'm on the success page"}
+          </span>
           <ArrowRight size={isSmall ? 16 : 20} />
         </button>
       )}

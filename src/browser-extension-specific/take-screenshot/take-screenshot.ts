@@ -92,7 +92,7 @@ async function drawFullPageScreenshot(
   if (!mobileDeviceEmulatorIsOverlappedByDevTools) {
     await scrollToTop(tabId);
     if (sovendusOverlayIntegration) {
-      await createSovendusOverlayScreenshot(ctx, zoomAdjustedHeight);
+      await createSovendusOverlayScreenshot(ctx);
       await hideOrShowStickyBannerAndOverlay(true, tabId);
       await addDelayBetweenScreenshotOnChrome();
     }
@@ -191,23 +191,25 @@ async function drawSegmentScreenshot({
 
 async function createSovendusOverlayScreenshot(
   ctx: OffscreenCanvasRenderingContext2D,
-  zoomAdjustedHeight: number,
 ): Promise<void> {
   return new Promise((resolve) => {
-    chrome.tabs.captureVisibleTab((screenshotDataUrl) => {
-      const screenshotImage = new Image();
-      screenshotImage.src = screenshotDataUrl;
-      screenshotImage.onload = (): void => {
+    chrome.tabs.captureVisibleTab(
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      async (screenshotDataUrl) => {
+        const response = await fetch(screenshotDataUrl);
+        const blob = await response.blob();
+        const screenshotImage = await createImageBitmap(blob);
+
         ctx.drawImage(
           screenshotImage,
           0,
-          zoomAdjustedHeight,
+          0,
           screenshotImage.width,
           screenshotImage.height,
         );
         resolve();
-      };
-    });
+      },
+    );
   });
 }
 
@@ -241,18 +243,16 @@ async function getScreenShotDimensions(
   const mobileDeviceEmulatorZoomLevelSet = zoomLevelWidth < 0.9;
 
   let screenshotElementVerticalPosition: number;
+  screenshotContainer.width = zoomAdjustedWidth;
   if (sovendusOverlayIntegration) {
     // Adjust canvas size considering the zoom factor
     screenshotContainer.height =
-      scrollHeight * zoomLevelWidth + zoomAdjustedHeight * 2;
-    screenshotContainer.width = zoomAdjustedWidth;
-    screenshotElementVerticalPosition = zoomAdjustedHeight * 2;
+      scrollHeight * zoomLevelWidth + zoomAdjustedHeight;
+    screenshotElementVerticalPosition = zoomAdjustedHeight;
   } else {
     // Adjust canvas size considering the zoom factor
-    screenshotContainer.height =
-      scrollHeight * zoomLevelWidth + zoomAdjustedHeight;
-    screenshotContainer.width = zoomAdjustedWidth;
-    screenshotElementVerticalPosition = zoomAdjustedHeight;
+    screenshotContainer.height = scrollHeight * zoomLevelWidth;
+    screenshotElementVerticalPosition = 0;
   }
 
   return {

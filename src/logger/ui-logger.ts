@@ -1,7 +1,7 @@
 import type { ExplicitAnyType } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import { debug as _debug } from "../logger/logger";
 
-const enableUiDebug: boolean = false;
+const enableUiDebug: boolean = true;
 
 export function debugUi(
   component: string,

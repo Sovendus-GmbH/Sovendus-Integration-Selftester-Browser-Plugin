@@ -58,7 +58,8 @@ export async function hideOrShowStickyBannerAndOverlay(
     world: "MAIN",
     args: [hide],
     func: async (hide) => {
-      await window.sovSelfTester?.hideOverlayBanners(hide);
+      // TODO handle this
+      window.sovSelfTester?.hideOverlayBanners(hide);
     },
   });
 }
