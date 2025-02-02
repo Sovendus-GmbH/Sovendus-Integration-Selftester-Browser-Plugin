@@ -8,7 +8,7 @@
     "build-release": "yarn run build-and-test",
     "build-ts": "cd .. && yarn build",
     "debug-on-ff": "cd ../dist/firefox && web-ext run",
-    "lint": "eslint src/**/*.ts --no-ignore --fix",
+    "lint": "cd .. && eslint integration-tester/src/**/*.ts --no-ignore --fix && eslint integration-tester/src/**/*.tsx --no-ignore --fix",
     "zip-builds": "zip-build ../dist/chrome release_zips -t 'chrome-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%' && zip-build ../dist/firefox release_zips -t 'firefox-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%' && zip-build ../dist/chrome test_zips -t 'chrome-test-sovendus-integration_TESTING.crx' && zip-build ../dist/firefox test_zips -t 'firefox-test-sovendus-integration_TESTING.xpi'"
   },
   "author": "Marcus Brandstaetter - Sovendus GmbH",

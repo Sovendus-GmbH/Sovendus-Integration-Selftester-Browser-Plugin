@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Sovendus Integration Tester</title>
+  <script src="./extension-pop-up.js" type="module"></script>
+  <style>
+    .sovendus-button {
+      width: 100%;
+      background-color: #293049;
+      color: rgb(232, 230, 227);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0;
+      border: unset;
+    }
+  </style>
+</head>
+
+<body style="width: 200px; background: linear-gradient(90deg, #b87400 0%, #c70014 100%); border: unset">
+  <div id="alertContainer"
+    style="background:red;color:white; padding:10px;border-radius:8px;margin-bottom:7px;display:none"></div>
+  <button class="sovendus-button" id="capture-button">
+    Copy Test Result
+  </button>
+  <button class="sovendus-button" style="margin-top: 7px;display:none" id="hide-button">
+    Show/Hide Self Test Overlay
+  </button>
+  <button class="sovendus-button" style="margin-top: 7px;display:none" id="check-methods-button">
+    Check available integration methods for this page
+  </button>
+  <canvas id="screenshot-canvas" style="display: none; width: 0; height: 0"></canvas>
+</body>
+
+</html>

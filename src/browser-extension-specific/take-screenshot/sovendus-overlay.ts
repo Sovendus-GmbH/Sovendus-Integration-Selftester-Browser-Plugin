@@ -1,5 +1,5 @@
-import type SelfTester from "../../integration-tester/integrationTester";
-import { transmitIntegrationError } from "../../integration-tester/integrationTester";
+import type SelfTester from "../../tester/integration-tester";
+import { transmitIntegrationError } from "../../tester/integration-tester";
 import { error } from "../../logger/logger";
 import { browserAPI } from "../browser-api";
 

@@ -1,3 +1,4 @@
+import { overlayRootId } from "../../constants";
 import { browserAPI } from "../browser-api";
 
 export async function toggleSelfTesterOverlayVisibility(

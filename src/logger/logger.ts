@@ -1,4 +1,4 @@
-import type { ExplicitAnyType } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
+import type { ExplicitAnyType } from "../tester/integration-tester-data-to-sync-with-dev-hub";
 
 // TODO only do this in dev mode
 export const enableDebugLogs: boolean = true;

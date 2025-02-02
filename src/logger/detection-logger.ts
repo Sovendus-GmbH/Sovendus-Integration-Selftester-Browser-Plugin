@@ -1,5 +1,5 @@
-import type { ExplicitAnyType } from "../integration-tester/integration-tester-data-to-sync-with-dev-hub";
 import { debug as _debug } from "../logger/logger";
+import type { ExplicitAnyType } from "../tester/integration-tester-data-to-sync-with-dev-hub";
 
 const enableDebugDetector: boolean = true;
 
