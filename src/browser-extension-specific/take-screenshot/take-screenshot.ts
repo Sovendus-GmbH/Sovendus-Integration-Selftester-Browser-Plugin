@@ -2,7 +2,7 @@ import { browserAPI } from "../browser-api";
 import {
   hideSelfTesterOverlay,
   restoreSelfTesterOverlay,
-} from "./integration-test-overlay";
+} from "../extension-utils/integration-test-overlay";
 import { scrollDownToNextSection, scrollToTop } from "./scrolling";
 import {
   checkStickyBannerAndOverlayIntegration,

@@ -1,6 +1,6 @@
+import { error } from "../../logger/logger";
 import type SelfTester from "../../tester/integration-tester";
 import { transmitIntegrationError } from "../../tester/integration-tester";
-import { error } from "../../logger/logger";
 import { browserAPI } from "../browser-api";
 
 export async function checkStickyBannerAndOverlayIntegration(

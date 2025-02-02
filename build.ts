@@ -1,16 +1,11 @@
 import react from "@vitejs/plugin-react";
-import path from "path";
 import type { PluginOption } from "vite";
 import { build } from "vite";
 import envCompatible from "vite-plugin-env-compatible";
 import { createHtmlPlugin } from "vite-plugin-html";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
-
-
-const entries = [
- 
-];
+const entries = [];
 
 const plugins: PluginOption[] = [
   react(),
