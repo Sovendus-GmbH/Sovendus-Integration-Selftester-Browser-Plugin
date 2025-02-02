@@ -1,78 +1,149 @@
 import { debug, error } from "../logger/logger";
 import { browserAPI } from "./browser-api";
 import { createFullPageScreenShot } from "./take-screenshot/take-screenshot";
+import type { ScreenShotRequest, ScreenShotResponse } from "./types";
 
-let isInitialized = false;
-
-function serviceWorker(): void {
-  if (isInitialized) {
-    debug("serviceWorker", "Service worker already initialized, skipping...");
-    return;
+const initializedTabs = new Map<
+  number,
+  {
+    handler: ScreenshotHandler;
+    messageHandler: (
+      request: ScreenShotRequest,
+      sender: chrome.runtime.MessageSender,
+      sendResponse: (response?: ScreenShotResponse) => void,
+    ) => void;
   }
-  isInitialized = true;
-  const url = browserAPI.runtime.getURL("/browserExtensionLoader.js");
+>();
 
-  browserAPI.webNavigation.onDOMContentLoaded.addListener(({ tabId }) => {
-    void browserAPI.scripting.executeScript({
-      target: { tabId },
-      args: [url],
-      func: injectScriptFn,
-    });
-    // browserAPI.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    //   if (request.action === "TAKE_SCREENSHOT_SERVICE_WORKER") {
-    //     void chrome.tabs.captureVisibleTab((dataUrl) => {
-    //       sendResponse({ screenshotUrl: dataUrl });
-    //     });
-    //     return true; // Will respond asynchronously.
-    //   }
-    // });
-    browserAPI.runtime.onMessage.addListener(
-      (request, _sender, sendResponse) => {
-        if (request.action === "TAKE_SCREENSHOT_SERVICE_WORKER") {
-          debug(
-            "browserSettingsBridge][serviceWorker",
-            "Received take screenshot from contentScript...",
-          );
-          createFullPageScreenShot(tabId)
-            .then((screenshotUrl) => {
-              sendResponse({ screenshotUrl: screenshotUrl });
-              debug(
-                "browserSettingsBridge][serviceWorker",
-                "Sent screenshot to contentScript...",
-              );
-            })
-            .catch((e) => {
-              error(
-                "browserSettingsBridge][serviceWorker",
-                "Error taking screenshot:",
-                e,
-              );
-              sendResponse({ screenshotUrl: "", error: e });
-            });
-        }
-      },
-    );
-    debug("browserSettingsBridge][serviceWorker", "Service worker loaded...");
-  });
-
-  function injectScriptFn(url: string): void {
-    function injectScript(): void {
-      const script = document.createElement("script");
-      script.setAttribute("type", "text/javascript");
-      script.setAttribute("src", url);
-      script.setAttribute("type", "module");
-      document.body.appendChild(script);
+class ScreenshotHandler {
+  private async takeScreenshot(
+    tabId: number,
+    sendResponse: (response?: ScreenShotResponse) => void,
+  ): Promise<void> {
+    try {
+      debug("browserBridge][serviceWorker", "Taking screenshot...", {
+        tabId,
+      });
+      const screenshotResponse = await createFullPageScreenShot(tabId);
+      debug("browserBridge][serviceWorker", "Screenshot taken successfully");
+      sendResponse(screenshotResponse);
+      debug(
+        "browserBridge][serviceWorker",
+        "Sent screenshot to contentScript...",
+        { success: true },
+      );
+    } catch (e) {
+      error("browserBridge][serviceWorker", "Error taking screenshot:", e);
+      sendResponse({
+        screenShotUri: "",
+        errorMessage: e as string,
+        success: false,
+      });
     }
-    if (!window.didLoad) {
-      window.didLoad = true;
-      injectScript();
+  }
+
+  public async handleScreenshotRequest(
+    request: ScreenShotRequest,
+    tabId: number,
+    sendResponse: (response?: ScreenShotResponse) => void,
+  ): Promise<void> {
+    debug("browserBridge][serviceWorker", "Processing screenshot request", {
+      action: request.action,
+      tabId,
+    });
+
+    if (request.action === "TAKE_SCREENSHOT_SERVICE_WORKER") {
+      debug(
+        "browserBridge][serviceWorker",
+        "Received take screenshot request...",
+        { request },
+      );
+      await this.takeScreenshot(tabId, sendResponse);
+    } else {
+      debug("browserBridge][serviceWorker", "Ignoring unknown request action", {
+        action: request.action,
+      });
     }
   }
 }
 
-serviceWorker();
+function serviceWorker({ tabId }: { tabId: number }): void {
+  // Guard against multiple initializations
+  if (initializedTabs.has(tabId)) {
+    debug(
+      "browserBridge][serviceWorker",
+      "Service worker already initialized",
+      { tabId },
+    );
+    return;
+  }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  debug("browserBridge][serviceWorker", "Initializing service worker", {
+    tabId,
+  });
+
+  const screenshotHandler = new ScreenshotHandler();
+
+  const messageHandler = (
+    request: ScreenShotRequest,
+    _sender: chrome.runtime.MessageSender,
+    sendResponse: (response?: ScreenShotResponse) => void,
+  ): true => {
+    debug("browserBridge][serviceWorker", "Message handler called", {
+      request,
+    });
+    void screenshotHandler.handleScreenshotRequest(
+      request,
+      tabId,
+      sendResponse,
+    );
+    return true; // Indicates we'll respond asynchronously
+  };
+
+  // Store handlers
+  initializedTabs.set(tabId, {
+    handler: screenshotHandler,
+    messageHandler,
+  });
+
+  // Setup message listener
+  browserAPI.runtime.onMessage.addListener(messageHandler);
+
+  // Inject content script
+  void browserAPI.scripting.executeScript({
+    target: { tabId },
+    args: [browserAPI.runtime.getURL("/browserExtensionLoader.js")],
+    func: injectScriptFn,
+  });
+
+  // Cleanup on tab close
+  browserAPI.tabs.onRemoved.addListener((closedTabId) => {
+    if (closedTabId === tabId) {
+      const tab = initializedTabs.get(tabId);
+      if (tab) {
+        browserAPI.runtime.onMessage.removeListener(tab.messageHandler);
+        initializedTabs.delete(tabId);
+      }
+    }
+  });
+
+  debug("browserBridge][serviceWorker", "Setup complete");
+}
+
+function injectScriptFn(url: string): void {
+  if (!window.didLoad) {
+    window.didLoad = true;
+    const script = document.createElement("script");
+    script.setAttribute("type", "module");
+    script.setAttribute("src", url);
+    document.body.appendChild(script);
+  }
+}
+
+// Setup navigation listener
+browserAPI.webNavigation.onDOMContentLoaded.removeListener(serviceWorker);
+browserAPI.webNavigation.onDOMContentLoaded.addListener(serviceWorker);
+
 interface ServiceWorkerWindow extends Window {
   didLoad: boolean;
 }

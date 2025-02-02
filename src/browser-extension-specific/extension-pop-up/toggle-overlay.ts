@@ -1,8 +1,3 @@
-import {
-  fullscreenClass,
-  openSovendusOverlayId,
-  overlayId,
-} from "../../integration-tester-ui/old/integration-test-overlay-css-vars";
 import { browserAPI } from "../browser-api";
 
 export async function toggleSelfTesterOverlayVisibility(
@@ -11,12 +6,8 @@ export async function toggleSelfTesterOverlayVisibility(
 ): Promise<void> {
   const result = await browserAPI.scripting.executeScript({
     target: { tabId },
-    args: [openSovendusOverlayId, overlayId, fullscreenClass],
-    func: (
-      openSovendusOverlayId: string,
-      overlayId: string,
-      fullscreenClass: string,
-    ): boolean => {
+    args: [overlayRootId],
+    func: (overlayRootId: string): boolean => {
       let isVisibleNow: boolean = false;
       const overlay = document.getElementById(overlayId);
       const overlayToggle = document.getElementById(openSovendusOverlayId);

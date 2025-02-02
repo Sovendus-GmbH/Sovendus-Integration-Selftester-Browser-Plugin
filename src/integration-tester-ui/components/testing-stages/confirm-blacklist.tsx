@@ -58,18 +58,28 @@ export function ConfirmBlacklist({
 
   const infoTextStyle: React.CSSProperties = {
     marginTop: "0.5rem",
-    fontSize: "0.88rem",
+    fontSize: "1rem",
     color: "#E0E0E0",
-    textAlign: "center",
     lineHeight: "1.4",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(30, 118, 181, 0.81)",
     padding: "0.3rem",
+    marginLeft: "0.5rem",
+    marginRight: "0.5rem",
+    marginBottom: "0.5rem",
     borderRadius: "0.5rem",
     fontFamily: "Arial, sans-serif",
+    textAlign: "left",
   };
 
   return (
     <div style={containerStyle}>
+      <div style={infoTextStyle}>
+        <div>To re-enable:</div>
+        <div>
+          Click the parcel icon in your browser's top-right corner, then select
+          the Sovendus icon.
+        </div>
+      </div>
       <div style={buttonContainerStyle}>
         <button style={blacklistButtonStyle} onClick={handleBlacklist}>
           Blacklist this Page
@@ -78,12 +88,6 @@ export function ConfirmBlacklist({
           Hide Overlay
         </button>
       </div>
-      <p style={infoTextStyle}>
-        If you hide the tester or blacklist this page, you can re-enable it by
-        clicking on the extension icon in the top-right corner of your browser.
-        In the menu, select the option to whitelist this page or show the tester
-        again.
-      </p>
     </div>
   );
 }

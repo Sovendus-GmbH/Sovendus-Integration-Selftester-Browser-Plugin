@@ -2,7 +2,6 @@ import { browserAPI } from "../browser-api";
 import {
   hideSelfTesterOverlay,
   restoreSelfTesterOverlay,
-  showSelfTesterOverlay,
 } from "./integration-test-overlay";
 import { scrollDownToNextSection, scrollToTop } from "./scrolling";
 import {
@@ -49,7 +48,17 @@ export async function createFullPageScreenShot(tabId: number): Promise<{
   }
   await restoreSelfTesterOverlay(tabId);
   const blob = await screenshotContainer.convertToBlob();
-  const screenshotUrl = URL.createObjectURL(blob);
+  const reader = new FileReader();
+  const screenshotUrl = await new Promise<string>(
+    (resolve: (value: string) => void) => {
+      reader.onloadend = (): void => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        }
+      };
+      reader.readAsDataURL(blob);
+    },
+  );
   return {
     success: true,
     screenShotUri: screenshotUrl,
@@ -66,9 +75,6 @@ async function drawFullPageScreenshot(
   mobileDeviceEmulatorIsOverlappedByDevTools: boolean;
   mobileDeviceEmulatorZoomLevelSet: boolean;
 }> {
-  // chrome.tabs.captureVisibleTab((dataUrl) => {
-  //   console.log("dataUrl", dataUrl);
-  // });
   const {
     zoomAdjustedHeight,
     scrollHeight,
@@ -100,9 +106,6 @@ async function drawFullPageScreenshot(
       zoomAdjustedHeight,
       zoomLevel,
     });
-
-    await showSelfTesterOverlay(tabId);
-    await createDebugInfoScreenshot(ctx);
   }
   return {
     mobileDeviceEmulatorIsOverlappedByDevTools,
@@ -209,28 +212,6 @@ async function createSovendusOverlayScreenshot(
   });
 }
 
-async function createDebugInfoScreenshot(
-  ctx: OffscreenCanvasRenderingContext2D,
-): Promise<void> {
-  await addDelayBetweenScreenshotOnChrome();
-  return new Promise((resolve) => {
-    chrome.tabs.captureVisibleTab((screenshotDataUrl) => {
-      const screenshotImage = new Image();
-      screenshotImage.src = screenshotDataUrl;
-      screenshotImage.onload = (): void => {
-        ctx.drawImage(
-          screenshotImage,
-          0,
-          0,
-          screenshotImage.width,
-          screenshotImage.height,
-        );
-        resolve();
-      };
-    });
-  });
-}
-
 async function getScreenShotDimensions(
   tabId: number,
   screenshotContainer: OffscreenCanvas,
@@ -326,16 +307,10 @@ async function getZoomAdjustedDimensions(): Promise<{
   width: number;
   height: number;
 }> {
-  // chrome.tabs.captureVisibleTab((dataUrl) => {
-  //   console.log("dataUrl", dataUrl);
-  // });
-  await addDelayBetweenScreenshotOnChrome();
-
   return new Promise((resolve) => {
     chrome.tabs.captureVisibleTab(
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       async (screenshotDataUrl) => {
-        console.log("screenshotDataUrl", screenshotDataUrl);
         const response = await fetch(screenshotDataUrl);
         const blob = await response.blob();
         const bitmap = await createImageBitmap(blob);
@@ -358,30 +333,3 @@ function getScreenshotCanvas(): {
   }
   return { ctx, screenshotContainer };
 }
-
-// async function abortEarlyAndSetErrorMessage(
-//   tabId: number,
-//   captureButton: HTMLElement,
-//   alertContainer: HTMLElement,
-// ): Promise<void> {
-//   captureButton.innerText = "Failed to copy";
-//   captureButton.style.background = "red";
-//   captureButton.style.color = "white";
-//   alertContainer.innerText =
-//     "Error: The mobile device emulation window can not be overlapped by the developer console.";
-//   alertContainer.style.display = "block";
-//   await restoreSelfTesterOverlay(tabId);
-// }
-
-// function setZoomDetectedWarningMessage(alertContainer: HTMLElement): void {
-//   alertContainer.innerText =
-//     "Warning: Zoom detected, the screenshot might be blurry. Set the zoom to 100% if possible!";
-//   alertContainer.style.display = "block";
-//   alertContainer.style.background = "orange";
-// }
-
-// function setSuccessMessage(captureButton: HTMLElement): void {
-//   captureButton.innerText = "Copy Test Result Again";
-//   captureButton.style.background = "green";
-//   captureButton.style.color = "white";
-// }

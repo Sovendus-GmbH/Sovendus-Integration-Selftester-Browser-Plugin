@@ -178,6 +178,7 @@ export function TestContent({ overlayState }: StepProps): JSX.Element {
       <div>
         <button
           onClick={async () => {
+            console.log("clicking screencap button");
             const screenshotUrl = await overlayState._getScreenshot();
             console.log(screenshotUrl);
             setScreenshotUrl(screenshotUrl);

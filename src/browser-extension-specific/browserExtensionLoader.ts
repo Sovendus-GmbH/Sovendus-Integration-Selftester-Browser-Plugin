@@ -14,7 +14,7 @@ async function initializeExtension(): Promise<void> {
       const messageHandler = (event: ExtensionSettingsEvent): void => {
         if (event.data.type === "GET_SETTINGS_RESPONSE") {
           debug(
-            "browserSettingsBridge][browserExtensionLoader",
+            "browserBridge][browserExtensionLoader",
             "Received settings from browser",
             event.data.settings,
           );
@@ -24,12 +24,12 @@ async function initializeExtension(): Promise<void> {
       };
       window.addEventListener("message", messageHandler);
       debug(
-        "browserSettingsBridge][browserExtensionLoader",
+        "browserBridge][browserExtensionLoader",
         "Requesting settings from browser",
       );
       window.postMessage({ type: "GET_SETTINGS" }, "*");
       debug(
-        "browserSettingsBridge][browserExtensionLoader",
+        "browserBridge][browserExtensionLoader",
         "Requested settings from browser",
       );
     });
@@ -41,7 +41,7 @@ async function initializeExtension(): Promise<void> {
         if (event.data.type === "TAKE_SCREENSHOT_RESPONSE") {
           if (event.data.success) {
             debug(
-              "browserSettingsBridge][browserExtensionLoader",
+              "browserBridge][browserExtensionLoader",
               "Screenshot received from browser",
               event.data.settings,
             );
@@ -49,7 +49,7 @@ async function initializeExtension(): Promise<void> {
             resolve(event.data.screenshotUrl as string);
           } else {
             error(
-              "browserSettingsBridge][browserExtensionLoader",
+              "browserBridge][browserExtensionLoader",
               "Screenshot request failed",
               event.data,
             );
@@ -60,12 +60,12 @@ async function initializeExtension(): Promise<void> {
       };
       window.addEventListener("message", messageHandler);
       debug(
-        "browserSettingsBridge][browserExtensionLoader",
+        "browserBridge][browserExtensionLoader",
         "Requesting screenshot from browser",
       );
       window.postMessage({ type: "TAKE_SCREENSHOT" }, "*");
       debug(
-        "browserSettingsBridge][browserExtensionLoader",
+        "browserBridge][browserExtensionLoader",
         "Requested screenshot from browser",
       );
     });
@@ -76,7 +76,7 @@ async function initializeExtension(): Promise<void> {
   ): Promise<boolean> {
     return new Promise((resolve) => {
       debug(
-        "browserSettingsBridge][browserExtensionLoader",
+        "browserBridge][browserExtensionLoader",
         "Started updating settings from browser",
         newSettings,
       );
@@ -93,7 +93,7 @@ async function initializeExtension(): Promise<void> {
         if (event.data.type === "UPDATE_SETTINGS_RESPONSE") {
           window.removeEventListener("message", messageHandler);
           debug(
-            "browserSettingsBridge][browserExtensionLoader",
+            "browserBridge][browserExtensionLoader",
             "Success updating settings from browser",
             newSettings,
           );
