@@ -4,9 +4,8 @@
   "description": "Sovendus integration tester chrome & firefox extensions",
   "private": false,
   "scripts": {
-    "build": "cd .. yarn build",
+    "build": "yarn sov-build build",
     "build-release": "yarn run build-and-test",
-    "build-ts": "cd .. && yarn build",
     "debug-on-ff": "cd ../dist/firefox && web-ext run",
     "lint": "cd .. && eslint integration-tester/src/**/*.ts --no-ignore --fix && eslint integration-tester/src/**/*.tsx --no-ignore --fix",
     "zip-builds": "zip-build ../dist/chrome release_zips -t 'chrome-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%' && zip-build ../dist/firefox release_zips -t 'firefox-test-sovendus-integration_%VERSION%_%TIMESTAMP%.%EXT%' && zip-build ../dist/chrome test_zips -t 'chrome-test-sovendus-integration_TESTING.crx' && zip-build ../dist/firefox test_zips -t 'firefox-test-sovendus-integration_TESTING.xpi'"
@@ -15,7 +14,6 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
-    "@floating-ui/dom": "^1.6.10",
     "lucide-react": "^0.468.0",
     "pdfmake": "^0.2.18",
     "react": "19.0.0",
@@ -23,6 +21,7 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "sovendus-builder": "^1.0.15",
     "@types/chrome": "^0.0.270",
     "@types/crypto-js": "^4.2.2",
     "@types/firefox-webext-browser": "^120.0.4",
