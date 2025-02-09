@@ -2,12 +2,12 @@ import { Home, ShoppingBag } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import { colors } from "../../styles";
+import { testingFlowConfig } from "../../testing-flow-config";
 import type { StepProps } from "../../testing-storage";
-import { OverlaySize, PageType } from "../../testing-storage";
+import { OverlaySize } from "../../testing-storage";
 
-export function PageSelection({
-  overlayState: { handlePageSelection, getCurrentTestRun },
+export function FeatureSelection({
+  overlayState: { transition, getCurrentTestRun },
 }: StepProps): JSX.Element {
   const currentTestRun = getCurrentTestRun();
   const isBig = currentTestRun.overlaySize === OverlaySize.LARGE;
@@ -34,11 +34,15 @@ export function PageSelection({
   };
   return (
     <div style={containerStyle}>
-      {!isSmall ? <h2 style={headingStyle}>Select Current Page</h2> : <></>}
+      {!isSmall ? (
+        <h2 style={headingStyle}>How can I help you today? :)</h2>
+      ) : (
+        <></>
+      )}
       <div style={optionsContainerStyle}>
         <PageOption
-          title="Landing Page"
-          description={!isBig ? "" : "Product or category page"}
+          title="Test a Sovendus Integration"
+          description={!isBig ? "" : "Make sure everything works as expected"}
           icon={
             <Home
               style={{
@@ -47,12 +51,16 @@ export function PageSelection({
               }}
             />
           }
-          onClick={() => handlePageSelection(PageType.LANDING)}
+          onClick={() =>
+            transition(
+              testingFlowConfig.transitions.featureSelection.TEST_INTEGRATION!,
+            )
+          }
           small={!isBig}
         />
         <PageOption
-          title="Order Success"
-          description={!isBig ? "" : "After completing an order"}
+          title="Integrate Sovendus on this Page"
+          description={!isBig ? "" : "We guide you through the whole process"}
           icon={
             <ShoppingBag
               style={{
@@ -61,7 +69,11 @@ export function PageSelection({
               }}
             />
           }
-          onClick={() => handlePageSelection(PageType.SUCCESS)}
+          onClick={() =>
+            transition(
+              testingFlowConfig.transitions.featureSelection.INTEGRATION_HELP!,
+            )
+          }
           small={!isBig}
         />
       </div>
@@ -113,7 +125,7 @@ function PageOption({
 
   const descriptionStyle: React.CSSProperties = {
     fontSize: "0.75rem",
-    color: colors.textLight,
+    color: "rgba(255, 255, 255, 0.7)",
   };
 
   return (

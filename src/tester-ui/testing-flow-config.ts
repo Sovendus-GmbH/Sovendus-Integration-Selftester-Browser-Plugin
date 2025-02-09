@@ -1,5 +1,6 @@
 import { ConfirmBlacklist } from "./components/testing-stages/confirm-blacklist";
 import { ConsentSelectionStep } from "./components/testing-stages/consent-selection";
+import { FeatureSelection } from "./components/testing-stages/feature-selection";
 import { InitialPrompt } from "./components/testing-stages/initial-prompt";
 import { LandingPageTestContent } from "./components/testing-stages/landing-page-test-content/test-content";
 import { PageSelection } from "./components/testing-stages/page-selection";
@@ -17,6 +18,11 @@ export const testingFlowConfig: TestingFlowConfigType = {
     },
     confirmBlacklist: {
       component: ConfirmBlacklist,
+      availableSizes: [OverlaySize.MEDIUM],
+      defaultSize: OverlaySize.MEDIUM,
+    },
+    featureSelection: {
+      component: FeatureSelection,
       availableSizes: [OverlaySize.MEDIUM],
       defaultSize: OverlaySize.MEDIUM,
     },
@@ -53,15 +59,18 @@ export const testingFlowConfig: TestingFlowConfigType = {
   initialStage: "initialPrompt",
   transitions: {
     initialPrompt: {
-      ACCEPT: "consentSelection",
+      ACCEPT: "featureSelection",
       DECLINE: "confirmBlacklist",
     },
     confirmBlacklist: {
       BLACKLIST: "confirmBlacklist",
-      HIDE_OVERLAY: "declineBlacklist",
     },
     consentSelection: {
       SELECT: "pageSelection",
+    },
+    featureSelection: {
+      TEST_INTEGRATION: "consentSelection",
+      INTEGRATION_HELP: "availabilityCheck",
     },
     pageSelection: {
       SELECT_LANDING: "landingPageTest",
@@ -79,6 +88,5 @@ export const testingFlowConfig: TestingFlowConfigType = {
       TO_TEST_HISTORY: "testHistory",
       RESTART: "consentSelection",
     },
-    declineBlacklist: {},
   },
 };

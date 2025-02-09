@@ -43,7 +43,7 @@ export function DraggableOverlay({
     display: "flex",
     flexDirection: "column",
     borderRadius: "0.5rem",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+    boxShadow: `0 25px 50px -12px ${colors.overlayShadow}`,
     background: colors.background,
     overflow: "hidden",
     zIndex: maxZIndex,

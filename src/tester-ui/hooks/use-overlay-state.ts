@@ -25,7 +25,7 @@ export interface OverlayState {
   isPromptVisible: boolean;
   isInitialized: boolean;
   _getSettings: () => Promise<ExtensionStorage>;
-  _updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>;
+  _updateSettings: (newSettings: ExtensionStorage) => Promise<boolean>;
   setPosition: (
     positionCallBack: (position: { x: number; y: number }) => {
       x: number;
@@ -66,7 +66,7 @@ export interface OverlayState {
 export const useOverlayState = (
   testerStorage: ExtensionStorage,
   getSettings: () => Promise<ExtensionStorage>,
-  updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>,
+  updateSettings: (newSettings: ExtensionStorage) => Promise<boolean>,
   takeScreenshot: () => Promise<string>,
 ): ReturnType<typeof useMemo<UseBoundStore<StoreApi<OverlayState>>>> => {
   return useMemo(() => {

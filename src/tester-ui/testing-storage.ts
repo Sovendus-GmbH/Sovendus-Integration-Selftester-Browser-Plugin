@@ -98,10 +98,10 @@ export type StageType = {
 export type StageKeys =
   | "initialPrompt"
   | "confirmBlacklist"
+  | "featureSelection"
   | "consentSelection"
   | "pageSelection"
   | "landingPageTest"
-  | "declineBlacklist"
   | "successPageTest"
   | "testHistory";
 
@@ -109,12 +109,13 @@ export type TransitionTypes =
   | "ACCEPT"
   | "DECLINE"
   | "BLACKLIST"
-  | "HIDE_OVERLAY"
   | "SELECT"
   | "SELECT_LANDING"
   | "SELECT_SUCCESS"
   | "COMPLETE"
   | "NAVIGATE"
+  | "TEST_INTEGRATION"
+  | "INTEGRATION_HELP"
   | "TO_TEST_HISTORY"
   | "RESTART";
 

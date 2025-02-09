@@ -2,15 +2,13 @@ import type { JSX } from "react";
 import React from "react";
 
 import { debugUi } from "../../../logger/ui-logger";
+import { colors } from "../../styles";
 import type { StepProps } from "../../testing-storage";
-import { OverlaySize } from "../../testing-storage";
+import { Button } from "../ui-components/button";
 
 export function ConfirmBlacklist({
-  overlayState: { addToBlacklist, hideOverlay, getCurrentTestRun },
+  overlayState: { addToBlacklist, hideOverlay },
 }: StepProps): JSX.Element {
-  const currentTestRun = getCurrentTestRun();
-  const isSmall = currentTestRun.overlaySize === OverlaySize.SMALL;
-
   const handleBlacklist = (): void => {
     debugUi("ConfirmBlacklist", "Blacklist clicked");
     void addToBlacklist();
@@ -21,21 +19,6 @@ export function ConfirmBlacklist({
     hideOverlay();
   };
 
-  const blacklistButtonStyle: React.CSSProperties = {
-    padding: "0.5rem 1rem",
-    backgroundColor: "#D30000",
-    color: "white",
-    borderRadius: "0.375rem",
-    border: "none",
-    cursor: "pointer",
-    transition: "background-color 0.2s",
-    fontSize: isSmall ? "0.75rem" : "0.875rem",
-  };
-
-  const hideButtonStyle: React.CSSProperties = {
-    ...blacklistButtonStyle,
-    backgroundColor: "#7C3AED",
-  };
   const containerStyle: React.CSSProperties = {
     marginTop: "0.3rem",
     display: "flex",
@@ -55,13 +38,13 @@ export function ConfirmBlacklist({
   const infoTextStyle: React.CSSProperties = {
     marginTop: "0.5rem",
     fontSize: "1rem",
-    color: "#E0E0E0",
+    color: colors.text,
     lineHeight: "1.4",
     backgroundColor: "rgba(30, 118, 181, 0.81)",
-    padding: "0.3rem",
+    padding: "0.8rem",
     marginLeft: "0.5rem",
     marginRight: "0.5rem",
-    marginBottom: "0.5rem",
+    marginBottom: "1.5rem",
     borderRadius: "0.5rem",
     fontFamily: "Arial, sans-serif",
     textAlign: "left",
@@ -78,25 +61,15 @@ export function ConfirmBlacklist({
       </div>
       <div style={buttonContainerStyle}>
         {window.location.host ? (
-          <button style={blacklistButtonStyle} onClick={handleBlacklist}>
+          <Button variant="danger" onClick={handleBlacklist}>
             Blacklist this Page
-          </button>
+          </Button>
         ) : (
-          <button
-            style={{
-              ...blacklistButtonStyle,
-              backgroundColor: "grey",
-              cursor: "not-allowed",
-            }}
-            onClick={handleBlacklist}
-            disabled
-          >
-            Cant blacklist file urls
-          </button>
+          <Button variant="disabled">Cant blacklist this type of urls</Button>
         )}
-        <button style={hideButtonStyle} onClick={handleHideOverlay}>
+        <Button variant="secondary" onClick={handleHideOverlay}>
           Hide Overlay
-        </button>
+        </Button>
       </div>
     </div>
   );

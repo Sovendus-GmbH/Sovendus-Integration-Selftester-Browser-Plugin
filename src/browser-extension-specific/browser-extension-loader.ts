@@ -63,7 +63,7 @@ async function initializeExtension(): Promise<void> {
   }
 
   async function updateSettings(
-    newSettings: Partial<ExtensionStorage>,
+    newSettings: ExtensionStorage,
   ): Promise<boolean> {
     return new Promise((resolve) => {
       debugExtensionLoader(

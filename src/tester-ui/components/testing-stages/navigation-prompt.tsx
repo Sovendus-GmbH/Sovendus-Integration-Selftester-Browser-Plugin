@@ -9,6 +9,7 @@ import type { JSX } from "react";
 import React, { useState } from "react";
 
 import { DetectionState } from "../../../detector/integration-detector";
+import { colors } from "../../styles";
 import type { StepProps } from "../../testing-storage";
 import { OverlaySize } from "../../testing-storage";
 import { StatusItem } from "./components/status-item";
@@ -96,8 +97,8 @@ export function NavigationPrompt({
               color={
                 currentTestRun.landingPageResult.integrationDetector
                   .detectionState === DetectionState.DETECTED
-                  ? "#34D399"
-                  : "#F87171"
+                  ? colors.success
+                  : colors.error
               }
               small={isSmall}
             />

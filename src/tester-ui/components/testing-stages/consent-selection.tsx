@@ -1,12 +1,14 @@
-import { Shield, ShieldOff } from "lucide-react";
+import { ArrowLeft, Shield, ShieldOff } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
+import { testingFlowConfig } from "../../testing-flow-config";
 import type { StepProps } from "../../testing-storage";
 import { OverlaySize } from "../../testing-storage";
+import { Button } from "../ui-components/button";
 
 export function ConsentSelectionStep({
-  overlayState: { handleConsentSelection, getCurrentTestRun },
+  overlayState: { handleConsentSelection, getCurrentTestRun, transition },
 }: StepProps): JSX.Element {
   const currentTestRun = getCurrentTestRun();
   const isSmall = currentTestRun.overlaySize === OverlaySize.SMALL;
@@ -69,6 +71,14 @@ export function ConsentSelectionStep({
       <div style={{ ...paragraphStyle, marginTop: "0.5rem" }}>
         You'll need to run both tests for complete results
       </div>
+      <Button
+        onClick={() =>
+          transition(testingFlowConfig.transitions.initialPrompt.ACCEPT!)
+        }
+      >
+        <ArrowLeft size={isSmall ? 16 : 20} />
+        <span style={{ marginRight: "0.5rem" }}>Back</span>
+      </Button>
     </div>
   );
 }

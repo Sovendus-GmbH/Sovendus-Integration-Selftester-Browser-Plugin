@@ -16,7 +16,7 @@ import type { ExtensionStorage } from "../tester-ui/testing-storage";
 export function startIntegrationTester(
   settings: ExtensionStorage,
   getSettings: () => Promise<ExtensionStorage>,
-  updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>,
+  updateSettings: (newSettings: ExtensionStorage) => Promise<boolean>,
   takeScreenshot: () => Promise<string>,
 ): void {
   if (!window.testerLoaderDidLoad) {
@@ -54,14 +54,12 @@ function reactLoader({
   }: {
     settings: ExtensionStorage;
     getSettings: () => Promise<ExtensionStorage>;
-    updateSettings: (
-      newSettings: Partial<ExtensionStorage>,
-    ) => Promise<boolean>;
+    updateSettings: (newSettings: ExtensionStorage) => Promise<boolean>;
     takeScreenshot: () => Promise<string>;
   }) => JSX.Element;
   settings: ExtensionStorage;
   getSettings: () => Promise<ExtensionStorage>;
-  updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>;
+  updateSettings: (newSettings: ExtensionStorage) => Promise<boolean>;
   takeScreenshot: () => Promise<string>;
 }): void {
   const testerContainer = document.createElement("div");
@@ -94,7 +92,7 @@ export function Main({
 }: {
   settings: ExtensionStorage;
   getSettings: () => Promise<ExtensionStorage>;
-  updateSettings: (newSettings: Partial<ExtensionStorage>) => Promise<boolean>;
+  updateSettings: (newSettings: ExtensionStorage) => Promise<boolean>;
   takeScreenshot: () => Promise<string>;
 }): JSX.Element {
   debugTesterLoader("Main", "Rendering Main component", settings);
