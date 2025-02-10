@@ -1,4 +1,4 @@
-import { type CheckCircle } from "lucide-react";
+import type { CheckCircle } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 

@@ -3,7 +3,7 @@ import React from "react";
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
 import { debugUi } from "../../logger/ui-logger";
-import { styles } from "../styles";
+import { colors } from "../styles";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -55,39 +55,38 @@ function ErrorComponent({
   errorInfo: React.ErrorInfo | null;
 }): JSX.Element {
   const containerStyle: React.CSSProperties = {
-    ...styles.text,
+    color: colors.text,
     padding: "1rem",
-    backgroundColor: "#FEE2E2",
+    backgroundColor: "#F87171",
     border: "1px solid #F87171",
-    color: "#B91C1C",
     borderRadius: "0.375rem",
   };
 
   const headingStyle: React.CSSProperties = {
-    ...styles.text,
+    color: colors.text,
     fontSize: "1.5rem",
     fontWeight: "bold",
     marginBottom: "1rem",
   };
 
   const paragraphStyle: React.CSSProperties = {
-    ...styles.text,
+    color: colors.text,
     marginBottom: "1rem",
   };
 
   const detailsStyle: React.CSSProperties = {
-    ...styles.text,
+    color: colors.text,
     whiteSpace: "pre-wrap",
   };
 
   const summaryStyle: React.CSSProperties = {
-    ...styles.text,
+    color: colors.text,
     cursor: "pointer",
     marginBottom: "0.5rem",
   };
 
   const preStyle: React.CSSProperties = {
-    ...styles.text,
+    color: colors.text,
     fontSize: "0.75rem",
     overflowX: "auto",
     backgroundColor: "#F3F4F6",

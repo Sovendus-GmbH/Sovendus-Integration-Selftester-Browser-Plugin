@@ -1,18 +1,18 @@
 "use client";
 
-import { urlConfig as developmentConfig } from "integration-scripts-builder/integration-scripts-builder/build-config/cfg.development";
-import { urlConfig as previewConfig } from "integration-scripts-builder/integration-scripts-builder/build-config/cfg.preview";
+// import { urlConfig as developmentConfig } from "integration-scripts-builder/integration-scripts-builder/build-config/cfg.development";
+// import { urlConfig as previewConfig } from "integration-scripts-builder/integration-scripts-builder/build-config/cfg.preview";
 import type { JSX } from "react";
 import React from "react";
 import { useEffect } from "react";
-import { start as startVoucherNetwork } from "sovendus-integration-scripts/src/js/sovendus/main/sovendus";
-import { start as startThankYou } from "sovendus-integration-scripts/src/js/thank-you/thank-you";
-import type { ConversionsType } from "sovendus-integration-scripts/src/js/thank-you/utils/IntegrationDataCollector";
-import { cleanUp } from "sovendus-integration-scripts/src/js/thank-you/utils/removalObserver";
+// import { start as startVoucherNetwork } from "sovendus-integration-scripts/src/js/sovendus/main/sovendus";
+// import { start as startThankYou } from "sovendus-integration-scripts/src/js/thank-you/thank-you";
+// import { cleanUp } from "sovendus-integration-scripts/src/js/thank-you/utils/removalObserver";
 import type {
+  ConversionsType,
   SovConsumerType,
   SovendusPublicConversionWindow,
-} from "sovendus-integration-scripts/src/js/thank-you/utils/thank-you-types";
+} from "sovendus-integration-types";
 
 export function SovendusBanner({
   config,
@@ -26,7 +26,7 @@ export function SovendusBanner({
   useEffect(() => {
     if (typeof window !== "undefined") {
       if (window.sovIframes) {
-        cleanUp();
+        // cleanUp();
       }
       window.sovIframes = window.sovIframes || [];
       window.sovIframes.push({
@@ -36,29 +36,29 @@ export function SovendusBanner({
       });
 
       window.sovConsumer = config.consumer;
-      executeSovendus();
+      // executeSovendus();
     }
   }, [divId, config]);
   return <div id={divId}></div>;
 }
 
-function executeSovendus(): void {
-  const urlConfig =
-    process.env["NODE_ENV"] === "development"
-      ? developmentConfig
-      : process.env["NODE_ENV"] === "production"
-        ? previewConfig
-        : undefined;
-  window.sovApplication = {
-    ...window.sovApplication,
-    urlConfig: {
-      CACHE_BUSTER: "xxx-xxx-xxx",
-      ...urlConfig,
-    },
-  };
+// function executeSovendus(): void {
+//   const urlConfig =
+//     process.env["NODE_ENV"] === "development"
+//       ? developmentConfig
+//       : process.env["NODE_ENV"] === "production"
+//         ? previewConfig
+//         : undefined;
+//   window.sovApplication = {
+//     ...window.sovApplication,
+//     urlConfig: {
+//       CACHE_BUSTER: "xxx-xxx-xxx",
+//       ...urlConfig,
+//     },
+//   };
 
-  startThankYou(window, startVoucherNetwork);
-}
+//   startThankYou(window, startVoucherNetwork);
+// }
 
 interface CLientSovendusThankYouWindow extends SovendusPublicConversionWindow {
   sovDivId?: number;

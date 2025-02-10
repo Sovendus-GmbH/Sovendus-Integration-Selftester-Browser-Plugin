@@ -116,7 +116,7 @@ if (!overlay) {
         // statusCode,
         // errorMessage,
       } = this.getAvailableMethodsFromResponse(data);
-      let availableMethods: string = "";
+      let availableMethods = "";
       if (shopSystemName && this.supportedSystems[shopSystemName]) {
         availableMethods = this.formatIntegrationOption(
           this.supportedSystems[shopSystemName],
@@ -201,7 +201,7 @@ ${
     }> {
       const randomIndex = Math.floor(Math.random() * this.apiKeys.length);
       let responseStatusCode: StatusCodeType;
-      let responseErrorMessage: string = "";
+      let responseErrorMessage = "";
       try {
         const response = await fetch(
           `https://whatcms.org/API/Tech?key=${this.apiKeys[randomIndex]}&url=${window.location.origin}`,

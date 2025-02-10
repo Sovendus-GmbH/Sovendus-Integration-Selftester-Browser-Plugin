@@ -2,7 +2,6 @@
 
 import type { JSX } from "react";
 import React from "react";
-import type { SovendusPageWindow } from "sovendus-integration-scripts/src/js/page/page";
 
 import { startIntegrationTester as start } from "../../tester-loader/integration-tester-loader";
 import {
@@ -12,7 +11,6 @@ import {
 
 export function IntegrationTester(): null {
   if (typeof window !== "undefined") {
-    window.transmitTestResult = true;
     const initializeExtension = async (): Promise<void> => {
       // eslint-disable-next-line @typescript-eslint/require-await
       const getSettings = async (): Promise<ExtensionStorage> => {
@@ -56,12 +54,6 @@ export function ClearTesterStorageButton(): JSX.Element {
     </button>
   );
 }
-
-interface DebugSovendusPageWindow extends SovendusPageWindow {
-  transmitTestResult: boolean;
-}
-
-declare let window: DebugSovendusPageWindow;
 
 const screencapMock =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA" +

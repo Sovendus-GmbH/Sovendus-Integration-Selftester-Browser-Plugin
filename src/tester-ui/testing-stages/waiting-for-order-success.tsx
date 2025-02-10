@@ -12,6 +12,8 @@ import { DetectionState } from "../../../detector/integration-detector";
 import { colors } from "../../styles";
 import type { StepProps } from "../../testing-storage";
 import { OverlaySize } from "../../testing-storage";
+import { Button } from "../button";
+import { H1, P } from "../typography";
 import { StatusItem } from "./components/status-item";
 
 export function NavigationPrompt({
@@ -26,13 +28,6 @@ export function NavigationPrompt({
     alignItems: "center",
     justifyContent: "center",
     color: "white",
-  };
-
-  const headingStyle: React.CSSProperties = {
-    fontSize: isSmall ? "1.125rem" : "1.25rem",
-    fontWeight: "bold",
-    marginBottom: "0.5rem",
-    textAlign: "center",
   };
 
   const resultContainerStyle: React.CSSProperties = {
@@ -75,7 +70,9 @@ export function NavigationPrompt({
 
   return (
     <div style={containerStyle}>
-      <h2 style={headingStyle}>Navigate to Order Success Page</h2>
+      <H1 overlaySize={currentTestRun.overlaySize}>
+        Navigate to Order Success Page
+      </H1>
       {currentTestRun.landingPageResult && (
         <div style={resultContainerStyle}>
           <div
@@ -115,14 +112,14 @@ export function NavigationPrompt({
           )}
         </div>
       )}
-      <div style={paragraphStyle}>
+      <P overlaySize={currentTestRun.overlaySize} style={paragraphStyle}>
         Please complete an order or navigate to the order success page to
         continue testing.
-      </div>
-      <button onClick={handleNavigateToSuccessPage} style={buttonStyle}>
+      </P>
+      <Button onClick={handleNavigateToSuccessPage} style={buttonStyle}>
         <span style={{ marginRight: "0.5rem" }}>I'm on the success page</span>
         <ArrowRight size={isSmall ? 16 : 20} />
-      </button>
+      </Button>
     </div>
   );
 }

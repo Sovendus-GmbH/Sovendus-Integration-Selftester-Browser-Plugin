@@ -106,9 +106,7 @@ export class IntegrationDetectorLoop {
   private async integrationDetection(): Promise<void> {
     const detectionResult = await this.waitForSovendusIntegrationDetected();
     await this.waitForSovendusIntegrationToBeLoaded();
-    const sovSelfTester = (window.sovSelfTester = new SelfTester(
-      detectionResult,
-    ));
+    const sovSelfTester = new SelfTester(detectionResult);
     sovSelfTester.selfTestIntegration();
     this.overlayStateRef.current.setCurrentTestRunData(() => {
       const testResult = { ...detectionResult };
@@ -168,6 +166,7 @@ export class IntegrationDetectorLoop {
             testResultUpdate.landingPageResult = {
               integrationTester: undefined,
               integrationDetector: sovendusDetectionStatus,
+              screenshotUri: undefined,
             };
           } else {
             testResultUpdate.currentStage = "successPageTest";
@@ -175,6 +174,7 @@ export class IntegrationDetectorLoop {
             testResultUpdate.successPageResult = {
               integrationTester: undefined,
               integrationDetector: sovendusDetectionStatus,
+              screenshotUri: undefined,
             };
           }
           testResult = { ...currentResult, ...testResultUpdate };

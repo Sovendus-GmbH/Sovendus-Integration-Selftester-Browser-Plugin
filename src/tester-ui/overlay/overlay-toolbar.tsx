@@ -4,8 +4,9 @@ import type { JSX } from "react";
 import React from "react";
 
 import { DetectionState } from "../../detector/integration-detector";
+import { Button } from "../components/button";
 import type { OverlayState } from "../hooks/use-overlay-state";
-import { colors, styles } from "../styles";
+import { colors } from "../styles";
 import { testingFlowConfig } from "../testing-flow-config";
 import type { StageType, TestRun } from "../testing-storage";
 import { OverlaySize } from "../testing-storage";
@@ -20,7 +21,7 @@ export function OverlayToolbar({
   toolbarRef,
   listeners,
   overlayState: {
-    openBlacklistConfirmation,
+    transition,
     transitionBack,
     getCurrentTestRun,
     showTestHistory,
@@ -37,7 +38,8 @@ export function OverlayToolbar({
   const isSmall = currentTestRun.overlaySize === OverlaySize.SMALL;
   const showMinusButton = currentSizeIndex > 0;
   const showPlusButton = currentSizeIndex < availableSizes.length - 1;
-  const showCloseButton = currentTestRun.currentStage !== "confirmBlacklist";
+  const showCloseButton =
+    currentTestRun.currentStage !== "blacklistConfirmation";
 
   const toolbarStyle: React.CSSProperties = {
     display: "flex",
@@ -46,7 +48,7 @@ export function OverlayToolbar({
     padding: "0.25rem",
     backgroundColor: colors.backgroundToolBar,
     backdropFilter: "blur(4px)",
-    ...styles.text,
+    color: colors.text,
   };
 
   const dragHandleStyle: React.CSSProperties = {
@@ -58,27 +60,19 @@ export function OverlayToolbar({
     borderRadius: "0.25rem",
     transition: "background-color 0.2s",
     flexGrow: 1,
-    ...styles.text,
+    color: colors.text,
   };
 
   const buttonContainerStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
     gap: "0.25rem",
-    ...styles.text,
+    color: colors.text,
   };
 
   const buttonStyle: React.CSSProperties = {
-    ...styles.text,
     background: "none",
-    border: "none",
-    cursor: "pointer",
     padding: "0.125rem",
-    borderRadius: "0.25rem",
-    transition: "color 0.2s",
-    display: "flex",
-    marginTop: "auto",
-    marginBottom: "auto",
   };
 
   return (
@@ -101,28 +95,33 @@ export function OverlayToolbar({
       </div>
       <div style={buttonContainerStyle}>
         <DetectionStatus currentTestRun={currentTestRun} />
-        <button onClick={showTestHistory} style={buttonStyle}>
+        <Button onClick={showTestHistory} style={buttonStyle}>
           <History size={16} />
-        </button>
+        </Button>
         {showPlusButton && (
-          <button onClick={() => resizeOverlay("increase")} style={buttonStyle}>
+          <Button onClick={() => resizeOverlay("increase")} style={buttonStyle}>
             <Plus size={16} />
-          </button>
+          </Button>
         )}
         {showMinusButton && (
-          <button onClick={() => resizeOverlay("decrease")} style={buttonStyle}>
+          <Button onClick={() => resizeOverlay("decrease")} style={buttonStyle}>
             <Minus size={16} />
-          </button>
+          </Button>
         )}
         {showCloseButton && (
-          <button onClick={openBlacklistConfirmation} style={buttonStyle}>
+          <Button
+            onClick={() =>
+              transition(testingFlowConfig.stages.initialPrompt.transitions.DECLINE)
+            }
+            style={buttonStyle}
+          >
             <Eye size={16} />
-          </button>
+          </Button>
         )}
         {!showCloseButton && (
-          <button onClick={transitionBack} style={buttonStyle}>
+          <Button onClick={transitionBack} style={buttonStyle}>
             <ArrowLeft size={16} />
-          </button>
+          </Button>
         )}
       </div>
     </div>

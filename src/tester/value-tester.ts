@@ -1,4 +1,5 @@
-import type { ExplicitAnyType } from "./integration-tester";
+import type { ExplicitAnyType } from "sovendus-integration-types";
+
 import { safeURI, WarningOrFailTestResult } from "./integration-tester";
 import type { StatusMessageKeyTypes } from "./integration-tester-data-to-sync-with-dev-hub";
 import { StatusCodes } from "./integration-tester-data-to-sync-with-dev-hub";

@@ -1,25 +1,18 @@
 import type {
+  ConversionsType,
+  ExplicitAnyType,
   SovApplicationConsumer,
-  SovCbVnApplicationType,
-} from "sovendus-integration-scripts/src/js/sovendus/main/sovendus";
-import type { ConversionsType } from "sovendus-integration-scripts/src/js/thank-you/utils/IntegrationDataCollector";
-import type {
   SovConsumerType,
   SovendusPublicConversionWindow,
-} from "sovendus-integration-scripts/src/js/thank-you/utils/thank-you-types";
+} from "sovendus-integration-types";
 
 import { scriptAliases } from "../detector/integration-detector";
 import { logger } from "../logger/logger";
-import {
-  sovendusOverlayErrorClass,
-  tooltipButtonClass,
-  tooltipClass,
-} from "../tester-ui/old/integration-test-overlay-css-vars";
 import type { TestResult } from "../tester-ui/testing-storage";
 import { PageType, type TestRun } from "../tester-ui/testing-storage";
 import type {
   ElementValue,
-  TestResultDataType as TestResultDataType,
+  TestResultDataType,
 } from "./integration-tester-data-to-sync-with-dev-hub";
 import {
   BrowserTypes,
@@ -1981,7 +1974,7 @@ export class WarningOrFailTestResult<
         }
         return `${String(
           this.elementValue ? this.elementValue : "",
-        )}<span class='${sovendusOverlayErrorClass}' style="padding-left: 5px;">${
+        )}<span class='todo' style="padding-left: 5px;">${
           statusMessages[this.statusMessageKey].errorText
         }</span>${this.getInfoMarkWithLabel(
           this.replaceElementValueInMessage(
@@ -2024,7 +2017,7 @@ export class WarningOrFailTestResult<
         );
         return "";
       }
-      return `<li><h3 class='${sovendusOverlayErrorClass}'>${this.replaceElementValueInMessage(
+      return `<li><h3 class='todo'>${this.replaceElementValueInMessage(
         statusMessages[this.statusMessageKey].errorText,
       )}</h3></li>`;
     }
@@ -2047,9 +2040,9 @@ export class WarningOrFailTestResult<
     const whiteInfoIcon =
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAONJREFUWEftl9sOhDAIROX/P7obHzS1C8wwNqm70VcLHIdL0bbFjy2Ov/0mQGutecqZWfmDaIMoaJRCFgYCVAOPQAgkBbgb/IDJIEIANc9VOxeg6mSUvWJPA3gy9oHQ+x3SO/MF4NEzzqMAo7/RFwSICkgFLQGgFkIpOGojU+GiAJKrL7ZZZyWASpXv0NMVWA7A5JZNl5SC/wVABYNGLjsz+nPyIGJhUbtCgGjEMgDMtHzeZeR9GbNYZG2X2T9zIYn6XP2HkFayWRDoRoVbsQqCAp91ochavYyyGLQCCihj8wJ8AKPZ6CHFW/ndAAAAAElFTkSuQmCC";
     return `
-      <img style="height:20px;width:auto;margin-bottom: -4px;" class="${tooltipButtonClass}"
+      <img style="height:20px;width:auto;margin-bottom: -4px;" class="todo"
       src=${infoIcon} />
-      <div class="${tooltipClass}" role="tooltip">
+      <div class="todo" role="tooltip">
         <img style="height:20px;width:auto;margin-bottom: -4px;"
           src="${whiteInfoIcon}"
           />
@@ -2180,14 +2173,9 @@ export interface IntegrationErrorDataType {
   sovConsumer?: SovConsumerType;
 }
 
-export type SovSelfTesterWindow = SovendusPublicConversionWindow & {
-  sovApplication?: SovCbVnApplicationType;
-  sovSelfTester?: SelfTester;
+export interface SovSelfTesterWindow extends SovendusPublicConversionWindow {
   // only used by tests
   sovTransmitTestResult?: boolean;
-};
+}
 
-declare let window: SovSelfTesterWindow;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ExplicitAnyType = any;
+declare const window: SovSelfTesterWindow;

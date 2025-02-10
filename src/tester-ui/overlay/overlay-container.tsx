@@ -1,7 +1,8 @@
 import type { DragEndEvent } from "@dnd-kit/core";
 import { DndContext } from "@dnd-kit/core";
 import type { JSX } from "react";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useEffect, useState } from "react";
 
 import { maxZIndex } from "../../constants";
 import { debugUi } from "../../logger/ui-logger";

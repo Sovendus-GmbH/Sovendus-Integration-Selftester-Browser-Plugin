@@ -1,13 +1,12 @@
 import type { JSX } from "react";
 import React from "react";
 
-import { styles } from "../../../styles";
 import type { StepProps } from "../../../testing-storage";
 import type { TestRun } from "../../../testing-storage";
 import type { TestResult } from "../../../testing-storage";
+import { H2, P } from "../../typography";
 
 export function CheckoutProductsContent({
-  overlayState,
   currentTestRun,
   currentPageTestResult,
 }: StepProps & {
@@ -21,16 +20,16 @@ export function CheckoutProductsContent({
   }
 
   return (
-    <div style={styles["contentContainer"]}>
-      <h3 style={styles.sectionTitle}>Checkout Products Data:</h3>
-      <div style={styles.text}>
+    <div>
+      <H2 overlaySize={currentTestRun.overlaySize}>Checkout Products Data:</H2>
+      <P overlaySize={currentTestRun.overlaySize}>
         Checkout Products Token:{" "}
         {selfTester.checkoutProductsToken?.elementValue || "Not detected"}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Checkout Products ID:{" "}
         {selfTester.checkoutProductsId?.elementValue || "Not detected"}
-      </div>
+      </P>
     </div>
   );
 }

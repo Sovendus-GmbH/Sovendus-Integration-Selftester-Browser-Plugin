@@ -459,15 +459,11 @@ export const statusMessages: {
 
   currencyNotValid: {
     errorText: "NOT A VALID CURRENCY",
-    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
-      ", ",
-    )}`,
+    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(", ")}`,
   },
   currencyMissing: {
     errorText: "VALUE MISSING",
-    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
-      ", ",
-    )}`,
+    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(", ")}`,
   },
 
   currencySuccess: {
@@ -646,9 +642,7 @@ export const statusMessages: {
 
   missingConsumerCountry: {
     errorText: "VALUE MISSING",
-    infoText: `Make sure to pass the country id of the delivery address. Valid are: ${validCountries.join(
-      ", ",
-    )}`,
+    infoText: `Make sure to pass the country id of the delivery address. Valid are: ${validCountries.join(", ")}`,
   },
 
   consumerCountrySuccess: {
@@ -837,15 +831,11 @@ export const statusMessages: {
   },
   optimizeCurrencyNotValid: {
     errorText: "NOT A VALID CURRENCY",
-    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
-      ", ",
-    )}`,
+    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(", ")}`,
   },
   optimizeCurrencyMissing: {
     errorText: "VALUE MISSING",
-    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(
-      ", ",
-    )}`,
+    infoText: `Make sure a valid order currency gets passed, valid currencies are: ${validCurrencies.join(", ")}`,
   },
   optimizeCurrencySuccess: {
     errorText: "",

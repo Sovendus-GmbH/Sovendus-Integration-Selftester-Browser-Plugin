@@ -2,8 +2,10 @@
 
 import type { JSX } from "react";
 import React, { useState } from "react";
-import type { ConversionsType } from "sovendus-integration-scripts/src/js/thank-you/utils/IntegrationDataCollector";
-import type { SovConsumerType } from "sovendus-integration-scripts/src/js/thank-you/utils/thank-you-types";
+import type {
+  ConversionsType,
+  SovConsumerType,
+} from "sovendus-integration-types";
 
 import NavBar from "../components/NavBar";
 import { SovendusBanner } from "../components/thank-you/SovendusThankYou";

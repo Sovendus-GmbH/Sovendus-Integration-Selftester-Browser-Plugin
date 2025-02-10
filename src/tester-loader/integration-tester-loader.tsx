@@ -8,9 +8,9 @@ import { useIntegrationDetector } from "../detector/integration-detector";
 import { logger } from "../logger/logger";
 import { debugTesterLoader } from "../logger/tester-loader-logger";
 import { ErrorBoundary } from "../tester-ui/components/error-boundary";
-import { DraggableOverlayContainer } from "../tester-ui/components/overlay-container";
 import type { OverlayState } from "../tester-ui/hooks/use-overlay-state";
 import { useOverlayState } from "../tester-ui/hooks/use-overlay-state";
+import { DraggableOverlayContainer } from "../tester-ui/overlay/overlay-container";
 import type { ExtensionStorage } from "../tester-ui/testing-storage";
 
 export function startIntegrationTester(

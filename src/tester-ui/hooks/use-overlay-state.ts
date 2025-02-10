@@ -10,13 +10,12 @@ import type { SovSelfTesterWindow } from "../../tester/integration-tester";
 import { testingFlowConfig } from "../testing-flow-config";
 import type {
   ExtensionStorage,
-  StageKeys,
   StageType,
   TestResult,
   TestRun,
+  Transition,
 } from "../testing-storage";
-import { OverlaySize } from "../testing-storage";
-import { PageType } from "../testing-storage";
+import { OverlaySize, PageType } from "../testing-storage";
 
 export interface OverlayState {
   currentHost: string;
@@ -32,15 +31,13 @@ export interface OverlayState {
       y: number;
     },
   ) => void;
-  transition: (nextStage: StageKeys) => void;
+  transition: (nextStage: Transition) => void;
+  _transition: (nextStage: Transition) => Promise<void>;
   getTestRunHistory: () => TestRun[];
   getCurrentTestRun: () => TestRun;
   setCurrentTestRunData: (
     setCallBack: (testRunData: TestRun) => Partial<TestRun>,
   ) => void;
-  handleInitialSovendusCheck: () => void;
-  handleConsentSelection: (withConsent: boolean) => void;
-  handlePageSelection: (pageType: PageType) => void;
   handleTestCompletion: (result: TestResult) => void;
   handleNavigateToSuccessPage: () => void;
   startNewTest: () => void;
@@ -48,8 +45,6 @@ export interface OverlayState {
   transitionBack: () => void;
   addToBlacklist: () => void;
   resizeOverlay: (direction: "increase" | "decrease") => void;
-  hideOverlay: () => void;
-  openBlacklistConfirmation: () => void;
   updateTesterStorage: (
     updateCallBack: (
       currentState: ExtensionStorage,
@@ -154,59 +149,33 @@ export const useOverlayState = (
           }
         },
 
-        openBlacklistConfirmation: (): void => {
-          get().transition(
-            testingFlowConfig.transitions.initialPrompt.DECLINE!,
-          );
+        transition: (nextStage: Transition): void => {
+          const { _transition } = get();
+          void _transition(nextStage);
         },
 
-        transition: (nextStage: StageKeys): void => {
-          debugUi("useOverlayState", `Transitioning to ${nextStage}`);
-          const stageConfig = testingFlowConfig.stages[nextStage] as StageType;
+        _transition: async (nextStage: Transition): Promise<void> => {
+          debugUi("useOverlayState", `Transitioning to ${nextStage.target}`);
+          const stageConfig = testingFlowConfig.stages[
+            nextStage.target
+          ] as StageType;
+          if (!stageConfig) {
+            error("useOverlayState", `Invalid stage: ${nextStage.target}`);
+            return;
+          }
+          await nextStage.action?.({ set, get });
           const { setCurrentTestRunData } = get();
           setCurrentTestRunData((currentRun) => ({
             lastStage: currentRun.currentStage,
-            currentStage: nextStage,
+            currentStage: nextStage.target,
             overlaySize: stageConfig.defaultSize,
           }));
         },
 
-        handleInitialSovendusCheck: (): void => {
-          debugUi("useOverlayState", 'Initial prompt response: "accepted"');
-          get().transition(testingFlowConfig.transitions.initialPrompt.ACCEPT!);
-        },
-
-        hideOverlay: (): void => {
-          set({ isPromptVisible: false });
-        },
-
-        handleConsentSelection: (withConsent): void => {
-          debugUi(
-            "useOverlayState",
-            `Consent selection: ${withConsent ? "with consent" : "without consent"}`,
-          );
-          const { transition, setCurrentTestRunData } = get();
-          setCurrentTestRunData(() => ({
-            withConsent,
-          }));
-          transition(testingFlowConfig.transitions.consentSelection.SELECT!);
-        },
-
-        handlePageSelection: (pageType): void => {
-          debugUi("useOverlayState", `Page selection: ${pageType}`);
-          const { transition, setCurrentTestRunData } = get();
-          setCurrentTestRunData(() => ({
-            currentPageType: pageType,
-          }));
-          transition(
-            pageType === PageType.LANDING
-              ? testingFlowConfig.transitions.pageSelection.SELECT_LANDING!
-              : testingFlowConfig.transitions.pageSelection.SELECT_SUCCESS!,
-          );
-        },
-
         handleTestCompletion: (result): void => {
           const { getCurrentTestRun, testerStorage } = get();
+          const currentTestRun = getCurrentTestRun();
+          const { currentPageType } = currentTestRun;
           debugUi(
             "useOverlayState",
             `Test completion: ${currentPageType}`,
@@ -234,7 +203,9 @@ export const useOverlayState = (
             if (currentPageType === PageType.SUCCESS) {
               set({
                 testHistory: [
-                  ...testHistory.filter((test) => test.id !== updatedRun.id),
+                  ...testerStorage.testHistory.filter(
+                    (test) => test.id !== updatedRun.id,
+                  ),
                   updatedRun,
                 ],
                 currentTestRun: null,
@@ -243,7 +214,6 @@ export const useOverlayState = (
               set({ currentTestRun: updatedRun });
             }
           }
-          get().setUiState({ testingState: TestingState.COMPLETED });
         },
 
         handleNavigateToSuccessPage: (): void => {
@@ -252,20 +222,22 @@ export const useOverlayState = (
             currentPageType: PageType.SUCCESS,
           }));
           get().transition(
-            testingFlowConfig.transitions.landingPageTest.NAVIGATE!,
+            testingFlowConfig.stages.landingPageTestTestPurchase.transitions.COMPLETE,
           );
         },
 
         startNewTest: (): void => {
           debugUi("useOverlayState", "Starting new test");
           get().setCurrentTestRunData(() => createNewTestRun());
-          get().transition(testingFlowConfig.transitions.initialPrompt.ACCEPT!);
+          get().transition(
+            testingFlowConfig.stages.initialPrompt.transitions.CHECK,
+          );
         },
 
         showTestHistory: (): void => {
           debugUi("useOverlayState", "Showing test history");
           get().transition(
-            testingFlowConfig.transitions.testHistory.TO_TEST_HISTORY!,
+            testingFlowConfig.stages.testHistory.transitions.TO_TEST_HISTORY,
           );
         },
 
@@ -318,12 +290,15 @@ export const useOverlayState = (
           debugUi("useOverlayState", "Exiting history view");
           const { getCurrentTestRun, transition } = get();
           const currentTestRun = getCurrentTestRun();
-          if (!currentTestRun.lastStage) {
+          if (!currentTestRun.lastStage || !currentTestRun.lastTransition) {
             // This should never happen
             error("useOverlayState", "No last stage found to go back to");
             return;
           }
-          transition(currentTestRun.lastStage);
+          const prevTransition = (
+            testingFlowConfig.stages[currentTestRun.lastStage] as StageType
+          ).transitions[currentTestRun.lastTransition] as Transition;
+          transition(prevTransition);
         },
 
         setPosition: (setPositionCallback): void => {
@@ -398,10 +373,12 @@ function createNewTestRun(): TestRun {
       screenshotUri: undefined,
     },
     currentStage: "initialPrompt",
+    lastTransition: undefined,
     completed: false,
     lastStage: undefined,
     currentPageType: PageType.LANDING,
-  };
+    selectedProducts: [],
+  } satisfies TestRun;
 }
 
 export interface OverlayDimensions {

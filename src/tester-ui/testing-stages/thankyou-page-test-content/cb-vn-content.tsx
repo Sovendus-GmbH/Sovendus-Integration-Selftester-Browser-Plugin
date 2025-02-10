@@ -1,13 +1,12 @@
 import type { JSX } from "react";
 import React from "react";
 
-import { styles } from "../../../styles";
-import type { StepProps } from "../../../testing-storage";
 import type { TestRun } from "../../../testing-storage";
 import type { TestResult } from "../../../testing-storage";
+import { type StepProps } from "../../../testing-storage";
+import { H2, H3, P } from "../../typography";
 
 export function CBVNContent({
-  overlayState,
   currentTestRun,
   currentPageTestResult,
 }: StepProps & {
@@ -21,80 +20,82 @@ export function CBVNContent({
   }
 
   return (
-    <div style={styles["contentContainer"]}>
-      <h3 style={styles.sectionTitle}>Sovendus Partner Numbers:</h3>
-      <div style={styles.text}>
+    <div>
+      <H2 overlaySize={currentTestRun.overlaySize}>
+        Sovendus Partner Numbers:
+      </H2>
+      <P overlaySize={currentTestRun.overlaySize}>
         Traffic Source Number: {selfTester.trafficSourceNumber?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Traffic Medium Number: {selfTester.trafficMediumNumber?.elementValue}
-      </div>
+      </P>
 
-      <h3 style={styles.sectionTitle}>Sovendus Container:</h3>
-      <div style={styles.text}>
+      <H3 overlaySize={currentTestRun.overlaySize}>Sovendus Container:</H3>
+      <P overlaySize={currentTestRun.overlaySize}>
         iFrame Container ID: {selfTester.iFrameContainerId?.elementValue}
-      </div>
+      </P>
 
-      <h3 style={styles.sectionTitle}>Order Data:</h3>
-      <div style={styles.text}>
+      <H3 overlaySize={currentTestRun.overlaySize}>Order Data:</H3>
+      <P overlaySize={currentTestRun.overlaySize}>
         Currency: {selfTester.orderCurrency?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Order ID: {selfTester.orderId?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Order Value: {selfTester.orderValue?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Session ID: {selfTester.sessionId?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Timestamp: {selfTester.timestamp?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Used Coupon Code: {selfTester.usedCouponCode?.elementValue}
-      </div>
+      </P>
 
-      <h3 style={styles.sectionTitle}>Customer Data:</h3>
-      <div style={styles.text}>
+      <H3 overlaySize={currentTestRun.overlaySize}>Customer Data:</H3>
+      <P overlaySize={currentTestRun.overlaySize}>
         Salutation: {selfTester.consumerSalutation?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         First Name: {selfTester.consumerFirstName?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Last Name: {selfTester.consumerLastName?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Year of Birth: {selfTester.consumerYearOfBirth?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Date of Birth: {selfTester.consumerDateOfBirth?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Email: {selfTester.consumerEmail?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Email Hash: {selfTester.consumerEmailHash?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Phone: {selfTester.consumerPhone?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Street: {selfTester.consumerStreet?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Street Number: {selfTester.consumerStreetNumber?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Zip Code: {selfTester.consumerZipCode?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         City: {selfTester.consumerCity?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Country: {selfTester.consumerCountry?.elementValue}
-      </div>
+      </P>
     </div>
   );
 }

@@ -1,73 +1,78 @@
 import type { JSX } from "react";
 import React from "react";
 
-import { debugUi } from "../../../logger/ui-logger";
 import { colors } from "../../styles";
+import { testingFlowConfig } from "../../testing-flow-config";
 import type { StepProps } from "../../testing-storage";
-import { Button } from "../ui-components/button";
+import { Button } from "../button";
 
 export function ConfirmBlacklist({
-  overlayState: { addToBlacklist, hideOverlay },
+  overlayState: { transition },
 }: StepProps): JSX.Element {
-  const handleBlacklist = (): void => {
-    debugUi("ConfirmBlacklist", "Blacklist clicked");
-    void addToBlacklist();
-  };
-
-  const handleHideOverlay = (): void => {
-    debugUi("ConfirmBlacklist", "HideOverlay clicked");
-    hideOverlay();
-  };
-
   const containerStyle: React.CSSProperties = {
-    marginTop: "0.3rem",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     textAlign: "center",
     color: "white",
-    padding: "0.25rem",
+    padding: ".25rem",
+    height: "100%",
   };
 
   const buttonContainerStyle: React.CSSProperties = {
     display: "flex",
     gap: "0.5rem",
+    width: "100%",
   };
 
   const infoTextStyle: React.CSSProperties = {
-    marginTop: "0.5rem",
-    fontSize: "1rem",
-    color: colors.text,
+    fontSize: "0.9rem",
+    color: colors.textLight,
     lineHeight: "1.4",
-    backgroundColor: "rgba(30, 118, 181, 0.81)",
+    backgroundColor: colors.info,
     padding: "0.8rem",
-    marginLeft: "0.5rem",
-    marginRight: "0.5rem",
-    marginBottom: "1.5rem",
+    marginTop: "0.5rem",
+    marginLeft: "0.25rem",
+    marginRight: "0.25rem",
+    marginBottom: ".5rem",
     borderRadius: "0.5rem",
-    fontFamily: "Arial, sans-serif",
     textAlign: "left",
   };
-
   return (
     <div style={containerStyle}>
       <div style={infoTextStyle}>
-        <div>To re-enable:</div>
-        <div>
+        <p>To re-enable:</p>
+        <p>
           Click the parcel icon in your browser's top-right corner, then select
           the Sovendus icon.
-        </div>
+        </p>
       </div>
       <div style={buttonContainerStyle}>
         {window.location.host ? (
-          <Button variant="danger" onClick={handleBlacklist}>
+          <Button
+            variant="danger"
+            onClick={() =>
+              transition(
+                testingFlowConfig.stages.blacklistConfirmation.transitions.HIDE,
+              )
+            }
+          >
+            {/* <Ban size={16} style={{ marginRight: "0.25rem" }} /> */}
             Blacklist this Page
           </Button>
         ) : (
-          <Button variant="disabled">Cant blacklist this type of urls</Button>
+          <Button variant="disabled">Can't blacklist this type of URL</Button>
         )}
-        <Button variant="secondary" onClick={handleHideOverlay}>
+        <Button
+          variant="secondary"
+          onClick={() =>
+            transition(
+              testingFlowConfig.stages.blacklistConfirmation.transitions.HIDE,
+            )
+          }
+        >
+          {/* <X size={16} style={{ marginRight: "0.25rem" }} /> */}
           Hide Overlay
         </Button>
       </div>

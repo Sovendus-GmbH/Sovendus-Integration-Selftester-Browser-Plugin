@@ -9,7 +9,7 @@ export async function toggleSelfTesterOverlayVisibility(
     target: { tabId },
     args: [overlayRootId],
     func: (overlayRootId: string): boolean => {
-      let isVisibleNow: boolean = false;
+      let isVisibleNow = false;
       const overlay = document.getElementById(overlayId);
       const overlayToggle = document.getElementById(openSovendusOverlayId);
       if (overlay && overlayToggle) {
@@ -41,9 +41,7 @@ export async function toggleSelfTesterOverlayVisibility(
   });
   if (result?.[0]?.result === undefined) {
     throw new Error(
-      `Failed to check if an overlay is used, result: ${JSON.stringify(
-        result,
-      )}`,
+      `Failed to check if an overlay is used, result: ${JSON.stringify(result)}`,
     );
   }
   const isVisibleNow = result[0].result;

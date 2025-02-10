@@ -4,12 +4,12 @@ import React from "react";
 
 import { maxZIndex } from "../../constants";
 import { debugUi } from "../../logger/ui-logger";
+import { ErrorBoundary } from "../components/error-boundary";
 import type {
   OverlayDimensions,
   OverlayState,
 } from "../hooks/use-overlay-state";
-import { colors, styles } from "../styles";
-import { ErrorBoundary } from "./error-boundary";
+import { colors } from "../styles";
 import { OverlayContent } from "./overlay-content";
 import { OverlayToolbar } from "./overlay-toolbar";
 
@@ -33,7 +33,7 @@ export function DraggableOverlay({
   });
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
-  const toolbarHeight = toolbarRef.current?.clientHeight ?? 0;
+  const toolbarHeight = toolbarRef.current?.clientHeight ?? 34;
 
   const style: React.CSSProperties = {
     position: "fixed",
@@ -47,21 +47,29 @@ export function DraggableOverlay({
     background: colors.background,
     overflow: "hidden",
     zIndex: maxZIndex,
-    ...styles.text,
+    color: colors.text,
   };
 
   return (
     <ErrorBoundary>
       <div ref={setNodeRef} style={style} {...attributes}>
-        <OverlayToolbar
-          listeners={listeners}
-          overlayState={overlayState}
-          toolbarRef={toolbarRef}
-        />
-        <OverlayContent
-          overlayState={overlayState}
-          toolbarHeight={toolbarHeight}
-        />
+        <div>
+          <OverlayToolbar
+            listeners={listeners}
+            overlayState={overlayState}
+            toolbarRef={toolbarRef}
+          />
+        </div>
+        <div
+          style={{
+            flex: 1,
+            height: `calc(100% - ${toolbarHeight}px)`,
+          }}
+        >
+          <div style={{ overflowY: "auto", overflowX: "hidden" }}>
+            <OverlayContent overlayState={overlayState} />
+          </div>
+        </div>
       </div>
     </ErrorBoundary>
   );

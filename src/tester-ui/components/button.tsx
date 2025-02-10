@@ -1,7 +1,7 @@
 import type { CSSProperties, JSX, ReactNode } from "react";
 import React from "react";
 
-import { colors } from "../../styles";
+import { colors } from "../styles";
 
 const baseButtonStyle: React.CSSProperties = {
   padding: "0.5rem 1rem",
@@ -10,28 +10,32 @@ const baseButtonStyle: React.CSSProperties = {
   cursor: "pointer",
   transition: "background-color 0.2s",
   display: "flex",
-  margin: "auto",
   fontSize: "0.875rem",
   fontWeight: "500",
+  alignItems: "center",
+  justifyContent: "center",
+  color: colors.text,
+  outline: "none",
+  marginTop: "auto",
+  marginBottom: "auto",
 };
 
 const variantStyles: { [key: string]: React.CSSProperties } = {
   primary: {
     backgroundColor: colors.primary,
-    color: colors.text,
   },
   secondary: {
     backgroundColor: colors.secondary,
-    color: colors.text,
   },
   danger: {
     backgroundColor: colors.error,
-    color: colors.text,
   },
   disabled: {
     backgroundColor: colors.disabled,
-    color: colors.text,
     cursor: "not-allowed",
+  },
+  transparent: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
 };
 
@@ -53,10 +57,9 @@ const sizeStyles: { [key: string]: React.CSSProperties } = {
 type ButtonProps = {
   children: ReactNode;
   onClick?: () => void;
-  variant?: "primary" | "secondary" | "danger" | "disabled";
+  variant?: "primary" | "secondary" | "danger" | "disabled" | "transparent";
   size?: "small" | "medium" | "large";
   style?: CSSProperties;
-  disabled?: boolean;
 };
 
 export function Button({
@@ -73,11 +76,11 @@ export function Button({
   };
 
   return (
-    <button
+    <div
       style={{ ..._style, ...style }}
       onClick={variant === "disabled" ? undefined : onClick}
     >
       {children}
-    </button>
+    </div>
   );
 }

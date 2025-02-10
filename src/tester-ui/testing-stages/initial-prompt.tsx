@@ -1,31 +1,21 @@
 import type { JSX } from "react";
 import React from "react";
 
-import { debugUi } from "../../../logger/ui-logger";
+import { colors } from "../../styles";
+import { testingFlowConfig } from "../../testing-flow-config";
 import type { StepProps } from "../../testing-storage";
-import { Button } from "../ui-components/button";
+import { Button } from "../button";
 
 export function InitialPrompt({
-  overlayState: { handleInitialSovendusCheck, openBlacklistConfirmation },
+  overlayState: { transition },
 }: StepProps): JSX.Element {
-  const handleAccept = (): void => {
-    debugUi("InitialPrompt", "Accept clicked");
-    handleInitialSovendusCheck();
-  };
-
-  const handleDecline = (): void => {
-    debugUi("InitialPrompt", "Decline clicked");
-    openBlacklistConfirmation();
-  };
-
   const containerStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     textAlign: "center",
-    color: "white",
-    padding: "0.25rem",
+    color: colors.text,
   };
 
   return (
@@ -36,10 +26,23 @@ export function InitialPrompt({
           gap: "0.5rem",
         }}
       >
-        <Button size="small" onClick={handleAccept}>
+        <Button
+          size="small"
+          onClick={() =>
+            transition(testingFlowConfig.stages.initialPrompt.transitions.CHECK)
+          }
+        >
           Check Sovendus
         </Button>
-        <Button variant="secondary" size="small" onClick={handleDecline}>
+        <Button
+          variant="secondary"
+          size="small"
+          onClick={() =>
+            transition(
+              testingFlowConfig.stages.initialPrompt.transitions.DECLINE,
+            )
+          }
+        >
           Disable on this Page
         </Button>
       </div>

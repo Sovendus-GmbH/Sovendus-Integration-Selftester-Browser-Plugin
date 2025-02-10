@@ -2,15 +2,14 @@ import { X } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import { styles } from "../../../styles";
 import type { StepProps } from "../../../testing-storage";
 import type { TestRun } from "../../../testing-storage";
 import type { TestResult } from "../../../testing-storage";
+import { H2, H3, P } from "../../typography";
 
 export function OptimizeContent({
-  overlayState,
-  currentTestRun,
   currentPageTestResult,
+  currentTestRun,
 }: StepProps & {
   currentTestRun: TestRun;
   currentPageTestResult: TestResult;
@@ -42,34 +41,33 @@ export function OptimizeContent({
   }
 
   return (
-    <div style={styles.contentContainer}>
-      <div style={styles.sectionTitle}>Optimize Data:</div>
-      <div style={styles.text}>
+    <div>
+      <H2 overlaySize={currentTestRun.overlaySize}>Optimize Data:</H2>
+      <P overlaySize={currentTestRun.overlaySize}>
         Optimize ID: {selfTester.optimizeId?.elementValue || "Not detected"}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Checkout Products Token:{" "}
         {selfTester.checkoutProductsToken?.elementValue || "Not detected"}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Checkout Products ID:{" "}
         {selfTester.checkoutProductsId?.elementValue || "Not detected"}
-      </div>
+      </P>
 
-
-      <div style={styles.sectionTitle}>Order Data:</div>
-      <div style={styles.text}>
+      <H3 overlaySize={currentTestRun.overlaySize}>Order Data:</H3>
+      <P overlaySize={currentTestRun.overlaySize}>
         Currency: {selfTester.orderCurrency?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Order ID: {selfTester.orderId?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Order Value: {selfTester.orderValue?.elementValue}
-      </div>
-      <div style={styles.text}>
+      </P>
+      <P overlaySize={currentTestRun.overlaySize}>
         Coupon Code: {selfTester.usedCouponCode?.elementValue}
-      </div>
+      </P>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import type { CSSProperties, JSX, ReactNode } from "react";
+
 import type { IntegrationDetectorData } from "../detector/integration-detector";
 import type { TestResultDataType } from "../tester/integration-tester-data-to-sync-with-dev-hub";
 import type { OverlayState } from "./hooks/use-overlay-state";
@@ -30,12 +32,6 @@ export enum OverlaySize {
   LARGE = "large",
 }
 
-export enum IntegrationType {
-  CB_VN = "Checkout Benefits & Voucher Network",
-  CHECKOUT_PRODUCTS = "Checkout Products",
-  OPTIMIZE = "Optimize",
-}
-
 export enum PageType {
   UNKNOWN = "unknown",
   LANDING = "landing",
@@ -63,13 +59,34 @@ export interface TestRun {
   startTime: number;
   endTime?: number;
   withConsent: boolean | undefined;
-  currentPageType: PageType | undefined;
+  currentPageType: PageType;
   landingPageResult: TestResult;
   successPageResult: TestResult;
   currentStage: StageKeys;
   lastStage: StageKeys | undefined;
+  lastTransition: TransitionTypes | undefined;
   completed: boolean;
+  selectedProducts: SovendusProductKey[];
 }
+
+export type SovendusProductKey = keyof typeof sovendusProductKeys;
+
+export const sovendusProductKeys = {
+  VOUCHER_NETWORK: "VOUCHER_NETWORK",
+  CHECKOUT_BENEFITS: "CHECKOUT_BENEFITS",
+  OPTIMIZE: "OPTIMIZE",
+  CHECKOUT_PRODUCTS: "CHECKOUT_PRODUCTS",
+} as const;
+
+export const sovendusProductTitles: Record<
+  keyof typeof sovendusProductKeys,
+  string
+> = {
+  VOUCHER_NETWORK: "Voucher Network",
+  CHECKOUT_BENEFITS: "Checkout Benefits",
+  OPTIMIZE: "Optimize",
+  CHECKOUT_PRODUCTS: "Checkout Products",
+};
 
 export type TestingFlowConfigType = {
   stages: {
@@ -87,37 +104,79 @@ export type TransitionType = {
 
 export interface StepProps {
   overlayState: OverlayState;
+  stageInfo: StageType;
 }
 
 export type StageType = {
-  component: ({ overlayState }: StepProps) => React.JSX.Element;
-  availableSizes: OverlaySize[];
-  defaultSize: OverlaySize;
+  readonly title?: string;
+  readonly instruction?: string;
+  readonly applicableProducts?: SovendusProductKey[];
+  readonly icon?: ({
+    size,
+    style,
+  }: {
+    size: number;
+    style?: CSSProperties;
+  }) => ReactNode;
+  readonly component: ({ overlayState }: StepProps) => JSX.Element;
+  readonly availableSizes: readonly OverlaySize[];
+  readonly defaultSize: OverlaySize;
+  readonly transitions: {
+    [transitionType in TransitionTypes]?: Transition;
+  };
 };
+
+export interface Transition {
+  target: StageKeys;
+  action?: (args: {
+    set: {
+      (
+        partial:
+          | OverlayState
+          | Partial<OverlayState>
+          | ((state: OverlayState) => OverlayState | Partial<OverlayState>),
+        replace?: false,
+      ): void;
+      (
+        state: OverlayState | ((state: OverlayState) => OverlayState),
+        replace: true,
+      ): void;
+    };
+    get: () => OverlayState;
+  }) => Promise<void> | void;
+}
 
 export type StageKeys =
   | "initialPrompt"
-  | "confirmBlacklist"
+  | "blacklistConfirmation"
   | "featureSelection"
   | "consentSelection"
-  | "pageSelection"
-  | "landingPageTest"
+  | "productSelection"
+  | "landingPageTestScreenshot"
+  | "landingPageTestVoucherCode"
+  | "landingPageTestOrderValue"
+  | "landingPageTestCurrency"
+  | "landingPageTestDummyParams"
+  | "landingPageTestOptimizeCheck"
+  | "landingPageTestTestPurchase"
   | "successPageTest"
   | "testHistory";
 
 export type TransitionTypes =
   | "ACCEPT"
-  | "DECLINE"
-  | "BLACKLIST"
-  | "SELECT"
-  | "SELECT_LANDING"
-  | "SELECT_SUCCESS"
-  | "COMPLETE"
-  | "NAVIGATE"
-  | "TEST_INTEGRATION"
-  | "INTEGRATION_HELP"
+  | "CHECK"
+  | "HIDE"
+  | "BACK"
+  | "WITHOUT_CONSENT"
+  | "WITH_CONSENT"
   | "TO_TEST_HISTORY"
-  | "RESTART";
+  | "BLACKLIST"
+  | "CONTINUE"
+  | "COMPLETE"
+  | "DECLINE"
+  | "RESTART"
+  | "SELECT"
+  | "TEST_INTEGRATION";
 
 export interface TestResult {
   integrationTester: TestResultDataType | undefined;

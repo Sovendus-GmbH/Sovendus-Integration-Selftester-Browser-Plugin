@@ -1,7 +1,9 @@
 import type { Dispatch, JSX, SetStateAction } from "react";
 import React from "react";
-import type { ConversionsType } from "sovendus-integration-scripts/src/js/thank-you/utils/IntegrationDataCollector";
-import type { SovConsumerType } from "sovendus-integration-scripts/src/js/thank-you/utils/thank-you-types";
+import type {
+  ConversionsType,
+  SovConsumerType,
+} from "sovendus-integration-types";
 
 export function ThankyouPageForm({
   config,
