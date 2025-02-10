@@ -111,7 +111,9 @@ export function OverlayToolbar({
         {showCloseButton && (
           <Button
             onClick={() =>
-              transition(testingFlowConfig.stages.initialPrompt.transitions.DECLINE)
+              transition(
+                testingFlowConfig.stages.initialPrompt.transitions.DECLINE,
+              )
             }
             style={buttonStyle}
           >

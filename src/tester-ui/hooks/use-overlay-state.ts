@@ -222,7 +222,8 @@ export const useOverlayState = (
             currentPageType: PageType.SUCCESS,
           }));
           get().transition(
-            testingFlowConfig.stages.landingPageTestTestPurchase.transitions.COMPLETE,
+            testingFlowConfig.stages.landingPageTestTestPurchase.transitions
+              .COMPLETE,
           );
         },
 

@@ -64,7 +64,7 @@ export function LandingPageTestContent({
           >
             <StepIcon size={20} />
             <StatusItem
-              label={stageInfo.title!}
+              label={stageInfo.title}
               value={"Done"}
               icon={CheckCircle}
               color={"#10B981"}

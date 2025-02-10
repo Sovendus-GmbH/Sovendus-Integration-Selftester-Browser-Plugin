@@ -57,7 +57,7 @@ export async function hideOrShowStickyBannerAndOverlay(
     target: { tabId },
     world: "MAIN",
     args: [hide],
-    func: async (hide) => {
+    func: (hide) => {
       // TODO handle this
       window.sovSelfTester?.hideOverlayBanners(hide);
     },
@@ -65,7 +65,7 @@ export async function hideOrShowStickyBannerAndOverlay(
 }
 
 export interface SovWindow extends Window {
-  sovSelfTester?: SelfTester;
+  // sovSelfTester?: SelfTester;
 }
 
 declare let window: SovWindow;
