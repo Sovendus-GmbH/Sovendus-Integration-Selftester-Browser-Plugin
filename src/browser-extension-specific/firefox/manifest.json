@@ -1,0 +1,31 @@
+{
+  "name": "Sovendus Integration Tester",
+  "version": "2.0.0",
+  "manifest_version": 2,
+  "description": "Use this extension to verify if your Sovendus integration is setup properly",
+  "background": {
+    "scripts": [
+      "service-worker.js"
+    ],
+    "persistent": true
+  },
+  "permissions": [
+    "<all_urls>",
+    "scripting",
+    "clipboardWrite",
+    "storage"
+  ],
+  "icons": {
+    "128": "sovendus.png"
+  },
+  "browser_action": {
+    "default_icon": "sovendus.png",
+    "default_title": "Sovendus Integration Tester",
+    "default_popup": "extension-pop-up.html"
+  },
+  "applications": {
+    "gecko": {
+      "id": "{9ea53b13-faa1-4963-bb55-481b5adda7b6}"
+    }
+  }
+}

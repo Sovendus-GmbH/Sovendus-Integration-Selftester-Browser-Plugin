@@ -1,21 +1,21 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "noEmitOnError": true,
     "removeComments": true,
-    // "sourceMap": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "target": "ESNext",
+    "sourceMap": true,
     "module": "ESNext",
-    "allowJs": true,
+    "moduleResolution": "node",
+    "target": "ESNext",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": false,
     "allowArbitraryExtensions": true,
-    "outDir": "build/chrome",
-    "rootDir": "src",
+    "outDir": "build",
+    "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@src/*": [
-        "src/*"
-      ]
+      "*": ["node_modules/*"]
     },
     // Strict Checks
     "strict": true, // Enable all strict type-checking options
@@ -47,12 +47,9 @@
     "suppressImplicitAnyIndexErrors": false,
     "noStrictGenericChecks": false
   },
-  "include": [
-    "src/",
-    "src/tests"
-  ],
-  "exclude": [
-    "src/chrome",
-    "src/firefox"
-  ]
+  "ts-node": {
+    "esm": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "build.ts"],
+  "exclude": ["src/chrome", "node_modules", "src/firefox", "build"]
 }

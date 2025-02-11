@@ -1,0 +1,17 @@
+export const colors = {
+  primary: "#4F46E5",
+  secondary: "#7C3AED",
+  border: "#E5E7EB",
+  background: "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)",
+  overlayShadow: "rgba(0, 0, 0, 0.25)",
+  backgroundToolBar: "rgba(255, 255, 255, 0.1)",
+  text: "#F3F4F6",
+  link: "#60A5FA",
+  textLight: "rgba(255, 255, 255, 0.7)",
+  white: "#FFFFFF",
+  info: "rgba(30, 118, 181, 0.2)",
+  error: "#D30000",
+  warning: "#F59E0B",
+  success: "#10B981",
+  disabled: "#D1D5DB",
+};

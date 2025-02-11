@@ -1,0 +1,49 @@
+{
+  "name": "Sovendus Integration Tester",
+  "version": "2.0.0",
+  "manifest_version": 3,
+  "description": "Use this extension to verify if your Sovendus integration is setup properly",
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "permissions": [
+    "scripting",
+    "webNavigation",
+    "storage",
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "extension-pop-up.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content-script.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "/browser-extension-loader.js",
+        "/extension-pop-up.js",
+        "/extension-pop-up.js.map",
+        "/browser-extension-loader.js.map"
+      ],
+      "matches": [
+        "<all_urls>"
+      ],
+      "extension_ids": []
+    }
+  ],
+  "icons": {
+    "128": "sovendus.png"
+  }
+}
