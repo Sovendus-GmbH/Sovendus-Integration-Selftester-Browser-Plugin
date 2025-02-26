@@ -1,43 +1,50 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { JSX } from "react";
-import React from "react";
 
 import { ClearTesterStorageButton } from "./SelfTester";
 
-export default function NavBar({
-  currentPage,
-}: {
-  currentPage: "/" | "/empty-page" | "/thank-you";
-}): JSX.Element {
+export default function NavBar(): JSX.Element {
+  const currentPage = usePathname();
   return (
     <div
       style={{
         display: "flex",
-        // paddingTop: "40px",
-        paddingBottom: "40px",
+        paddingBottom: "20px",
         gap: "30px",
       }}
     >
-      <a href={"/"}>
+      <Link href={"/"}>
         <button disabled={currentPage === "/"} style={{ padding: "5px" }}>
-          Landing Page
-        </button>
-      </a>
-      <a href={"/empty-page"}>
-        <button
-          disabled={currentPage === "/empty-page"}
-          style={{ padding: "5px" }}
-        >
           empty-page
         </button>
-      </a>
-      <a href={"/thank-you"}>
+      </Link>
+      <Link href={"/settings"}>
+        <button
+          disabled={currentPage === "/settings"}
+          style={{ padding: "5px" }}
+        >
+          Settings Page
+        </button>
+      </Link>
+      <Link href={"/landing-page"}>
+        <button
+          disabled={currentPage === "/landing-page"}
+          style={{ padding: "5px" }}
+        >
+          Landing Page
+        </button>
+      </Link>
+      <Link href={"/thank-you"}>
         <button
           disabled={currentPage === "/thank-you"}
           style={{ padding: "5px" }}
         >
           go to thank you page
         </button>
-      </a>
+      </Link>
       <ClearTesterStorageButton />
     </div>
   );

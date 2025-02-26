@@ -1,7 +1,14 @@
 import type { JSX, ReactNode } from "react";
 import React from "react";
 
+
+import NavBar from "./components/NavBar";
 import { IntegrationTester } from "./components/SelfTester";
+
+export const metadata = {
+  title: "Preview ENV for sovendus integration testing app",
+  description: "Using Next.js <3",
+};
 
 export default function RootLayout({
   children,
@@ -17,7 +24,11 @@ export default function RootLayout({
         }}
       >
         <IntegrationTester />
-        {children}
+
+        <main style={{ padding: "40px" }}>
+          <NavBar />
+          {children}
+        </main>
       </body>
     </html>
   );

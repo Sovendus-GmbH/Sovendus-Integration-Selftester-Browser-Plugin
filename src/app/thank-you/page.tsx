@@ -1,54 +1,75 @@
 "use client";
 
 import type { JSX } from "react";
-import React, { useState } from "react";
+
+import { useEffect, useState } from "react";
+import { CountryCodes } from "sovendus-integration-types";
 import type {
-  ConversionsType,
-  SovConsumerType,
+  SovendusConsumerType,
+  SovendusVNConversionsType,
 } from "sovendus-integration-types";
 
-import NavBar from "../components/NavBar";
-import { SovendusBanner } from "../components/thank-you/SovendusThankYou";
-import { ThankyouPageForm } from "../components/thank-you/ThankYouPageForm";
+import { SovendusThankyou } from "./SovendusThankYou";
+import { ThankyouPageForm } from "./ThankYouPageForm";
+
+const defaultConfig: {
+  orderData: SovendusVNConversionsType;
+  customerData: SovendusConsumerType;
+} = {
+  orderData: {
+    sessionId: "asdas",
+    orderId: "13245",
+    orderValue: "1324",
+    orderCurrency: "EUR",
+    usedCouponCode: "1324",
+  },
+  customerData: {
+    consumerSalutation: "Mr.",
+    consumerFirstName: "John",
+    consumerLastName: "Doe",
+    consumerEmail: "John.doe@bla.bla",
+    consumerCountry: CountryCodes.DE,
+    consumerZipcode: "",
+    consumerPhone: "0123456789",
+    consumerYearOfBirth: "1991",
+    consumerDateOfBirth: "01.01.1991",
+    consumerStreet: "test street",
+    consumerStreetNumber: "1",
+    consumerCity: "testCity",
+  },
+};
 
 export default function ThankYou(): JSX.Element {
   const [config, setConfig] = useState<{
-    iframes: ConversionsType;
-    consumer: SovConsumerType;
-  }>({
-    iframes: {
-      trafficSourceNumber: 7849,
-      trafficMediumNumber: 16,
-      sessionId: "asdas",
-      timestamp: Math.floor(Date.now() / 1000),
-      orderId: "13245",
-      orderValue: "1324",
-      orderCurrency: "EUR",
-      usedCouponCode: "1324",
+    orderData: SovendusVNConversionsType;
+    customerData: SovendusConsumerType;
+  }>(
+    (): {
+      orderData: SovendusVNConversionsType;
+      customerData: SovendusConsumerType;
+    } => {
+      if (typeof window !== "undefined") {
+        const storedConfig = localStorage.getItem("thankyouConfig");
+        return storedConfig
+          ? (JSON.parse(storedConfig) as {
+              orderData: SovendusVNConversionsType;
+              customerData: SovendusConsumerType;
+            })
+          : defaultConfig;
+      }
+      return defaultConfig;
     },
-    consumer: {
-      consumerSalutation: "",
-      consumerFirstName: "",
-      consumerLastName: "",
-      consumerEmail: "",
-      consumerCountry: "",
-      consumerZipcode: "",
-      consumerPhone: "",
-      consumerYearOfBirth: "",
-      consumerDateOfBirth: "",
-      consumerStreet: "",
-      consumerStreetNumber: "",
-      consumerCity: "",
-    },
-  });
+  );
+
+  useEffect(() => {
+    localStorage.setItem("thankyouConfig", JSON.stringify(config));
+  }, [config]);
+
   return (
     <div>
-      <main style={{ padding: "40px" }}>
-        <NavBar currentPage="/thank-you" />
-        <h1>This is a thank you page</h1>
-        <ThankyouPageForm config={config} setConfig={setConfig} />
-        <SovendusBanner config={config} />
-      </main>
+      <h1>This is a thank you page</h1>
+      <ThankyouPageForm config={config} setConfig={setConfig} />
+      <SovendusThankyou config={config} />
     </div>
   );
 }
