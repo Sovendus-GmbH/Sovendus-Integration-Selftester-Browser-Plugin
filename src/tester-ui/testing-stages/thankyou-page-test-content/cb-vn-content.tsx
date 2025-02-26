@@ -1,10 +1,8 @@
 import type { JSX } from "react";
 import React from "react";
 
-import type { TestRun } from "../../../testing-storage";
-import type { TestResult } from "../../../testing-storage";
-import { type StepProps } from "../../../testing-storage";
-import { H2, H3, P } from "../../typography";
+import { H2, H3, P } from "../../components/typography";
+import type { StepProps, TestResult, TestRun } from "../../testing-storage";
 
 export function CBVNContent({
   currentTestRun,

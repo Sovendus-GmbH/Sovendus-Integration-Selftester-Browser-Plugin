@@ -8,14 +8,14 @@ import {
   Ticket,
 } from "lucide-react";
 
-import { ConfirmBlacklist } from "./components/testing-stages/confirm-blacklist";
-import { ConsentSelection } from "./components/testing-stages/consent-selection";
-import { FeatureSelection } from "./components/testing-stages/feature-selection";
-import { InitialPrompt } from "./components/testing-stages/initial-prompt";
-import { LandingPageTestContent } from "./components/testing-stages/landing-page-test/test-content";
-import { ProductSelection } from "./components/testing-stages/product-selection";
-import { TestHistory } from "./components/testing-stages/test-history";
-import { ThankyouTestContent } from "./components/testing-stages/thankyou-page-test-content/test-content";
+import { ConfirmBlacklist } from "./testing-stages/confirm-blacklist";
+import { ConsentSelection } from "./testing-stages/consent-selection";
+import { FeatureSelection } from "./testing-stages/feature-selection";
+import { InitialPrompt } from "./testing-stages/initial-prompt";
+import { LandingPageTestContent } from "./testing-stages/landing-page-test/test-content";
+import { ProductSelection } from "./testing-stages/product-selection";
+import { TestHistory } from "./testing-stages/test-history";
+import { ThankyouTestContent } from "./testing-stages/thankyou-page-test-content/test-content";
 import type { StageKeys, StageType, Transition } from "./testing-storage";
 import { OverlaySize, PageType, sovendusProductKeys } from "./testing-storage";
 

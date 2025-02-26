@@ -8,14 +8,11 @@ import {
 import type { JSX } from "react";
 import React from "react";
 
-import { DetectionState } from "../../../../detector/integration-detector";
-import { DownloadIntegrationTestReport } from "../../../../test-report/integration-test-report";
-import { testingFlowConfig } from "../../../testing-flow-config";
-import {
-  OverlaySize,
-  PageType,
-  type StepProps,
-} from "../../../testing-storage";
+import { DetectionState } from "../../../detector/integration-detector";
+import DownloadIntegrationTestReport from "../../../test-report/integration-test-report";
+import { testingFlowConfig } from "../../testing-flow-config";
+import type { StepProps } from "../../testing-storage";
+import { OverlaySize, PageType } from "../../testing-storage";
 import { StatusItem } from "../components/status-item";
 import { CBVNContent } from "./cb-vn-content";
 import { CheckoutProductsContent } from "./checkout products-content";

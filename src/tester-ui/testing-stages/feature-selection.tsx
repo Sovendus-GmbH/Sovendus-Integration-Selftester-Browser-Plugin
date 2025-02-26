@@ -2,10 +2,10 @@ import { ArrowLeft, CheckCircle, HelpCircle } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import { testingFlowConfig } from "../../testing-flow-config";
-import type { StepProps } from "../../testing-storage";
-import { Button } from "../button";
-import { H1 } from "../typography";
+import { Button } from "../components/button";
+import { H1 } from "../components/typography";
+import { testingFlowConfig } from "../testing-flow-config";
+import type { StepProps } from "../testing-storage";
 
 export function FeatureSelection({
   overlayState: { transition, getCurrentTestRun },

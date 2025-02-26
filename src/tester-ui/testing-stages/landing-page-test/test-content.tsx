@@ -9,8 +9,8 @@ import {
 import type { JSX } from "react";
 import React from "react";
 
-import { DetectionState } from "../../../../detector/integration-detector";
-import { OverlaySize, type StepProps } from "../../../testing-storage";
+import { DetectionState } from "../../../detector/integration-detector";
+import { OverlaySize, type StepProps } from "../../testing-storage";
 import { StatusItem } from "../components/status-item";
 
 export function LandingPageTestContent({
@@ -24,7 +24,7 @@ export function LandingPageTestContent({
 
   const selectedProducts = currentTestRun.selectedProducts;
 
-  const handleStepCompletion = async (): Promise<void> => {
+  const handleStepCompletion = (): void => {
     const completeTransition = stageInfo.transitions.COMPLETE;
     if (!completeTransition) {
       throw new Error("Transition 'COMPLETE' not found");
@@ -32,7 +32,7 @@ export function LandingPageTestContent({
     transition(completeTransition);
   };
 
-  const handleStepBack = async (): Promise<void> => {
+  const handleStepBack = (): void => {
     const completeTransition = stageInfo.transitions.BACK;
     if (!completeTransition) {
       throw new Error("Transition 'BACK' not found");

@@ -1,14 +1,14 @@
 import { ArrowLeft, ArrowRight, Check, ExternalLink } from "lucide-react";
 import React, { useCallback } from "react";
 
-import { colors } from "../../styles";
-import { testingFlowConfig } from "../../testing-flow-config";
-import type { SovendusProductKey, StepProps } from "../../testing-storage";
-import { sovendusProductKeys } from "../../testing-storage";
-import { Alert } from "../alert";
-import { Button } from "../button";
-import { ErrorBoundary } from "../error-boundary";
-import { H1 } from "../typography";
+import { Alert } from "../components/alert";
+import { Button } from "../components/button";
+import { ErrorBoundary } from "../components/error-boundary";
+import { H1 } from "../components/typography";
+import { colors } from "../styles";
+import { testingFlowConfig } from "../testing-flow-config";
+import type { SovendusProductKey } from "../testing-storage";
+import { sovendusProductKeys, type StepProps } from "../testing-storage";
 
 interface Product {
   name: string;

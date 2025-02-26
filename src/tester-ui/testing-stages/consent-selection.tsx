@@ -2,13 +2,13 @@ import { ArrowLeft, CheckCircle } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import { colors } from "../../styles";
-import { testingFlowConfig } from "../../testing-flow-config";
-import type { StepProps } from "../../testing-storage";
-import { OverlaySize } from "../../testing-storage";
-import { Alert } from "../alert";
-import { Button } from "../button";
-import { H1, H3, P } from "../typography";
+import { Alert } from "../components/alert";
+import { Button } from "../components/button";
+import { H1, H3, P } from "../components/typography";
+import { colors } from "../styles";
+import { testingFlowConfig } from "../testing-flow-config";
+import type { StepProps } from "../testing-storage";
+import { OverlaySize } from "../testing-storage";
 
 export function ConsentSelectionStep({
   overlayState: { getCurrentTestRun, transition },

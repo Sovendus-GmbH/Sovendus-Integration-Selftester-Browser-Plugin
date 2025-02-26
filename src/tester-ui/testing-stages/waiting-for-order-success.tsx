@@ -8,12 +8,11 @@ import {
 import type { JSX } from "react";
 import React, { useState } from "react";
 
-import { DetectionState } from "../../../detector/integration-detector";
-import { colors } from "../../styles";
-import type { StepProps } from "../../testing-storage";
-import { OverlaySize } from "../../testing-storage";
-import { Button } from "../button";
-import { H1, P } from "../typography";
+import { DetectionState } from "../../detector/integration-detector";
+import { Button } from "../components/button";
+import { H1, P } from "../components/typography";
+import { colors } from "../styles";
+import { OverlaySize, type StepProps } from "../testing-storage";
 import { StatusItem } from "./components/status-item";
 
 export function NavigationPrompt({

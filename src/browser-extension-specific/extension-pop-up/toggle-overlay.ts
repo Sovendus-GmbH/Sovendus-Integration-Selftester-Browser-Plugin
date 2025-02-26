@@ -10,32 +10,17 @@ export async function toggleSelfTesterOverlayVisibility(
     args: [overlayRootId],
     func: (overlayRootId: string): boolean => {
       let isVisibleNow = false;
-      const overlay = document.getElementById(overlayId);
-      const overlayToggle = document.getElementById(openSovendusOverlayId);
-      if (overlay && overlayToggle) {
-        if (overlayToggle.style.display === "none") {
+      const overlay = document.getElementById(overlayRootId);
+      if (overlay) {
+        if (overlay.style.display === "none") {
           overlay.style.display = "block";
-          overlay.classList.remove(fullscreenClass);
-          overlayToggle.style.display = "block";
           isVisibleNow = true;
         } else {
           overlay.style.display = "none";
-          overlay.classList.remove(fullscreenClass);
-          overlayToggle.style.display = "none";
           isVisibleNow = false;
         }
       }
 
-      const checkerOverlay = document.getElementById(
-        "outerSovendusIntegrationMethodCheckerOverlay",
-      );
-      if (checkerOverlay) {
-        if (checkerOverlay.style.display === "none") {
-          checkerOverlay.style.display = "block";
-        } else {
-          checkerOverlay.style.display = "none";
-        }
-      }
       return isVisibleNow;
     },
   });

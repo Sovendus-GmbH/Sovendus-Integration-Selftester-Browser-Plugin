@@ -2,14 +2,11 @@ import { ArrowLeft, RotateCcw } from "lucide-react";
 import type { JSX } from "react";
 import React from "react";
 
-import { colors } from "../../styles";
-import {
-  OverlaySize,
-  type StepProps,
-  type TestRun,
-} from "../../testing-storage";
-import { Button } from "../button";
-import { H1, H2, H3, P } from "../typography";
+import { Button } from "../components/button";
+import { H1, H2, H3, P } from "../components/typography";
+import { colors } from "../styles";
+import type { TestRun } from "../testing-storage";
+import { OverlaySize, type StepProps } from "../testing-storage";
 
 export function TestHistory({ overlayState }: StepProps): JSX.Element {
   const { getTestRunHistory } = overlayState;

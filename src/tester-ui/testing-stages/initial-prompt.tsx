@@ -1,10 +1,10 @@
 import type { JSX } from "react";
 import React from "react";
 
-import { colors } from "../../styles";
-import { testingFlowConfig } from "../../testing-flow-config";
-import type { StepProps } from "../../testing-storage";
-import { Button } from "../button";
+import { Button } from "../components/button";
+import { colors } from "../styles";
+import { testingFlowConfig } from "../testing-flow-config";
+import type { StepProps } from "../testing-storage";
 
 export function InitialPrompt({
   overlayState: { transition },
