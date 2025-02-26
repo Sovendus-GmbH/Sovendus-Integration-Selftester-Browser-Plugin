@@ -282,7 +282,7 @@ export const statusMessages: {
     errorText: `<h3 class='sovendus-overlay-error'>
               ERROR: Awin integration detected and a sale has been tracked, but for an unknown reason Sovendus hasn't been executed.
               A potential cause for the issue could be that the sale has been tracked after the www.dwin1.com/XXXX.js script got executed / placed on the DOM.
-              <a href="https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag" target="_blank">
+              <a href="https://developer.awin.com/docs/conversion-tag" target="_blank">
                 How to set up sales tracking with Awin?
               </a>
             </h3>`,
@@ -296,7 +296,7 @@ export const statusMessages: {
           <h2 class='sovendus-overlay-h2 sovendus-overlay-error'>It's normal if this isn't the order success page!</h2>
           <h3 class='sovendus-overlay-font sovendus-overlay-h3'>
             If this happens on the order success page, make sure you've implemented Awin sales tracking properly, as no sale was tracked.
-            <a href="https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Conversion_Tag" target="_blank">
+            <a href="https://developer.awin.com/docs/conversion-tag" target="_blank">
               How to set up sales tracking with Awin?
             </a>
           </h3>`,

@@ -1,4 +1,6 @@
-const buildConfig = {
+import type { BuildConfig } from "sovendus-builder";
+
+const buildConfig: BuildConfig = {
   foldersToClean: ["../dist/chrome", "../dist/firefox"],
   filesToCompile: [
     {

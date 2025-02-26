@@ -239,8 +239,8 @@ export const testingFlowConfig = {
         COMPLETE: {
           target: "landingPageTestOptimizeCheck",
           action: () => {
-            window.location.search +=
-              "&sovReqProductId=test-product-id&sovReqToken=test-token";
+            // window.location.search +=
+            //   "&sovReqProductId=test-product-id&sovReqToken=test-token";
           },
         } as Transition,
         BACK: {
