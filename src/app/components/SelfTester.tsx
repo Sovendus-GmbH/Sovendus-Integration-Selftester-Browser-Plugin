@@ -1,9 +1,10 @@
 "use client";
 
 import type { JSX } from "react";
-import { startIntegrationTester as start } from "../../tester-loader/integration-tester-loader";
 import type { SovendusPageData } from "sovendus-integration-types";
-import { ExtensionStorage } from "../../tester-ui/testing-storage";
+
+import { startIntegrationTester as start } from "../../tester-loader/integration-tester-loader";
+import type { ExtensionStorage } from "../../tester-ui/testing-storage";
 import { defaultStorage } from "../../tester-ui/testing-storage";
 
 export function IntegrationTester(): null {
@@ -53,9 +54,7 @@ export function ClearTesterStorageButton(): JSX.Element {
   );
 }
 
-
-interface SovendusPageWindow extends Window, SovendusPageData {
-}
+interface SovendusPageWindow extends Window, SovendusPageData {}
 
 declare let window: SovendusPageWindow;
 

@@ -1,13 +1,12 @@
 "use client";
 
 import type { JSX } from "react";
-
 import { useEffect, useState } from "react";
-import { CountryCodes } from "sovendus-integration-types";
 import type {
   SovendusConsumerType,
   SovendusVNConversionsType,
 } from "sovendus-integration-types";
+import { CountryCodes } from "sovendus-integration-types";
 
 import { SovendusThankyou } from "./SovendusThankYou";
 import { ThankyouPageForm } from "./ThankYouPageForm";

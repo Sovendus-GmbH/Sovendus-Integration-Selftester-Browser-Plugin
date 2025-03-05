@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "preserve",
     "noEmitOnError": true,
     "removeComments": true,
     "sourceMap": true,
@@ -15,7 +15,9 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*"]
+      "*": [
+        "node_modules/*"
+      ]
     },
     // Strict Checks
     "strict": true, // Enable all strict type-checking options
@@ -45,11 +47,38 @@
     "noImplicitUseStrict": false,
     "suppressExcessPropertyErrors": false,
     "suppressImplicitAnyIndexErrors": false,
-    "noStrictGenericChecks": false
+    "noStrictGenericChecks": false,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "ts-node": {
     "esm": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "build.ts"],
-  "exclude": ["src/chrome", "node_modules", "src/firefox", "build"]
+  "include": [
+    "build.ts",
+    "integration-end-to-end-tests/**/*.ts",
+    "integration-end-to-end-tests/**/*.tsx",
+    "sov_build.config.ts",
+    "sov_release.config.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

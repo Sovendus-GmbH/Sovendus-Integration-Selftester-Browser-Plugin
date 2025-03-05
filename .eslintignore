@@ -1,6 +1,0 @@
-*.png
-node_modules/
-dist/
-build/
-src/chrome/service-worker.js
-src/firefox/service-worker.js

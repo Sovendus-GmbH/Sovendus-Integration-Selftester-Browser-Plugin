@@ -1,0 +1,12 @@
+.github
+.vscode
+.gitignore
+eslint.config.mjs
+next-env.d.ts
+node_modules/
+tsconfig.json
+yarn.lock
+components.json
+.next
+sov_build.config.ts
+sov_release.config.ts

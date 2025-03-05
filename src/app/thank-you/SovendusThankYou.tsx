@@ -2,6 +2,7 @@
 
 import type { JSX } from "react";
 import { useEffect } from "react";
+import { SovendusThankyouPage } from "sovendus-integration-scripts";
 import type {
   SovendusThankyouPageData,
   SovendusThankyouWindow,
@@ -9,9 +10,8 @@ import type {
 import type {
   SovendusConsumerData,
   SovendusConversionsData,
-} from "sovendus-integration-types/src";
+} from "sovendus-integration-types";
 
-import { SovendusThankyouPage } from "../../thankyou-page/thankyou-page-handler";
 import { getSettings } from "../settings/settings-util";
 
 export function SovendusThankyou({
@@ -25,7 +25,7 @@ export function SovendusThankyou({
   useEffect(() => {
     window.sovThankyouConfig = {
       settings: getSettings(),
-      integrationType: "sovendus-integration-scripts-preview",
+      integrationType: "sovendus-integration-tester-preview",
       sovDebugLevel: "debug",
       orderData: config.orderData,
       customerData: config.customerData,

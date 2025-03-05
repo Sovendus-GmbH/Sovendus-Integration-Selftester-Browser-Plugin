@@ -1196,13 +1196,12 @@ export default class SelfTester {
         !!window.sovApplication?.instances?.length) ||
       false;
     if (wasExecuted) {
-      // eslint-disable-next-line no-console
       logger("Sovendus was executed");
       return new SuccessTestResult<boolean>({
         elementValue: true,
       });
     }
-    // eslint-disable-next-line no-console
+
     logger("Sovendus was detected but not executed");
     return new WarningOrFailTestResultWithoutStatusMessageKey<boolean>({
       elementValue: wasExecuted,
@@ -1814,7 +1813,6 @@ class TestResultType<TElementValueType> {
     this.statusCode = statusCode;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getFormattedStatusMessage(_showSuccessCheckMark: boolean = true): string {
     return "";
   }
@@ -2072,7 +2070,6 @@ export function safeURI(
         return encodeURIComponent(value);
     }
   } catch (e) {
-    // eslint-disable-next-line no-console
     logger(`Error in safeURI(${uriType}) - Value: (${value})- Error -> ${e}`);
     void transmitIntegrationError(
       `Error in safeURI(

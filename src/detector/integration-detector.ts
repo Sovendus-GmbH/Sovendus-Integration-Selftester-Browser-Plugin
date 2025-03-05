@@ -124,7 +124,7 @@ export class IntegrationDetectorLoop {
 
   private async repeatUntilStopped(tests: () => Promise<void>): Promise<void> {
     let visitedPath = "";
-    // eslint-disable-next-line no-constant-condition
+
     while (true) {
       if (this.overlayStateRef.current.shouldCheck) {
         if (visitedPath !== window.location.pathname) {
@@ -137,13 +137,12 @@ export class IntegrationDetectorLoop {
   }
 
   private async waitForSovendusIntegrationDetected(): Promise<TestRun> {
-    // eslint-disable-next-line no-console
     logger("No Sovendus integration detected yet");
 
     // this.overlayStateRef.current.setCurrentTestRunData(() => ({
     //   defaultIntegrationState,
     // }));
-    // eslint-disable-next-line no-constant-condition
+
     while (true) {
       debugDetector(
         "waitForSovendusIntegrationDetected",
@@ -356,7 +355,7 @@ export class IntegrationDetectorLoop {
     }
     // wait a bit longer, just in case multiple integrations fire later
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    // eslint-disable-next-line no-console
+
     logger("Sovendus banner loaded");
   }
 

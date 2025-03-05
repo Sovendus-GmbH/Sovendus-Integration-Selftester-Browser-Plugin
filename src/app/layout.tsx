@@ -1,7 +1,6 @@
 import type { JSX, ReactNode } from "react";
 import React from "react";
 
-
 import NavBar from "./components/NavBar";
 import { IntegrationTester } from "./components/SelfTester";
 

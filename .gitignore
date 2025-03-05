@@ -5,3 +5,5 @@ build
 .env
 test_zips
 jest.config.js
+.next
+dist

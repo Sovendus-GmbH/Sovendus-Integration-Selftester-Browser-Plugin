@@ -1,4 +1,4 @@
-import { debug as _debug } from "../logger/logger";
+import { debug as _debug } from "./logger";
 import type { ExplicitAnyType } from "../tester/integration-tester-data-to-sync-with-dev-hub";
 
 const enableUiDebug: boolean = true;

@@ -8,7 +8,7 @@ import type {
 import type {
   SovendusConsumerData,
   SovendusConversionsData,
-} from "sovendus-integration-types/src";
+} from "sovendus-integration-types";
 
 export function ThankyouPageForm({
   config,
