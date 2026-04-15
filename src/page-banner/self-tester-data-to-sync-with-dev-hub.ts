@@ -34,6 +34,7 @@ export interface TestResultResponseDataType {
   isSovendusJsOnDom?: TestResultType<boolean | undefined>;
   isSovendusJsExecutable?: TestResultType<boolean | string | undefined>;
   isUnknownSovendusJsError?: TestResultType<boolean | undefined>;
+  hasConsent?: TestResultType<string | undefined>;
 }
 
 export interface TestResultType<TElementValueType> {
@@ -144,6 +145,9 @@ export enum StatusMessageKeyTypes {
   missingIframeContainerId = "missingIframeContainerId",
   iFrameContainerIdMalformed = "iFrameContainerIdMalformed",
   iFrameContainerIdHasSpaces = "iFrameContainerIdHasSpaces",
+  missingHasConsent = "missingHasConsent",
+  hasConsentSuccess = "hasConsentSuccess",
+  hasConsentNotABoolean = "hasConsentNotABoolean",
   empty = "empty",
 }
 
@@ -636,6 +640,20 @@ export const statusMessages: {
     errorText: "VALUE MISSING",
     infoText:
       "Make sure to pass the salutation of the customer, valid are Mrs. and Mr.",
+  },
+  missingHasConsent: {
+    errorText: "VALUE MISSING",
+    infoText: "Make sure to pass hasConsent as a boolean (true or false).",
+  },
+  hasConsentSuccess: {
+    errorText: "",
+    infoText:
+      "Make sure this value reflects whether the user has given consent.",
+  },
+  hasConsentNotABoolean: {
+    errorText: "NOT A BOOLEAN",
+    infoText:
+      "hasConsent must be exactly true or false, not a string or other type.",
   },
   empty: {
     errorText: "",

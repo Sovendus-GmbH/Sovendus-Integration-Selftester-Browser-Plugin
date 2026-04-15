@@ -95,6 +95,7 @@ export const sovAppIFramesAllValidData: SovIframes = {
   usedCouponCode: "coupon-1234",
   iframeContainerId: "sovendus-integration-container",
   integrationType: "test-1.0.0",
+  hasConsent: true,
 };
 
 export const sovAppIFramesAllValidDataDifferent: SovIframes = {
@@ -108,6 +109,7 @@ export const sovAppIFramesAllValidDataDifferent: SovIframes = {
   usedCouponCode: "coupon-4321",
   iframeContainerId: "sovendus-integration-container",
   integrationType: "test-2.0.0",
+  hasConsent: true,
 };
 
 export const sovAwinID = 8771;
@@ -156,6 +158,7 @@ export const sovAppDataMalformedButIsOkay: SovDataType = {
     usedCouponCode: { object: "isNotGood" },
     iframeContainerId: "sovendus-integration-container",
     integrationType: { object: "isNotGood" },
+    hasConsent: "yes",
   },
 };
 
@@ -187,6 +190,7 @@ export const sovAppDataMalformedObjectsButIsOkay: SovDataType = {
     usedCouponCode: malformedObjectData,
     iframeContainerId: malformedObjectData,
     integrationType: malformedObjectData,
+    hasConsent: malformedObjectData,
   },
 };
 
@@ -216,6 +220,7 @@ export const sovAppDataMalformedObjects: SovDataType = {
     usedCouponCode: malformedObjectData,
     iframeContainerId: malformedObjectData,
     integrationType: malformedObjectData,
+    hasConsent: malformedObjectData,
   },
 };
 
@@ -246,6 +251,7 @@ export const sovAppDataNumberButIsOkay: SovDataType = {
     usedCouponCode: 1234,
     iframeContainerId: 1234,
     integrationType: 1234,
+    hasConsent: 1234,
   },
 };
 
@@ -276,6 +282,7 @@ export const sovAppDataNumberAsStringButIsOkay: SovDataType = {
     usedCouponCode: "1234",
     iframeContainerId: "1234",
     integrationType: "1234",
+    hasConsent: "1234",
   },
 };
 
@@ -305,6 +312,7 @@ export const sovAppDataNumberWithCommaInsteadOfDotButIsOkay: SovDataType = {
     usedCouponCode: "1234,56",
     iframeContainerId: "1234,56",
     integrationType: "1234,56",
+    hasConsent: "1234,56",
   },
 };
 
@@ -335,6 +343,7 @@ export const sovAppDataFloatNumberButIsOkay: SovDataType = {
     usedCouponCode: 1234.56,
     iframeContainerId: 1234.56,
     integrationType: 1234.56,
+    hasConsent: 1234.56,
   },
 };
 
@@ -365,6 +374,7 @@ export const sovAppDataTrueButIsOkay: SovDataType = {
     usedCouponCode: true,
     iframeContainerId: true,
     integrationType: true,
+    hasConsent: true,
   },
 };
 
@@ -394,6 +404,7 @@ export const sovAppDataTrue: SovDataType = {
     usedCouponCode: true,
     iframeContainerId: true,
     integrationType: true,
+    hasConsent: true,
   },
 };
 
@@ -424,6 +435,7 @@ export const sovAppDataFalseButIsOkay: SovDataType = {
     usedCouponCode: false,
     iframeContainerId: false,
     integrationType: false,
+    hasConsent: false,
   },
 };
 
@@ -453,6 +465,7 @@ export const sovAppDataFalse: SovDataType = {
     usedCouponCode: false,
     iframeContainerId: false,
     integrationType: false,
+    hasConsent: false,
   },
 };
 
@@ -483,6 +496,7 @@ export const sovAppDataNullButIsOkay: SovDataType = {
     usedCouponCode: null,
     iframeContainerId: null,
     integrationType: null,
+    hasConsent: null,
   },
 };
 
@@ -513,6 +527,7 @@ export const sovAppDataEmptyStringButIsOkay: SovDataType = {
     usedCouponCode: "",
     iframeContainerId: "",
     integrationType: "",
+    hasConsent: "",
   },
 };
 
@@ -542,6 +557,7 @@ export const sovAppDataNull: SovDataType = {
     usedCouponCode: null,
     iframeContainerId: null,
     integrationType: null,
+    hasConsent: null,
   },
 };
 
@@ -572,6 +588,7 @@ export const sovAppDataUndefinedButIsOkay: SovDataType = {
     usedCouponCode: undefined,
     iframeContainerId: undefined,
     integrationType: undefined,
+    hasConsent: undefined,
   },
 };
 
@@ -601,6 +618,7 @@ export const sovAppDataUndefined: SovDataType = {
     usedCouponCode: undefined,
     iframeContainerId: undefined,
     integrationType: undefined,
+    hasConsent: undefined,
   },
 };
 
@@ -632,6 +650,7 @@ export const sovAppDataMalformedArrayButIsOkay: SovDataType = {
     usedCouponCode: malformedArrayData,
     iframeContainerId: malformedArrayData,
     integrationType: malformedArrayData,
+    hasConsent: malformedArrayData,
   },
 };
 
@@ -661,5 +680,6 @@ export const sovAppDataMalformedArray: SovDataType = {
     usedCouponCode: malformedArrayData,
     iframeContainerId: malformedArrayData,
     integrationType: malformedArrayData,
+    hasConsent: malformedArrayData,
   },
 };

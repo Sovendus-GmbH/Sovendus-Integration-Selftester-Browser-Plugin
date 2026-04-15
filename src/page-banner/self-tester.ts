@@ -53,6 +53,8 @@ export default class SelfTester {
   isSovendusJsExecutable: TestResultType<boolean | string | undefined>;
   isUnknownSovendusJsError: TestResultType<boolean | undefined>;
 
+  hasConsent: TestResultType<string | undefined>;
+
   awinIntegrationDetectedTestResult: TestResultType<boolean>;
   awinSaleTrackedTestResult: TestResultType<boolean>;
   awinExecutedTestResult: TestResultType<boolean | undefined>;
@@ -69,6 +71,8 @@ export default class SelfTester {
       this.getTrafficSourceNumberTestResult());
     const trafficMediumNumber = (this.trafficMediumNumber =
       this.getTrafficMediumNumberTestResult());
+
+    this.hasConsent = this.getHasConsentTestResult();
 
     const wasExecuted = (this.wasExecuted = this.getWasExecutedTestResult(
       trafficSourceNumber,
@@ -581,6 +585,33 @@ export default class SelfTester {
         numbersInStringsAllowed: true,
         numberTypeAllowed: true,
       },
+    });
+  }
+
+  getHasConsentTestResult(): TestResultType<string | undefined> {
+    const value = window.sovIframes?.[0]?.hasConsent;
+    if (value === undefined || value === null || value === "") {
+      return new WarningOrFailTestResult<string | undefined>({
+        elementValue: undefined,
+        statusCode: StatusCodes.Error,
+        statusMessageKey: StatusMessageKeyTypes.missingHasConsent,
+      });
+    }
+    if (
+      value === true ||
+      value === false ||
+      value === "true" ||
+      value === "false"
+    ) {
+      return new SuccessTestResult<string | undefined>({
+        elementValue: value === true || value === "true" ? "true" : "false",
+      });
+    }
+    return new WarningOrFailTestResult<string | undefined>({
+      elementValue:
+        typeof value === "object" ? JSON.stringify(value) : String(value),
+      statusCode: StatusCodes.Error,
+      statusMessageKey: StatusMessageKeyTypes.hasConsentNotABoolean,
     });
   }
 
@@ -1408,6 +1439,9 @@ export default class SelfTester {
       ...(this.isSovendusJsExecutable.statusCode !== StatusCodes.TestDidNotRun
         ? { isSovendusJsExecutable: this.isSovendusJsExecutable }
         : {}),
+      ...(this.hasConsent.statusCode !== StatusCodes.TestDidNotRun
+        ? { hasConsent: this.hasConsent }
+        : {}),
     };
   }
 
@@ -1459,6 +1493,8 @@ export default class SelfTester {
     this.isSovendusJsOnDom = emptyBooleanUndefinedTestResult;
     this.isSovendusJsExecutable = emptyBooleanStringUndefinedTestResult;
     this.isUnknownSovendusJsError = emptyBooleanUndefinedTestResult;
+
+    this.hasConsent = emptyStringUndefinedTestResult;
 
     this.awinIntegrationDetectedTestResult = emptyBooleanTestResult;
     this.awinSaleTrackedTestResult = emptyBooleanTestResult;
@@ -1756,6 +1792,7 @@ export interface SovIframes {
   usedCouponCode?: ExplicitAnyType;
   iframeContainerId?: ExplicitAnyType;
   integrationType?: ExplicitAnyType;
+  hasConsent?: ExplicitAnyType;
 }
 
 interface Banner {

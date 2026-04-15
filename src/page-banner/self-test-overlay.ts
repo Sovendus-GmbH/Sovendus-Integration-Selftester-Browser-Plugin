@@ -318,6 +318,12 @@ class SelfTesterOverlay {
           <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
             trafficMediumNumber: ${selfTester.trafficMediumNumber.getFormattedStatusMessage()}
           </li>
+        <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+          Consent Status:
+        </h2>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            hasConsent: ${selfTester.hasConsent.getFormattedStatusMessage()}
+          </li>
           ${selfTester.isEnabledInBackend.getFormattedGeneralStatusMessage()}
           ${additionalInfo}
         </ul>

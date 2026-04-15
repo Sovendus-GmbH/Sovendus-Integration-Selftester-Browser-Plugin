@@ -92,4 +92,4 @@ Upload the extension zips you will find in the release_zips directory to the Fir
 
 ## Author
 
-Developed and maintained by Marcus Brandstaetter at Sovendus GmbH. If you have any questions or feedback, feel free to reach out to the author.
+Developed and maintained by the Technical Integration Team at Sovendus GmbH. If you have any questions or feedback, feel free to reach out to the author.

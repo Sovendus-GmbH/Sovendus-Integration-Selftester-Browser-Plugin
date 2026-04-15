@@ -289,6 +289,7 @@ export type SovSelfTesterKeys =
   | "isSovendusJsExecutable"
   | "isUnknownSovendusJsError"
   | "awinIntegrationDetectedTestResult"
+  | "hasConsent"
   | "awinSaleTrackedTestResult"
   | "awinExecutedTestResult"
   | "isOverlayOrStickyBanner";
