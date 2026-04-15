@@ -53,6 +53,7 @@
   ],
   "exclude": [
     "src/chrome",
-    "src/firefox"
+    "src/firefox",
+    "src/app"
   ]
 }
