@@ -35,6 +35,8 @@ export interface TestResultResponseDataType {
   isSovendusJsExecutable?: TestResultType<boolean | string | undefined>;
   isUnknownSovendusJsError?: TestResultType<boolean | undefined>;
   hasConsent?: TestResultType<string | undefined>;
+  hasConsentSovApi?: TestResultType<string | undefined>;
+  hasConsentMatch?: TestResultType<boolean | undefined>;
 }
 
 export interface TestResultType<TElementValueType> {
@@ -148,6 +150,11 @@ export enum StatusMessageKeyTypes {
   missingHasConsent = "missingHasConsent",
   hasConsentSuccess = "hasConsentSuccess",
   hasConsentNotABoolean = "hasConsentNotABoolean",
+  missingHasConsentSovApi = "missingHasConsentSovApi",
+  hasConsentSovApiSuccess = "hasConsentSovApiSuccess",
+  hasConsentSovApiNotABoolean = "hasConsentSovApiNotABoolean",
+  hasConsentMismatchTruthyButApiFalse = "hasConsentMismatchTruthyButApiFalse",
+  hasConsentMismatchFalsyButApiTrue = "hasConsentMismatchFalsyButApiTrue",
   empty = "empty",
 }
 
@@ -651,9 +658,33 @@ export const statusMessages: {
       "Make sure this value reflects whether the user has given consent.",
   },
   hasConsentNotABoolean: {
-    errorText: "NOT A BOOLEAN",
+    errorText: "INVALID CONSENT VALUE",
     infoText:
-      "hasConsent must be exactly true or false, not a string or other type.",
+      'hasConsent must be a valid consent value. Accepted truthy values: true, 1, "yes", "on". Accepted falsy values: false, 0, "no", "off".',
+  },
+  missingHasConsentSovApi: {
+    errorText: "VALUE MISSING",
+    infoText:
+      "The Sovendus API did not return a hasConsent value.",
+  },
+  hasConsentSovApiSuccess: {
+    errorText: "",
+    infoText: "",
+  },
+  hasConsentSovApiNotABoolean: {
+    errorText: "UNEXPECTED VALUE",
+    infoText:
+      "The Sovendus API returned an unexpected value for hasConsent.",
+  },
+  hasConsentMismatchTruthyButApiFalse: {
+    errorText:
+      "ERROR: Consent not honored - merchant passed a truthy value but the API returned false.",
+    infoText: "",
+  },
+  hasConsentMismatchFalsyButApiTrue: {
+    errorText:
+      "ERROR: Consent Mismatch <br>The integration passed a falsy value but the API returned true. <br>Probably the privacy feature is not enabled yet. <br>Please reach out to your contact person @Sovendus for more information.",
+    infoText: "",
   },
   empty: {
     errorText: "",

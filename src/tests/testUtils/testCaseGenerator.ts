@@ -285,5 +285,7 @@ export type SovSelfTesterKeys =
   | "isUnknownSovendusJsError"
   | "awinIntegrationDetectedTestResult"
   | "hasConsent"
+  | "hasConsentSovApi"
+  | "hasConsentMatch"
   | "awinSaleTrackedTestResult"
   | "awinExecutedTestResult";

@@ -54,6 +54,8 @@ export default class SelfTester {
   isUnknownSovendusJsError: TestResultType<boolean | undefined>;
 
   hasConsent: TestResultType<string | undefined>;
+  hasConsentSovApi: TestResultType<string | undefined>;
+  hasConsentMatch: TestResultType<boolean | undefined>;
 
   awinIntegrationDetectedTestResult: TestResultType<boolean>;
   awinSaleTrackedTestResult: TestResultType<boolean>;
@@ -73,6 +75,11 @@ export default class SelfTester {
       this.getTrafficMediumNumberTestResult());
 
     this.hasConsent = this.getHasConsentTestResult();
+    this.hasConsentSovApi = this.getHasConsentSovApiTestResult();
+    this.hasConsentMatch = this.getHasConsentMatchTestResult(
+      this.hasConsent,
+      this.hasConsentSovApi,
+    );
 
     const wasExecuted = (this.wasExecuted = this.getWasExecutedTestResult(
       trafficSourceNumber,
@@ -597,6 +604,43 @@ export default class SelfTester {
         statusMessageKey: StatusMessageKeyTypes.missingHasConsent,
       });
     }
+    const truthyValues: ExplicitAnyType[] = [true, "true", 1, "1", "yes", "on"];
+    const falsyValues: ExplicitAnyType[] = [false, "false", 0, "0", "no", "off"];
+    if (truthyValues.includes(value)) {
+      const displayValue =
+        value === true || value === "true"
+          ? "true"
+          : `${String(value)} (truthy)`;
+      return new SuccessTestResult<string | undefined>({
+        elementValue: displayValue,
+      });
+    }
+    if (falsyValues.includes(value)) {
+      const displayValue =
+        value === false || value === "false"
+          ? "false"
+          : `${String(value)} (falsy)`;
+      return new SuccessTestResult<string | undefined>({
+        elementValue: displayValue,
+      });
+    }
+    return new WarningOrFailTestResult<string | undefined>({
+      elementValue:
+        typeof value === "object" ? JSON.stringify(value) : String(value),
+      statusCode: StatusCodes.Error,
+      statusMessageKey: StatusMessageKeyTypes.hasConsentNotABoolean,
+    });
+  }
+
+  getHasConsentSovApiTestResult(): TestResultType<string | undefined> {
+    const value = window.sovApplication?.hasConsent;
+    if (value === undefined || value === null || value === "") {
+      return new WarningOrFailTestResult<string | undefined>({
+        elementValue: undefined,
+        statusCode: StatusCodes.Error,
+        statusMessageKey: StatusMessageKeyTypes.missingHasConsentSovApi,
+      });
+    }
     if (
       value === true ||
       value === false ||
@@ -611,7 +655,42 @@ export default class SelfTester {
       elementValue:
         typeof value === "object" ? JSON.stringify(value) : String(value),
       statusCode: StatusCodes.Error,
-      statusMessageKey: StatusMessageKeyTypes.hasConsentNotABoolean,
+      statusMessageKey: StatusMessageKeyTypes.hasConsentSovApiNotABoolean,
+    });
+  }
+
+  getHasConsentMatchTestResult(
+    hasConsent: TestResultType<string | undefined>,
+    hasConsentSovApi: TestResultType<string | undefined>,
+  ): TestResultType<boolean | undefined> {
+    if (
+      hasConsent.statusCode !== StatusCodes.Success ||
+      hasConsentSovApi.statusCode !== StatusCodes.Success
+    ) {
+      return new DidNotRunTestResult<boolean | undefined>();
+    }
+    const merchantTruthy =
+      hasConsent.elementValue === "true" ||
+      (hasConsent.elementValue?.includes("(truthy)") ?? false);
+    const apiTrue = hasConsentSovApi.elementValue === "true";
+    if (merchantTruthy && !apiTrue) {
+      return new WarningOrFailTestResult<boolean | undefined>({
+        elementValue: false,
+        statusCode: StatusCodes.Error,
+        statusMessageKey:
+          StatusMessageKeyTypes.hasConsentMismatchTruthyButApiFalse,
+      });
+    }
+    if (!merchantTruthy && apiTrue) {
+      return new WarningOrFailTestResult<boolean | undefined>({
+        elementValue: false,
+        statusCode: StatusCodes.Error,
+        statusMessageKey:
+          StatusMessageKeyTypes.hasConsentMismatchFalsyButApiTrue,
+      });
+    }
+    return new SuccessTestResult<boolean | undefined>({
+      elementValue: true,
     });
   }
 
@@ -1442,6 +1521,12 @@ export default class SelfTester {
       ...(this.hasConsent.statusCode !== StatusCodes.TestDidNotRun
         ? { hasConsent: this.hasConsent }
         : {}),
+      ...(this.hasConsentSovApi.statusCode !== StatusCodes.TestDidNotRun
+        ? { hasConsentSovApi: this.hasConsentSovApi }
+        : {}),
+      ...(this.hasConsentMatch.statusCode !== StatusCodes.TestDidNotRun
+        ? { hasConsentMatch: this.hasConsentMatch }
+        : {}),
     };
   }
 
@@ -1495,6 +1580,8 @@ export default class SelfTester {
     this.isUnknownSovendusJsError = emptyBooleanUndefinedTestResult;
 
     this.hasConsent = emptyStringUndefinedTestResult;
+    this.hasConsentSovApi = emptyStringUndefinedTestResult;
+    this.hasConsentMatch = emptyBooleanUndefinedTestResult;
 
     this.awinIntegrationDetectedTestResult = emptyBooleanTestResult;
     this.awinSaleTrackedTestResult = emptyBooleanTestResult;
@@ -1779,6 +1866,7 @@ interface SovApplicationConsumer {
 interface SovApplication {
   consumer?: SovApplicationConsumer;
   instances?: Instance[];
+  hasConsent?: ExplicitAnyType;
 }
 
 export interface SovIframes {

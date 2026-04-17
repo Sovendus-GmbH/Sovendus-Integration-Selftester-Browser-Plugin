@@ -324,6 +324,10 @@ class SelfTesterOverlay {
           <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
             hasConsent: ${selfTester.hasConsent.getFormattedStatusMessage()}
           </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            hasConsent | Sov API response: ${selfTester.hasConsentSovApi.getFormattedStatusMessage()}
+          </li>
+          ${selfTester.hasConsentMatch.getFormattedGeneralStatusMessage()}
           ${selfTester.isEnabledInBackend.getFormattedGeneralStatusMessage()}
           ${additionalInfo}
         </ul>

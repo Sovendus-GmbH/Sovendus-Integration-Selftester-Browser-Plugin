@@ -69,12 +69,11 @@ executeOverlayTests({
             StatusMessageKeyTypes.missingHasConsent,
         },
         {
-          testName: "MalformedString",
+          testName: "TruthyStringYes",
           sovAppData: sovAppDataMalformedButIsOkay,
-          expectedElementValue: "yes",
-          expectedStatusCode: StatusCodes.Error,
-          expectedStatusMessageKey:
-            StatusMessageKeyTypes.hasConsentNotABoolean,
+          expectedElementValue: "yes (truthy)",
+          expectedStatusCode: StatusCodes.Success,
+          expectedStatusMessageKey: null,
         },
         {
           testName: "MalformedNumber",
