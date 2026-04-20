@@ -678,12 +678,12 @@ export const statusMessages: {
   },
   hasConsentMismatchTruthyButApiFalse: {
     errorText:
-      "ERROR: Consent not honored - merchant passed a truthy value but the API returned false.",
+      "ERROR: Consent not honored <br>Merchant passed a truthy value but the API returned false. <br>Remember using a different email address if you test both cases within a time frame of 4 hours",
     infoText: "",
   },
   hasConsentMismatchFalsyButApiTrue: {
     errorText:
-      "ERROR: Consent Mismatch <br>The integration passed a falsy value but the API returned true. <br>Probably the privacy feature is not enabled yet. <br>Please reach out to your contact person @Sovendus for more information.",
+      "ERROR: Consent Mismatch <br>The integration passed a falsy value but the API returned true. <br>Probably the privacy feature is not enabled yet. <br>Please reach out to your contact person @Sovendus for more information. <br>Remember using a different email address if you test both cases within a time frame of 4 hours",
     infoText: "",
   },
   empty: {
