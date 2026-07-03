@@ -269,7 +269,6 @@ export type SovSelfTesterKeys =
   | "orderId"
   | "orderValue"
   | "sessionId"
-  // | "timestamp"
   | "usedCouponCode"
   | "iFrameContainerId"
   | "isEnabledInBackend"

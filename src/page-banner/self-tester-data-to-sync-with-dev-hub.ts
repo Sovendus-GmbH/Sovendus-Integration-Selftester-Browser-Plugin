@@ -20,7 +20,6 @@ export interface TestResultResponseDataType {
   orderId?: TestResultType<string | undefined>;
   orderValue?: TestResultType<string | undefined>;
   sessionId?: TestResultType<string | undefined>;
-  // timestamp?: TestResultType<string | undefined>;
   usedCouponCode?: TestResultType<string | undefined>;
   iFrameContainerId?: TestResultType<string | undefined>;
   isEnabledInBackend?: TestResultType<boolean | undefined>;
@@ -93,9 +92,6 @@ export enum StatusMessageKeyTypes {
   currencyNotValid = "currencyNotValid",
   currencyMissing = "currencyMissing",
   currencySuccess = "currencySuccess",
-  // unixTimestampMissing = "unixTimestampMissing",
-  // notAUnixTimestamp = "notAUnixTimestamp",
-  // unixTimestampOlderThan2Minutes = "unixTimestampOlderThan2Minutes",
   orderValueMissing = "orderValueMissing",
   orderValueWrongFormat = "orderValueWrongFormat",
   orderValueSuccess = "orderValueSuccess",
@@ -364,22 +360,6 @@ export const statusMessages: {
       ", ",
     )}`,
   },
-
-  // unixTimestampMissing: {
-  //   errorText: "VALUE MISSING",
-  //   infoText: "Make sure to pass a unix timestamp in seconds.",
-  // },
-
-  // notAUnixTimestamp: {
-  //   errorText: "IS NOT A UNIX TIME",
-  //   infoText: "Make sure to pass a unix timestamp in seconds.",
-  // },
-
-  // unixTimestampOlderThan2Minutes: {
-  //   errorText: "TIMESTAMP OLDER THAN 2 MINUTES",
-  //   infoText:
-  //     "Make sure to pass the unix timestamp in seconds of the order time. If you just refreshed the success page after a while then this is normal and expected",
-  // },
 
   missingOrderId: {
     errorText: "VALUE MISSING",

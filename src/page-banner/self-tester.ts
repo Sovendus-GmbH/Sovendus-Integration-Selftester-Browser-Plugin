@@ -38,7 +38,6 @@ export default class SelfTester {
   orderId: TestResultType<string | undefined>;
   orderValue: TestResultType<string | undefined>;
   sessionId: TestResultType<string | undefined>;
-  // timestamp: TestResultType<string | undefined>;
   usedCouponCode: TestResultType<string | undefined>;
   iFrameContainerId: TestResultType<string | undefined>;
   isEnabledInBackend: TestResultType<boolean | undefined>;
@@ -296,13 +295,12 @@ export default class SelfTester {
     this.consumerCountry = this.getConsumerCountryTestResult(sovConsumer);
   }
 
-  executeOrderDataTests(withSessionIdAndTimestamp: boolean = true): void {
+  executeOrderDataTests(withSessionId: boolean = true): void {
     this.orderCurrency = this.getOrderCurrencyTestResult();
     this.orderId = this.getOrderIdTestResult();
     this.orderValue = this.getOrderValueTestResult();
-    if (withSessionIdAndTimestamp) {
+    if (withSessionId) {
       this.sessionId = this.getSessionIdTestResult();
-      // this.timestamp = this.getTimestampTestResult();
     }
     this.usedCouponCode = this.getUsedCouponCodeTestResult();
   }
@@ -1246,64 +1244,6 @@ export default class SelfTester {
     });
   }
 
-  // getTimestampTestResult(): TestResultType<string | undefined> {
-  //   const valueTestResult = this.validValueTestResult({
-  //     value: window.sovIframes?.[0]?.timestamp,
-  //     missingErrorMessageKey: StatusMessageKeyTypes.unixTimestampMissing,
-  //     malformedMessageKey: StatusMessageKeyTypes.notAUnixTimestamp,
-  //     successMessageKey: StatusMessageKeyTypes.empty,
-  //     numberCheckType: {
-  //       floatNumbersAllowed: true,
-  //       numbersInStringsAllowed: true,
-  //       numberTypeAllowed: true,
-  //     },
-  //   });
-  //   let statusMessageKey: StatusMessageKeyTypes =
-  //     valueTestResult.statusMessageKey;
-  //   let statusCode: StatusCodes = valueTestResult.statusCode;
-  //   if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-  //     const truncatedTime = Math.floor(Number(valueTestResult.elementValue));
-  //     let isUnixTime = false;
-  //     let timestampInMilliSeconds = truncatedTime;
-
-  //     // Check if the timestamp is in seconds (10 digits) or milliseconds (13 digits)
-  //     if (!isNaN(truncatedTime)) {
-  //       if (truncatedTime.toString().length === 10) {
-  //         timestampInMilliSeconds = truncatedTime * 1000;
-  //         isUnixTime = true;
-  //       } else if (truncatedTime.toString().length === 13) {
-  //         isUnixTime = true;
-  //       }
-  //     }
-  //     if (isUnixTime) {
-  //       // Check if the timestamp is older than 1 minute
-  //       const currentTime = Date.now();
-  //       const timeDifference = currentTime - timestampInMilliSeconds;
-  //       const oneMinutesInMilliSeconds = 2 * 60 * 1000;
-
-  //       if (timeDifference > oneMinutesInMilliSeconds) {
-  //         statusMessageKey =
-  //           StatusMessageKeyTypes.unixTimestampOlderThan2Minutes;
-  //         return new WarningOrFailTestResult({
-  //           elementValue: valueTestResult.elementValue,
-  //           statusMessageKey,
-  //           statusCode: StatusCodes.Error,
-  //         });
-  //       }
-  //       return new SuccessTestResult({
-  //         elementValue: valueTestResult.elementValue,
-  //       });
-  //     }
-  //     statusCode = StatusCodes.Error;
-  //     statusMessageKey = StatusMessageKeyTypes.notAUnixTimestamp;
-  //   }
-  //   return new WarningOrFailTestResult({
-  //     elementValue: valueTestResult.elementValue,
-  //     statusMessageKey,
-  //     statusCode: statusCode,
-  //   });
-  // }
-
   getUsedCouponCodeTestResult(
     value: ExplicitAnyType = window.sovIframes?.[0]?.usedCouponCode,
   ): TestResultType<string | undefined> {
@@ -1612,9 +1552,6 @@ export default class SelfTester {
       ...(this.sessionId.statusCode !== StatusCodes.TestDidNotRun
         ? { sessionId: this.sessionId }
         : {}),
-      // ...(this.timestamp.statusCode !== StatusCodes.TestDidNotRun
-      //   ? { timestamp: this.timestamp }
-      //   : {}),
       ...(this.usedCouponCode.statusCode !== StatusCodes.TestDidNotRun
         ? { usedCouponCode: this.usedCouponCode }
         : {}),
@@ -1702,7 +1639,6 @@ export default class SelfTester {
     this.orderId = emptyStringUndefinedTestResult;
     this.orderValue = emptyStringUndefinedTestResult;
     this.sessionId = emptyStringUndefinedTestResult;
-    // this.timestamp = emptyStringUndefinedTestResult;
     this.usedCouponCode = emptyStringUndefinedTestResult;
     this.iFrameContainerId = emptyStringUndefinedTestResult;
     this.isEnabledInBackend = emptyBooleanUndefinedTestResult;
@@ -2045,7 +1981,6 @@ export interface SovIframes {
   trafficSourceNumber?: ExplicitAnyType;
   trafficMediumNumber?: ExplicitAnyType;
   sessionId?: ExplicitAnyType;
-  // timestamp?: ExplicitAnyType;
   orderId?: ExplicitAnyType;
   orderValue?: ExplicitAnyType;
   orderCurrency?: ExplicitAnyType;
