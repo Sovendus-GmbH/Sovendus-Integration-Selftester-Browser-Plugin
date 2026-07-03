@@ -5,6 +5,8 @@ This project is a Chrome and Firefox browser extension designed for testing the 
 ## Table of Contents
 
 - [Installation](#installation)
+- [Architecture](#architecture)
+  - [Benefits API capture](#benefits-api-capture)
 - [Development](#development)
   - [Building the Extension](#building-the-extension)
   - [Running Tests](#running-tests)
@@ -22,6 +24,20 @@ npm install
 ```
 
 This will install all required dependencies listed in the devDependencies section of the package.json.
+
+## Architecture
+
+### Benefits API capture
+
+On Shopify (and other sandboxed integrations) the Sovendus globals never reach
+the top page, so the self-tester has nothing to read. The integration does,
+however, make a client-side POST to the Benefits API. `src/shared/benefits-api-capture.js`
+captures that request payload in the background script and hands it to the
+overlay via runtime messaging, so the integration can still be validated.
+
+The file is shared between the Chrome (MV3 service worker) and Firefox (MV2
+background) background scripts and loaded as a classic script, so it must not
+use ES module `import`/`export`.
 
 ## Development
 

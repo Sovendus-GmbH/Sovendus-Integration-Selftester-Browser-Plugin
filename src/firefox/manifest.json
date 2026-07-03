@@ -5,6 +5,7 @@
   "description": "Use this extension to verify if your Sovendus integration is setup properly",
   "background": {
     "scripts": [
+      "shared/benefits-api-capture.js",
       "service-worker.js"
     ],
     "persistent": true
@@ -12,7 +13,8 @@
   "permissions": [
     "<all_urls>",
     "scripting",
-    "clipboardWrite"
+    "clipboardWrite",
+    "webRequest"
   ],
   "icons": {
     "128": "sovendus.png"

@@ -28,8 +28,12 @@ import {
   tooltipButtonClass,
   tooltipClass,
 } from "./self-test-overlay-css-vars.js";
+import type { SovBenefitsApiRequest } from "./self-tester.js";
 import SelfTester from "./self-tester.js";
 import { StatusCodes } from "./self-tester-data-to-sync-with-dev-hub.js";
+
+const detectionPollIntervalMs = 300;
+const detectionMaxWaitMs = 20_000;
 
 void (async (): Promise<void> => {
   await repeatTestsOnSPA(async () => {
@@ -39,13 +43,63 @@ void (async (): Promise<void> => {
 
 async function executeTests(): Promise<void> {
   removeOverlay();
-  window.sovSelfTester = new SelfTester();
-  await window.sovSelfTester.waitForSovendusIntegrationDetected();
+  const selfTester = (window.sovSelfTester = new SelfTester());
+  const detected = await waitForIntegrationOrCapturedRequest(selfTester);
+  if (detected.source === "none") {
+    return;
+  }
   const overlay = new SelfTesterOverlay();
   overlay.createLoadingOverlay();
-  await window.sovSelfTester.waitForSovendusIntegrationToBeLoaded();
-  window.sovSelfTester.selfTestIntegration();
-  overlay.createOverlay(window.sovSelfTester);
+  if (detected.source === "captured") {
+    selfTester.selfTestCapturedApiRequest(detected.payload);
+  } else {
+    await selfTester.waitForSovendusIntegrationToBeLoaded();
+    selfTester.selfTestIntegration();
+  }
+  overlay.createOverlay(selfTester);
+}
+
+async function waitForIntegrationOrCapturedRequest(
+  selfTester: SelfTester,
+): Promise<
+  | { source: "globals" }
+  | { source: "captured"; payload: SovBenefitsApiRequest }
+  | { source: "none" }
+> {
+  const maxAttempts = Math.ceil(detectionMaxWaitMs / detectionPollIntervalMs);
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (
+      selfTester.sovIframesOrConsumerExists() ||
+      selfTester.awinIntegrationDetected()
+    ) {
+      return { source: "globals" };
+    }
+    const payload = await getCapturedBenefitsApiRequest();
+    if (payload) {
+      return { source: "captured", payload };
+    }
+    await new Promise((resolve) =>
+      setTimeout(resolve, detectionPollIntervalMs),
+    );
+  }
+  return { source: "none" };
+}
+
+function getCapturedBenefitsApiRequest(): Promise<SovBenefitsApiRequest | null> {
+  return new Promise((resolve) => {
+    const handler = (event: MessageEvent): void => {
+      if (
+        event.source !== window ||
+        event.data?.type !== "sovendusBenefitsApiRequestResponse"
+      ) {
+        return;
+      }
+      window.removeEventListener("message", handler);
+      resolve(event.data.payload ?? null);
+    };
+    window.addEventListener("message", handler);
+    window.postMessage({ type: "getSovendusBenefitsApiRequest" }, "*");
+  });
 }
 
 async function repeatTestsOnSPA(tests: () => Promise<void>): Promise<void> {
@@ -74,7 +128,9 @@ class SelfTesterOverlay {
               repeat tests
             </button>        
         `,
-      children: `
+      children: selfTester.isCapturedApiResult
+        ? this.createCapturedApiContent(selfTester)
+        : `
             <ul class="${sovendusOverlayFontClass}">
               <li class="${sovendusOverlayFontClass}">
                 Integration Type: ${selfTester.integrationType.getFormattedStatusMessage(false)}
@@ -92,6 +148,95 @@ class SelfTesterOverlay {
             ${this.createInnerInnerOverlay(selfTester)}
         `,
     });
+  }
+
+  createCapturedApiContent(selfTester: SelfTester): string {
+    return `
+        <ul class="${sovendusOverlayFontClass}">
+          <li class="${sovendusOverlayFontClass}">
+            Integration Type: ${selfTester.integrationType.getFormattedStatusMessage(false)}
+          </li>
+          <li class="${sovendusOverlayFontClass}">
+            Browser: ${selfTester.browserName.elementValue}
+          </li>
+        </ul>
+        <h3 class="${sovendusOverlayFontClass} ${sovendusOverlayH3Class}" style="border: 1px solid; border-radius: 8px; padding: 8px;">
+          No Sovendus page integration was found on this page, but a request to the Sovendus Benefits API (<b>/v2/list</b>) was detected.
+          The values below are read from that request payload.<br/><br/>
+          For most of the customer fields the Shopify app currently only reports whether a value exists, not the value itself.
+        </h3>
+        <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+          Sovendus Partner Numbers:
+        </h2>
+        <ul class="${sovendusOverlayFontClass}">
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            trafficSourceNumber: ${selfTester.trafficSourceNumber.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            trafficMediumNumber: ${selfTester.trafficMediumNumber.getFormattedStatusMessage()}
+          </li>
+        </ul>
+        <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+          Consent Status:
+        </h2>
+        <ul class="${sovendusOverlayFontClass}">
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            hasConsent: ${selfTester.hasConsent.getFormattedStatusMessage()}
+          </li>
+        </ul>
+        <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+          Order Data:
+        </h2>
+        <ul class="${sovendusOverlayFontClass}">
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            orderCurrency: ${selfTester.orderCurrency.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            orderId: ${selfTester.orderId.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            orderValue: ${selfTester.orderValue.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            usedCouponCode: ${selfTester.usedCouponCode.getFormattedStatusMessage()}
+          </li>
+        </ul>
+        <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
+          Customer Data:
+        </h2>
+        <ul class="${sovendusOverlayFontClass}">
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            consumerEmail: ${selfTester.consumerEmail.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            consumerEmailHash: ${selfTester.consumerEmailHash.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            consumerFirstName: ${selfTester.consumerFirstName.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            consumerLastName: ${selfTester.consumerLastName.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            consumerYearOfBirth: ${selfTester.consumerYearOfBirth.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            consumerStreet: ${selfTester.consumerStreet.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            consumerStreetNumber: ${selfTester.consumerStreetNumber.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            consumerZipcode: ${selfTester.consumerZipCode.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            consumerCity: ${selfTester.consumerCity.getFormattedStatusMessage()}
+          </li>
+          <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
+            consumerCountry: ${selfTester.consumerCountry.getFormattedStatusMessage()}
+          </li>
+        </ul>
+    `;
   }
 
   createLoadingOverlay(): void {
@@ -291,15 +436,7 @@ class SelfTesterOverlay {
                 </li>
               `
         }
-        ${
-          selfTester.timestamp.statusCode === StatusCodes.TestDidNotRun
-            ? ""
-            : `
-                <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
-                  timestamp: ${selfTester.timestamp.getFormattedStatusMessage()}
-                </li>
-              `
-        }
+
         <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
           usedCouponCode: ${selfTester.usedCouponCode.getFormattedStatusMessage()}
         </li>
@@ -322,10 +459,10 @@ class SelfTesterOverlay {
           Consent Status:
         </h2>
           <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
-            hasConsent: ${selfTester.hasConsent.getFormattedStatusMessage()}
+            hasConsent | sent by the partner: ${selfTester.hasConsent.getFormattedStatusMessage()}
           </li>
           <li class='${sovendusOverlayFontClass} ${sovendusOverlayTextClass}'>
-            hasConsent | Sov API response: ${selfTester.hasConsentSovApi.getFormattedStatusMessage()}
+            hasConsent | Sovendus API response: ${selfTester.hasConsentSovApi.getFormattedStatusMessage()}
           </li>
           ${selfTester.hasConsentMatch.getFormattedGeneralStatusMessage()}
           ${selfTester.isEnabledInBackend.getFormattedGeneralStatusMessage()}

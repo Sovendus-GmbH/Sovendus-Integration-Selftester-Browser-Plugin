@@ -20,7 +20,7 @@ export interface TestResultResponseDataType {
   orderId?: TestResultType<string | undefined>;
   orderValue?: TestResultType<string | undefined>;
   sessionId?: TestResultType<string | undefined>;
-  timestamp?: TestResultType<string | undefined>;
+  // timestamp?: TestResultType<string | undefined>;
   usedCouponCode?: TestResultType<string | undefined>;
   iFrameContainerId?: TestResultType<string | undefined>;
   isEnabledInBackend?: TestResultType<boolean | undefined>;
@@ -93,9 +93,9 @@ export enum StatusMessageKeyTypes {
   currencyNotValid = "currencyNotValid",
   currencyMissing = "currencyMissing",
   currencySuccess = "currencySuccess",
-  unixTimestampMissing = "unixTimestampMissing",
-  notAUnixTimestamp = "notAUnixTimestamp",
-  unixTimestampOlderThan2Minutes = "unixTimestampOlderThan2Minutes",
+  // unixTimestampMissing = "unixTimestampMissing",
+  // notAUnixTimestamp = "notAUnixTimestamp",
+  // unixTimestampOlderThan2Minutes = "unixTimestampOlderThan2Minutes",
   orderValueMissing = "orderValueMissing",
   orderValueWrongFormat = "orderValueWrongFormat",
   orderValueSuccess = "orderValueSuccess",
@@ -155,6 +155,8 @@ export enum StatusMessageKeyTypes {
   hasConsentSovApiNotABoolean = "hasConsentSovApiNotABoolean",
   hasConsentMismatchTruthyButApiFalse = "hasConsentMismatchTruthyButApiFalse",
   hasConsentMismatchFalsyButApiTrue = "hasConsentMismatchFalsyButApiTrue",
+  shopifyAppFieldProvided = "shopifyAppFieldProvided",
+  shopifyAppFieldMissing = "shopifyAppFieldMissing",
   empty = "empty",
 }
 
@@ -297,7 +299,7 @@ export const statusMessages: {
 
   sovendusBannerDisabled: {
     errorText:
-      "ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.",
+      "ERROR: Seems like the Sovendus banner is disabled in the Sovendus backend, or doesn't exist at all. <br/>If you are using Checkout Benefits only, this may be expected. <br/>Please contact your account manager to check if you're using the right traffic source and medium numbers and check if the banner is configured properly.",
     infoText: "",
   },
 
@@ -363,21 +365,21 @@ export const statusMessages: {
     )}`,
   },
 
-  unixTimestampMissing: {
-    errorText: "VALUE MISSING",
-    infoText: "Make sure to pass a unix timestamp in seconds.",
-  },
+  // unixTimestampMissing: {
+  //   errorText: "VALUE MISSING",
+  //   infoText: "Make sure to pass a unix timestamp in seconds.",
+  // },
 
-  notAUnixTimestamp: {
-    errorText: "IS NOT A UNIX TIME",
-    infoText: "Make sure to pass a unix timestamp in seconds.",
-  },
+  // notAUnixTimestamp: {
+  //   errorText: "IS NOT A UNIX TIME",
+  //   infoText: "Make sure to pass a unix timestamp in seconds.",
+  // },
 
-  unixTimestampOlderThan2Minutes: {
-    errorText: "TIMESTAMP OLDER THAN 2 MINUTES",
-    infoText:
-      "Make sure to pass the unix timestamp in seconds of the order time. If you just refreshed the success page after a while then this is normal and expected",
-  },
+  // unixTimestampOlderThan2Minutes: {
+  //   errorText: "TIMESTAMP OLDER THAN 2 MINUTES",
+  //   infoText:
+  //     "Make sure to pass the unix timestamp in seconds of the order time. If you just refreshed the success page after a while then this is normal and expected",
+  // },
 
   missingOrderId: {
     errorText: "VALUE MISSING",
@@ -664,8 +666,7 @@ export const statusMessages: {
   },
   missingHasConsentSovApi: {
     errorText: "VALUE MISSING",
-    infoText:
-      "The Sovendus API did not return a hasConsent value.",
+    infoText: "The Sovendus API did not return a hasConsent value.",
   },
   hasConsentSovApiSuccess: {
     errorText: "",
@@ -673,8 +674,7 @@ export const statusMessages: {
   },
   hasConsentSovApiNotABoolean: {
     errorText: "UNEXPECTED VALUE",
-    infoText:
-      "The Sovendus API returned an unexpected value for hasConsent.",
+    infoText: "The Sovendus API returned an unexpected value for hasConsent.",
   },
   hasConsentMismatchTruthyButApiFalse: {
     errorText:
@@ -685,6 +685,16 @@ export const statusMessages: {
     errorText:
       "ERROR: Consent Mismatch <br>The integration passed a falsy value but the API returned true. <br>Probably the privacy feature is not enabled yet. <br>Please reach out to your contact person @Sovendus for more information. <br>Remember using a different email address if you test both cases within a time frame of 4 hours",
     infoText: "",
+  },
+  shopifyAppFieldProvided: {
+    errorText: "",
+    infoText:
+      "Only the presence of this value is reported by the Shopify app — not the value itself.",
+  },
+  shopifyAppFieldMissing: {
+    errorText: "Not Existing",
+    infoText:
+      "This value is not passed by the Shopify app as it is not available in the Shopify CMS.",
   },
   empty: {
     errorText: "",

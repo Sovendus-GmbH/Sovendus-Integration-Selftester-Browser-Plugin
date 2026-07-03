@@ -38,7 +38,7 @@ export default class SelfTester {
   orderId: TestResultType<string | undefined>;
   orderValue: TestResultType<string | undefined>;
   sessionId: TestResultType<string | undefined>;
-  timestamp: TestResultType<string | undefined>;
+  // timestamp: TestResultType<string | undefined>;
   usedCouponCode: TestResultType<string | undefined>;
   iFrameContainerId: TestResultType<string | undefined>;
   isEnabledInBackend: TestResultType<boolean | undefined>;
@@ -62,6 +62,124 @@ export default class SelfTester {
   awinExecutedTestResult: TestResultType<boolean | undefined>;
 
   sovConsumer?: SovApplicationConsumer;
+
+  isCapturedApiResult: boolean = false;
+
+  selfTestCapturedApiRequest(payload: SovBenefitsApiRequest): void {
+    this.isCapturedApiResult = true;
+    this.integrationType = new SuccessTestResult<string>({
+      elementValue: "Shopify",
+    });
+    this.browserName = this.getBrowserName();
+    this.websiteURL = this.getWebsiteURL();
+
+    this.trafficSourceNumber = this.getTrafficSourceNumberTestResult(
+      payload.trafficSourceNumber,
+    );
+    this.trafficMediumNumber = this.getTrafficMediumNumberTestResult(
+      payload.trafficMediumNumber,
+    );
+
+    this.hasConsent = this.getHasConsentTestResult(payload.hasConsent);
+
+    this.orderCurrency = this.getOrderCurrencyTestResult(payload.orderCurrency);
+    this.orderId = this.getOrderIdTestResult(payload.orderId);
+    this.orderValue = this.getOrderValueTestResult(payload.orderValue);
+    this.usedCouponCode = this.getUsedCouponCodeTestResult(
+      payload.usedCouponCode,
+    );
+
+    this.consumerEmailHash = this.getConsumerEmailHashTestResult(
+      { emailHash: payload.consumerEmailHash } as ExplicitAnyType,
+      new DidNotRunTestResult<string | undefined>(),
+    );
+    this.consumerCountry = this.getConsumerCountryTestResult({
+      country: payload.country,
+    } as ExplicitAnyType);
+    this.consumerZipCode = this.getConsumerZipCodeTestResult({
+      zipCode: payload.zipCode,
+    } as ExplicitAnyType);
+
+    // The Shopify app currently reports these customer fields only as presence
+    // booleans (…Exists). Once it is updated to transmit the actual values,
+    // those values are validated directly instead. valueOrPresence handles both.
+    const yearOfBirthValue = payload.yearOfBirth ?? payload.dateOfBirth;
+    this.consumerEmail = this.valueOrPresence(payload.email, payload.emailExists, () =>
+      this.getConsumerEmailTestResult({ email: payload.email } as ExplicitAnyType),
+    );
+    this.consumerFirstName = this.valueOrPresence(
+      payload.firstName,
+      payload.firstNameExists,
+      () =>
+        this.getConsumerFirstNameTestResult({
+          firstName: payload.firstName,
+        } as ExplicitAnyType),
+    );
+    this.consumerLastName = this.valueOrPresence(
+      payload.lastName,
+      payload.lastNameExists,
+      () =>
+        this.getConsumerLastNameTestResult({
+          lastName: payload.lastName,
+        } as ExplicitAnyType),
+    );
+    this.consumerCity = this.valueOrPresence(payload.city, payload.cityExists, () =>
+      this.getConsumerCityTestResult({ city: payload.city } as ExplicitAnyType),
+    );
+    this.consumerStreet = this.valueOrPresence(
+      payload.street,
+      payload.streetExists,
+      () =>
+        this.getConsumerStreetTestResult({
+          street: payload.street,
+        } as ExplicitAnyType),
+    );
+    this.consumerStreetNumber = this.valueOrPresence(
+      payload.streetNumber,
+      payload.streetNumberExists,
+      () =>
+        this.getConsumerStreetNumberTestResult({
+          streetNumber: payload.streetNumber,
+        } as ExplicitAnyType),
+    );
+    this.consumerYearOfBirth = this.valueOrPresence(
+      yearOfBirthValue,
+      payload.dateOfBirthExists,
+      () =>
+        this.getConsumerYearOfBirthTestResult({
+          yearOfBirth: yearOfBirthValue,
+        } as ExplicitAnyType),
+    );
+  }
+
+  // Use the real value when the payload carries it, otherwise fall back to the
+  // presence-only boolean reported by the (current) Shopify app.
+  valueOrPresence(
+    value: ExplicitAnyType,
+    exists: boolean | undefined,
+    validateValue: () => TestResultType<string | undefined>,
+  ): TestResultType<string | undefined> {
+    return value !== undefined && value !== null
+      ? validateValue()
+      : this.getPresenceTestResult(exists);
+  }
+
+  getPresenceTestResult(
+    exists: boolean | undefined,
+  ): TestResultType<string | undefined> {
+    if (exists) {
+      return new WarningOrFailTestResult<string | undefined>({
+        elementValue: "value exists",
+        statusCode: StatusCodes.SuccessButNeedsReview,
+        statusMessageKey: StatusMessageKeyTypes.shopifyAppFieldProvided,
+      });
+    }
+    return new WarningOrFailTestResult<string | undefined>({
+      elementValue: undefined,
+      statusCode: StatusCodes.Error,
+      statusMessageKey: StatusMessageKeyTypes.shopifyAppFieldMissing,
+    });
+  }
 
   selfTestIntegration(): void {
     const awinIntegrationDetectedTestResult =
@@ -184,7 +302,7 @@ export default class SelfTester {
     this.orderValue = this.getOrderValueTestResult();
     if (withSessionIdAndTimestamp) {
       this.sessionId = this.getSessionIdTestResult();
-      this.timestamp = this.getTimestampTestResult();
+      // this.timestamp = this.getTimestampTestResult();
     }
     this.usedCouponCode = this.getUsedCouponCodeTestResult();
   }
@@ -561,12 +679,14 @@ export default class SelfTester {
     });
   }
 
-  getTrafficSourceNumberTestResult(): TestResultType<string | undefined> {
+  getTrafficSourceNumberTestResult(
+    value: ExplicitAnyType = window.sovIframes?.[0]?.trafficSourceNumber !==
+    undefined
+      ? window.sovIframes[0].trafficSourceNumber
+      : window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber,
+  ): TestResultType<string | undefined> {
     return this.validValueTestResult({
-      value:
-        window.sovIframes?.[0]?.trafficSourceNumber !== undefined
-          ? window.sovIframes[0].trafficSourceNumber
-          : window.AWIN?.Tracking?.Sovendus?.trafficSourceNumber,
+      value,
       missingErrorMessageKey: StatusMessageKeyTypes.missingTrafficSourceNumber,
       successMessageKey: StatusMessageKeyTypes.trafficSourceNumberSuccess,
       malformedMessageKey: StatusMessageKeyTypes.trafficSourceNumberMalformed,
@@ -578,12 +698,14 @@ export default class SelfTester {
     });
   }
 
-  getTrafficMediumNumberTestResult(): TestResultType<string | undefined> {
+  getTrafficMediumNumberTestResult(
+    value: ExplicitAnyType = window.sovIframes?.[0]?.trafficMediumNumber !==
+    undefined
+      ? window.sovIframes[0].trafficMediumNumber
+      : window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber,
+  ): TestResultType<string | undefined> {
     return this.validValueTestResult({
-      value:
-        window.sovIframes?.[0]?.trafficMediumNumber !== undefined
-          ? window.sovIframes[0].trafficMediumNumber
-          : window.AWIN?.Tracking?.Sovendus?.trafficMediumNumber,
+      value,
       missingErrorMessageKey: StatusMessageKeyTypes.missingTrafficMediumNumber,
       successMessageKey: StatusMessageKeyTypes.trafficMediumNumberSuccess,
       malformedMessageKey: StatusMessageKeyTypes.trafficMediumNumberMalformed,
@@ -595,8 +717,9 @@ export default class SelfTester {
     });
   }
 
-  getHasConsentTestResult(): TestResultType<string | undefined> {
-    const value = window.sovIframes?.[0]?.hasConsent;
+  getHasConsentTestResult(
+    value: ExplicitAnyType = window.sovIframes?.[0]?.hasConsent,
+  ): TestResultType<string | undefined> {
     if (value === undefined || value === null || value === "") {
       return new WarningOrFailTestResult<string | undefined>({
         elementValue: undefined,
@@ -605,7 +728,14 @@ export default class SelfTester {
       });
     }
     const truthyValues: ExplicitAnyType[] = [true, "true", 1, "1", "yes", "on"];
-    const falsyValues: ExplicitAnyType[] = [false, "false", 0, "0", "no", "off"];
+    const falsyValues: ExplicitAnyType[] = [
+      false,
+      "false",
+      0,
+      "0",
+      "no",
+      "off",
+    ];
     if (truthyValues.includes(value)) {
       const displayValue =
         value === true || value === "true"
@@ -1030,9 +1160,11 @@ export default class SelfTester {
     }
     return new DidNotRunTestResult<number | undefined>();
   }
-  getOrderCurrencyTestResult(): TestResultType<string | undefined> {
+  getOrderCurrencyTestResult(
+    value: ExplicitAnyType = window.sovIframes?.[0]?.orderCurrency,
+  ): TestResultType<string | undefined> {
     const valueTestResult = this.validValueTestResult({
-      value: window.sovIframes?.[0]?.orderCurrency,
+      value,
       missingErrorMessageKey: StatusMessageKeyTypes.currencyMissing,
       successMessageKey: StatusMessageKeyTypes.currencySuccess,
       malformedMessageKey: StatusMessageKeyTypes.currencyNotValid,
@@ -1059,9 +1191,11 @@ export default class SelfTester {
     return valueTestResult;
   }
 
-  getOrderIdTestResult(): TestResultType<string | undefined> {
+  getOrderIdTestResult(
+    value: ExplicitAnyType = window.sovIframes?.[0]?.orderId,
+  ): TestResultType<string | undefined> {
     return this.validValueTestResult({
-      value: window.sovIframes?.[0]?.orderId,
+      value,
       missingErrorMessageKey: StatusMessageKeyTypes.missingOrderId,
       successMessageKey: StatusMessageKeyTypes.orderIdSuccess,
       malformedMessageKey: StatusMessageKeyTypes.orderIdMalformed,
@@ -1071,9 +1205,11 @@ export default class SelfTester {
     });
   }
 
-  getOrderValueTestResult(): TestResultType<string | undefined> {
+  getOrderValueTestResult(
+    value: ExplicitAnyType = window.sovIframes?.[0]?.orderValue,
+  ): TestResultType<string | undefined> {
     const decodedValue = this.validValueTestResult({
-      value: window.sovIframes?.[0]?.orderValue,
+      value,
       missingErrorMessageKey: StatusMessageKeyTypes.orderValueMissing,
       successMessageKey: StatusMessageKeyTypes.orderValueSuccess,
       malformedMessageKey: StatusMessageKeyTypes.orderValueWrongFormat,
@@ -1110,67 +1246,69 @@ export default class SelfTester {
     });
   }
 
-  getTimestampTestResult(): TestResultType<string | undefined> {
-    const valueTestResult = this.validValueTestResult({
-      value: window.sovIframes?.[0]?.timestamp,
-      missingErrorMessageKey: StatusMessageKeyTypes.unixTimestampMissing,
-      malformedMessageKey: StatusMessageKeyTypes.notAUnixTimestamp,
-      successMessageKey: StatusMessageKeyTypes.empty,
-      numberCheckType: {
-        floatNumbersAllowed: true,
-        numbersInStringsAllowed: true,
-        numberTypeAllowed: true,
-      },
-    });
-    let statusMessageKey: StatusMessageKeyTypes =
-      valueTestResult.statusMessageKey;
-    let statusCode: StatusCodes = valueTestResult.statusCode;
-    if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
-      const truncatedTime = Math.floor(Number(valueTestResult.elementValue));
-      let isUnixTime = false;
-      let timestampInMilliSeconds = truncatedTime;
+  // getTimestampTestResult(): TestResultType<string | undefined> {
+  //   const valueTestResult = this.validValueTestResult({
+  //     value: window.sovIframes?.[0]?.timestamp,
+  //     missingErrorMessageKey: StatusMessageKeyTypes.unixTimestampMissing,
+  //     malformedMessageKey: StatusMessageKeyTypes.notAUnixTimestamp,
+  //     successMessageKey: StatusMessageKeyTypes.empty,
+  //     numberCheckType: {
+  //       floatNumbersAllowed: true,
+  //       numbersInStringsAllowed: true,
+  //       numberTypeAllowed: true,
+  //     },
+  //   });
+  //   let statusMessageKey: StatusMessageKeyTypes =
+  //     valueTestResult.statusMessageKey;
+  //   let statusCode: StatusCodes = valueTestResult.statusCode;
+  //   if (valueTestResult.statusCode === StatusCodes.SuccessButNeedsReview) {
+  //     const truncatedTime = Math.floor(Number(valueTestResult.elementValue));
+  //     let isUnixTime = false;
+  //     let timestampInMilliSeconds = truncatedTime;
 
-      // Check if the timestamp is in seconds (10 digits) or milliseconds (13 digits)
-      if (!isNaN(truncatedTime)) {
-        if (truncatedTime.toString().length === 10) {
-          timestampInMilliSeconds = truncatedTime * 1000;
-          isUnixTime = true;
-        } else if (truncatedTime.toString().length === 13) {
-          isUnixTime = true;
-        }
-      }
-      if (isUnixTime) {
-        // Check if the timestamp is older than 1 minute
-        const currentTime = Date.now();
-        const timeDifference = currentTime - timestampInMilliSeconds;
-        const oneMinutesInMilliSeconds = 2 * 60 * 1000;
+  //     // Check if the timestamp is in seconds (10 digits) or milliseconds (13 digits)
+  //     if (!isNaN(truncatedTime)) {
+  //       if (truncatedTime.toString().length === 10) {
+  //         timestampInMilliSeconds = truncatedTime * 1000;
+  //         isUnixTime = true;
+  //       } else if (truncatedTime.toString().length === 13) {
+  //         isUnixTime = true;
+  //       }
+  //     }
+  //     if (isUnixTime) {
+  //       // Check if the timestamp is older than 1 minute
+  //       const currentTime = Date.now();
+  //       const timeDifference = currentTime - timestampInMilliSeconds;
+  //       const oneMinutesInMilliSeconds = 2 * 60 * 1000;
 
-        if (timeDifference > oneMinutesInMilliSeconds) {
-          statusMessageKey =
-            StatusMessageKeyTypes.unixTimestampOlderThan2Minutes;
-          return new WarningOrFailTestResult({
-            elementValue: valueTestResult.elementValue,
-            statusMessageKey,
-            statusCode: StatusCodes.Error,
-          });
-        }
-        return new SuccessTestResult({
-          elementValue: valueTestResult.elementValue,
-        });
-      }
-      statusCode = StatusCodes.Error;
-      statusMessageKey = StatusMessageKeyTypes.notAUnixTimestamp;
-    }
-    return new WarningOrFailTestResult({
-      elementValue: valueTestResult.elementValue,
-      statusMessageKey,
-      statusCode: statusCode,
-    });
-  }
+  //       if (timeDifference > oneMinutesInMilliSeconds) {
+  //         statusMessageKey =
+  //           StatusMessageKeyTypes.unixTimestampOlderThan2Minutes;
+  //         return new WarningOrFailTestResult({
+  //           elementValue: valueTestResult.elementValue,
+  //           statusMessageKey,
+  //           statusCode: StatusCodes.Error,
+  //         });
+  //       }
+  //       return new SuccessTestResult({
+  //         elementValue: valueTestResult.elementValue,
+  //       });
+  //     }
+  //     statusCode = StatusCodes.Error;
+  //     statusMessageKey = StatusMessageKeyTypes.notAUnixTimestamp;
+  //   }
+  //   return new WarningOrFailTestResult({
+  //     elementValue: valueTestResult.elementValue,
+  //     statusMessageKey,
+  //     statusCode: statusCode,
+  //   });
+  // }
 
-  getUsedCouponCodeTestResult(): TestResultType<string | undefined> {
+  getUsedCouponCodeTestResult(
+    value: ExplicitAnyType = window.sovIframes?.[0]?.usedCouponCode,
+  ): TestResultType<string | undefined> {
     return this.validValueTestResult({
-      value: window.sovIframes?.[0]?.usedCouponCode,
+      value,
       missingErrorMessageKey: StatusMessageKeyTypes.missingCouponCode,
       successMessageKey: StatusMessageKeyTypes.couponCodeSuccess,
       malformedMessageKey: StatusMessageKeyTypes.couponCodeMalformed,
@@ -1474,9 +1612,9 @@ export default class SelfTester {
       ...(this.sessionId.statusCode !== StatusCodes.TestDidNotRun
         ? { sessionId: this.sessionId }
         : {}),
-      ...(this.timestamp.statusCode !== StatusCodes.TestDidNotRun
-        ? { timestamp: this.timestamp }
-        : {}),
+      // ...(this.timestamp.statusCode !== StatusCodes.TestDidNotRun
+      //   ? { timestamp: this.timestamp }
+      //   : {}),
       ...(this.usedCouponCode.statusCode !== StatusCodes.TestDidNotRun
         ? { usedCouponCode: this.usedCouponCode }
         : {}),
@@ -1564,7 +1702,7 @@ export default class SelfTester {
     this.orderId = emptyStringUndefinedTestResult;
     this.orderValue = emptyStringUndefinedTestResult;
     this.sessionId = emptyStringUndefinedTestResult;
-    this.timestamp = emptyStringUndefinedTestResult;
+    // this.timestamp = emptyStringUndefinedTestResult;
     this.usedCouponCode = emptyStringUndefinedTestResult;
     this.iFrameContainerId = emptyStringUndefinedTestResult;
     this.isEnabledInBackend = emptyBooleanUndefinedTestResult;
@@ -1869,11 +2007,45 @@ interface SovApplication {
   hasConsent?: ExplicitAnyType;
 }
 
+// Shape of the captured POST body to benefits-api.sovendus.com/v2/list.
+// Most customer fields are reported by the Shopify app only as presence booleans
+// (…Exists), not as values.
+export interface SovBenefitsApiRequest {
+  trafficSourceNumber?: ExplicitAnyType;
+  trafficMediumNumber?: ExplicitAnyType;
+  orderId?: ExplicitAnyType;
+  orderValue?: ExplicitAnyType;
+  orderCurrency?: ExplicitAnyType;
+  usedCouponCode?: ExplicitAnyType;
+  consumerEmailHash?: ExplicitAnyType;
+  country?: ExplicitAnyType;
+  zipCode?: ExplicitAnyType;
+  hasConsent?: ExplicitAnyType;
+  // Presence-only booleans sent by the current Shopify app.
+  emailExists?: boolean;
+  firstNameExists?: boolean;
+  lastNameExists?: boolean;
+  cityExists?: boolean;
+  streetExists?: boolean;
+  streetNumberExists?: boolean;
+  dateOfBirthExists?: boolean;
+  // Actual customer values — sent once the Shopify app is updated to transmit
+  // them. When present, these take precedence over the …Exists booleans.
+  email?: ExplicitAnyType;
+  firstName?: ExplicitAnyType;
+  lastName?: ExplicitAnyType;
+  city?: ExplicitAnyType;
+  street?: ExplicitAnyType;
+  streetNumber?: ExplicitAnyType;
+  yearOfBirth?: ExplicitAnyType;
+  dateOfBirth?: ExplicitAnyType;
+}
+
 export interface SovIframes {
   trafficSourceNumber?: ExplicitAnyType;
   trafficMediumNumber?: ExplicitAnyType;
   sessionId?: ExplicitAnyType;
-  timestamp?: ExplicitAnyType;
+  // timestamp?: ExplicitAnyType;
   orderId?: ExplicitAnyType;
   orderValue?: ExplicitAnyType;
   orderCurrency?: ExplicitAnyType;
