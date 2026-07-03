@@ -161,8 +161,6 @@ class SelfTesterOverlay {
           </li>
         </ul>
         <h3 class="${sovendusOverlayFontClass} ${sovendusOverlayH3Class}" style="border: 1px solid; border-radius: 8px; padding: 8px;">
-          No Sovendus page integration was found on this page, but a request to the Sovendus Benefits API (<b>/v2/list</b>) was detected.
-          The values below are read from that request payload.<br/><br/>
           For most of the customer fields the Shopify app currently only reports whether a value exists, not the value itself.
         </h3>
         <h2 class="${sovendusOverlayFontClass} ${sovendusOverlayH2Class}">
