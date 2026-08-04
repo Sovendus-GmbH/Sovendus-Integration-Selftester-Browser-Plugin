@@ -11,15 +11,16 @@ function injectScript(): void {
 
 function setupBenefitsApiBridge(): void {
   window.addEventListener("message", (event: MessageEvent): void => {
+    const data = event.data as { type?: string } | null | undefined;
     if (
       event.source !== window ||
-      event.data?.type !== "getSovendusBenefitsApiRequest"
+      data?.type !== "getSovendusBenefitsApiRequest"
     ) {
       return;
     }
     chrome.runtime.sendMessage(
       { type: "getSovendusBenefitsApiRequest" },
-      (response) => {
+      (response: { payload?: unknown }) => {
         window.postMessage(
           {
             type: "sovendusBenefitsApiRequestResponse",

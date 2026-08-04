@@ -89,22 +89,29 @@ export default class SelfTester {
     );
 
     this.consumerEmailHash = this.getConsumerEmailHashTestResult(
-      { emailHash: payload.consumerEmailHash } as ExplicitAnyType,
+      {
+        emailHash: payload.consumerEmailHash,
+      } as Partial<SovApplicationConsumer>,
       new DidNotRunTestResult<string | undefined>(),
     );
     this.consumerCountry = this.getConsumerCountryTestResult({
       country: payload.country,
-    } as ExplicitAnyType);
+    } as Partial<SovApplicationConsumer>);
     this.consumerZipCode = this.getConsumerZipCodeTestResult({
       zipCode: payload.zipCode,
-    } as ExplicitAnyType);
+    } as Partial<SovApplicationConsumer>);
 
     // The Shopify app currently reports these customer fields only as presence
     // booleans (…Exists). Once it is updated to transmit the actual values,
     // those values are validated directly instead. valueOrPresence handles both.
     const yearOfBirthValue = payload.yearOfBirth ?? payload.dateOfBirth;
-    this.consumerEmail = this.valueOrPresence(payload.email, payload.emailExists, () =>
-      this.getConsumerEmailTestResult({ email: payload.email } as ExplicitAnyType),
+    this.consumerEmail = this.valueOrPresence(
+      payload.email,
+      payload.emailExists,
+      () =>
+        this.getConsumerEmailTestResult({
+          email: payload.email,
+        } as Partial<SovApplicationConsumer>),
     );
     this.consumerFirstName = this.valueOrPresence(
       payload.firstName,
@@ -112,7 +119,7 @@ export default class SelfTester {
       () =>
         this.getConsumerFirstNameTestResult({
           firstName: payload.firstName,
-        } as ExplicitAnyType),
+        } as Partial<SovApplicationConsumer>),
     );
     this.consumerLastName = this.valueOrPresence(
       payload.lastName,
@@ -120,10 +127,15 @@ export default class SelfTester {
       () =>
         this.getConsumerLastNameTestResult({
           lastName: payload.lastName,
-        } as ExplicitAnyType),
+        } as Partial<SovApplicationConsumer>),
     );
-    this.consumerCity = this.valueOrPresence(payload.city, payload.cityExists, () =>
-      this.getConsumerCityTestResult({ city: payload.city } as ExplicitAnyType),
+    this.consumerCity = this.valueOrPresence(
+      payload.city,
+      payload.cityExists,
+      () =>
+        this.getConsumerCityTestResult({
+          city: payload.city,
+        } as Partial<SovApplicationConsumer>),
     );
     this.consumerStreet = this.valueOrPresence(
       payload.street,
@@ -131,7 +143,7 @@ export default class SelfTester {
       () =>
         this.getConsumerStreetTestResult({
           street: payload.street,
-        } as ExplicitAnyType),
+        } as Partial<SovApplicationConsumer>),
     );
     this.consumerStreetNumber = this.valueOrPresence(
       payload.streetNumber,
@@ -139,7 +151,7 @@ export default class SelfTester {
       () =>
         this.getConsumerStreetNumberTestResult({
           streetNumber: payload.streetNumber,
-        } as ExplicitAnyType),
+        } as Partial<SovApplicationConsumer>),
     );
     this.consumerYearOfBirth = this.valueOrPresence(
       yearOfBirthValue,
@@ -147,7 +159,7 @@ export default class SelfTester {
       () =>
         this.getConsumerYearOfBirthTestResult({
           yearOfBirth: yearOfBirthValue,
-        } as ExplicitAnyType),
+        } as Partial<SovApplicationConsumer>),
     );
   }
 
@@ -453,7 +465,7 @@ export default class SelfTester {
   }
 
   getConsumerFirstNameTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.firstName,
@@ -464,7 +476,7 @@ export default class SelfTester {
   }
 
   getConsumerLastNameTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.lastName,
@@ -475,7 +487,7 @@ export default class SelfTester {
   }
 
   getConsumerYearOfBirthTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
   ): TestResultType<string | undefined> {
     const valueTestResult = this.validValueTestResult({
       value: consumer.yearOfBirth || window.sovConsumer?.consumerYearOfBirth,
@@ -511,7 +523,7 @@ export default class SelfTester {
   }
 
   getConsumerEmailTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
   ): TestResultType<string | undefined> {
     const emailTestResult = this.validValueTestResult({
       value: consumer.email,
@@ -539,7 +551,7 @@ export default class SelfTester {
   }
 
   getConsumerEmailHashTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
     consumerEmail: TestResultType<string | undefined>,
   ): TestResultType<string | undefined> {
     let statusMessageKey: StatusMessageKeyTypes;
@@ -583,7 +595,7 @@ export default class SelfTester {
   }
 
   getConsumerStreetTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.street,
@@ -594,7 +606,7 @@ export default class SelfTester {
   }
 
   getConsumerStreetNumberTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.streetNumber,
@@ -608,7 +620,7 @@ export default class SelfTester {
   }
 
   getConsumerZipCodeTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.zipCode,
@@ -624,7 +636,7 @@ export default class SelfTester {
   }
 
   getConsumerPhoneTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.phone,
@@ -640,7 +652,7 @@ export default class SelfTester {
   }
 
   getConsumerCityTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
   ): TestResultType<string | undefined> {
     return this.validValueTestResult({
       value: consumer.city,
@@ -651,7 +663,7 @@ export default class SelfTester {
   }
 
   getConsumerCountryTestResult(
-    consumer: SovApplicationConsumer,
+    consumer: Partial<SovApplicationConsumer>,
   ): TestResultType<string | undefined> {
     const valueResult = this.validValueTestResult({
       value: consumer.country,

@@ -88,14 +88,21 @@ async function waitForIntegrationOrCapturedRequest(
 function getCapturedBenefitsApiRequest(): Promise<SovBenefitsApiRequest | null> {
   return new Promise((resolve) => {
     const handler = (event: MessageEvent): void => {
+      const data = event.data as
+        | {
+            type?: string;
+            payload?: SovBenefitsApiRequest | null;
+          }
+        | null
+        | undefined;
       if (
         event.source !== window ||
-        event.data?.type !== "sovendusBenefitsApiRequestResponse"
+        data?.type !== "sovendusBenefitsApiRequestResponse"
       ) {
         return;
       }
       window.removeEventListener("message", handler);
-      resolve(event.data.payload ?? null);
+      resolve(data.payload ?? null);
     };
     window.addEventListener("message", handler);
     window.postMessage({ type: "getSovendusBenefitsApiRequest" }, "*");
